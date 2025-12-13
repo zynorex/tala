@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { 
   Lock,
   Shield,
@@ -400,27 +401,43 @@ export default function Home() {
       {/* ========== SECTION 1: HERO ========== */}
       <section className="bg-gradient-to-br from-heirlock-yellow to-heirlock-blue py-12 md:py-20 px-4 border-b-4 border-black relative overflow-hidden">
         <div className="container mx-auto max-w-6xl">
-          <div className="space-y-8 relative z-10">
-            <h1 className="text-6xl md:text-8xl font-black text-black leading-tight">
-              THE VAULT IS<br />LOCKED.
-            </h1>
-            <h2 className="text-2xl md:text-4xl font-bold text-black max-w-2xl">
-              India's First Decentralized Time-Capsule Protocol.
-            </h2>
-            <p className="text-lg md:text-xl text-gray-800 max-w-3xl leading-relaxed font-medium">
-              Secure Exams, Government Tenders, and Legal Assets with mathematical certainty. Trust Code, Not Humans.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 pt-4">
-              <Link href="/create-vault">
-                <button className="micro-button px-8 py-4 bg-black text-heirlock-yellow font-black border-4 border-black shadow-brutal inline-flex items-center gap-2 text-lg">
-                  Launch App <ChevronRight className="w-5 h-5" />
-                </button>
-              </Link>
-              <Link href="/documentation">
-                <button className="micro-button px-8 py-4 bg-white text-black font-black border-4 border-white shadow-brutal inline-flex items-center gap-2 text-lg">
-                  Read Documentation <ChevronRight className="w-5 h-5" />
-                </button>
-              </Link>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center relative z-10">
+            {/* Left: Text Content */}
+            <div className="space-y-8">
+              <h1 className="text-6xl md:text-8xl font-black text-black leading-tight">
+                <span className="whitespace-nowrap">THE VAULT IS</span><br />LOCKED.
+              </h1>
+              <h2 className="text-2xl md:text-4xl font-bold text-black max-w-3xl">
+                India's First Decentralized <span className="whitespace-nowrap">Time-Capsule</span> Protocol.
+              </h2>
+              <p className="text-lg md:text-xl text-gray-800 max-w-3xl leading-relaxed font-medium">
+                Secure Exams, Government Tenders, and Legal Assets with mathematical certainty. Trust Code, Not Humans.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4 pt-4">
+                <Link href="/create-vault">
+                  <button className="micro-button px-8 py-4 bg-black text-heirlock-yellow font-black border-4 border-black shadow-brutal inline-flex items-center gap-2 text-lg">
+                    Launch App <ChevronRight className="w-5 h-5" />
+                  </button>
+                </Link>
+                <Link href="/documentation">
+                  <button className="micro-button px-8 py-4 bg-white text-black font-black border-4 border-white shadow-brutal inline-flex items-center gap-2 text-lg">
+                    Read Documentation <ChevronRight className="w-5 h-5" />
+                  </button>
+                </Link>
+              </div>
+            </div>
+
+            {/* Right: Mascot */}
+            <div className="relative h-80 md:h-96 hidden md:flex items-center justify-center group">
+              <div className="absolute inset-0 animate-float">
+                <Image
+                  src="/mascot.png"
+                  alt="T.A.L.A. Mascot"
+                  fill
+                  className="object-contain drop-shadow-lg group-hover:drop-shadow-2xl transition-all duration-300"
+                  priority
+                />
+              </div>
             </div>
           </div>
 
