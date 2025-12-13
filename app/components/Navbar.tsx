@@ -1,6 +1,7 @@
 'use client';
 
 import Link from "next/link";
+import Image from "next/image";
 import dynamic from "next/dynamic";
 import { useState, useEffect } from "react";
 import { Menu, X, ChevronDown, BookOpen, Zap, Code, Shield, HelpCircle, Newspaper, LayoutGrid, Mail } from "lucide-react";
@@ -46,7 +47,7 @@ export default function Navbar() {
     if (isActive("/student")) return "bg-heirlock-green";
     if (isActive("/create-vault")) return "bg-gradient-to-r from-heirlock-blue to-heirlock-green";
     if (isActive("/documentation") || isActive("/smart-contracts") || isActive("/faq") || isActive("/blog")) return "bg-heirlock-green";
-    if (isActive("/dashboard")) return "bg-heirlock-blue";
+    if (isActive("/dashboard")) return "bg-heirlock-pink";
     return "bg-heirlock-yellow";
   };
 
@@ -60,22 +61,9 @@ export default function Navbar() {
     if (isActive("/admin")) return "bg-heirlock-pink text-black border-4 border-heirlock-pink group-hover:text-black";
     if (isActive("/student")) return "bg-heirlock-green text-black border-4 border-heirlock-green group-hover:text-black";
     if (isActive("/create-vault")) return "bg-heirlock-blue text-black border-4 border-heirlock-blue group-hover:text-black";
-    if (isActive("/dashboard")) return "bg-heirlock-blue text-black border-4 border-heirlock-blue group-hover:text-black";
+    if (isActive("/dashboard")) return "bg-heirlock-pink text-black border-4 border-heirlock-pink group-hover:text-black";
     if (isActive("/documentation") || isActive("/smart-contracts") || isActive("/faq") || isActive("/blog")) return "bg-heirlock-green text-black border-4 border-heirlock-green group-hover:text-black";
     return "bg-heirlock-yellow text-black border-4 border-heirlock-yellow group-hover:text-black";
-  };
-
-  const getTalaColor = () => {
-    if (isScrolled) return "text-heirlock-yellow border-heirlock-yellow group-hover:text-heirlock-yellow group-hover:border-heirlock-yellow";
-    if (isActive("/")) return "text-black border-heirlock-yellow group-hover:text-white group-hover:border-white";
-    if (isActive("/about")) return "text-black border-heirlock-green group-hover:text-white group-hover:border-white";
-    if (isActive("/how-it-works")) return "text-black border-heirlock-blue group-hover:text-white group-hover:border-white";
-    if (isActive("/admin")) return "text-black border-heirlock-pink group-hover:text-white group-hover:border-white";
-    if (isActive("/student")) return "text-black border-heirlock-green group-hover:text-white group-hover:border-white";
-    if (isActive("/create-vault")) return "text-black border-heirlock-blue group-hover:text-white group-hover:border-white";
-    if (isActive("/dashboard")) return "text-black border-heirlock-blue group-hover:text-white group-hover:border-white";
-    if (isActive("/documentation") || isActive("/smart-contracts") || isActive("/faq") || isActive("/blog")) return "text-black border-heirlock-green group-hover:text-white group-hover:border-white";
-    return "text-black border-heirlock-yellow group-hover:text-white group-hover:border-white";
   };
 
   return (
@@ -83,7 +71,16 @@ export default function Navbar() {
       <div className="container mx-auto max-w-7xl px-4">
         <div className="flex justify-between items-center h-16 md:h-20">
           <Link href="/" className="flex items-center gap-3">
-            <span className={`text-2xl md:text-3xl font-bold  transition-all border-2 px-2 py-1 rounded-xl ${getTalaColor()}`}>T.A.L.A.</span>
+            <div className="relative h-10 md:h-12 w-auto">
+              <Image 
+                src="/logo.png" 
+                alt="T.A.L.A. Logo" 
+                height={48}
+                width={120}
+                priority
+                className="h-full w-auto object-contain"
+              />
+            </div>
             <span className={`px-3 py-1 text-xs font-black rounded-sm transition-all !text-black ${getBadgeColor()}`}>
               BETA
             </span>

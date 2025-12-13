@@ -2,9 +2,11 @@ import type { Metadata } from "next";
 import { Inter, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import { Web3Provider } from "@/components/providers/Web3Provider";
+import { ToastProvider } from "./providers/ToastProvider";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import PageSkeleton from "./components/PageSkeleton";
+import DevelopmentNotification from "./components/DevelopmentNotification";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -40,12 +42,15 @@ export default function RootLayout({
     <html lang="en" className={`${inter.variable} ${spaceGrotesk.variable}`}>
       <body className={inter.className}>
         <Web3Provider>
-          <PageSkeleton />
-          <Navbar />
-          <div className="pt-16 md:pt-20">
-            {children}
-          </div>
-          <Footer />
+          <ToastProvider>
+            <PageSkeleton />
+            <Navbar />
+            <DevelopmentNotification />
+            <div className="pt-16 md:pt-20">
+              {children}
+            </div>
+            <Footer />
+          </ToastProvider>
         </Web3Provider>
       </body>
     </html>

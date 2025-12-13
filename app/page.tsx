@@ -1,589 +1,694 @@
 'use client';
 
-import Image from "next/image";
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { 
-  Heart, 
-  Shield, 
-  Cloud, 
-  Link2, 
-  Unlock, 
-  Code2, 
   Lock,
+  Shield,
   Zap,
-  TrendingUp,
-  AlertCircle,
+  BookOpen,
+  Briefcase,
+  Gavel,
   CheckCircle,
-  ChevronRight
+  ChevronRight,
+  Code,
+  Database,
+  Globe,
+  User,
+  Unlock
 } from "lucide-react";
 
+// Micro Interactions Hook
+function useMicroInteractions() {
+  useEffect(() => {
+    const style = document.createElement('style');
+    style.textContent = `
+      /* Scroll Reveal Animation */
+      @keyframes slideUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      @keyframes scaleIn {
+        from {
+          opacity: 0;
+          transform: scale(0.95);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+
+      /* Shimmer */
+      @keyframes shimmer {
+        0% {
+          background-position: -1000px 0;
+        }
+        100% {
+          background-position: 1000px 0;
+        }
+      }
+
+      /* Icon bounce on hover */
+      @keyframes iconBounce {
+        0%, 100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-8px);
+        }
+      }
+
+      /* Pulse effect */
+      @keyframes pulse {
+        0%, 100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.7;
+        }
+      }
+
+      /* Interactive Elements */
+      .micro-button {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .micro-button:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15) !important;
+      }
+
+      .micro-button:active {
+        transform: translateY(-1px);
+      }
+
+      /* Card Hover Effects */
+      .micro-card {
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      .micro-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 16px 40px rgba(0, 0, 0, 0.12) !important;
+      }
+
+      .micro-card:hover .micro-icon {
+        animation: iconBounce 0.6s ease-in-out;
+        color: #FFFACD;
+      }
+
+      /* Icon hover */
+      .micro-icon {
+        transition: all 0.3s ease;
+      }
+
+      /* Scroll Reveal */
+      .reveal-section {
+        animation: slideUp 0.8s ease-out;
+      }
+
+      .reveal-card {
+        animation: scaleIn 0.6s ease-out;
+      }
+
+      /* Button Ripple Effect */
+      .micro-button::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.5);
+        transform: translate(-50%, -50%);
+        pointer-events: none;
+      }
+
+      .micro-button:active::after {
+        animation: ripple 0.6s ease-out;
+      }
+
+      @keyframes ripple {
+        to {
+          width: 300px;
+          height: 300px;
+          opacity: 0;
+        }
+      }
+
+      /* Text Gradient Animation */
+      .micro-gradient-text {
+        background: linear-gradient(135deg, #000 0%, #333 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        transition: all 0.3s ease;
+      }
+
+      /* Stat Number Animation */
+      .micro-stat-box {
+        transition: all 0.3s ease;
+      }
+
+      .micro-stat-box:hover {
+        transform: scale(1.05);
+        background-color: white !important;
+      }
+
+      /* Section Stagger */
+      .stagger-1 { animation-delay: 0.1s; }
+      .stagger-2 { animation-delay: 0.2s; }
+      .stagger-3 { animation-delay: 0.3s; }
+      .stagger-4 { animation-delay: 0.4s; }
+      .stagger-5 { animation-delay: 0.5s; }
+      .stagger-6 { animation-delay: 0.6s; }
+    `;
+    document.head.appendChild(style);
+    return () => {
+      document.head.removeChild(style);
+    };
+  }, []);
+}
+
+// Skeleton Loader Component
+function SkeletonLoader() {
+  return (
+    <main className="min-h-screen bg-cream">
+      <style>{`
+        @keyframes shimmer {
+          0% {
+            background-position: -1000px 0;
+          }
+          100% {
+            background-position: 1000px 0;
+          }
+        }
+        .skeleton-shimmer {
+          background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+          background-size: 1000px 100%;
+          animation: shimmer 2s infinite;
+        }
+      `}</style>
+
+      {/* Hero Skeleton */}
+      <section className="bg-gradient-to-br from-heirlock-yellow to-heirlock-blue py-12 md:py-20 px-4 border-b-4 border-black">
+        <div className="container mx-auto max-w-6xl">
+          <div className="space-y-8">
+            <div className="skeleton-shimmer h-20 md:h-32 w-4/5 rounded"></div>
+            <div className="skeleton-shimmer h-8 md:h-12 w-3/5 rounded"></div>
+            <div className="space-y-3">
+              <div className="skeleton-shimmer h-4 w-full rounded"></div>
+              <div className="skeleton-shimmer h-4 w-5/6 rounded"></div>
+            </div>
+            <div className="flex gap-4">
+              <div className="skeleton-shimmer h-12 w-32 rounded"></div>
+              <div className="skeleton-shimmer h-12 w-40 rounded"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Crisis Section Skeleton */}
+      <section className="bg-heirlock-red py-16 md:py-24 px-4 border-b-4 border-black">
+        <div className="container mx-auto max-w-5xl">
+          <div className="skeleton-shimmer h-12 md:h-16 w-3/5 rounded mb-12"></div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="border-4 border-black bg-black p-8">
+                <div className="skeleton-shimmer h-16 w-20 rounded mb-3"></div>
+                <div className="skeleton-shimmer h-6 w-full rounded mb-2"></div>
+                <div className="skeleton-shimmer h-4 w-4/5 rounded"></div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Network Status Skeleton */}
+      <section className="bg-black py-6 px-4 border-b-4 border-heirlock-yellow">
+        <div className="container mx-auto max-w-5xl">
+          <div className="border-4 border-heirlock-yellow bg-black p-4">
+            <div className="skeleton-shimmer h-8 w-full rounded"></div>
+          </div>
+        </div>
+      </section>
+
+      {/* Three Pillars Skeleton */}
+      <section className="py-16 md:py-24 px-4 bg-cream border-b-4 border-black">
+        <div className="container mx-auto max-w-5xl">
+          <div className="skeleton-shimmer h-12 md:h-16 w-3/5 rounded mb-12"></div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="bg-white border-4 border-black p-8">
+                <div className="skeleton-shimmer h-12 w-12 rounded mb-4"></div>
+                <div className="skeleton-shimmer h-6 w-4/5 rounded mb-3"></div>
+                <div className="space-y-2">
+                  <div className="skeleton-shimmer h-4 w-full rounded"></div>
+                  <div className="skeleton-shimmer h-4 w-5/6 rounded"></div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* How It Works Skeleton */}
+      <section className="py-16 md:py-24 px-4 bg-heirlock-blue border-b-4 border-black">
+        <div className="container mx-auto max-w-5xl">
+          <div className="skeleton-shimmer h-12 md:h-16 w-3/5 rounded mb-12"></div>
+          <div className="space-y-6">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="border-4 border-black bg-white p-6 md:p-8 flex gap-6">
+                <div className="skeleton-shimmer h-16 w-16 rounded flex-shrink-0"></div>
+                <div className="flex-1 space-y-3">
+                  <div className="skeleton-shimmer h-6 w-2/5 rounded"></div>
+                  <div className="space-y-2">
+                    <div className="skeleton-shimmer h-4 w-full rounded"></div>
+                    <div className="skeleton-shimmer h-4 w-5/6 rounded"></div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Security Specs Skeleton */}
+      <section className="py-16 md:py-24 px-4 bg-heirlock-yellow border-b-4 border-black">
+        <div className="container mx-auto max-w-5xl">
+          <div className="skeleton-shimmer h-12 md:h-16 w-3/5 rounded mb-12"></div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {[1, 2, 3, 4].map((i) => (
+              <div key={i} className="border-4 border-black bg-white p-8">
+                <div className="skeleton-shimmer h-10 w-10 rounded mb-4"></div>
+                <div className="skeleton-shimmer h-6 w-3/5 rounded mb-3"></div>
+                <div className="space-y-2">
+                  <div className="skeleton-shimmer h-4 w-full rounded"></div>
+                  <div className="skeleton-shimmer h-4 w-4/5 rounded"></div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    </main>
+  );
+}
+
 export default function Home() {
-  const stats = [
-    { label: "Papers Protected", value: "5,234", icon: Lock },
-    { label: "Schools Using T.A.L.A.", value: "142", icon: Shield },
-    { label: "99.99% Uptime", value: "Always Secure", icon: Zap },
-    { label: "Zero Leaks", value: "100%", icon: CheckCircle },
+  useMicroInteractions();
+  
+  const pillars = [
+    {
+      title: "Education",
+      description: "Exam Integrity. Time-lock papers until 10:00 AM sharp. Mathematical certainty replaces administrative trust.",
+      icon: BookOpen,
+      color: "bg-heirlock-yellow"
+    },
+    {
+      title: "Governance",
+      description: "Fair Tenders. Keep contractor bids sealed until the official opening moment. Corruption-proof procurement.",
+      icon: Briefcase,
+      color: "bg-heirlock-pink"
+    },
+    {
+      title: "Legal",
+      description: "Evidence Protection. Timestamp intellectual property and whistleblower evidence forever. Immutable proof.",
+      icon: Gavel,
+      color: "bg-heirlock-green"
+    }
   ];
 
-  const features = [
+  const steps = [
     {
-      title: "Gas-Free Check-ins",
-      description: "Administrators confirm papers are ready. Free every time. Only setup costs network gas.",
-      icon: Heart,
+      number: 1,
+      title: "ENCRYPT.",
+      description: "Client-side AES-256 encryption. Your file is locked on your device before it ever touches the internet. Raw files never reach our servers.",
+      icon: Lock
     },
     {
-      title: "100% Non-Custodial",
-      description: "Your private keys never leave your device. We never have access to papers-ever.",
-      icon: Shield,
+      number: 2,
+      title: "LOCK.",
+      description: "Smart Contract accepts custody of the decryption key. Mathematical impossibility of early access. Even creators cannot bypass the time-lock.",
+      icon: Zap
     },
     {
-      title: "24/7 Watchdog",
-      description: "Our Oracle monitors scheduled unlock times. Papers release automatically at exact time.",
-      icon: Cloud,
+      number: 3,
+      title: "REVEAL.",
+      description: "At T-Minus Zero, the blockchain releases the key automatically. Students decrypt in their browser. Instant access guaranteed.",
+      icon: Unlock
+    }
+  ];
+
+  const securitySpecs = [
+    {
+      icon: Lock,
+      title: "AES-256 Standards",
+      description: "Military-grade encryption. Same standard used by Banks and Defense Systems."
     },
     {
-      title: "Multi-School Ready",
-      description: "Polygon Amoy, Ethereum, and more coming soon. Protect papers across any blockchain.",
-      icon: Link2,
+      icon: Database,
+      title: "Immutable Ledger",
+      description: "Every action recorded on blockchain. Permanent audit trail. No deletion. No forgery."
     },
     {
-      title: "Automatic Unlock",
-      description: "When exam time arrives, papers automatically transfer to authorized students. No delays.",
-      icon: Unlock,
+      icon: User,
+      title: "Non-Custodial",
+      description: "You own your data. We never have encryption keys. Zero central point of failure."
     },
     {
+      icon: Code,
       title: "Open Source",
-      description: "Read the code. Trust through transparency. Security audited and battle-tested.",
-      icon: Code2,
+      description: "Verify the code yourself. Audit by independent security firms. Transparency by design."
     }
   ];
 
-  const useCases = [
-    {
-      title: "School Boards",
-      description: "Ensure exam papers reach schools exactly on time. Zero possibility of early leaks.",
-      icon: TrendingUp,
-      color: "heirlock-yellow"
-    },
-    {
-      title: "Universities",
-      description: "Secure final exams and board examinations with mathematical certainty.",
-      icon: Heart,
-      color: "heirlock-pink"
-    },
-    {
-      title: "State Education Bodies",
-      description: "Deploy across multiple schools. Centralized control, decentralized security.",
-      icon: Cloud,
-      color: "heirlock-blue"
-    },
-    {
-      title: "Competitive Exams",
-      description: "Protect JEE, NEET, UPSC papers. Large-scale time-locked distribution.",
-      icon: Zap,
-      color: "heirlock-green"
-    }
-  ];
+  const [isLoading, setIsLoading] = useState(true);
 
-  const faqs = [
-    {
-      q: "How do I know papers won't leak before exam time?",
-      a: "Papers are stored encrypted on IPFS and locked in a smart contract. Even we can't access them. Only the smart contract can release them at the scheduled time-mathematically guaranteed."
-    },
-    {
-      q: "What if I need to change the unlock time?",
-      a: "Before the papers are locked, you can update timing. Once locked, it's immutable-this is the security feature. Plan ahead and set the exact time needed."
-    },
-    {
-      q: "Can my institution handle multiple exams?",
-      a: "Yes! Create separate vaults for each exam. Each has its own lock time, beneficiaries, and papers. Manage unlimited exams in one dashboard."
-    },
-    {
-      q: "Is T.A.L.A. really secure?",
-      a: "Yes. Papers are encrypted with AES-256. Smart contracts are auditable. Your keys never leave your device. Only blockchain math unlocks the papers."
-    },
-    {
-      q: "What blockchains does T.A.L.A. support?",
-      a: "Currently Polygon Amoy (testnet). Polygon mainnet, Ethereum, and Base coming soon. Deploy anywhere you want."
-    },
-    {
-      q: "How much does it cost?",
-      a: "Creating a vault costs standard network gas fees (~$10-50 on testnet). Free forever after. No subscriptions, no hidden fees."
-    }
-  ];
+  useEffect(() => {
+    // Show skeleton for 800ms on initial load
+    const timer = setTimeout(() => setIsLoading(false), 800);
+    return () => clearTimeout(timer);
+  }, []);
 
-  const mobileFeatures = [
-    { icon: Heart, label: "Gas-Free", desc: "Setup" },
-    { icon: Shield, label: "Non-Custodial", desc: "Your Keys" },
-    { icon: Zap, label: "Auto", desc: "Unlock" },
-    { icon: Lock, label: "Always", desc: "Secure" }
-  ];
+  if (isLoading) {
+    return <SkeletonLoader />;
+  }
 
   return (
-    <main className="min-h-screen">
-      
-      {/* MOBILE HERO - Custom Neo-Brutalist Mobile UI */}
-      <section className="md:hidden bg-heirlock-yellow min-h-screen flex flex-col px-3 py-4 relative overflow-hidden">
-        {/* Mobile Header */}
-        <div className="flex flex-col gap-4 mb-6">
-          <div className="flex items-baseline gap-2">
-            <h1 className="text-5xl font-bold">T.A.L.A.</h1>
-            <span className="text-xs font-bold text-gray-700 border-2 border-black px-2 py-1">BETA</span>
-          </div>
-          <div className="border-4 border-black bg-white p-3 space-y-1">
-            <p className="text-sm font-bold">Don't Let Your Exam</p>
-            <p className="text-sm font-bold">Papers Leak</p>
-          </div>
-        </div>
-
-        {/* Quick Stats - Mobile Card Stack */}
-        <div className="flex flex-col gap-2 mb-6">
-          <div className="bg-white border-4 border-black p-3 flex justify-between items-center active:scale-95 active:shadow-none transition-transform cursor-pointer hover:shadow-brutal">
-            <span className="text-xs font-bold text-gray-700">Papers Protected</span>
-            <span className="text-2xl font-bold">5.2K</span>
-          </div>
-          <div className="bg-white border-4 border-black p-3 flex justify-between items-center active:scale-95 active:shadow-none transition-transform cursor-pointer hover:shadow-brutal">
-            <span className="text-xs font-bold text-gray-700">Schools Using</span>
-            <span className="text-2xl font-bold">142</span>
-          </div>
-        </div>
-
-        {/* CTA - Full Width Mobile Button */}
-        <div className="flex flex-col gap-2 mb-6">
-          <Link href="/create-vault" className="w-full">
-            <button className="w-full bg-black text-white px-3 py-3 font-bold border-4 border-black shadow-brutal text-sm active:translate-x-1 active:translate-y-1 active:shadow-none transition-all duration-100 hover:scale-105 hover:shadow-brutal">
-              CREATE VAULT
-            </button>
-          </Link>
-          <Link href="/" className="w-full">
-            <button className="w-full bg-white text-black px-3 py-3 font-bold border-4 border-black shadow-brutal text-sm active:translate-x-1 active:translate-y-1 active:shadow-none transition-all duration-100 hover:scale-105 hover:shadow-brutal">
-              HOW IT WORKS
-            </button>
-          </Link>
-        </div>
-
-        {/* Key Benefits - Icon Grid */}
-        <div className="grid grid-cols-2 gap-2">
-          {mobileFeatures.map((feature, idx) => {
-            const Icon = feature.icon;
-            return (
-              <div key={idx} className="bg-white border-4 border-black p-3 text-center cursor-pointer active:scale-95 transition-transform duration-100 hover:shadow-brutal">
-                <Icon className="w-6 h-6 mx-auto mb-1 transition-transform duration-200" />
-                <p className="text-xs font-bold">{feature.label}</p>
-                <p className="text-xs font-medium text-gray-700">{feature.desc}</p>
-              </div>
-            );
-          })}
-        </div>
-
-        {/* Decorative Element */}
-        <div className="absolute bottom-0 right-0 opacity-10 w-32 h-32">
-          <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-            <path fill="#000000" d="M40,-65C50,-55,55,-40,60,-25C65,-10,70,5,70,20C70,35,65,50,55,60C45,70,30,75,15,75C0,75,-15,70,-30,65C-45,60,-60,55,-70,45C-80,35,-85,20,-85,5C-85,-10,-80,-25,-70,-35C-60,-45,-45,-50,-30,-55C-15,-60,0,-65,15,-65C30,-65,30,-75,40,-65Z" transform="translate(100 100)" />
-          </svg>
-        </div>
-      </section>
-
-      {/* DESKTOP HERO - Original Design */}
-      <section className="hidden md:flex bg-heirlock-yellow min-h-screen items-center px-3 sm:px-4 py-8 md:py-10 relative overflow-hidden">
-        <div className="absolute top-0 left-0 w-16 sm:w-20 md:w-24 h-16 sm:h-20 md:h-24 opacity-20">
-          <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-            <path fill="#000000" d="M40,-65C50,-55,55,-40,60,-25C65,-10,70,5,70,20C70,35,65,50,55,60C45,70,30,75,15,75C0,75,-15,70,-30,65C-45,60,-60,55,-70,45C-80,35,-85,20,-85,5C-85,-10,-80,-25,-70,-35C-60,-45,-45,-50,-30,-55C-15,-60,0,-65,15,-65C30,-65,30,-75,40,-65Z" transform="translate(100 100)" />
-          </svg>
-        </div>
-
-        <div className="container mx-auto max-w-7xl grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-8 items-center relative z-10 px-3 sm:px-6">
-          <div className="space-y-2 sm:space-y-3 md:space-y-4 order-1 lg:order-1">
-            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-6xl xl:text-7xl font-bold leading-tight">
-              <span className="inline-block bg-black text-heirlock-yellow px-3 py-1 mb-2">
-                T.A.L.A.
-              </span>
-              <br />
-              <span className="text-xl sm:text-2xl md:text-3xl lg:text-5xl xl:text-6xl">
-                Don't Let Your Exam Papers Leak Before Time.
-              </span>
+    <main className="min-h-screen bg-cream">
+      {/* ========== SECTION 1: HERO ========== */}
+      <section className="bg-gradient-to-br from-heirlock-yellow to-heirlock-blue py-12 md:py-20 px-4 border-b-4 border-black relative overflow-hidden">
+        <div className="container mx-auto max-w-6xl">
+          <div className="space-y-8 relative z-10">
+            <h1 className="text-6xl md:text-8xl font-black text-black leading-tight">
+              THE VAULT IS<br />LOCKED.
             </h1>
-            
-            <p className="text-xs sm:text-sm md:text-base lg:text-lg font-medium max-w-xl">
-              The only time-lock for exams. When you set the unlock time, papers automatically become available to students. Non-custodial. Tamper-proof. Forever.
+            <h2 className="text-2xl md:text-4xl font-bold text-black max-w-2xl">
+              India's First Decentralized Time-Capsule Protocol.
+            </h2>
+            <p className="text-lg md:text-xl text-gray-800 max-w-3xl leading-relaxed font-medium">
+              Secure Exams, Government Tenders, and Legal Assets with mathematical certainty. Trust Code, Not Humans.
             </p>
-
-            <div className="flex flex-col sm:flex-row flex-wrap gap-2">
+            <div className="flex flex-col sm:flex-row gap-4 pt-4">
               <Link href="/create-vault">
-                <button className="bg-black text-white px-4 sm:px-5 md:px-6 py-2 sm:py-2.5 text-xs sm:text-sm md:text-base font-bold border-4 border-black shadow-brutal hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all w-full sm:w-auto flex items-center justify-center gap-2">
-                  <Lock className="w-4 h-4" /> Create Free Vault
+                <button className="micro-button px-8 py-4 bg-black text-heirlock-yellow font-black border-4 border-black shadow-brutal inline-flex items-center gap-2 text-lg">
+                  Launch App <ChevronRight className="w-5 h-5" />
                 </button>
               </Link>
-              <Link href="/" className="inline-block w-full sm:w-auto">
-                <button className="w-full bg-white text-black px-4 sm:px-5 md:px-6 py-2 sm:py-2.5 text-xs sm:text-sm md:text-base font-bold border-4 border-black shadow-brutal hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all flex items-center justify-center gap-2">
-                  Learn How <ChevronRight className="w-4 h-4" />
+              <Link href="/documentation">
+                <button className="micro-button px-8 py-4 bg-white text-black font-black border-4 border-white shadow-brutal inline-flex items-center gap-2 text-lg">
+                  Read Documentation <ChevronRight className="w-5 h-5" />
                 </button>
               </Link>
             </div>
-
-            <div className="pt-2 sm:pt-3 space-y-1">
-              <p className="text-xs font-bold text-gray-700">✓ No credit card needed</p>
-              <p className="text-xs font-bold text-gray-700">✓ Setup in 2 minutes</p>
-              <p className="text-xs font-bold text-gray-700">✓ Your keys, your papers</p>
-            </div>
           </div>
 
-          <div className="flex justify-center order-2 lg:order-2 mt-4 lg:mt-0 w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-xl">
-            <div className="border-4 border-black bg-white p-8 shadow-brutal">
-              <div className="aspect-square bg-gradient-to-br from-heirlock-pink to-heirlock-green rounded-xl flex items-center justify-center">
-                <div className="text-6xl">🔐</div>
-              </div>
-            </div>
+          {/* Decorative element */}
+          <div className="absolute top-10 right-0 opacity-5 w-96 h-96">
+            <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+              <path fill="#000000" d="M40,-65C50,-55,55,-40,60,-25C65,-10,70,5,70,20C70,35,65,50,55,60C45,70,30,75,15,75C0,75,-15,70,-30,65C-45,60,-60,55,-70,45C-80,35,-85,20,-85,5C-85,-10,-80,-25,-70,-35C-60,-45,-45,-50,-30,-55C-15,-60,0,-65,15,-65C30,-65,30,-75,40,-65Z" transform="translate(100 100)" />
+            </svg>
           </div>
         </div>
       </section>
 
-      {/* STATS SECTION - Mobile Hidden */}
-      <section className="hidden md:block bg-black px-4 py-12 md:py-16 border-t-4 border-b-4 border-black">
-        <div className="container mx-auto max-w-7xl">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
-            {stats.map((stat, idx) => {
-              const Icon = stat.icon;
-              return (
-                <div key={idx} className="border-4 border-white bg-black p-4 sm:p-6 text-center hover:bg-white transition-all group">
-                  <Icon className="w-6 h-6 sm:w-8 sm:h-8 text-white mx-auto mb-2 sm:mb-3 group-hover:text-black" />
-                  <p className="text-xl sm:text-3xl font-bold text-white group-hover:text-black">{stat.value}</p>
-                  <p className="text-xs sm:text-sm font-medium text-gray-400 group-hover:text-black mt-1 sm:mt-2">{stat.label}</p>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* WAVY DIVIDER - Mobile Hidden */}
-      <div className="hidden md:block bg-heirlock-green relative">
-        <div className="absolute top-0 left-0 w-full overflow-hidden leading-none">
-          <svg className="relative block w-full h-12" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
-            <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" fill="#FFF59D"></path>
-          </svg>
-        </div>
-      </div>
-
-      {/* FEATURES SECTION - Custom Mobile Layout */}
-      <section className="py-8 md:py-20 md:bg-heirlock-green">
-        {/* Mobile Features - Vertical Stack */}
-        <div className="px-3 md:hidden container mx-auto bg-heirlock-green border-4 border-black shadow-brutal">
-          <div className="bg-white border-b-4 border-black p-4">
-            <h2 className="text-2xl font-bold">Why T.A.L.A.?</h2>
-            <p className="text-xs font-medium text-gray-700 mt-1">Built for educators</p>
-          </div>
-          
-          <div className="space-y-1">
-            <div className="bg-heirlock-pink border-b-4 border-black p-4 border-t-4 cursor-pointer active:scale-95 transition-transform duration-100 hover:shadow-brutal">
-              <div className="flex gap-3">
-                <Heart className="w-5 h-5 flex-shrink-0 mt-0.5 transition-transform duration-200" />
-                <div>
-                  <p className="font-bold text-sm">Secure Setup</p>
-                  <p className="text-xs font-medium text-gray-700">Create vault in 2 min</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-heirlock-blue border-b-4 border-black p-4 cursor-pointer active:scale-95 transition-transform duration-100 hover:shadow-brutal">
-              <div className="flex gap-3">
-                <Shield className="w-5 h-5 flex-shrink-0 mt-0.5 transition-transform duration-200" />
-                <div>
-                  <p className="font-bold text-sm">Non-Custodial</p>
-                  <p className="text-xs font-medium text-gray-700">Your keys always yours</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-heirlock-yellow border-b-4 border-black p-4 cursor-pointer active:scale-95 transition-transform duration-100 hover:shadow-brutal">
-              <div className="flex gap-3">
-                <Zap className="w-5 h-5 flex-shrink-0 mt-0.5 transition-transform duration-200" />
-                <div>
-                  <p className="font-bold text-sm">Auto Unlock</p>
-                  <p className="text-xs font-medium text-gray-700">Right on time</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-heirlock-green border-b-4 border-black p-4 cursor-pointer active:scale-95 transition-transform duration-100 hover:shadow-brutal">
-              <div className="flex gap-3">
-                <Cloud className="w-5 h-5 flex-shrink-0 mt-0.5 transition-transform duration-200" />
-                <div>
-                  <p className="font-bold text-sm">Always Monitoring</p>
-                  <p className="text-xs font-medium text-gray-700">24/7 security</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Desktop Features - Original Grid */}
-        <div className="hidden md:block">
-          <div className="container mx-auto max-w-7xl bg-heirlock-green px-4">
-            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-center mb-3 md:mb-4 px-4 pt-12 md:pt-20">
-              Why Choose T.A.L.A.?
-            </h2>
-            <p className="text-center text-sm sm:text-base md:text-lg font-medium mb-10 md:mb-16 max-w-2xl mx-auto px-4">
-              Built for schools and exam boards. Tested. Audited. Ready.
-            </p>
-
-            <div className="px-4 pb-12 md:pb-20 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 lg:gap-8">
-            {features.map((feature, idx) => {
-              const Icon = feature.icon;
-              const colors = ["heirlock-yellow", "heirlock-pink", "heirlock-blue", "heirlock-green", "heirlock-yellow", "heirlock-pink"];
-              return (
-                <div key={idx} className="bg-white border-4 border-black shadow-brutal p-4 sm:p-6 hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all">
-                  <div className={`bg-${colors[idx]} border-4 border-black w-14 h-14 sm:w-16 sm:h-16 flex items-center justify-center mb-3 sm:mb-4`}>
-                    <Icon className="w-7 h-7 sm:w-8 sm:h-8" />
-                  </div>
-                  <h3 className="text-lg sm:text-xl md:text-2xl font-bold mb-2">{feature.title}</h3>
-                  <p className="text-sm sm:text-base font-medium text-gray-700">{feature.description}</p>
-                </div>
-              );
-            })}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* WAVY DIVIDER - Mobile Hidden */}
-      <div className="hidden md:block bg-heirlock-pink relative">
-        <div className="absolute top-0 left-0 w-full overflow-hidden leading-none">
-          <svg className="relative block w-full h-12" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
-            <path d="M985.66,92.83C906.67,72,823.78,31,743.84,14.19c-82.26-17.34-168.06-16.33-250.45.39-57.84,11.73-114,31.07-172,41.86A600.21,600.21,0,0,1,0,27.35V120H1200V95.8C1132.19,118.92,1055.71,111.31,985.66,92.83Z" fill="#BAFFC9"></path>
-          </svg>
-        </div>
-      </div>
-
-      {/* USE CASES SECTION - Custom Mobile Layout */}
-      <section className="py-8 md:py-20 md:bg-heirlock-pink">
-        {/* Mobile Use Cases - Carousel Style */}
-        <div className="px-3 md:hidden container mx-auto">
-          <div className="mb-6">
-            <h2 className="text-2xl font-bold mb-1">Who Uses T.A.L.A.?</h2>
-            <p className="text-xs font-medium text-gray-700">Everyone securing exams</p>
-          </div>
-
-          <div className="space-y-3">
-            {useCases.map((useCase, idx) => {
-              const Icon = useCase.icon;
-              return (
-                <div key={idx} className="bg-white border-4 border-black shadow-brutal p-4 cursor-pointer active:scale-95 active:shadow-none transition-transform duration-100 hover:translate-x-1 hover:translate-y-1 hover:shadow-none">
-                  <div className="flex gap-3">
-                    <div className={`bg-heirlock-${useCase.color} border-4 border-black w-10 h-10 flex-shrink-0 flex items-center justify-center transition-transform duration-200`}>
-                      <Icon className="w-5 h-5" />
-                    </div>
-                    <div className="flex-1">
-                      <p className="font-bold text-sm">{useCase.title}</p>
-                      <p className="text-xs font-medium text-gray-700 mt-1">{useCase.description}</p>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* Desktop Use Cases - Original Grid */}
-        <div className="hidden md:block bg-heirlock-pink">
-          <div className="container mx-auto max-w-7xl px-4 py-8 md:py-0">
-            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-center mb-3 md:mb-4">
-              Who Should Use T.A.L.A.?
-            </h2>
-            <p className="text-center text-sm sm:text-base md:text-lg font-medium mb-10 md:mb-16 max-w-2xl mx-auto">
-              If you're securing exam papers, this is for you.
-            </p>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {useCases.map((useCase, idx) => {
-                const Icon = useCase.icon;
-                return (
-                  <div key={idx} className="bg-white border-4 border-black shadow-brutal p-6 sm:p-8 hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all">
-                    <div className={`w-16 h-16 bg-heirlock-${useCase.color} border-4 border-black flex items-center justify-center mb-4`}>
-                      <Icon className="w-8 h-8" />
-                    </div>
-                    <h3 className="text-2xl font-bold mb-3">{useCase.title}</h3>
-                    <p className="text-base font-medium text-gray-700">{useCase.description}</p>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* HOW IT WORKS VISUAL - Custom Mobile Layout */}
-      <section className="py-8 md:py-20 md:bg-heirlock-blue">
-        {/* Mobile Steps - Vertical Timeline */}
-        <div className="px-3 md:hidden container mx-auto">
-          <div className="mb-6">
-            <h2 className="text-2xl font-bold mb-1">3 Steps</h2>
-            <p className="text-xs font-medium text-gray-700">Peace of mind</p>
-          </div>
-
-          <div className="space-y-3">
-            {[
-              {
-                step: "1",
-                title: "Create",
-                desc: "Connect wallet, set exam time",
-                time: "2 min"
-              },
-              {
-                step: "2",
-                title: "Upload",
-                desc: "Add papers to IPFS vault",
-                time: "Auto"
-              },
-              {
-                step: "3",
-                title: "Auto Release",
-                desc: "Papers unlock exactly on time",
-                time: "Guaranteed"
-              }
-            ].map((item, idx) => (
-              <div key={idx} className="bg-heirlock-blue border-4 border-black shadow-brutal p-4 cursor-pointer active:scale-95 active:shadow-none transition-transform duration-100 hover:translate-x-1 hover:translate-y-1 hover:shadow-none">
-                <div className="flex gap-3">
-                  <div className="bg-white border-4 border-black w-10 h-10 flex-shrink-0 flex items-center justify-center transition-transform duration-200">
-                    <span className="font-bold">{item.step}</span>
-                  </div>
-                  <div className="flex-1">
-                    <p className="font-bold text-sm text-white">{item.title}</p>
-                    <p className="text-xs font-medium text-white opacity-80">{item.desc}</p>
-                    <p className="text-xs font-bold text-white mt-1">⏱️ {item.time}</p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Desktop Steps - Original Grid */}
-        <div className="hidden md:block bg-heirlock-blue">
-          <div className="container mx-auto max-w-7xl px-4 py-8 md:py-0">
-            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-center mb-10 md:mb-16">
-              3 Steps to Secured Exams
-            </h2>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
-              {[
-                {
-                  step: "1",
-                  title: "Create Vault",
-                  desc: "Connect wallet, set exam date and time, add authorized institutions.",
-                  time: "2 min"
-                },
-                {
-                  step: "2",
-                  title: "Upload Papers",
-                  desc: "Add exam papers encrypted to IPFS. Smart contract locks until exam time.",
-                  time: "1 min"
-                },
-                {
-                  step: "3",
-                  title: "Auto Release",
-                  desc: "At scheduled time, papers automatically unlock to authorized students. Guaranteed.",
-                  time: "Auto"
-                }
-              ].map((item, idx) => (
-              <div key={idx} className="bg-white border-4 border-black shadow-brutal p-6 sm:p-8 text-center hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all">
-                <div className="w-16 h-16 bg-heirlock-yellow border-4 border-black flex items-center justify-center mx-auto mb-4 rounded-full">
-                  <span className="text-4xl font-bold">{item.step}</span>
-                </div>
-                <h3 className="text-2xl font-bold mb-3">{item.title}</h3>
-                <p className="font-medium text-gray-700 mb-4">{item.desc}</p>
-                <p className="text-sm font-medium text-black bg-heirlock-blue bg-opacity-20 border-2 border-heirlock-blue p-2">⏱️ {item.time}</p>
-              </div>
-            ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* FAQ SECTION - Custom Mobile Layout */}
-      <section className="py-8 md:py-20 md:bg-heirlock-yellow">
-        {/* Mobile FAQ - Accordion */}
-        <div className="px-3 md:hidden container mx-auto bg-heirlock-yellow border-4 border-black shadow-brutal">
-          <div className="bg-white border-b-4 border-black p-4">
-            <h2 className="text-2xl font-bold">FAQ</h2>
-          </div>
-
-          <div className="divide-y-4 divide-black">
-            {faqs.map((faq, idx) => (
-              <details key={idx} className="p-4 cursor-pointer group">
-                <summary className="font-bold text-sm flex justify-between items-center">
-                  {faq.q}
-                  <span className="text-lg group-open:rotate-180 transition-transform">+</span>
-                </summary>
-                <p className="font-medium text-gray-700 mt-3 text-xs leading-relaxed">{faq.a}</p>
-              </details>
-            ))}
-          </div>
-        </div>
-
-        {/* Desktop FAQ - Original */}
-        <div className="hidden md:block container mx-auto max-w-4xl bg-heirlock-yellow px-4 py-8 md:py-20">
-          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-center mb-10 md:mb-16">
-            Frequently Asked Questions
+      {/* ========== SECTION 2: CRISIS / PROBLEM ========== */}
+      <section className="bg-heirlock-red py-16 md:py-24 px-4 border-b-4 border-black">
+        <div className="container mx-auto max-w-5xl">
+          <h2 className="text-5xl md:text-6xl font-black text-black mb-12 leading-tight">
+            THE COST OF HUMAN TRUST
           </h2>
 
-          <div className="space-y-4 md:space-y-6">
-            {faqs.map((faq, idx) => (
-              <details key={idx} className="border-4 border-black p-6 bg-white cursor-pointer hover:shadow-brutal transition-all group">
-                <summary className="font-bold text-lg md:text-xl flex justify-between items-center">
-                  {faq.q}
-                  <span className="group-open:rotate-180 transition-transform">↓</span>
-                </summary>
-                <p className="font-medium text-gray-700 mt-4 text-sm md:text-base">{faq.a}</p>
-              </details>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+            <div className="border-4 border-black bg-black p-8 shadow-brutal">
+              <div className="text-5xl font-black text-heirlock-yellow mb-3">41+</div>
+              <p className="text-xl text-white font-bold">Paper Leaks in 5 Years</p>
+              <p className="text-gray-400 mt-2">Documented incidents of exam paper compromise</p>
+            </div>
+            <div className="border-4 border-black bg-black p-8 shadow-brutal">
+              <div className="text-5xl font-black text-heirlock-pink mb-3">1.4 Cr</div>
+              <p className="text-xl text-white font-bold">Students Affected</p>
+              <p className="text-gray-400 mt-2">Lives disrupted by compromised exams and lost trust</p>
+            </div>
+            <div className="border-4 border-black bg-black p-8 shadow-brutal">
+              <div className="text-5xl font-black text-heirlock-green mb-3">∞</div>
+              <p className="text-xl text-white font-bold">Loss of Trust</p>
+              <p className="text-gray-400 mt-2">Immeasurable damage to India's education system</p>
+            </div>
+          </div>
+
+          <div className="border-4 border-black bg-hierlock-green p-8 md:p-10 shadow-brutal">
+            <p className="text-xl md:text-2xl font-bold text-black leading-relaxed">
+              <span className="text-black">Centralized systems have a single point of failure: The Human.</span> Whether through greed, coercion, or negligence, humans will eventually compromise systems they control. T.A.L.A. removes the human from the equation entirely.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* ========== SECTION 3: LIVE NETWORK STATUS ========== */}
+      <section className="bg-black py-6 px-4 border-b-4 border-heirlock-yellow">
+        <div className="container mx-auto max-w-5xl">
+          <div className="border-4 border-heirlock-yellow bg-black p-4 font-mono text-heirlock-yellow text-sm md:text-base overflow-x-auto shadow-brutal">
+            <div className="flex items-center justify-between gap-4 whitespace-nowrap animate-pulse">
+              <span className="inline-block">[ NETWORK: POLYGON AMOY ]</span>
+              <span className="inline-block">●</span>
+              <span className="inline-block">[ STATUS: OPERATIONAL ]</span>
+              <span className="inline-block">●</span>
+              <span className="inline-block">[ CURRENT BLOCK: 12,450,231 ]</span>
+              <span className="inline-block">●</span>
+              <span className="inline-block">[ GAS PRICE: 0.01 GWEI ]</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ========== SECTION 4: THE THREE PILLARS ========== */}
+      <section className="py-16 md:py-24 px-4 bg-cream border-b-4 border-black">
+        <div className="container mx-auto max-w-5xl">
+          <h2 className="text-5xl md:text-6xl font-black text-black mb-12">
+            ONE PROTOCOL, THREE PILLARS
+          </h2>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {pillars.map((pillar, idx) => {
+              const Icon = pillar.icon;
+              return (
+                <div key={idx} className={`micro-card ${pillar.color} border-4 border-black p-8 shadow-brutal stagger-${idx + 1}`}>
+                  <Icon className="micro-icon w-12 h-12 text-black mb-4" />
+                  <h3 className="text-2xl font-black text-black mb-3">{pillar.title}</h3>
+                  <p className="text-black font-medium leading-relaxed">{pillar.description}</p>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* ========== SECTION 5: HOW IT WORKS ========== */}
+      <section className="py-16 md:py-24 px-4 bg-heirlock-blue border-b-4 border-black">
+        <div className="container mx-auto max-w-5xl">
+          <h2 className="text-5xl md:text-6xl font-black text-black mb-16">
+            HOW IT WORKS
+          </h2>
+
+          <div className="space-y-8">
+            {steps.map((step, idx) => {
+              const Icon = step.icon;
+              return (
+                <div key={idx} className="micro-card border-4 border-black bg-white p-8 shadow-brutal stagger-${idx + 1}">
+                  <div className="flex items-start gap-6">
+                    <div className="flex items-center justify-center w-16 h-16 bg-heirlock-blue border-4 border-black flex-shrink-0 shadow-brutal">
+                      <span className="text-3xl font-black text-black">{step.number}</span>
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="text-2xl md:text-3xl font-black text-black mb-3">{step.title}</h3>
+                      <p className="text-lg text-black leading-relaxed font-medium">{step.description}</p>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* ========== SECTION 6: TECH STACK ========== */}
+      <section className="py-16 md:py-24 px-4 bg-cream border-b-4 border-black">
+        <div className="container mx-auto max-w-5xl">
+          <h2 className="text-5xl md:text-6xl font-black text-black mb-4">
+            BUILT ON TRUSTLESS INFRASTRUCTURE
+          </h2>
+          <p className="text-lg text-black font-bold mb-12">We leverage the world's most secure decentralized networks.</p>
+
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+            {[
+              { name: "Polygon", desc: "EVM Security" },
+              { name: "IPFS", desc: "Immutable Storage" },
+              { name: "Next.js", desc: "Modern Frontend" },
+              { name: "Wagmi", desc: "Web3 Hooks" },
+              { name: "RainbowKit", desc: "Wallet Connect" }
+            ].map((tech, idx) => (
+              <div key={idx} className="micro-card border-4 border-black bg-white p-6 shadow-brutal text-center stagger-${idx + 1}">
+                <h4 className="text-lg font-black text-black mb-1">{tech.name}</h4>
+                <p className="text-sm text-gray-700">{tech.desc}</p>
+              </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* CTA SECTION - Custom Mobile Layout */}
-      <section className="py-8 md:py-24 md:bg-black">
-        {/* Mobile CTA - Stacked */}
-        <div className="px-3 md:hidden container mx-auto">
-          <div className="bg-white border-4 border-black shadow-brutal p-6 cursor-pointer active:scale-95 active:shadow-none transition-transform duration-100">
-            <h2 className="text-2xl font-bold text-black mb-2">Ready to Secure Your Exams?</h2>
-            <p className="text-xs font-medium text-gray-700 mb-4">Set up in 2 minutes. No credit card.</p>
-            <Link href="/create-vault" className="w-full block">
-              <button className="w-full bg-black text-white px-4 py-3 font-bold border-4 border-black shadow-brutal text-sm active:translate-x-1 active:translate-y-1 active:shadow-none mb-3 flex items-center justify-center gap-2 transition-all duration-100 hover:scale-105 hover:shadow-brutal">
-                <Lock className="w-4 h-4 transition-transform duration-200" />
-                CREATE VAULT NOW
-              </button>
-            </Link>
-            <p className="text-xs font-medium text-gray-700 text-center">Just MetaMask and 2 minutes.</p>
+      {/* ========== SECTION 7: SECURITY SPECS ========== */}
+      <section className="py-16 md:py-24 px-4 bg-heirlock-yellow border-b-4 border-black">
+        <div className="container mx-auto max-w-5xl">
+          <h2 className="text-5xl md:text-6xl font-black text-black mb-12">
+            SECURITY GUARANTEES
+          </h2>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {securitySpecs.map((spec, idx) => {
+              const Icon = spec.icon;
+              return (
+                <div key={idx} className="micro-card border-4 border-black bg-white p-8 shadow-brutal stagger-${idx + 1}">
+                  <Icon className="micro-icon w-10 h-10 text-black mb-4" />
+                  <h3 className="text-2xl font-black text-black mb-3">{spec.title}</h3>
+                  <p className="text-black font-medium leading-relaxed">{spec.description}</p>
+                </div>
+              );
+            })}
           </div>
         </div>
+      </section>
 
-        {/* Desktop CTA - Improved */}
-        <div className="hidden md:block bg-black">
-          <div className="container mx-auto max-w-5xl px-4 py-16 md:py-24">
-            <div className="bg-heirlock-yellow border-4 border-black shadow-brutal p-8 md:p-12 lg:p-16">
-              <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-black mb-4 text-center">
-                Ready to Secure Your Exams?
-              </h2>
-              <p className="text-base sm:text-lg md:text-xl font-bold text-black mb-8 text-center max-w-3xl mx-auto leading-relaxed">
-                Set up your vault in 2 minutes. Papers protected forever. Mathematical certainty every time.
-              </p>
-              
-              <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
-                <Link href="/create-vault" className="flex-1 sm:flex-none">
-                  <button className="w-full bg-black text-heirlock-yellow px-8 md:px-12 py-4 md:py-6 text-lg md:text-2xl font-bold border-4 border-black shadow-brutal hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all inline-flex items-center justify-center gap-3">
-                    <Lock className="w-6 h-6 md:w-8 md:h-8" />
-                    Create Vault Now
-                    <ChevronRight className="w-6 h-6 md:w-8 md:h-8" />
-                  </button>
-                </Link>
-              </div>
+      {/* ========== SECTION 8: COMPARISON (Old vs New) ========== */}
+      <section className="py-16 md:py-24 px-4 bg-cream border-b-4 border-black">
+        <div className="container mx-auto max-w-5xl">
+          <h2 className="text-5xl md:text-6xl font-black text-black mb-12">
+            THE SHIFT FROM TRUST TO TRUTH
+          </h2>
 
-              <p className="text-black font-bold text-center text-sm md:text-base mt-4">
-                ✓ No credit card required &nbsp;•&nbsp; ✓ No sign-up needed &nbsp;•&nbsp; ✓ Just MetaMask
-              </p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="micro-card border-4 border-black bg-white p-8 shadow-brutal">
+              <h3 className="text-2xl font-black text-black mb-6 border-b-4 border-black pb-4">The Old Way (Web2)</h3>
+              <ul className="space-y-4">
+                <li className="flex items-start gap-3">
+                  <span className="text-red-500 font-black text-xl">✗</span>
+                  <span className="text-black font-medium">Passwords can be stolen or shared</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="text-red-500 font-black text-xl">✗</span>
+                  <span className="text-black font-medium">Admins can be bribed or coerced</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="text-red-500 font-black text-xl">✗</span>
+                  <span className="text-black font-medium">Servers can be hacked or infiltrated</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="text-red-500 font-black text-xl">✗</span>
+                  <span className="text-black font-medium">Audit trails can be altered or deleted</span>
+                </li>
+              </ul>
+            </div>
+
+            <div className="micro-card border-4 border-black bg-heirlock-green p-8 shadow-brutal">
+              <h3 className="text-2xl font-black text-black mb-6 border-b-4 border-black pb-4">The T.A.L.A. Way (Web3)</h3>
+              <ul className="space-y-4">
+                <li className="flex items-start gap-3">
+                  <CheckCircle className="w-6 h-6 text-black flex-shrink-0 mt-0.5" />
+                  <span className="text-black font-medium">Key locked on immutable blockchain</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <CheckCircle className="w-6 h-6 text-black flex-shrink-0 mt-0.5" />
+                  <span className="text-black font-medium">Logic enforced by mathematics, not humans</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <CheckCircle className="w-6 h-6 text-black flex-shrink-0 mt-0.5" />
+                  <span className="text-black font-medium">Storage decentralized across IPFS</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <CheckCircle className="w-6 h-6 text-black flex-shrink-0 mt-0.5" />
+                  <span className="text-black font-medium">Audit trail permanent and immutable</span>
+                </li>
+              </ul>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* ========== SECTION 9: MANIFESTO / VISION ========== */}
+      <section className="py-16 md:py-24 px-4 bg-black border-b-4 border-heirlock-green">
+        <div className="container mx-auto max-w-5xl">
+          <div className="border-4 border-heirlock-green bg-black p-8 md:p-12 shadow-brutal">
+            <blockquote className="text-2xl md:text-4xl font-black text-heirlock-green leading-tight mb-8">
+              "In a digital democracy, secrecy should not depend on a bureaucrat's honesty. It should depend on mathematical laws."
+            </blockquote>
+            <p className="text-lg text-white font-bold">— The T.A.L.A. Protocol</p>
+          </div>
+
+          <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="micro-card border-4 border-white bg-black p-6 shadow-brutal stagger-1">
+              <h3 className="text-white font-black mb-2">For Students</h3>
+              <p className="text-gray-400">Fair exams. No leaks. Mathematical certainty.</p>
+            </div>
+            <div className="micro-card border-4 border-white bg-black p-6 shadow-brutal stagger-2">
+              <h3 className="text-white font-black mb-2">For Government</h3>
+              <p className="text-gray-400">Transparent tenders. Corruption-proof. Immutable proof.</p>
+            </div>
+            <div className="micro-card border-4 border-white bg-black p-6 shadow-brutal stagger-3">
+              <h3 className="text-white font-black mb-2">For Society</h3>
+              <p className="text-gray-400">Trust in code. Democracy in mathematics.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ========== SECTION 10: FINAL CTA ========== */}
+      <section className="bg-heirlock-pink py-16 md:py-24 px-4 border-b-4 border-black">
+        <div className="container mx-auto max-w-5xl text-center">
+          <h2 className="text-5xl md:text-6xl font-black text-black mb-6">
+            READY TO DEPLOY?
+          </h2>
+          <p className="text-xl md:text-2xl font-bold text-black mb-12 max-w-2xl mx-auto">
+            Join Government Bodies, Universities, and Organizations securing the future with mathematical certainty.
+          </p>
+
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link href="/create-vault">
+              <button className="micro-button px-8 py-4 bg-black text-heirlock-pink font-black border-4 border-black shadow-brutal inline-flex items-center gap-2 text-lg">
+                Connect Wallet <ChevronRight className="w-5 h-5" />
+              </button>
+            </Link>
+            <a 
+              href="https://github.com" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="micro-button px-8 py-4 bg-white text-black font-black border-4 border-black shadow-brutal inline-flex items-center gap-2 text-lg"
+            >
+              GitHub Repo <ChevronRight className="w-5 h-5" />
+            </a>
+          </div>
+
+          <p className="text-black font-bold mt-8">The future is code. The future is T.A.L.A.</p>
         </div>
       </section>
     </main>
