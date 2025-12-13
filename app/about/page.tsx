@@ -8,7 +8,7 @@ export default function About() {
     {
       icon: AlertCircle,
       title: "Reliance on Authorized Personnel",
-      description: "Traditional systems depend on human gatekeepers—principals, administrators, custodians. Every person is a vulnerability."
+      description: "Traditional systems depend on human gatekeepers-principals, administrators, custodians. Every person is a vulnerability."
     },
     {
       icon: AlertCircle,

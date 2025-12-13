@@ -33,7 +33,7 @@ export default function Home() {
     },
     {
       title: "100% Non-Custodial",
-      description: "Your private keys never leave your device. We never have access to papers—ever.",
+      description: "Your private keys never leave your device. We never have access to papers-ever.",
       icon: Shield,
     },
     {
@@ -88,11 +88,11 @@ export default function Home() {
   const faqs = [
     {
       q: "How do I know papers won't leak before exam time?",
-      a: "Papers are stored encrypted on IPFS and locked in a smart contract. Even we can't access them. Only the smart contract can release them at the scheduled time—mathematically guaranteed."
+      a: "Papers are stored encrypted on IPFS and locked in a smart contract. Even we can't access them. Only the smart contract can release them at the scheduled time-mathematically guaranteed."
     },
     {
       q: "What if I need to change the unlock time?",
-      a: "Before the papers are locked, you can update timing. Once locked, it's immutable—this is the security feature. Plan ahead and set the exact time needed."
+      a: "Before the papers are locked, you can update timing. Once locked, it's immutable-this is the security feature. Plan ahead and set the exact time needed."
     },
     {
       q: "Can my institution handle multiple exams?",
