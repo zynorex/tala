@@ -14,7 +14,7 @@ const config: Config = {
         accent: '#FF6B35',
         'accent-light': '#FFB347',
         'border-gray': '#E0DDB4',
-        'heirlock-yellow': '#FFFF59D',
+        'heirlock-yellow': '#FFFF59',
         'heirlock-pink': '#FFB3BA',
         'heirlock-green': '#BAFFC9',
         'heirlock-blue': '#BAE1FF',
