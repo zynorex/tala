@@ -47,7 +47,7 @@ export async function uploadToIPFS(
   description: string
 ): Promise<IPFSUploadResponse> {
   const apiKey = process.env.NEXT_PUBLIC_PINATA_API_KEY;
-  const apiSecret = process.env.PINATA_API_SECRET;
+  const apiSecret = process.env.NEXT_PUBLIC_PINATA_SECRET_API_KEY;
 
   if (!apiKey || !apiSecret) {
     throw new Error('Pinata credentials not configured');
@@ -157,7 +157,7 @@ export async function downloadFromIPFS(ipfsHash: string): Promise<IPFSDownloadRe
  */
 export async function pinFileIPFS(ipfsHash: string): Promise<boolean> {
   const apiKey = process.env.NEXT_PUBLIC_PINATA_API_KEY;
-  const apiSecret = process.env.PINATA_API_SECRET;
+  const apiSecret = process.env.NEXT_PUBLIC_PINATA_SECRET_API_KEY;
 
   if (!apiKey || !apiSecret) {
     console.warn('Pinata credentials not available for pinning');

@@ -20,10 +20,15 @@ export default function Footer() {
       { label: "FAQ", href: "/faq" },
       { label: "Blog", href: "/blog" },
     ],
-    company: [
-      { label: "About", href: "/about" },
+    legal: [
+      { label: "Legal Hub", href: "/legal" },
       { label: "Terms of Service", href: "/terms" },
       { label: "Privacy Policy", href: "/privacy" },
+      { label: "Disclaimer", href: "/disclaimer" },
+      { label: "Cookie Policy", href: "/cookies" },
+    ],
+    company: [
+      { label: "About", href: "/about" },
       { label: "Contact", href: "/contact" },
     ],
     social: [
@@ -140,6 +145,20 @@ export default function Footer() {
             </div>
           </div>
 
+          {/* Legal Links */}
+          <div className="bg-gray-900 border-4 border-gray-700 p-3">
+            <h4 className="text-xs font-bold text-heirlock-pink mb-3">LEGAL</h4>
+            <div className="grid grid-cols-2 gap-2">
+              {footerLinks.legal.map((link) => (
+                <Link key={link.label} href={link.href}>
+                  <button className="w-full text-left px-2 py-2 text-xs font-bold text-gray-400 hover:text-heirlock-pink hover:bg-black border-2 border-transparent hover:border-heirlock-pink transition-all">
+                    {link.label}
+                  </button>
+                </Link>
+              ))}
+            </div>
+          </div>
+
           {/* Company Links */}
           <div className="bg-gray-900 border-4 border-gray-700 p-3">
             <h4 className="text-xs font-bold text-heirlock-blue mb-3">COMPANY</h4>
@@ -168,7 +187,7 @@ export default function Footer() {
 
       {/* Desktop Footer - Original Layout */}
       <div className="hidden md:block container mx-auto max-w-7xl px-3 sm:px-4 py-12 md:py-16">
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-6 md:gap-8 mb-12 md:mb-16">
+        <div className="grid grid-cols-2 md:grid-cols-6 gap-6 md:gap-8 mb-12 md:mb-16">
           {/* Brand & Description */}
           <div className="col-span-2 md:col-span-1">
             <Link href="/" className="text-2xl font-bold mb-4 inline-block hover:scale-105 transition-transform">
@@ -226,6 +245,25 @@ export default function Footer() {
                   <Link
                     href={link.href}
                     className="text-sm text-gray-400 hover:text-heirlock-green transition-colors"
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Legal Links */}
+          <div>
+            <h4 className="text-sm font-bold uppercase tracking-widest text-heirlock-pink mb-4">
+              Legal
+            </h4>
+            <ul className="space-y-2">
+              {footerLinks.legal.map((link) => (
+                <li key={link.label}>
+                  <Link
+                    href={link.href}
+                    className="text-sm text-gray-400 hover:text-heirlock-pink transition-colors"
                   >
                     {link.label}
                   </Link>

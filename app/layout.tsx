@@ -8,6 +8,7 @@ import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import PageSkeleton from "./components/PageSkeleton";
 import DevelopmentNotification from "./components/DevelopmentNotification";
+import CookieConsent from "./components/CookieConsent";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -48,6 +49,7 @@ export default function RootLayout({
               <PageSkeleton />
               <Navbar />
               <DevelopmentNotification />
+              <CookieConsent />
               <div className="pt-16 md:pt-20">
                 {children}
               </div>

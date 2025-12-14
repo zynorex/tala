@@ -27,7 +27,7 @@ export const validators = {
   /**
    * Validate file size
    */
-  fileSize: (size: number, maxSize: number = 500 * 1024 * 1024): { valid: boolean; error?: string } => {
+  fileSize: (size: number, maxSize: number = 10 * 1024 * 1024): { valid: boolean; error?: string } => {
     if (size <= 0) {
       return { valid: false, error: 'File size must be greater than 0' };
     }

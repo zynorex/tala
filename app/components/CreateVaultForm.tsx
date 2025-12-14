@@ -184,9 +184,28 @@ export default function CreateVaultForm() {
       setEncryptionPassword('');
       setErrors({});
     } catch (err) {
-      const errorMsg = err instanceof Error ? err.message : 'Failed to create vault';
-      toast(errorMsg, 'error');
-      setErrors({ submit: errorMsg });
+      const fullError = err instanceof Error ? err.message : 'Failed to create vault';
+      
+      // Extract user-friendly error message
+      let userFriendlyMsg = 'Failed to create vault';
+      
+      if (fullError.includes('User rejected')) {
+        userFriendlyMsg = 'Transaction was rejected. Please try again.';
+      } else if (fullError.includes('insufficient funds')) {
+        userFriendlyMsg = 'Insufficient MATIC for gas fees. Please add more funds to your wallet.';
+      } else if (fullError.includes('Pinata')) {
+        userFriendlyMsg = 'Failed to upload file to IPFS. Please check your credentials.';
+      } else if (fullError.includes('Invalid')) {
+        userFriendlyMsg = 'Invalid input. Please check your inputs and try again.';
+      } else if (fullError.length > 200) {
+        // Truncate very long technical errors
+        userFriendlyMsg = fullError.substring(0, 150) + '...';
+      } else {
+        userFriendlyMsg = fullError;
+      }
+      
+      toast(userFriendlyMsg, 'error');
+      setErrors({ submit: userFriendlyMsg });
     } finally {
       setForm({ ...form, isSubmitting: false });
     }
@@ -259,7 +278,7 @@ export default function CreateVaultForm() {
       <div className="space-y-2">
         <label className="font-black text-black text-sm uppercase block">
           <Upload className="w-4 h-4 inline mr-2" />
-          File to Encrypt *
+          File to Encrypt * (Max 10 MB)
         </label>
         <div className="border-4 border-dashed border-black p-6 bg-cream hover:bg-gray-50 transition-colors cursor-pointer">
           <input
@@ -272,19 +291,27 @@ export default function CreateVaultForm() {
           <label htmlFor="file-upload" className="cursor-pointer block">
             {form.file ? (
               <div className="flex items-center justify-between">
-                <div>
+                <div className="flex-1">
                   <p className="font-black text-black mb-1">{form.file.name}</p>
-                  <p className="text-xs text-gray-700 font-medium">
-                    Size: {(form.file.size / 1024 / 1024).toFixed(2)} MB
+                  <p className="text-xs text-gray-700 font-medium mb-3">
+                    Size: {(form.file.size / 1024 / 1024).toFixed(2)} MB / 10 MB
                   </p>
+                  {/* File size progress bar */}
+                  <div className="w-full bg-gray-300 border-2 border-black h-2">
+                    <div
+                      className="h-full bg-heirlock-green transition-all duration-300"
+                      style={{ width: `${Math.min((form.file.size / (10 * 1024 * 1024)) * 100, 100)}%` }}
+                    ></div>
+                  </div>
                 </div>
-                <CheckCircle className="w-6 h-6 text-green-600" />
+                <CheckCircle className="w-6 h-6 text-green-600 flex-shrink-0 ml-4" />
               </div>
             ) : (
               <div className="text-center">
-                <Upload className="w-8 h-8 text-black mx-auto mb-2" />
+                <Upload className="w-8 h-8 text-gray-600 mx-auto mb-2" />
                 <p className="font-black text-black mb-1">Click to select file</p>
-                <p className="text-xs text-gray-700 font-medium">Max 500 MB</p>
+                <p className="text-xs text-gray-600 font-medium">or drag and drop</p>
+                <p className="text-xs text-gray-500 font-medium mt-2">Maximum file size: 10 MB</p>
               </div>
             )}
           </label>
@@ -390,10 +417,10 @@ export default function CreateVaultForm() {
 
       {/* Error Messages */}
       {(errors.submit || contractError) && (
-        <div className="border-4 border-red-500 p-4 bg-red-50 shadow-brutal">
-          <p className="text-sm text-red-700 font-medium flex items-center gap-2">
-            <AlertCircle className="w-4 h-4" />
-            {errors.submit || contractError}
+        <div className="border-4 border-red-500 p-4 bg-red-50 shadow-brutal max-h-32 overflow-y-auto">
+          <p className="text-sm text-red-700 font-medium flex items-start gap-2 break-words">
+            <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
+            <span className="flex-1">{errors.submit || contractError}</span>
           </p>
         </div>
       )}
