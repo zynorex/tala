@@ -37,6 +37,7 @@ export default function CreateVaultForm() {
   const [errors, setErrors] = useState<ValidationErrors>({});
   const [encryptionPassword, setEncryptionPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [isCopied, setIsCopied] = useState(false);
 
   // Generate encryption password helper
   const generatePassword = useCallback(() => {
@@ -53,7 +54,10 @@ export default function CreateVaultForm() {
   const copyPassword = useCallback(() => {
     if (encryptionPassword) {
       navigator.clipboard.writeText(encryptionPassword);
+      setIsCopied(true);
       toast('Password copied to clipboard', 'success');
+      // Reset the copied state after 2 seconds
+      setTimeout(() => setIsCopied(false), 2000);
     }
   }, [encryptionPassword, toast]);
 
@@ -356,9 +360,13 @@ export default function CreateVaultForm() {
               <button
                 type="button"
                 onClick={copyPassword}
-                className="w-full px-3 py-2 bg-white text-black font-black border-2 border-black text-xs hover:bg-gray-50 transition-colors"
+                className={`w-full px-3 py-2 font-black border-2 border-black text-xs transition-all duration-200 ${
+                  isCopied
+                    ? 'bg-heirlock-green text-black border-heirlock-green'
+                    : 'bg-white text-black hover:bg-gray-50'
+                }`}
               >
-                Copy Key
+                {isCopied ? '✓ Copied!' : 'Copy Key'}
               </button>
             </div>
           )}
