@@ -3,6 +3,7 @@ import { Inter, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import { Web3Provider } from "@/components/providers/Web3Provider";
 import { ToastProvider } from "./providers/ToastProvider";
+import { ErrorBoundary } from "./components/ErrorBoundary";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import PageSkeleton from "./components/PageSkeleton";
@@ -41,17 +42,19 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} ${spaceGrotesk.variable}`}>
       <body className={inter.className}>
-        <Web3Provider>
-          <ToastProvider>
-            <PageSkeleton />
-            <Navbar />
-            <DevelopmentNotification />
-            <div className="pt-16 md:pt-20">
-              {children}
-            </div>
-            <Footer />
-          </ToastProvider>
-        </Web3Provider>
+        <ErrorBoundary>
+          <Web3Provider>
+            <ToastProvider>
+              <PageSkeleton />
+              <Navbar />
+              <DevelopmentNotification />
+              <div className="pt-16 md:pt-20">
+                {children}
+              </div>
+              <Footer />
+            </ToastProvider>
+          </Web3Provider>
+        </ErrorBoundary>
       </body>
     </html>
   );
