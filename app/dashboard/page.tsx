@@ -1,217 +1,309 @@
 'use client';
 
-import { BarChart3, Lock, Users, Zap, TrendingUp, Calendar, CheckCircle, Settings, ChevronRight } from "lucide-react";
-import Link from "next/link";
+import { useAccount } from 'wagmi';
+import { useState, useEffect } from 'react';
+import Link from 'next/link';
+import { Lock, Unlock, Trash2, Eye, Plus, Loader, AlertCircle, CheckCircle, Clock } from 'lucide-react';
+import { useVaultContract } from '@/app/hooks/useVaultContract';
+import { useCountdown } from '@/app/hooks/useCountdown';
+import { useToast } from '@/app/hooks/useToast';
+
+interface VaultWithMetadata {
+  id: number;
+  creator: string;
+  ipfsHash: string;
+  encryptedKeyHash: string;
+  unlockTime: bigint;
+  createdAt: bigint;
+  voided: boolean;
+  description: string;
+  fileSize: bigint;
+}
 
 export default function Dashboard() {
-  const stats = [
-    {
-      label: "Total Vaults",
-      value: "8",
-      change: "+2 this month",
-      icon: Lock,
-      color: "border-heirlock-blue",
-    },
-    {
-      label: "Papers Protected",
-      value: "1,247",
-      change: "+340 this month",
-      icon: CheckCircle,
-      color: "border-heirlock-green",
-    },
-    {
-      label: "Students Authorized",
-      value: "3,456",
-      change: "+890 this month",
-      icon: Users,
-      color: "border-heirlock-pink",
-    },
-    {
-      label: "Gas Saved",
-      value: "$4,230",
-      change: "With free check-ins",
-      icon: Zap,
-      color: "border-heirlock-yellow",
-    },
-  ];
+  const { isConnected, address } = useAccount();
+  const { toast } = useToast();
+  const { userVaults, vaultCount, error, isLoading: isVaultsLoading, refetchUserVaults } = useVaultContract();
+  const [vaultsData, setVaultsData] = useState<VaultWithMetadata[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const recentVaults = [
-    {
-      name: "Final Exam 2024",
-      school: "IIT Delhi",
-      students: 450,
-      unlocksIn: "2 days",
-      status: "Active",
-    },
-    {
-      name: "Midterm Paper",
-      school: "Stanford University",
-      students: 320,
-      unlocksIn: "5 hours",
-      status: "Active",
-    },
-    {
-      name: "Quiz Round 3",
-      school: "MIT",
-      students: 180,
-      unlocksIn: "Completed",
-      status: "Completed",
-    },
-  ];
+  // Load vaults when userVaults changes
+  useEffect(() => {
+    if (userVaults && userVaults.length > 0) {
+      // In a real implementation, you'd fetch full vault data
+      // For now, we'll show vault IDs and basic info
+      setVaultsData(
+        userVaults.map((id) => ({
+          id: Number(id),
+          creator: address || '',
+          ipfsHash: '',
+          encryptedKeyHash: '0x' as any,
+          unlockTime: 0n,
+          createdAt: 0n,
+          voided: false,
+          description: 'Loading...',
+          fileSize: 0n,
+        }))
+      );
+    }
+  }, [userVaults, address]);
+
+  if (!isConnected) {
+    return (
+      <div className="min-h-screen bg-cream py-12 px-4">
+        <div className="max-w-4xl mx-auto">
+          <div className="border-4 border-black p-8 bg-heirlock-yellow shadow-brutal text-center">
+            <AlertCircle className="w-12 h-12 text-black mx-auto mb-4" />
+            <h2 className="text-3xl font-black text-black mb-2">Wallet Not Connected</h2>
+            <p className="text-gray-800 font-medium mb-6">
+              Please connect your wallet to view and manage your vaults.
+            </p>
+            <p className="text-sm text-gray-700 font-medium">
+              Click the "Connect Wallet" button in the top right to get started.
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <main className="min-h-screen bg-white">
-      {/* Hero Section */}
-      <section className="bg-heirlock-blue border-b-4 border-black py-12 md:py-20 pt-24 md:pt-32">
-        <div className="container mx-auto max-w-7xl px-3 sm:px-4">
-          <div className="space-y-4 md:space-y-6 flex justify-between items-start">
-            <div>
-              <h1 className="text-5xl md:text-7xl font-bold text-black leading-tight">
-                Dashboard
-              </h1>
-              <p className="text-lg md:text-xl text-black max-w-3xl mt-4">
-                Welcome back! Here's your vault overview.
+    <main className="min-h-screen bg-cream py-12 px-4">
+      <div className="max-w-6xl mx-auto space-y-12">
+        {/* Header */}
+        <div className="space-y-4">
+          <h1 className="text-5xl md:text-7xl font-black text-black">YOUR VAULTS</h1>
+          <p className="text-xl text-gray-800 font-medium">
+            Manage your time-locked vaults and encrypted content
+          </p>
+        </div>
+
+        {/* Stats */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="border-4 border-black p-6 bg-heirlock-pink shadow-brutal">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-black text-black uppercase mb-2">Total Vaults</p>
+                <p className="text-4xl font-black text-black">{vaultCount || 0}</p>
+              </div>
+              <Lock className="w-12 h-12 text-black opacity-20" />
+            </div>
+          </div>
+
+          <div className="border-4 border-black p-6 bg-heirlock-blue shadow-brutal">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-black text-black uppercase mb-2">Wallet Address</p>
+                <code className="text-sm font-mono text-black break-all">{address?.slice(0, 10)}...{address?.slice(-8)}</code>
+              </div>
+              <CheckCircle className="w-12 h-12 text-black opacity-20" />
+            </div>
+          </div>
+        </div>
+
+        {/* Create New Vault Button */}
+        <Link href="/create-vault">
+          <button className="w-full px-8 py-6 bg-black text-heirlock-yellow font-black border-4 border-black shadow-brutal hover:translate-y-[-3px] hover:shadow-lg transition-all duration-200 flex items-center justify-center gap-3 text-xl">
+            <Plus className="w-6 h-6" />
+            <span>Create New Vault</span>
+          </button>
+        </Link>
+
+        {/* Vaults List */}
+        <div className="space-y-6">
+          <h2 className="text-3xl font-black text-black uppercase">Vault List</h2>
+
+          {isVaultsLoading || isLoading ? (
+            <div className="border-4 border-black p-12 bg-cream shadow-brutal text-center">
+              <Loader className="w-8 h-8 text-black mx-auto mb-4 animate-spin" />
+              <p className="font-black text-black">Loading vaults...</p>
+            </div>
+          ) : error ? (
+            <div className="border-4 border-black p-6 bg-red-50 shadow-brutal">
+              <p className="text-sm text-red-700 font-black flex items-center gap-2">
+                <AlertCircle className="w-5 h-5" />
+                {error}
               </p>
             </div>
-            <Link href="/create-vault">
-              <button className="px-6 py-3 bg-black text-heirlock-blue font-bold border-4 border-black hover:bg-white hover:text-black shadow-brutal hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all">
-                New Vault
-              </button>
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* Stats Grid */}
-      <section className="py-12 md:py-20 bg-white">
-        <div className="container mx-auto max-w-7xl px-3 sm:px-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-20">
-            {stats.map((stat, index) => {
-              const Icon = stat.icon;
-              return (
-                <div
-                  key={index}
-                  className={`border-4 ${stat.color} bg-white p-6 shadow-brutal hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all`}
-                >
-                  <div className="flex justify-between items-start mb-4">
-                    <Icon className="w-8 h-8 text-black" />
-                    <TrendingUp className="w-5 h-5 text-black" />
-                  </div>
-                  <p className="text-gray-600 text-sm mb-2">{stat.label}</p>
-                  <p className="text-3xl font-bold mb-2">{stat.value}</p>
-                  <p className={`text-xs ${
-                    stat.color.includes('blue') ? 'text-heirlock-blue' :
-                    stat.color.includes('green') ? 'text-heirlock-green' :
-                    stat.color.includes('pink') ? 'text-heirlock-pink' :
-                    'text-heirlock-yellow'
-                  }`}>{stat.change}</p>
-                </div>
-              );
-            })}
-          </div>
-
-          {/* Main Content */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Recent Vaults */}
-            <div className="lg:col-span-2">
-              <div className="border-4 border-black bg-white p-8 shadow-brutal">
-                <h2 className="text-2xl font-bold mb-6">Recent Vaults</h2>
-                <div className="space-y-4">
-                  {recentVaults.map((vault, index) => (
-                    <div
-                      key={index}
-                      className="bg-gray-50 p-6 border-4 border-black hover:shadow-brutal transition-all"
-                    >
-                      <div className="flex justify-between items-start mb-4">
-                        <div className="flex-1">
-                          <h3 className="text-lg font-bold mb-1">{vault.name}</h3>
-                          <p className="text-sm text-gray-600">{vault.school}</p>
-                        </div>
-                        <span
-                          className={`px-3 py-1 text-xs font-bold rounded border-2 ${
-                            vault.status === "Active"
-                              ? "bg-heirlock-green text-black border-heirlock-green"
-                              : "bg-gray-400 text-white border-gray-400"
-                          }`}
-                        >
-                          {vault.status}
-                        </span>
-                      </div>
-                      <div className="flex gap-8">
-                        <div>
-                          <p className="text-xs text-gray-600 mb-1">Students</p>
-                          <p className="font-bold">{vault.students}</p>
-                        </div>
-                        <div>
-                          <p className="text-xs text-gray-600 mb-1">
-                            {vault.status === "Active" ? "Unlocks In" : "Unlocked"}
-                          </p>
-                          <p className="font-bold">{vault.unlocksIn}</p>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
+          ) : vaultCount === 0 ? (
+            <div className="border-4 border-black p-12 bg-heirlock-green shadow-brutal text-center space-y-6">
+              <Lock className="w-12 h-12 text-black mx-auto" />
+              <div>
+                <h3 className="text-2xl font-black text-black mb-2">No Vaults Yet</h3>
+                <p className="text-gray-800 font-medium mb-6">
+                  Create your first vault to start storing encrypted content securely
+                </p>
               </div>
-            </div>
-
-            {/* Quick Actions */}
-            <div className="space-y-4">
-              <div className="border-4 border-black bg-white p-8 shadow-brutal">
-                <Settings className="w-8 h-8 text-black mb-4" />
-                <h3 className="text-xl font-bold mb-3">Settings</h3>
-                <p className="text-gray-700 text-sm mb-6">Manage your profile and account preferences.</p>
-                <button className="w-full border-4 border-black text-black px-4 py-2 font-bold rounded hover:bg-black hover:text-white shadow-brutal hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all">
-                  Account Settings
-                </button>
-              </div>
-
-              <div className="border-4 border-black bg-white p-8 shadow-brutal">
-                <Calendar className="w-8 h-8 text-black mb-4" />
-                <h3 className="text-xl font-bold mb-3">Upcoming</h3>
-                <p className="text-gray-700 text-sm mb-6">3 vaults scheduled to unlock this week.</p>
-                <button className="w-full border-4 border-black text-black px-4 py-2 font-bold rounded hover:bg-black hover:text-white shadow-brutal hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all">
-                  View Calendar
-                </button>
-              </div>
-
-              <div className="border-4 border-black bg-white p-8 shadow-brutal">
-                <BarChart3 className="w-8 h-8 text-black mb-4" />
-                <h3 className="text-xl font-bold mb-3">Analytics</h3>
-                <p className="text-gray-700 text-sm mb-6">Detailed stats on your vault activity.</p>
-                <button className="w-full border-4 border-black text-black px-4 py-2 font-bold rounded hover:bg-black hover:text-white shadow-brutal hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all">
-                  View Reports
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Help Section */}
-      <section className="py-12 md:py-20 bg-black border-t-4 border-heirlock-blue">
-        <div className="container mx-auto max-w-7xl px-3 sm:px-4">
-          <div className="border-4 border-heirlock-blue bg-black p-12 shadow-brutal">
-            <h2 className="text-4xl md:text-5xl font-bold text-white mb-6 text-heirlock-blue">Need Help?</h2>
-            <p className="text-gray-300 mb-8">
-              Check our documentation or contact support for assistance with your vaults.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4">
-              <Link href="/documentation">
-                <button className="bg-heirlock-blue text-black px-6 py-3 font-bold border-4 border-heirlock-blue hover:bg-white hover:text-black shadow-brutal hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all">
-                  Documentation
+              <Link href="/create-vault">
+                <button className="px-8 py-4 bg-black text-heirlock-green font-black border-4 border-black shadow-brutal hover:translate-y-[-2px] transition-all duration-200">
+                  Create First Vault
                 </button>
               </Link>
-              <a
-                href="mailto:support@tala.edu"
-                className="border-4 border-heirlock-blue text-heirlock-blue px-6 py-3 font-bold rounded hover:bg-heirlock-blue hover:text-black shadow-brutal hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all"
-              >
-                Contact Support
-              </a>
             </div>
+          ) : (
+            <div className="space-y-4">
+              {vaultsData.map((vault) => (
+                <VaultCard key={vault.id} vault={vault} />
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Info Section */}
+        <div className="border-4 border-black p-8 bg-heirlock-yellow shadow-brutal space-y-4">
+          <h3 className="text-2xl font-black text-black uppercase">About Your Vaults</h3>
+          <ul className="space-y-3 text-sm text-gray-800 font-medium">
+            <li className="flex items-start gap-3">
+              <span className="text-black font-black mt-1">→</span>
+              <span>Each vault is encrypted with AES-256-GCM - military-grade security</span>
+            </li>
+            <li className="flex items-start gap-3">
+              <span className="text-black font-black mt-1">→</span>
+              <span>Only you have the decryption key. We can't access your data</span>
+            </li>
+            <li className="flex items-start gap-3">
+              <span className="text-black font-black mt-1">→</span>
+              <span>Vaults are stored on IPFS for decentralized availability</span>
+            </li>
+            <li className="flex items-start gap-3">
+              <span className="text-black font-black mt-1">→</span>
+              <span>Time-locks are enforced by smart contract on Polygon blockchain</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </main>
+  );
+}
+
+/**
+ * Individual Vault Card Component
+ */
+function VaultCard({ vault }: { vault: VaultWithMetadata }) {
+  const { canUnlock, refetchCanUnlock, refetchTimeToUnlock, voidVault, isVoidPending } = useVaultContract();
+  const timeRemaining = useCountdown(vault.unlockTime);
+  const { toast } = useToast();
+
+  const handleVoid = async () => {
+    if (!confirm('Are you sure you want to void this vault? This action cannot be undone.')) {
+      return;
+    }
+
+    try {
+      await voidVault(vault.id);
+      toast('Vault voided successfully', 'success');
+    } catch (error) {
+      toast('Failed to void vault', 'error');
+    }
+  };
+
+  const formatFileSize = (bytes: bigint) => {
+    const num = Number(bytes);
+    if (num === 0) return '0 B';
+    const k = 1024;
+    const sizes = ['B', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(num) / Math.log(k));
+    return Math.round((num / Math.pow(k, i)) * 100) / 100 + ' ' + sizes[i];
+  };
+
+  return (
+    <div
+      className={`border-4 border-black p-6 shadow-brutal hover:shadow-lg hover:translate-y-[-2px] transition-all duration-200 ${
+        vault.voided ? 'bg-gray-200' : timeRemaining.isUnlocked ? 'bg-heirlock-green' : 'bg-white'
+      }`}
+    >
+      <div className="space-y-4">
+        {/* Header */}
+        <div className="flex items-start justify-between">
+          <div className="flex-1">
+            <h3 className="text-xl font-black text-black mb-2">Vault #{vault.id}</h3>
+            <p className="text-gray-800 font-medium">{vault.description}</p>
+          </div>
+          <div className="flex items-center gap-2">
+            {vault.voided ? (
+              <span className="px-3 py-1 bg-gray-400 text-black font-black text-xs border-2 border-black">
+                VOIDED
+              </span>
+            ) : timeRemaining.isUnlocked ? (
+              <span className="px-3 py-1 bg-green-400 text-black font-black text-xs border-2 border-black flex items-center gap-1">
+                <Unlock className="w-3 h-3" />
+                UNLOCKED
+              </span>
+            ) : (
+              <span className="px-3 py-1 bg-yellow-300 text-black font-black text-xs border-2 border-black flex items-center gap-1">
+                <Lock className="w-3 h-3" />
+                LOCKED
+              </span>
+            )}
           </div>
         </div>
-      </section>
-    </main>
+
+        {/* Details Grid */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div>
+            <p className="text-xs font-black text-black uppercase mb-1">File Size</p>
+            <p className="font-mono text-sm text-gray-800">{formatFileSize(vault.fileSize)}</p>
+          </div>
+
+          {!vault.voided && !timeRemaining.isUnlocked && (
+            <>
+              <div>
+                <p className="text-xs font-black text-black uppercase mb-1">Days</p>
+                <p className="text-2xl font-black text-black">{timeRemaining.days}</p>
+              </div>
+
+              <div>
+                <p className="text-xs font-black text-black uppercase mb-1">Hours</p>
+                <p className="text-2xl font-black text-black">{timeRemaining.hours}</p>
+              </div>
+
+              <div>
+                <p className="text-xs font-black text-black uppercase mb-1">Minutes</p>
+                <p className="text-2xl font-black text-black">{timeRemaining.minutes}</p>
+              </div>
+            </>
+          )}
+
+          {timeRemaining.isUnlocked && (
+            <div className="col-span-2 md:col-span-3">
+              <p className="text-xs font-black text-black uppercase mb-1">Status</p>
+              <p className="font-black text-green-600 text-sm">Ready to unlock and access content</p>
+            </div>
+          )}
+        </div>
+
+        {/* IPFS Hash */}
+        <div className="border-t-3 border-black pt-4">
+          <p className="text-xs font-black text-black uppercase mb-2">IPFS Hash</p>
+          <code className="text-xs font-mono text-gray-800 break-all bg-gray-50 p-2 border-2 border-black block">
+            {vault.ipfsHash || 'Loading...'}
+          </code>
+        </div>
+
+        {/* Actions */}
+        <div className="border-t-3 border-black pt-4 flex gap-3">
+          <Link href={`/vault/${vault.id}`} className="flex-1">
+            <button className="w-full px-4 py-3 bg-black text-heirlock-yellow font-black border-3 border-black shadow-brutal hover:translate-y-[-2px] transition-all duration-200 flex items-center justify-center gap-2 text-sm">
+              <Eye className="w-4 h-4" />
+              <span>View Details</span>
+            </button>
+          </Link>
+
+          {!vault.voided && (
+            <button
+              onClick={handleVoid}
+              disabled={isVoidPending}
+              className="px-4 py-3 bg-red-500 text-white font-black border-3 border-red-600 shadow-brutal hover:translate-y-[-2px] transition-all duration-200 flex items-center justify-center gap-2 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isVoidPending ? (
+                <Loader className="w-4 h-4 animate-spin" />
+              ) : (
+                <Trash2 className="w-4 h-4" />
+              )}
+            </button>
+          )}
+        </div>
+      </div>
+    </div>
   );
 }

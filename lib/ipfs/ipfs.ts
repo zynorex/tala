@@ -55,7 +55,7 @@ export async function uploadToIPFS(
 
   try {
     const formData = new FormData();
-    const blob = new Blob([encryptedFile], { type: 'application/octet-stream' });
+    const blob = new Blob([encryptedFile as BlobPart], { type: 'application/octet-stream' });
     formData.append('file', blob, filename);
 
     // Add metadata

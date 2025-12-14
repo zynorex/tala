@@ -46,14 +46,14 @@ export default function CreateVaultForm() {
       password += chars.charAt(Math.floor(Math.random() * chars.length));
     }
     setEncryptionPassword(password);
-    toast('success', 'Encryption password generated. Save it securely!');
+    toast('Encryption password generated. Save it securely!', 'success');
   }, [toast]);
 
   // Copy password to clipboard
   const copyPassword = useCallback(() => {
     if (encryptionPassword) {
       navigator.clipboard.writeText(encryptionPassword);
-      toast('success', 'Password copied to clipboard');
+      toast('Password copied to clipboard', 'success');
     }
   }, [encryptionPassword, toast]);
 
@@ -63,8 +63,8 @@ export default function CreateVaultForm() {
     if (file) {
       const sizeValidation = validators.fileSize(file.size);
       if (!sizeValidation.valid) {
-        setErrors({ ...errors, file: sizeValidation.error });
-        toast('error', sizeValidation.error || 'File size invalid');
+        setErrors({ ...errors, file: sizeValidation.error || 'File size invalid' });
+        toast(sizeValidation.error || 'File size invalid', 'error');
         return;
       }
 
@@ -114,7 +114,7 @@ export default function CreateVaultForm() {
     e.preventDefault();
 
     if (!isConnected || !address) {
-      toast('error', 'Please connect your wallet first');
+      toast('Please connect your wallet first', 'error');
       return;
     }
 
@@ -135,11 +135,11 @@ export default function CreateVaultForm() {
       const encryptionKey = generateEncryptionKey();
 
       // Encrypt file
-      toast('info', 'Encrypting file...');
+      toast('Encrypting file...', 'info');
       const encrypted = encrypt(Buffer.from(fileUint8Array), encryptionKey);
 
       // Upload to IPFS
-      toast('info', 'Uploading to IPFS...');
+      toast('Uploading to IPFS...', 'info');
       const encryptedBuffer = Buffer.from(encrypted.ciphertext, 'hex');
       const ipfsResult = await uploadToIPFS(encryptedBuffer, form.file.name, form.description);
 
@@ -150,7 +150,7 @@ export default function CreateVaultForm() {
       const unlockDateTime = new Date(`${form.unlockDate}T${form.unlockTime}`).getTime() / 1000;
 
       // Create vault on blockchain
-      toast('info', 'Creating vault on blockchain...');
+      toast('Creating vault on blockchain...', 'info');
       await createVault(
         ipfsResult.ipfsHash,
         keyHash as `0x${string}`,
@@ -159,7 +159,7 @@ export default function CreateVaultForm() {
         form.file.size
       );
 
-      toast('success', 'Vault created successfully!');
+      toast('Vault created successfully!', 'success');
 
       // Store encrypted key locally (user responsibility)
       const vaultKeyData = {
@@ -185,7 +185,7 @@ export default function CreateVaultForm() {
       setErrors({});
     } catch (err) {
       const errorMsg = err instanceof Error ? err.message : 'Failed to create vault';
-      toast('error', errorMsg);
+      toast(errorMsg, 'error');
       setErrors({ submit: errorMsg });
     } finally {
       setForm({ ...form, isSubmitting: false });
