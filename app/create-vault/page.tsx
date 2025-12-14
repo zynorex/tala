@@ -2,6 +2,7 @@
 
 import { Lock, Users, Upload, Settings, Zap, Shield, Clock, CheckCircle, ChevronRight, ArrowRight } from "lucide-react";
 import Link from "next/link";
+import CreateVaultForm from "@/app/components/CreateVaultForm";
 
 export default function CreateVault() {
   const steps = [
@@ -221,22 +222,39 @@ export default function CreateVault() {
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="py-12 md:py-20 bg-black border-t-4 border-heirlock-blue">
+      {/* Form Section */}
+      <section className="py-12 md:py-20 bg-white border-t-4 border-black">
+        <div className="container mx-auto max-w-4xl px-3 sm:px-4">
+          <div className="mb-12 text-center">
+            <h2 className="text-4xl md:text-5xl font-bold text-black mb-6">
+              Create Your Vault Now
+            </h2>
+            <p className="text-lg text-gray-700 max-w-2xl mx-auto">
+              Time-lock your sensitive files with military-grade encryption. Follow the 4 steps below to create your secure vault on the blockchain.
+            </p>
+          </div>
+          <CreateVaultForm />
+        </div>
+      </section>
+
+      {/* Final CTA */}
+      <section className="py-12 md:py-20 bg-heirlock-blue border-t-4 border-black">
         <div className="container mx-auto max-w-7xl px-3 sm:px-4 text-center">
-          <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
-            Ready to Secure Your Future?
+          <h2 className="text-4xl md:text-5xl font-bold text-black mb-6">
+            Need Help?
           </h2>
-          <p className="text-lg text-gray-300 mb-8 max-w-2xl mx-auto">
-            Create your first vault today. Time-lock your sensitive files with military-grade encryption on the blockchain.
+          <p className="text-lg text-black mb-8 max-w-2xl mx-auto">
+            Check our documentation or contact support if you have any questions about creating vaults.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button className="px-8 py-3 bg-heirlock-blue text-black font-bold border-4 border-heirlock-blue hover:bg-white hover:text-black shadow-brutal hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all">
-              Create Vault Now
-            </button>
             <Link href="/how-it-works">
-              <button className="px-8 py-3 bg-transparent text-white font-bold border-4 border-white hover:bg-white hover:text-black shadow-brutal hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all flex items-center justify-center gap-2">
+              <button className="px-8 py-3 bg-black text-heirlock-blue font-bold border-4 border-black hover:bg-white hover:text-black shadow-brutal hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all flex items-center justify-center gap-2">
                 How It Works <ChevronRight className="w-4 h-4" />
+              </button>
+            </Link>
+            <Link href="/documentation">
+              <button className="px-8 py-3 bg-transparent text-black font-bold border-4 border-black hover:bg-black hover:text-heirlock-blue shadow-brutal hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all flex items-center justify-center gap-2">
+                Documentation <ChevronRight className="w-4 h-4" />
               </button>
             </Link>
           </div>
