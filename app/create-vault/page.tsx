@@ -72,10 +72,25 @@ export default function CreateVault() {
         </div>
       </section>
 
-      {/* Steps */}
-      <section className="py-12 md:py-20 bg-white">
+      {/* Form Section - PROMINENT */}
+      <section className="py-12 md:py-20 bg-white border-t-4 border-heirlock-blue">
+        <div className="container mx-auto max-w-4xl px-3 sm:px-4">
+          <div className="mb-12 text-center">
+            <h2 className="text-4xl md:text-5xl font-bold text-black mb-6">
+              Create Your Vault Now
+            </h2>
+            <p className="text-lg text-gray-700 max-w-2xl mx-auto">
+              Upload a file, set an unlock date, and secure it forever. No complications.
+            </p>
+          </div>
+          <CreateVaultForm />
+        </div>
+      </section>
+
+      {/* How It Works - Educational Content */}
+      <section className="py-12 md:py-20 bg-heirlock-yellow border-t-4 border-black">
         <div className="container mx-auto max-w-7xl px-3 sm:px-4">
-          <h2 className="text-4xl md:text-5xl font-bold mb-12">4 Simple Steps</h2>
+          <h2 className="text-4xl md:text-5xl font-bold text-black mb-12">How It Works</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
             {steps.map((step, index) => {
               const Icon = step.icon;
@@ -219,21 +234,6 @@ export default function CreateVault() {
               </ul>
             </div>
           </div>
-        </div>
-      </section>
-
-      {/* Form Section */}
-      <section className="py-12 md:py-20 bg-white border-t-4 border-black">
-        <div className="container mx-auto max-w-4xl px-3 sm:px-4">
-          <div className="mb-12 text-center">
-            <h2 className="text-4xl md:text-5xl font-bold text-black mb-6">
-              Create Your Vault Now
-            </h2>
-            <p className="text-lg text-gray-700 max-w-2xl mx-auto">
-              Time-lock your sensitive files with military-grade encryption. Follow the 4 steps below to create your secure vault on the blockchain.
-            </p>
-          </div>
-          <CreateVaultForm />
         </div>
       </section>
 
