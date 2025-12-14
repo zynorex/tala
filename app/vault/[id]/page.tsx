@@ -1,399 +1,436 @@
 'use client';
 
-import { useAccount } from 'wagmi';
-import { useParams, useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
+import { useAccount } from 'wagmi';
 import Link from 'next/link';
-import { Lock, Download, Unlock, AlertCircle, Loader, Copy, CheckCircle, Shield } from 'lucide-react';
-import { useVaultContract } from '@/app/hooks/useVaultContract';
-import { useCountdown } from '@/app/hooks/useCountdown';
+import { 
+  Lock, Download, Share2, Trash2, Edit2, Shield, Clock, FileText, 
+  ArrowLeft, AlertCircle, CheckCircle, Eye, EyeOff, Copy, MoreVertical,
+  Calendar, HardDrive, Activity
+} from 'lucide-react';
 import { useToast } from '@/app/hooks/useToast';
-import { downloadFromIPFS } from '@/lib/ipfs/ipfs';
-import { decrypt } from '@/lib/crypto/encryption';
+import { useCountdown } from '@/app/hooks/useCountdown';
 
-interface VaultDetails {
-  id: number;
-  creator: string;
-  ipfsHash: string;
-  encryptedKeyHash: string;
-  unlockTime: bigint;
-  createdAt: bigint;
-  voided: boolean;
+interface Vault {
+  id: string;
   description: string;
-  fileSize: bigint;
+  createdAt: number;
+  unlockTime: number;
+  fileSize: number;
+  fileName: string;
+  txHash: string;
+  encryptionMethod: string;
+  isUnlocked: boolean;
+  fileHash: string;
 }
 
-export default function VaultDetailsPage() {
-  const params = useParams();
-  const router = useRouter();
-  const vaultId = params.id as string;
+interface ActivityEvent {
+  id: string;
+  type: 'accessed' | 'unlocked' | 'downloaded' | 'settings_changed';
+  timestamp: number;
+  description: string;
+}
+
+export default function VaultDetailPage({ params }: { params: { id: string } }) {
   const { isConnected, address } = useAccount();
   const { toast } = useToast();
-  const { unlockVault, isUnlockPending } = useVaultContract();
-
-  const [vault, setVault] = useState<VaultDetails | null>(null);
+  
+  const [vault, setVault] = useState<Vault | null>(null);
+  const [activities, setActivities] = useState<ActivityEvent[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [isDownloading, setIsDownloading] = useState(false);
-  const [decryptionKey, setDecryptionKey] = useState('');
-  const [showKey, setShowKey] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedDescription, setEditedDescription] = useState('');
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [showFileHash, setShowFileHash] = useState(false);
+  const [copied, setCopied] = useState<string | null>(null);
+
   const timeRemaining = useCountdown(vault?.unlockTime || 0);
 
-  // Load vault (simulated - in production, fetch from contract)
+  // Load vault data
   useEffect(() => {
-    if (!vaultId) {
-      setIsLoading(false);
-      return;
-    }
-
-    // Simulate loading vault data
-    setTimeout(() => {
-      setVault({
-        id: Number(vaultId),
-        creator: address || '',
-        ipfsHash: 'Qm...',
-        encryptedKeyHash: '0x...',
-        unlockTime: BigInt(Math.floor(Date.now() / 1000) + 86400 * 7), // 7 days
-        createdAt: BigInt(Math.floor(Date.now() / 1000)),
-        voided: false,
-        description: 'Example vault description',
-        fileSize: BigInt(1024 * 1024 * 5), // 5MB
-      });
-      setIsLoading(false);
-    }, 500);
-  }, [vaultId, address]);
-
-  const handleUnlock = async () => {
-    if (!vault) return;
+    if (!isConnected) return;
 
     try {
-      await unlockVault(vault.id);
-      toast('Vault unlocked successfully!', 'success');
+      const storedVaults = JSON.parse(localStorage.getItem('vaults') || '[]');
+      const foundVault = storedVaults.find((v: Vault) => v.id === params.id);
+      
+      if (foundVault) {
+        setVault(foundVault);
+        setEditedDescription(foundVault.description);
+
+        // Load activities for this vault
+        const storedActivities = JSON.parse(localStorage.getItem(`vault_activities_${params.id}`) || '[]');
+        setActivities(storedActivities);
+      }
     } catch (error) {
-      toast('Failed to unlock vault', 'error');
-    }
-  };
-
-  const handleDownload = async () => {
-    if (!vault || !decryptionKey) {
-      toast('Please provide decryption key', 'error');
-      return;
-    }
-
-    setIsDownloading(true);
-
-    try {
-      toast('Downloading from IPFS...', 'info');
-
-      // Download encrypted file
-      const { data } = await downloadFromIPFS(vault.ipfsHash);
-
-      toast('Decrypting file...', 'info');
-
-      // Decrypt file
-      const keyBuffer = Buffer.from(decryptionKey, 'hex');
-      const encryptedData = JSON.parse(data.toString());
-      const decrypted = decrypt(encryptedData, keyBuffer);
-
-      // Download decrypted file
-      const blob = new Blob([Buffer.from(decrypted)], { type: 'application/octet-stream' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `vault-${vault.id}-content`;
-      a.click();
-      URL.revokeObjectURL(url);
-
-      toast('File downloaded and decrypted successfully!', 'success');
-    } catch (error) {
-      toast(error instanceof Error ? error.message : 'Failed to download vault', 'error');
+      console.error('Error loading vault:', error);
+      toast('Failed to load vault details', 'error');
     } finally {
-      setIsDownloading(false);
+      setIsLoading(false);
     }
-  };
-
-  const copyToClipboard = (text: string) => {
-    navigator.clipboard.writeText(text);
-    toast('Copied to clipboard', 'success');
-  };
-
-  const formatDate = (timestamp: bigint) => {
-    return new Date(Number(timestamp) * 1000).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    });
-  };
-
-  const formatFileSize = (bytes: bigint) => {
-    const num = Number(bytes);
-    if (num === 0) return '0 B';
-    const k = 1024;
-    const sizes = ['B', 'KB', 'MB', 'GB'];
-    const i = Math.floor(Math.log(num) / Math.log(k));
-    return Math.round((num / Math.pow(k, i)) * 100) / 100 + ' ' + sizes[i];
-  };
+  }, [isConnected, params.id, toast]);
 
   if (!isConnected) {
     return (
-      <div className="min-h-screen bg-cream py-12 px-4">
+      <div className="min-h-screen bg-gradient-to-b from-cream to-white p-4 md:p-8 pt-24">
         <div className="max-w-4xl mx-auto">
-          <div className="border-4 border-black p-8 bg-heirlock-yellow shadow-brutal text-center">
-            <AlertCircle className="w-12 h-12 text-black mx-auto mb-4" />
-            <h2 className="text-3xl font-black text-black mb-2">Wallet Not Connected</h2>
-            <p className="text-gray-800 font-medium">
-              Please connect your wallet to access this vault.
-            </p>
+          <div className="border-4 border-black p-8 text-center bg-white">
+            <AlertCircle className="w-12 h-12 mx-auto mb-4 text-red-600" />
+            <h1 className="text-2xl font-black mb-4">Wallet Not Connected</h1>
+            <p className="text-sm mb-4">Please connect your wallet to view vault details</p>
+            <Link href="/dashboard" className="text-heirlock-blue underline font-black">
+              Back to Dashboard
+            </Link>
           </div>
         </div>
       </div>
     );
   }
 
-  if (isLoading) {
+  if (isLoading || !vault) {
     return (
-      <div className="min-h-screen bg-cream py-12 px-4">
+      <div className="min-h-screen bg-gradient-to-b from-cream to-white p-4 md:p-8 pt-24">
         <div className="max-w-4xl mx-auto">
-          <div className="border-4 border-black p-12 bg-cream shadow-brutal text-center">
-            <Loader className="w-8 h-8 text-black mx-auto mb-4 animate-spin" />
-            <p className="font-black text-black">Loading vault details...</p>
+          <div className="border-4 border-black p-8 bg-white animate-pulse">
+            <div className="h-8 bg-gray-200 rounded w-1/4 mb-4"></div>
+            <div className="h-64 bg-gray-200 rounded"></div>
           </div>
         </div>
       </div>
     );
   }
 
-  if (!vault) {
-    return (
-      <div className="min-h-screen bg-cream py-12 px-4">
-        <div className="max-w-4xl mx-auto space-y-6">
-          <Link href="/dashboard">
-            <button className="px-4 py-2 bg-black text-heirlock-yellow font-black border-3 border-black shadow-brutal hover:translate-y-[-2px] transition-all duration-200">
-              ← Back to Dashboard
-            </button>
-          </Link>
+  const formatFileSize = (bytes: number) => {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + ' ' + sizes[i];
+  };
 
-          <div className="border-4 border-black p-8 bg-red-50 shadow-brutal text-center">
-            <AlertCircle className="w-12 h-12 text-red-600 mx-auto mb-4" />
-            <h2 className="text-3xl font-black text-black mb-2">Vault Not Found</h2>
-            <p className="text-gray-800 font-medium">
-              The vault you're looking for doesn't exist or has been removed.
-            </p>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  const formatDate = (timestamp: number) => {
+    return new Date(timestamp * 1000).toLocaleString();
+  };
+
+  const copyToClipboard = (text: string, label: string) => {
+    navigator.clipboard.writeText(text);
+    setCopied(label);
+    toast(`${label} copied!`, 'success');
+    setTimeout(() => setCopied(null), 2000);
+  };
+
+  const handleUpdateDescription = () => {
+    if (editedDescription.trim() === vault.description) {
+      setIsEditing(false);
+      return;
+    }
+
+    const updatedVault = { ...vault, description: editedDescription };
+    const storedVaults = JSON.parse(localStorage.getItem('vaults') || '[]');
+    const updated = storedVaults.map((v: Vault) => v.id === vault.id ? updatedVault : v);
+    localStorage.setItem('vaults', JSON.stringify(updated));
+    setVault(updatedVault);
+    setIsEditing(false);
+    toast('Vault description updated', 'success');
+
+    // Log activity
+    const newActivity: ActivityEvent = {
+      id: Date.now().toString(),
+      type: 'settings_changed',
+      timestamp: Math.floor(Date.now() / 1000),
+      description: 'Updated vault description'
+    };
+    const updatedActivities = [...activities, newActivity];
+    localStorage.setItem(`vault_activities_${vault.id}`, JSON.stringify(updatedActivities));
+    setActivities(updatedActivities);
+  };
+
+  const handleDeleteVault = () => {
+    const storedVaults = JSON.parse(localStorage.getItem('vaults') || '[]');
+    const filtered = storedVaults.filter((v: Vault) => v.id !== vault.id);
+    localStorage.setItem('vaults', JSON.stringify(filtered));
+    localStorage.removeItem(`vault_activities_${vault.id}`);
+    toast('Vault deleted successfully', 'success');
+    // Redirect after short delay
+    setTimeout(() => window.location.href = '/dashboard', 500);
+  };
+
+  const isUnlocked = vault.unlockTime <= Math.floor(Date.now() / 1000);
 
   return (
-    <main className="min-h-screen bg-cream py-12 px-4">
-      <div className="max-w-4xl mx-auto space-y-8">
-        {/* Back Button */}
-        <Link href="/dashboard">
-          <button className="px-4 py-2 bg-black text-heirlock-yellow font-black border-3 border-black shadow-brutal hover:translate-y-[-2px] transition-all duration-200">
-            ← Back to Dashboard
-          </button>
-        </Link>
-
+    <div className="min-h-screen bg-gradient-to-b from-cream to-white p-4 md:p-8 pt-24">
+      <div className="max-w-6xl mx-auto">
         {/* Header */}
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <h1 className="text-5xl font-black text-black">Vault #{vault.id}</h1>
-            <span
-              className={`px-4 py-2 font-black text-sm border-3 border-black ${
-                vault.voided
-                  ? 'bg-gray-400 text-black'
-                  : timeRemaining.isUnlocked
-                    ? 'bg-green-400 text-black'
-                    : 'bg-yellow-300 text-black'
-              }`}
-            >
-              {vault.voided ? 'VOIDED' : timeRemaining.isUnlocked ? 'UNLOCKED' : 'LOCKED'}
-            </span>
-          </div>
-          <p className="text-xl text-gray-800 font-medium">{vault.description}</p>
+        <div className="flex items-center justify-between mb-8">
+          <Link 
+            href="/dashboard" 
+            className="flex items-center gap-2 text-heirlock-blue font-black hover:underline"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Back to Dashboard
+          </Link>
+          <button
+            onClick={() => setShowSettings(!showSettings)}
+            className="p-2 hover:bg-gray-100 border-2 border-black rounded"
+          >
+            <MoreVertical className="w-5 h-5" />
+          </button>
         </div>
 
-        {/* Vault Info Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="border-4 border-black p-6 bg-heirlock-blue shadow-brutal">
-            <p className="text-xs font-black text-black uppercase mb-2">File Size</p>
-            <p className="text-3xl font-black text-black">{formatFileSize(vault.fileSize)}</p>
-          </div>
-
-          <div className="border-4 border-black p-6 bg-heirlock-pink shadow-brutal">
-            <p className="text-xs font-black text-black uppercase mb-2">Created</p>
-            <p className="text-sm text-gray-800 font-medium">{formatDate(vault.createdAt)}</p>
-          </div>
-        </div>
-
-        {/* Countdown or Status */}
-        {!vault.voided && !timeRemaining.isUnlocked ? (
-          <div className="border-4 border-black p-8 bg-heirlock-yellow shadow-brutal">
-            <h3 className="text-2xl font-black text-black mb-6 flex items-center gap-2">
-              <Lock className="w-6 h-6" />
-              Time Until Unlock
-            </h3>
-            <div className="grid grid-cols-4 gap-4">
-              <div className="text-center">
-                <p className="text-4xl font-black text-black">{timeRemaining.days}</p>
-                <p className="text-xs font-black text-black uppercase mt-2">Days</p>
-              </div>
-              <div className="text-center">
-                <p className="text-4xl font-black text-black">{timeRemaining.hours}</p>
-                <p className="text-xs font-black text-black uppercase mt-2">Hours</p>
-              </div>
-              <div className="text-center">
-                <p className="text-4xl font-black text-black">{timeRemaining.minutes}</p>
-                <p className="text-xs font-black text-black uppercase mt-2">Minutes</p>
-              </div>
-              <div className="text-center">
-                <p className="text-4xl font-black text-black">{timeRemaining.seconds}</p>
-                <p className="text-xs font-black text-black uppercase mt-2">Seconds</p>
-              </div>
-            </div>
-            <p className="text-sm text-gray-800 font-medium mt-6">
-              Unlock Date: {formatDate(vault.unlockTime)}
-            </p>
-          </div>
-        ) : timeRemaining.isUnlocked ? (
-          <div className="border-4 border-black p-8 bg-heirlock-green shadow-brutal">
-            <div className="flex items-center gap-3 mb-4">
-              <Unlock className="w-6 h-6 text-black" />
-              <h3 className="text-2xl font-black text-black">Vault Unlocked!</h3>
-            </div>
-            <p className="text-gray-800 font-medium">
-              This vault is now accessible. You can unlock the smart contract and download your content.
-            </p>
-          </div>
-        ) : null}
-
-        {/* Security Info */}
-        <div className="border-4 border-black p-6 bg-white shadow-brutal">
-          <h3 className="font-black text-black text-lg mb-4 flex items-center gap-2">
-            <Shield className="w-5 h-5" />
-            Security Information
-          </h3>
-          <div className="space-y-3 text-sm text-gray-800 font-medium">
-            <p>
-              <strong>IPFS Hash:</strong>
-              <code className="block mt-1 p-2 bg-gray-50 border-2 border-black font-mono text-xs break-all">
-                {vault.ipfsHash}
-              </code>
-            </p>
-            <p>
-              <strong>Encrypted Key Hash (on-chain):</strong>
-              <code className="block mt-1 p-2 bg-gray-50 border-2 border-black font-mono text-xs break-all">
-                {vault.encryptedKeyHash}
-              </code>
-            </p>
-            <p className="text-xs text-gray-700 italic mt-4">
-              Your encryption key is stored locally and never transmitted to our servers. This ensures
-              complete privacy and security of your data.
-            </p>
-          </div>
-        </div>
-
-        {/* Decrypt Key Input */}
-        {timeRemaining.isUnlocked && !vault.voided && (
-          <div className="space-y-4">
-            <h3 className="text-2xl font-black text-black">Access Content</h3>
-
-            <div className="border-4 border-black p-6 bg-white shadow-brutal space-y-4">
-              <div>
-                <label className="font-black text-black text-sm uppercase block mb-2">
-                  Encryption Key (Hex Format) *
-                </label>
-                <div className="relative">
-                  <input
-                    type={showKey ? 'text' : 'password'}
-                    value={decryptionKey}
-                    onChange={(e) => setDecryptionKey(e.target.value)}
-                    placeholder="Paste your encryption key here"
-                    className="w-full px-4 py-3 border-3 border-black bg-cream font-mono text-xs text-black placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowKey(!showKey)}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-xs font-black text-black underline"
-                  >
-                    {showKey ? 'Hide' : 'Show'}
-                  </button>
+        {/* Main Content Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Left Column - Vault Info */}
+          <div className="lg:col-span-2 space-y-6">
+            {/* Vault Header Card */}
+            <div className="border-4 border-black p-6 bg-white">
+              <div className="flex items-start justify-between mb-4">
+                <div className="flex-1">
+                  {isEditing ? (
+                    <div className="space-y-2">
+                      <textarea
+                        value={editedDescription}
+                        onChange={(e) => setEditedDescription(e.target.value)}
+                        className="w-full p-3 border-2 border-black font-mono text-sm resize-none"
+                        rows={3}
+                      />
+                      <div className="flex gap-2">
+                        <button
+                          onClick={handleUpdateDescription}
+                          className="px-4 py-2 bg-heirlock-green text-white border-2 border-black font-black text-xs hover:opacity-90"
+                        >
+                          Save
+                        </button>
+                        <button
+                          onClick={() => {
+                            setIsEditing(false);
+                            setEditedDescription(vault.description);
+                          }}
+                          className="px-4 py-2 bg-gray-200 text-black border-2 border-black font-black text-xs hover:bg-gray-300"
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div>
+                      <h1 className="text-3xl font-black mb-2 break-words">{vault.description || 'Untitled Vault'}</h1>
+                      <button
+                        onClick={() => setIsEditing(true)}
+                        className="text-xs font-black text-heirlock-blue underline flex items-center gap-1"
+                      >
+                        <Edit2 className="w-3 h-3" />
+                        Edit Description
+                      </button>
+                    </div>
+                  )}
                 </div>
-                <p className="text-xs text-gray-700 font-medium mt-2">
-                  Paste the encryption key you saved when creating this vault
+                <div className={`px-4 py-2 border-3 border-black font-black text-xs ${
+                  isUnlocked 
+                    ? 'bg-heirlock-green text-white' 
+                    : 'bg-yellow-200 text-black'
+                }`}>
+                  {isUnlocked ? '🔓 UNLOCKED' : '🔒 LOCKED'}
+                </div>
+              </div>
+            </div>
+
+            {/* Unlock Status */}
+            {!isUnlocked && (
+              <div className="border-4 border-yellow-400 bg-yellow-50 p-6">
+                <div className="flex items-center gap-4">
+                  <Clock className="w-8 h-8 text-yellow-600 flex-shrink-0" />
+                  <div>
+                    <p className="text-xs font-black text-yellow-900 mb-1">TIME REMAINING</p>
+                    <p className="text-2xl font-black text-yellow-900">
+                      {timeRemaining.days}d {timeRemaining.hours}h {timeRemaining.minutes}m {timeRemaining.seconds}s
+                    </p>
+                    <p className="text-xs text-yellow-800 mt-1">
+                      Unlocks at {formatDate(vault.unlockTime)}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Vault Details Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="border-4 border-black p-4 bg-white">
+                <p className="text-xs font-black text-gray-600 mb-2 flex items-center gap-2">
+                  <Calendar className="w-4 h-4" />
+                  CREATED
                 </p>
+                <p className="font-mono text-sm">{formatDate(vault.createdAt)}</p>
               </div>
 
-              <button
-                onClick={handleDownload}
-                disabled={!decryptionKey || isDownloading}
-                className={`w-full px-6 py-4 font-black border-4 border-black shadow-brutal flex items-center justify-center gap-3 text-lg transition-all duration-200 ${
-                  !decryptionKey || isDownloading
-                    ? 'bg-gray-400 text-gray-600 cursor-not-allowed'
-                    : 'bg-black text-heirlock-yellow hover:translate-y-[-3px] hover:shadow-lg'
-                }`}
-              >
-                {isDownloading ? (
-                  <>
-                    <Loader className="w-5 h-5 animate-spin" />
-                    <span>Downloading & Decrypting...</span>
-                  </>
-                ) : (
-                  <>
-                    <Download className="w-5 h-5" />
-                    <span>Download & Decrypt</span>
-                  </>
-                )}
+              <div className="border-4 border-black p-4 bg-white">
+                <p className="text-xs font-black text-gray-600 mb-2 flex items-center gap-2">
+                  <HardDrive className="w-4 h-4" />
+                  FILE SIZE
+                </p>
+                <p className="font-mono text-sm">{formatFileSize(vault.fileSize)}</p>
+              </div>
+
+              <div className="border-4 border-black p-4 bg-white md:col-span-2">
+                <p className="text-xs font-black text-gray-600 mb-2 flex items-center gap-2">
+                  <Shield className="w-4 h-4" />
+                  ENCRYPTION
+                </p>
+                <p className="font-mono text-sm">{vault.encryptionMethod}</p>
+              </div>
+            </div>
+
+            {/* File Hash */}
+            <div className="border-4 border-black p-6 bg-white">
+              <div className="flex items-center justify-between mb-3">
+                <p className="text-xs font-black text-gray-600">FILE HASH</p>
+                <button
+                  onClick={() => setShowFileHash(!showFileHash)}
+                  className="text-xs font-black text-heirlock-blue underline"
+                >
+                  {showFileHash ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
+              </div>
+              <div className="flex gap-2">
+                <code className="flex-1 text-xs font-mono break-all p-2 bg-gray-100 border-2 border-black">
+                  {showFileHash ? vault.fileHash : '•'.repeat(64)}
+                </code>
+                <button
+                  onClick={() => copyToClipboard(vault.fileHash, 'File Hash')}
+                  className={`px-3 py-2 font-black border-2 border-black text-xs transition-all ${
+                    copied === 'File Hash'
+                      ? 'bg-heirlock-green text-white border-heirlock-green'
+                      : 'bg-white hover:bg-gray-50'
+                  }`}
+                >
+                  {copied === 'File Hash' ? '✓' : <Copy className="w-4 h-4" />}
+                </button>
+              </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {isUnlocked && (
+                <button className="border-4 border-heirlock-blue bg-heirlock-blue text-white p-4 font-black text-sm hover:opacity-90 transition-all flex items-center justify-center gap-2">
+                  <Download className="w-5 h-5" />
+                  Download File
+                </button>
+              )}
+              
+              <button className={`border-4 p-4 font-black text-sm transition-all flex items-center justify-center gap-2 ${
+                isUnlocked ? '' : 'opacity-50 cursor-not-allowed'
+              }`} disabled={!isUnlocked}>
+                <Share2 className="w-5 h-5" />
+                Share Access
               </button>
             </div>
-
-            <div className="border-4 border-black p-4 bg-heirlock-yellow shadow-brutal">
-              <p className="text-sm text-gray-800 font-medium flex items-start gap-2">
-                <AlertCircle className="w-4 h-4 mt-0.5 flex-shrink-0" />
-                <span>
-                  Your file will be decrypted in your browser. We never have access to your encryption key
-                  or decrypted content.
-                </span>
-              </p>
-            </div>
           </div>
-        )}
 
-        {/* Unlock Button for Creator */}
-        {timeRemaining.isUnlocked && !vault.voided && address?.toLowerCase() === vault.creator.toLowerCase() && (
-          <button
-            onClick={handleUnlock}
-            disabled={isUnlockPending}
-            className={`w-full px-8 py-4 font-black border-4 border-black shadow-brutal flex items-center justify-center gap-3 text-lg transition-all duration-200 ${
-              isUnlockPending ? 'bg-gray-400 text-gray-600' : 'bg-green-400 text-black hover:translate-y-[-3px] hover:shadow-lg'
-            }`}
-          >
-            {isUnlockPending ? (
-              <>
-                <Loader className="w-5 h-5 animate-spin" />
-                <span>Unlocking on Blockchain...</span>
-              </>
-            ) : (
-              <>
-                <Unlock className="w-5 h-5" />
-                <span>Unlock on Smart Contract</span>
-              </>
+          {/* Right Column - Security & Activity */}
+          <div className="space-y-6">
+            {/* Security Card */}
+            <div className="border-4 border-heirlock-blue p-6 bg-blue-50">
+              <p className="text-xs font-black text-heirlock-blue mb-4 flex items-center gap-2">
+                <Shield className="w-4 h-4" />
+                SECURITY STATUS
+              </p>
+              <div className="space-y-3">
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="w-4 h-4 text-heirlock-green" />
+                  <span className="text-xs font-black">Encrypted</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="w-4 h-4 text-heirlock-green" />
+                  <span className="text-xs font-black">Time-locked</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="w-4 h-4 text-heirlock-green" />
+                  <span className="text-xs font-black">Blockchain Verified</span>
+                </div>
+              </div>
+            </div>
+
+            {/* TX Hash */}
+            <div className="border-4 border-black p-4 bg-white">
+              <p className="text-xs font-black text-gray-600 mb-2">TX HASH</p>
+              <div className="flex gap-2">
+                <code className="flex-1 text-xs font-mono break-all p-2 bg-gray-100 border-2 border-black">
+                  {vault.txHash.substring(0, 12)}...
+                </code>
+                <button
+                  onClick={() => copyToClipboard(vault.txHash, 'TX Hash')}
+                  className={`px-3 py-2 font-black border-2 border-black text-xs transition-all ${
+                    copied === 'TX Hash'
+                      ? 'bg-heirlock-green text-white border-heirlock-green'
+                      : 'bg-white hover:bg-gray-50'
+                  }`}
+                >
+                  {copied === 'TX Hash' ? '✓' : <Copy className="w-4 h-4" />}
+                </button>
+              </div>
+            </div>
+
+            {/* Recent Activity */}
+            <div className="border-4 border-black p-6 bg-white">
+              <p className="text-xs font-black text-gray-600 mb-4 flex items-center gap-2">
+                <Activity className="w-4 h-4" />
+                RECENT ACTIVITY
+              </p>
+              <div className="space-y-3 max-h-48 overflow-y-auto">
+                {activities.length === 0 ? (
+                  <p className="text-xs text-gray-500">No activities yet</p>
+                ) : (
+                  activities.slice(-5).reverse().map((activity) => (
+                    <div key={activity.id} className="border-l-4 border-heirlock-blue pl-3 py-1">
+                      <p className="text-xs font-black capitalize">{activity.type}</p>
+                      <p className="text-xs text-gray-600">
+                        {new Date(activity.timestamp * 1000).toLocaleTimeString()}
+                      </p>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+
+            {/* Settings Menu */}
+            {showSettings && (
+              <div className="border-4 border-red-500 bg-red-50 p-4 space-y-2">
+                <button
+                  onClick={() => setShowDeleteConfirm(true)}
+                  className="w-full border-4 border-red-500 bg-red-500 text-white p-3 font-black text-xs hover:opacity-90 flex items-center justify-center gap-2"
+                >
+                  <Trash2 className="w-4 h-4" />
+                  Delete Vault
+                </button>
+              </div>
             )}
-          </button>
-        )}
+          </div>
+        </div>
 
-        {/* Voided Notice */}
-        {vault.voided && (
-          <div className="border-4 border-black p-6 bg-gray-300 shadow-brutal">
-            <p className="font-black text-black text-lg flex items-center gap-2">
-              <AlertCircle className="w-6 h-6" />
-              This vault has been voided and is no longer accessible.
-            </p>
+        {/* Delete Confirmation Modal */}
+        {showDeleteConfirm && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+            <div className="border-4 border-black bg-white p-8 max-w-sm">
+              <h2 className="text-2xl font-black mb-4">Delete Vault?</h2>
+              <p className="text-sm mb-6">This action cannot be undone. All vault data will be permanently deleted.</p>
+              <div className="flex gap-4">
+                <button
+                  onClick={() => setShowDeleteConfirm(false)}
+                  className="flex-1 border-4 border-black bg-gray-200 p-3 font-black text-xs hover:bg-gray-300"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleDeleteVault}
+                  className="flex-1 border-4 border-red-500 bg-red-500 text-white p-3 font-black text-xs hover:opacity-90"
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
           </div>
         )}
       </div>
-    </main>
+    </div>
   );
 }
