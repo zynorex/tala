@@ -333,4 +333,15 @@
     border-left: none;
     border-top: none;
   }
+
+  /* Hide footer on docs pages */
+  body[data-page="docs"] footer,
+  body[data-page="docs-page"] footer {
+    display: none;
+  }
+}
+
+::selection {
+  background: var(--color-dark);
+  color: var(--color-cream);
 }

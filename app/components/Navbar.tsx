@@ -146,6 +146,12 @@ export default function Navbar() {
                   <div>
                     <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Build</h3>
                     <div className="space-y-3">
+                      <Link href="/docs" onClick={closeMenu}>
+                        <div className="flex items-center gap-3 px-3 py-2 rounded hover:bg-orange-500 hover:text-black transition-all font-bold cursor-pointer">
+                          <Code className="w-5 h-5" />
+                          <span>Developer Docs</span>
+                        </div>
+                      </Link>
                       <Link href="/smart-contracts" onClick={closeMenu}>
                         <div className="flex items-center gap-3 px-3 py-2 rounded hover:bg-heirlock-blue hover:text-black transition-all font-bold cursor-pointer">
                           <Code className="w-5 h-5" />
@@ -210,7 +216,7 @@ export default function Navbar() {
 
             <Link href="/create-vault">
               <button className={`px-5 lg:px-7 py-2 text-sm lg:text-base font-bold border-4 shadow-brutal transition-all ${
-                isScrolled ? "bg-white text-black border-black hover:bg-heirlock-yellow hover:text-white hover:border-black hover:translate-x-1 hover:translate-y-1 hover:shadow-none" : "bg-black text-white border-black hover:bg-heirlock-yellow hover:text-white hover:border-black hover:translate-x-1 hover:translate-y-1 hover:shadow-none"
+                isScrolled ? "bg-white text-black border-black hover:bg-heirlock-yellow hover:text-black hover:border-black hover:translate-x-1 hover:translate-y-1 hover:shadow-none" : "bg-black text-white border-black hover:bg-heirlock-yellow hover:text-white hover:border-black hover:translate-x-1 hover:translate-y-1 hover:shadow-none"
               }`}>🔒 Create Vault</button>
             </Link>
 

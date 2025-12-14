@@ -6,40 +6,40 @@ import Link from "next/link";
 export default function Documentation() {
   const docSections = [
     {
+      title: "Developer Docs",
+      description: "Complete technical documentation with architecture, smart contracts, and security models.",
+      icon: Code,
+      href: "/docs",
+    },
+    {
       title: "Getting Started",
       description: "Learn the basics of T.A.L.A. and how to set up your first vault.",
       icon: BookOpen,
-      href: "/documentation/getting-started",
+      href: "/docs",
     },
     {
-      title: "API Reference",
-      description: "Complete API documentation for integrating T.A.L.A. into your systems.",
-      icon: Code,
-      href: "/documentation/api-reference",
+      title: "Architecture",
+      description: "Understand the hybrid model combining Client, IPFS, and Blockchain.",
+      icon: Shield,
+      href: "/docs/architecture",
     },
     {
       title: "Smart Contracts",
-      description: "Understand the smart contracts powering T.A.L.A. security and time-locks.",
-      icon: Shield,
-      href: "/smart-contracts",
+      description: "Solidity reference for TimeLockedVault with function signatures and error codes.",
+      icon: Code,
+      href: "/docs/smart-contract",
     },
     {
-      title: "Best Practices",
-      description: "Security tips and best practices for protecting your exam papers.",
+      title: "Security Model",
+      description: "Threat analysis, encryption standards (AES-256-GCM), and attack vector mitigations.",
       icon: Zap,
-      href: "/documentation/best-practices",
+      href: "/docs/security",
     },
     {
-      title: "Deployment Guide",
-      description: "Step-by-step guide to deploying T.A.L.A. on different blockchains.",
+      title: "API Reference",
+      description: "Technical specifications for integrating T.A.L.A. into your applications.",
       icon: FileText,
-      href: "/documentation/deployment",
-    },
-    {
-      title: "Troubleshooting",
-      description: "Common issues and how to resolve them quickly.",
-      icon: Shield,
-      href: "/documentation/troubleshooting",
+      href: "/docs/smart-contract",
     },
   ];
 
