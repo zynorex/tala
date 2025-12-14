@@ -1,11 +1,26 @@
 'use client';
 
 import { X, AlertCircle } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 export default function DevelopmentNotification() {
   const [isDismissed, setIsDismissed] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
+  useEffect(() => {
+    // Check localStorage on mount
+    const dismissed = localStorage.getItem('devNotificationDismissed') === 'true';
+    setIsDismissed(dismissed);
+    setMounted(true);
+  }, []);
+
+  const handleDismiss = () => {
+    setIsDismissed(true);
+    localStorage.setItem('devNotificationDismissed', 'true');
+  };
+
+  // Don't render until mounted to prevent hydration mismatch
+  if (!mounted) return null;
   if (isDismissed) return null;
 
   const xAccountUrl = 'https://x.com/ayushedith'; // Update with your X account URL
@@ -24,7 +39,7 @@ export default function DevelopmentNotification() {
             </h3>
           </div>
           <button
-            onClick={() => setIsDismissed(true)}
+            onClick={handleDismiss}
             className="text-black hover:text-gray-700 transition-colors flex-shrink-0 font-bold text-xl"
           >
             ×
