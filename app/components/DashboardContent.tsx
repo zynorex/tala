@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useAccount } from 'wagmi';
-import { BarChart, TrendingUp, Lock, Shield, Clock, Database, AlertCircle, Eye, EyeOff } from 'lucide-react';
+import { BarChart, TrendingUp, Lock, Shield, Clock, Database, AlertCircle, Eye, EyeOff, User } from 'lucide-react';
 import Link from 'next/link';
 import DashboardStats from './DashboardStats';
 import VaultsList from './VaultsList';
@@ -215,7 +215,7 @@ export default function DashboardContent() {
         {/* Quick Links Section */}
         <div className="border-4 border-black bg-white p-8 shadow-brutal">
           <h2 className="font-black text-xl text-black mb-6">Quick Navigation</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
             <Link
               href="/dashboard/activity"
               className="border-4 border-heirlock-blue bg-blue-50 p-6 hover:shadow-brutal transition-all hover:-translate-y-1"
@@ -260,6 +260,17 @@ export default function DashboardContent() {
               </div>
               <h3 className="font-black text-black mb-2">Create Vault</h3>
               <p className="text-xs text-gray-700">Create a new encrypted vault</p>
+            </Link>
+
+            <Link
+              href="/profile"
+              className="border-4 border-purple-500 bg-purple-50 p-6 hover:shadow-brutal transition-all hover:-translate-y-1"
+            >
+              <div className="w-8 h-8 bg-purple-500 text-white rounded-full flex items-center justify-center mb-3">
+                <User className="w-4 h-4" />
+              </div>
+              <h3 className="font-black text-black mb-2">Profile</h3>
+              <p className="text-xs text-gray-700">Manage your account and settings</p>
             </Link>
           </div>
         </div>
