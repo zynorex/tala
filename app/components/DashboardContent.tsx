@@ -104,7 +104,7 @@ export default function DashboardContent() {
           <div>
             <h1 className="font-black text-4xl text-black mb-2">Dashboard</h1>
             <p className="text-gray-700 font-medium">
-              Welcome back, <span className="font-black text-heirlock-blue">{address?.slice(0, 6)}...{address?.slice(-4)}</span>
+              Welcome back, <span className="font-black text-heirlock-pink">{address?.slice(0, 6)}...{address?.slice(-4)}</span>
             </p>
           </div>
           <button
@@ -163,12 +163,20 @@ export default function DashboardContent() {
 
         {/* Bottom Section - Detailed Analytics */}
         <div className="border-4 border-black bg-white p-8 shadow-brutal">
-          <div className="flex items-center gap-3 mb-6">
-            <BarChart className="w-6 h-6 text-black" />
-            <h2 className="font-black text-2xl text-black">Vault Analytics</h2>
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center gap-3">
+              <BarChart className="w-6 h-6 text-black" />
+              <h2 className="font-black text-2xl text-black">Vault Analytics</h2>
+            </div>
+            <Link
+              href="/dashboard/analytics"
+              className="px-4 py-2 border-2 border-black bg-heirlock-blue text-white font-black text-xs hover:opacity-90 transition-all"
+            >
+              View Full Analytics →
+            </Link>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="p-6 border-3 border-black bg-cream">
+            <div className="p-6 border-3 border-black bg-cream hover:shadow-brutal transition-all cursor-pointer">
               <p className="text-xs font-black text-gray-700 uppercase mb-2">Storage Efficiency</p>
               <p className="font-black text-3xl text-heirlock-blue">
                 {dashboardData.totalStorageUsed > 0 ? 
@@ -181,7 +189,7 @@ export default function DashboardContent() {
               </p>
             </div>
 
-            <div className="p-6 border-3 border-black bg-cream">
+            <div className="p-6 border-3 border-black bg-cream hover:shadow-brutal transition-all cursor-pointer">
               <p className="text-xs font-black text-gray-700 uppercase mb-2">Active Rate</p>
               <p className="font-black text-3xl text-heirlock-green">
                 {dashboardData.totalVaults > 0 ? 
@@ -194,13 +202,65 @@ export default function DashboardContent() {
               </p>
             </div>
 
-            <div className="p-6 border-3 border-black bg-cream">
+            <div className="p-6 border-3 border-black bg-cream hover:shadow-brutal transition-all cursor-pointer">
               <p className="text-xs font-black text-gray-700 uppercase mb-2">Security Score</p>
               <p className="font-black text-3xl text-heirlock-pink">
                 {dashboardData.totalVaults > 0 ? '98' : '—'}
               </p>
               <p className="text-xs text-gray-600 font-medium mt-2">All vaults encrypted & secure</p>
             </div>
+          </div>
+        </div>
+
+        {/* Quick Links Section */}
+        <div className="border-4 border-black bg-white p-8 shadow-brutal">
+          <h2 className="font-black text-xl text-black mb-6">Quick Navigation</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <Link
+              href="/dashboard/activity"
+              className="border-4 border-heirlock-blue bg-blue-50 p-6 hover:shadow-brutal transition-all hover:-translate-y-1"
+            >
+              <div className="w-8 h-8 bg-heirlock-blue text-white rounded-full flex items-center justify-center mb-3">
+                <TrendingUp className="w-4 h-4" />
+              </div>
+              <h3 className="font-black text-black mb-2">Activity Log</h3>
+              <p className="text-xs text-gray-700">View all vault activities and events</p>
+            </Link>
+
+            <Link
+              href="/dashboard/analytics"
+              className="border-4 border-heirlock-green bg-green-50 p-6 hover:shadow-brutal transition-all hover:-translate-y-1"
+            >
+              <div className="w-8 h-8 bg-heirlock-green text-white rounded-full flex items-center justify-center mb-3">
+                <BarChart className="w-4 h-4" />
+              </div>
+              <h3 className="font-black text-black mb-2">Analytics</h3>
+              <p className="text-xs text-gray-700">Explore vault trends and insights</p>
+            </Link>
+
+            <Link
+              href="/dashboard/security"
+              className="border-4 border-heirlock-pink bg-pink-50 p-6 hover:shadow-brutal transition-all hover:-translate-y-1"
+            >
+              <div className="w-8 h-8 bg-heirlock-pink text-white rounded-full flex items-center justify-center mb-3">
+                <Lock className="w-4 h-4" />
+              </div>
+              <h3 className="font-black text-black mb-2">Security</h3>
+              <p className="text-xs text-gray-700">Manage encryption and backups</p>
+            </Link>
+
+            <Link
+              href="/create-vault"
+              className="border-4 border-yellow-500 bg-yellow-50 p-6 hover:shadow-brutal transition-all hover:-translate-y-1"
+            >
+              <div className="w-8 h-8 bg-yellow-500 text-white rounded-full flex items-center justify-center mb-3">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                </svg>
+              </div>
+              <h3 className="font-black text-black mb-2">Create Vault</h3>
+              <p className="text-xs text-gray-700">Create a new encrypted vault</p>
+            </Link>
           </div>
         </div>
       </div>
