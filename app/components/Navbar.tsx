@@ -222,14 +222,6 @@ export default function Navbar() {
 
             {mounted && <WalletButton isScrolled={isScrolled} />}
 
-            <Link href="/profile">
-              <button className={`px-5 lg:px-7 py-2 text-sm lg:text-base font-bold border-4 shadow-brutal transition-all flex items-center gap-2 ${
-                isScrolled ? "bg-white text-black border-black hover:bg-heirlock-pink hover:text-white hover:border-black hover:translate-x-1 hover:translate-y-1 hover:shadow-none" : "bg-heirlock-pink text-black border-black hover:bg-black hover:text-heirlock-pink hover:translate-x-1 hover:translate-y-1 hover:shadow-none"
-              }`}>
-                👤 Profile
-              </button>
-            </Link>
-
             <Link href="/dashboard">
               <button className={`px-5 lg:px-7 py-2 text-sm lg:text-base font-bold border-4 shadow-brutal transition-all flex items-center gap-2 ${
                 isScrolled ? "bg-white text-black border-black hover:bg-heirlock-blue hover:text-white hover:border-black hover:translate-x-1 hover:translate-y-1 hover:shadow-none" : "bg-heirlock-blue text-black border-black hover:bg-black hover:text-heirlock-blue hover:translate-x-1 hover:translate-y-1 hover:shadow-none"
