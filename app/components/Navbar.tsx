@@ -216,7 +216,7 @@ export default function Navbar() {
 
             <Link href="/create-vault">
               <button className={`px-5 lg:px-7 py-2 text-sm lg:text-base font-bold border-4 shadow-brutal transition-all ${
-                isScrolled ? "bg-white text-black border-black hover:bg-heirlock-yellow hover:text-black hover:border-black hover:translate-x-1 hover:translate-y-1 hover:shadow-none" : "bg-black text-white border-black hover:bg-heirlock-yellow hover:text-white hover:border-black hover:translate-x-1 hover:translate-y-1 hover:shadow-none"
+                isScrolled ? "bg-white text-black border-black hover:bg-heirlock-yellow hover:text-black hover:border-black hover:translate-x-1 hover:translate-y-1 hover:shadow-none" : "bg-black text-white border-black hover:bg-heirlock-yellow hover:text-black hover:border-black hover:translate-x-1 hover:translate-y-1 hover:shadow-none"
               }`}>🔒 Create Vault</button>
             </Link>
 
