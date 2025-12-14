@@ -126,7 +126,7 @@ export default function AnalyticsDashboardPage() {
         <div className="mb-8">
           <Link
             href="/dashboard"
-            className="flex items-center gap-2 text-heirlock-blue font-black hover:underline mb-6"
+            className="flex items-center gap-2 text-black font-black hover:underline mb-6"
           >
             <ArrowLeft className="w-4 h-4" />
             Back to Dashboard

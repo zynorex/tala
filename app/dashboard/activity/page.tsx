@@ -167,7 +167,7 @@ export default function ActivityHistoryPage() {
         <div className="mb-8">
           <Link
             href="/dashboard"
-            className="flex items-center gap-2 text-heirlock-blue font-black hover:underline mb-6"
+            className="flex items-center gap-2 text-black font-black hover:underline mb-6"
           >
             <ArrowLeft className="w-4 h-4" />
             Back to Dashboard
@@ -180,7 +180,7 @@ export default function ActivityHistoryPage() {
             </h1>
             <button
               onClick={handleExport}
-              className="flex items-center gap-2 px-4 py-2 bg-heirlock-green text-white border-2 border-black font-black text-sm hover:opacity-90"
+              className="flex items-center gap-2 px-4 py-2 bg-heirlock-green text-black border-2 border-black font-black text-sm hover:opacity-90"
             >
               <Download className="w-4 h-4" />
               Export CSV
