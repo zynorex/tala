@@ -347,9 +347,3 @@ export default function DisclaimerPage() {
     </div>
   );
 }
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}

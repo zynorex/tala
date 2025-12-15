@@ -6,10 +6,9 @@ import Link from 'next/link';
 import {
   ArrowLeft, User, Mail, Bell, Lock, Palette, Settings, Download, Copy, LogOut,
   AlertCircle, CheckCircle, Eye, EyeOff, Save, X, Plus, Trash2, Shield, Smartphone,
-  Globe, Moon, Sun, Code
+  Globe, Code
 } from 'lucide-react';
 import { useToast } from '@/app/hooks/useToast';
-import { useTheme } from '@/app/providers/ThemeProvider';
 
 interface UserProfile {
   displayName: string;
@@ -57,7 +56,7 @@ const DEFAULT_PROFILE: UserProfile = {
 
 export default function ProfilePage() {
   const { isConnected, address } = useAccount();
-  const { toast } = useToast();  const { theme, setTheme } = useTheme();
+  const { toast } = useToast();
   const [profile, setProfile] = useState<UserProfile>(DEFAULT_PROFILE);
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -364,37 +363,6 @@ export default function ProfilePage() {
                       {editedProfile.bio.length}/200
                     </p>
                   )}
-                </div>
-
-                {/* Theme Selection */}
-                <div>
-                  <label className="block text-xs font-black mb-2" style={{ color: 'var(--text-primary)' }}>Theme Preference</label>
-                  <div className="flex gap-2">
-                    {['light', 'dim', 'dark'].map((themeOption) => (
-                      <button
-                        key={themeOption}
-                        onClick={() => setTheme(themeOption as 'light' | 'dim' | 'dark')}
-                        className={`flex-1 p-3 border-2 font-black text-xs transition-all flex items-center justify-center gap-2 ${
-                          theme === themeOption
-                            ? 'border-black bg-heirlock-yellow text-black'
-                            : 'border-gray-400 hover:border-gray-600'
-                        }`}
-                        style={{
-                          backgroundColor: theme === themeOption ? undefined : 'var(--card-bg)',
-                          color: theme === themeOption ? '#000' : 'var(--text-primary)',
-                          borderColor: theme === themeOption ? '#000' : 'var(--border-color)',
-                        }}
-                      >
-                        {themeOption === 'light' && <Sun className="w-4 h-4" />}
-                        {themeOption === 'dim' && <Zap className="w-4 h-4" />}
-                        {themeOption === 'dark' && <Moon className="w-4 h-4" />}
-                        {themeOption.charAt(0).toUpperCase() + themeOption.slice(1)}
-                      </button>
-                    ))}
-                  </div>
-                  <p className="text-xs mt-2" style={{ color: 'var(--text-secondary)' }}>
-                    Theme changes are applied instantly across the entire app
-                  </p>
                 </div>
               </div>
 
