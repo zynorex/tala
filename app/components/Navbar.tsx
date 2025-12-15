@@ -6,10 +6,13 @@ import dynamic from "next/dynamic";
 import { useState, useEffect } from "react";
 import { Menu, X, ChevronDown, BookOpen, Zap, Code, Shield, HelpCircle, Newspaper, LayoutGrid, Mail } from "lucide-react";
 import { usePathname } from "next/navigation";
-import ThemeToggle from "./ThemeToggle";
 
-// Dynamic import to avoid hydration issues with Web3
+// Dynamic imports to avoid hydration issues with Web3 and Theme
 const WalletButton = dynamic(() => import("./WalletButton"), { 
+  ssr: false
+});
+
+const ThemeToggle = dynamic(() => import("./ThemeToggle"), {
   ssr: false
 });
 

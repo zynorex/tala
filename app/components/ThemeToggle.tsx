@@ -2,9 +2,17 @@
 
 import { useTheme } from '@/app/providers/ThemeProvider';
 import { Sun, Moon, Zap } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 export default function ThemeToggle() {
   const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) return null;
 
   return (
     <div className="flex items-center gap-2 border-4 border-black bg-white p-1 rounded-lg shadow-brutal" style={{
