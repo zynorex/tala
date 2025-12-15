@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { verifyRequest } from '@/lib/auth/jwt';
 import { createUserSchema, updateUserSchema } from '@/lib/auth/schemas';
 import { apiSuccess, apiError, handleValidationError, httpErrors } from '@/lib/auth/api-response';
+import { rateLimit, rateLimitConfigs } from '@/lib/middleware/rate-limit';
 
 let prisma: any = null;
 
@@ -19,6 +20,17 @@ async function getPrisma() {
  */
 export async function POST(req: NextRequest) {
   try {
+    // Apply rate limiting (auth endpoints: 10 requests/min)
+    const { allowed, response: rateLimitResponse } = await rateLimit(
+      req,
+      undefined,
+      rateLimitConfigs.auth
+    );
+
+    if (!allowed && rateLimitResponse) {
+      return rateLimitResponse;
+    }
+
     const body = await req.json();
 
     // Validate request

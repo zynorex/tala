@@ -20,12 +20,15 @@ model User {
   walletAddress String?    @unique // Web3 wallet address
   username      String?    @unique
   displayName   String?
+  role          String     @default("user") // "user", "admin"
   
   // Profile
   avatarUrl     String?
   bio           String?
+  isActive      Boolean    @default(true)
   createdAt     DateTime   @default(now())
   updatedAt     DateTime   @updatedAt
+  deletedAt     DateTime?
   
   // Relations
   vaults        Vault[]
@@ -34,6 +37,7 @@ model User {
   
   @@index([email])
   @@index([walletAddress])
+  @@index([role])
 }
 
 // Vault Model - Stores encrypted vault metadata
@@ -62,10 +66,39 @@ model Vault {
   updatedAt     DateTime   @updatedAt
   
   // Relations
+  files         VaultFile[]
   activityLogs  ActivityLog[]
   
   @@index([userId])
   @@index([createdAt])
+}
+
+// VaultFile Model - Stores individual files in a vault
+model VaultFile {
+  id                    String     @id @default(cuid())
+  vaultId               String
+  vault                 Vault      @relation(fields: [vaultId], references: [id], onDelete: Cascade)
+  
+  // File metadata
+  fileName              String
+  fileSizeBytes         Int
+  mimeType              String?
+  
+  // Encryption & Storage
+  fileHash              String     // SHA-256 hash of original file
+  ipfsHash              String     // IPFS content hash
+  encryptionKeyHash     String     // SHA-256 hash of encryption key
+  
+  // Audit
+  uploadedBy            String
+  uploadedAt            DateTime   @default(now())
+  isActive              Boolean    @default(true)
+  deletedAt             DateTime?
+  deletedBy             String?
+  
+  @@index([vaultId])
+  @@index([uploadedAt])
+  @@index([isActive])
 }
 
 // ActivityLog Model - Tracks vault access and modifications

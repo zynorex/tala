@@ -1,19 +1,20 @@
 import { Code2, Database, Shield, Zap } from 'lucide-react';
 import Link from 'next/link';
+import { DevDocSection } from '@/app/docs/dev-doc-section';
 
 export const metadata = {
   title: 'Documentation - T.A.L.A.',
   description: 'Developer documentation for T.A.L.A. - Decentralized Time-Capsule Protocol',
 };
 
-export default function DocsHub() {
-  const techStack = [
-    { icon: Code2, label: 'Next.js', description: 'React Framework' },
-    { icon: Database, label: 'Polygon', description: 'Blockchain' },
-    { icon: Zap, label: 'IPFS', description: 'Decentralized Storage' },
-    { icon: Shield, label: 'Wagmi', description: 'Web3 Integration' },
-  ];
+const techStack = [
+  { icon: Code2, label: 'Next.js', description: 'React Framework' },
+  { icon: Database, label: 'Polygon', description: 'Blockchain' },
+  { icon: Zap, label: 'IPFS', description: 'Decentralized Storage' },
+  { icon: Shield, label: 'Wagmi', description: 'Web3 Integration' },
+];
 
+export default function DocsHub() {
   return (
     <div className="space-y-12">
       {/* Header */}
@@ -23,24 +24,9 @@ export default function DocsHub() {
         </h1>
         <div className="bg-white border-3 border-black p-6 shadow-brutal">
           <p className="text-lg font-bold text-black leading-relaxed">
-            T.A.L.A. is a decentralized protocol for time-locking sensitive data. This documentation covers the architecture, smart contracts, and security models. Everything you need to understand how the vault works.
+            T.A.L.A. is a decentralized protocol for time-locking sensitive data. This documentation covers the architecture, smart contracts, security models, and development setup. Everything you need to understand and work with the vault.
           </p>
         </div>
-      </section>
-
-      {/* Quick Start */}
-      <section className="space-y-4">
-        <h2 className="text-4xl font-black text-black font-mono border-b-4 border-black pb-4">
-          QUICK START
-        </h2>
-        <div className="bg-black border-4 border-black text-heirlock-yellow p-6 font-mono text-sm overflow-x-auto shadow-brutal">
-          <pre>{`$ git clone https://github.com/akaza/tala-vault.git
-$ npm install
-$ npm run dev`}</pre>
-        </div>
-        <p className="text-gray-700 font-medium">
-          Clone the repository, install dependencies, and start the development server.
-        </p>
       </section>
 
       {/* Tech Stack Grid */}
@@ -69,10 +55,21 @@ $ npm run dev`}</pre>
         </div>
       </section>
 
-      {/* Documentation Sections */}
+      {/* Developer Documentation Sections */}
       <section className="space-y-4">
         <h2 className="text-4xl font-black text-black font-mono border-b-4 border-black pb-4">
-          DOCUMENTATION
+          DEV DOCS REFERENCE
+        </h2>
+        <p className="text-gray-700 font-bold mb-6">
+          Click any section below to expand code examples, API patterns, and setup guides.
+        </p>
+        <DevDocSection />
+      </section>
+
+      {/* Additional Documentation */}
+      <section className="space-y-4">
+        <h2 className="text-4xl font-black text-black font-mono border-b-4 border-black pb-4">
+          DEEP DIVE DOCS
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <Link href="/docs/architecture">

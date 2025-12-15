@@ -4,6 +4,7 @@ import "./globals.css";
 import { Web3Provider } from "@/components/providers/Web3Provider";
 import { ToastProvider } from "./providers/ToastProvider";
 import { ThemeProvider } from "./providers/ThemeProvider";
+import { AdminShortcutProvider } from "./providers/AdminShortcutProvider";
 import { ErrorBoundary } from "./components/ErrorBoundary";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
@@ -46,21 +47,23 @@ export default function RootLayout({
     <html lang="en" className={`${inter.variable} ${spaceGrotesk.variable}`}>
       <body className={inter.className}>
         <ErrorBoundary>
-          <ThemeProvider>
-            <Web3Provider>
-              <ToastProvider>
-                <PageSkeleton />
-                <MobileWarning />
-                <Navbar />
-                <DevelopmentNotification />
-                <CookieConsent />
-                <div className="pt-16 md:pt-20">
-                  {children}
-                </div>
-                <Footer />
-              </ToastProvider>
-            </Web3Provider>
-          </ThemeProvider>
+          <AdminShortcutProvider>
+            <ThemeProvider>
+              <Web3Provider>
+                <ToastProvider>
+                  <PageSkeleton />
+                  <MobileWarning />
+                  <Navbar />
+                  <DevelopmentNotification />
+                  <CookieConsent />
+                  <div className="pt-16 md:pt-20">
+                    {children}
+                  </div>
+                  <Footer />
+                </ToastProvider>
+              </Web3Provider>
+            </ThemeProvider>
+          </AdminShortcutProvider>
         </ErrorBoundary>
       </body>
     </html>
