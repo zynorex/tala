@@ -6,6 +6,7 @@ import dynamic from "next/dynamic";
 import { useState, useEffect } from "react";
 import { Menu, X, ChevronDown, BookOpen, Zap, Code, Shield, HelpCircle, Newspaper, LayoutGrid, Mail } from "lucide-react";
 import { usePathname } from "next/navigation";
+import ThemeToggle from "./ThemeToggle";
 
 // Dynamic import to avoid hydration issues with Web3
 const WalletButton = dynamic(() => import("./WalletButton"), { 
@@ -221,6 +222,8 @@ export default function Navbar() {
             </Link>
 
             {mounted && <WalletButton isScrolled={isScrolled} />}
+
+            <ThemeToggle />
 
             <Link href="/dashboard">
               <button className={`px-5 lg:px-7 py-2 text-sm lg:text-base font-bold border-4 shadow-brutal transition-all flex items-center gap-2 ${

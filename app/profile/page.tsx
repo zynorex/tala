@@ -9,12 +9,12 @@ import {
   Globe, Moon, Sun, Code
 } from 'lucide-react';
 import { useToast } from '@/app/hooks/useToast';
+import { useTheme } from '@/app/providers/ThemeProvider';
 
 interface UserProfile {
   displayName: string;
   email: string;
   bio: string;
-  theme: 'light' | 'dark' | 'system';
   notifications: {
     vaultCreated: boolean;
     vaultUnlocked: boolean;
@@ -41,7 +41,6 @@ const DEFAULT_PROFILE: UserProfile = {
   displayName: '',
   email: '',
   bio: '',
-  theme: 'light',
   notifications: {
     vaultCreated: true,
     vaultUnlocked: true,
@@ -58,8 +57,7 @@ const DEFAULT_PROFILE: UserProfile = {
 
 export default function ProfilePage() {
   const { isConnected, address } = useAccount();
-  const { toast } = useToast();
-
+  const { toast } = useToast();  const { theme, setTheme } = useTheme();
   const [profile, setProfile] = useState<UserProfile>(DEFAULT_PROFILE);
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -370,33 +368,33 @@ export default function ProfilePage() {
 
                 {/* Theme Selection */}
                 <div>
-                  <label className="block text-xs font-black text-gray-700 mb-2">Theme Preference</label>
-                  {isEditing ? (
-                    <div className="flex gap-2">
-                      {['light', 'dark', 'system'].map((theme) => (
-                        <button
-                          key={theme}
-                          onClick={() =>
-                            setEditedProfile({ ...editedProfile, theme: theme as any })
-                          }
-                          className={`flex-1 p-3 border-2 border-black font-black text-xs transition-all flex items-center justify-center gap-2 ${
-                            editedProfile.theme === theme
-                              ? 'bg-black text-white'
-                              : 'bg-white hover:bg-gray-50'
-                          }`}
-                        >
-                          {theme === 'light' && <Sun className="w-4 h-4" />}
-                          {theme === 'dark' && <Moon className="w-4 h-4" />}
-                          {theme === 'system' && <Globe className="w-4 h-4" />}
-                          {theme.charAt(0).toUpperCase() + theme.slice(1)}
-                        </button>
-                      ))}
-                    </div>
-                  ) : (
-                    <p className="text-sm font-mono p-3 bg-gray-50 border-2 border-black capitalize">
-                      {profile.theme}
-                    </p>
-                  )}
+                  <label className="block text-xs font-black mb-2" style={{ color: 'var(--text-primary)' }}>Theme Preference</label>
+                  <div className="flex gap-2">
+                    {['light', 'dim', 'dark'].map((themeOption) => (
+                      <button
+                        key={themeOption}
+                        onClick={() => setTheme(themeOption as 'light' | 'dim' | 'dark')}
+                        className={`flex-1 p-3 border-2 font-black text-xs transition-all flex items-center justify-center gap-2 ${
+                          theme === themeOption
+                            ? 'border-black bg-heirlock-yellow text-black'
+                            : 'border-gray-400 hover:border-gray-600'
+                        }`}
+                        style={{
+                          backgroundColor: theme === themeOption ? undefined : 'var(--card-bg)',
+                          color: theme === themeOption ? '#000' : 'var(--text-primary)',
+                          borderColor: theme === themeOption ? '#000' : 'var(--border-color)',
+                        }}
+                      >
+                        {themeOption === 'light' && <Sun className="w-4 h-4" />}
+                        {themeOption === 'dim' && <Zap className="w-4 h-4" />}
+                        {themeOption === 'dark' && <Moon className="w-4 h-4" />}
+                        {themeOption.charAt(0).toUpperCase() + themeOption.slice(1)}
+                      </button>
+                    ))}
+                  </div>
+                  <p className="text-xs mt-2" style={{ color: 'var(--text-secondary)' }}>
+                    Theme changes are applied instantly across the entire app
+                  </p>
                 </div>
               </div>
 
