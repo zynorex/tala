@@ -13,7 +13,7 @@ import {
   hashEncryptionKey,
   verifyEncryptionKey,
   getEncryptionConstants,
-} from './encryption';
+} from '../crypto/encryption';
 
 /**
  * TALA Vault Encryption Service
