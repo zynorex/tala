@@ -1,0 +1,109 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// User Model - Stores user account information
+model User {
+  id            String     @id @default(cuid())
+  email         String     @unique
+  walletAddress String?    @unique // Web3 wallet address
+  username      String?    @unique
+  displayName   String?
+  
+  // Profile
+  avatarUrl     String?
+  bio           String?
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+  
+  // Relations
+  vaults        Vault[]
+  activityLogs  ActivityLog[]
+  apiKeys       ApiKey[]
+  
+  @@index([email])
+  @@index([walletAddress])
+}
+
+// Vault Model - Stores encrypted vault metadata
+model Vault {
+  id            String     @id @default(cuid())
+  userId        String
+  user          User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Vault metadata
+  name          String
+  description   String?
+  
+  // Encryption
+  encryptedData String     // Base64 encrypted vault content
+  keyHash       String     // SHA-256 hash of encryption key (for verification)
+  fileHash      String     // SHA-256 hash of original file
+  
+  // File info
+  fileName      String
+  fileSize      Int        // Size in bytes
+  mimeType      String?
+  
+  // Status
+  isActive      Boolean    @default(true)
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+  
+  // Relations
+  activityLogs  ActivityLog[]
+  
+  @@index([userId])
+  @@index([createdAt])
+}
+
+// ActivityLog Model - Tracks vault access and modifications
+model ActivityLog {
+  id            String     @id @default(cuid())
+  userId        String
+  user          User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  vaultId       String?
+  vault         Vault?     @relation(fields: [vaultId], references: [id], onDelete: SetNull)
+  
+  // Action details
+  action        String     // "view", "download", "update", "share", "delete"
+  description   String?
+  ipAddress     String?
+  userAgent     String?
+  
+  createdAt     DateTime   @default(now())
+  
+  @@index([userId])
+  @@index([vaultId])
+  @@index([createdAt])
+}
+
+// ApiKey Model - For programmatic access
+model ApiKey {
+  id            String     @id @default(cuid())
+  userId        String
+  user          User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  name          String
+  keyHash       String     @unique // Hashed API key for storage
+  
+  isActive      Boolean    @default(true)
+  lastUsedAt    DateTime?
+  
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+  
+  @@index([userId])
+}
