@@ -18,9 +18,9 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   // Load theme from localStorage on mount
   useEffect(() => {
     const stored = localStorage.getItem('theme') as Theme | null;
-    const theme = stored || 'light';
-    setThemeState(theme);
-    applyTheme(theme);
+    const initialTheme = stored || 'light';
+    setThemeState(initialTheme);
+    applyTheme(initialTheme);
     setMounted(true);
   }, []);
 
@@ -32,34 +32,38 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
   const applyTheme = (theme: Theme) => {
     const root = document.documentElement;
+    
+    // Remove all theme classes
+    root.classList.remove('light-theme', 'dim-theme', 'dark-theme');
+    
+    // Add the current theme class
+    if (theme === 'light') {
+      root.classList.add('light-theme');
+    } else if (theme === 'dim') {
+      root.classList.add('dim-theme');
+    } else if (theme === 'dark') {
+      root.classList.add('dark-theme');
+    }
+    
+    // Set the data attribute
     root.setAttribute('data-theme', theme);
-
-    // Apply theme-specific styles
+    
+    // Also update document element for Tailwind dark mode if needed
     if (theme === 'dark') {
       root.classList.add('dark');
-      document.body.style.backgroundColor = '#0a0a0a';
-      document.body.style.color = '#ffffff';
-    } else if (theme === 'dim') {
-      root.classList.remove('dark');
-      document.body.style.backgroundColor = '#1a1a1a';
-      document.body.style.color = '#e0e0e0';
     } else {
       root.classList.remove('dark');
-      document.body.style.backgroundColor = '#ffffff';
-      document.body.style.color = '#000000';
     }
   };
 
-  // Prevent hydration mismatch
+  // Prevent hydration mismatch - don't render context-dependent content until mounted
   if (!mounted) {
     return <>{children}</>;
   }
 
   return (
     <ThemeContext.Provider value={{ theme, setTheme }}>
-      <div data-theme={theme}>
-        {children}
-      </div>
+      {children}
     </ThemeContext.Provider>
   );
 }
