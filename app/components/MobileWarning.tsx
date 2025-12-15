@@ -24,29 +24,57 @@ export default function MobileWarning() {
   if (!isMounted || !isVisible) return null;
 
   return (
-    <div className="md:hidden fixed top-0 left-0 right-0 z-40 bg-heirlock-pink border-b-4 border-black shadow-brutal">
-      <div className="container mx-auto max-w-7xl px-4 py-3">
-        <div className="flex items-start gap-3 justify-between">
-          <div className="flex items-start gap-3 flex-1">
-            <AlertTriangle className="w-5 h-5 text-black flex-shrink-0 mt-0.5" />
-            <div className="flex-1">
-              <p className="text-sm font-black text-black mb-1">
-                ⚠️ Mobile Experience Limited
-              </p>
-              <p className="text-xs font-bold text-gray-900">
-                This platform is optimized for desktop/tablet. For the best experience and full features, please use a larger device.
-              </p>
+    <>
+      {/* Overlay */}
+      <div className="md:hidden fixed inset-0 bg-black bg-opacity-80 z-40" onClick={dismissWarning} />
+
+      {/* Modal */}
+      <div className="md:hidden fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div className="bg-gradient-to-br from-heirlock-pink to-heirlock-yellow border-4 border-black shadow-brutal w-full max-w-sm">
+          {/* Header */}
+          <div className="bg-black text-white p-4 border-b-4 border-black flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <AlertTriangle className="w-6 h-6 text-heirlock-yellow flex-shrink-0" />
+              <h2 className="text-lg font-black">MOBILE WARNING</h2>
             </div>
           </div>
-          <button
-            onClick={dismissWarning}
-            className="flex-shrink-0 p-1.5 hover:bg-black hover:bg-opacity-10 transition-all rounded"
-            title="Dismiss"
-          >
-            <X className="w-4 h-4 text-black" />
-          </button>
+
+          {/* Content */}
+          <div className="p-6 bg-white">
+            <p className="text-sm font-bold text-black mb-4">
+              ⚠️ This platform is optimized for <span className="text-heirlock-pink font-black">DESKTOP & TABLET</span> devices only.
+            </p>
+            
+            <p className="text-xs font-bold text-gray-700 mb-6 leading-relaxed">
+              Mobile devices have limited screen space and reduced functionality. For the best experience and full access to all features, please use a computer or tablet with a larger screen.
+            </p>
+
+            <div className="bg-heirlock-yellow bg-opacity-20 border-2 border-heirlock-yellow p-3 rounded mb-6">
+              <p className="text-xs font-black text-black">
+                💡 Recommended: Desktop (1920x1080 or higher)
+              </p>
+            </div>
+
+            {/* Buttons */}
+            <div className="flex gap-3">
+              <button
+                onClick={dismissWarning}
+                className="flex-1 px-4 py-3 bg-black text-white font-black border-4 border-black hover:bg-heirlock-pink hover:text-black transition-all shadow-brutal hover:shadow-none hover:translate-x-1 hover:translate-y-1"
+              >
+                Continue on Mobile
+              </button>
+            </div>
+
+            {/* Close Button */}
+            <button
+              onClick={dismissWarning}
+              className="w-full mt-2 px-4 py-2 text-xs font-black text-gray-600 hover:text-black transition-colors underline"
+            >
+              Close This Warning
+            </button>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
