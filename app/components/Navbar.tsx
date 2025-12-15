@@ -7,8 +7,12 @@ import { useState, useEffect } from "react";
 import { Menu, X, ChevronDown, BookOpen, Zap, Code, Shield, HelpCircle, Newspaper, LayoutGrid, Mail } from "lucide-react";
 import { usePathname } from "next/navigation";
 
-// Dynamic imports to avoid hydration issues with Web3
+// Dynamic imports to avoid hydration issues with Web3 and Theme
 const WalletButton = dynamic(() => import("./WalletButton"), { 
+  ssr: false
+});
+
+const ThemeToggle = dynamic(() => import("./ThemeToggle"), {
   ssr: false
 });
 
@@ -231,6 +235,10 @@ export default function Navbar() {
                   Dashboard
                 </button>
               </Link>
+
+              <div className="ml-2 lg:ml-4">
+                <ThemeToggle />
+              </div>
             </div>
           </div>
 
