@@ -7,6 +7,7 @@ import { ThemeProvider } from "./providers/ThemeProvider";
 import { ErrorBoundary } from "./components/ErrorBoundary";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
+import MobileWarning from "./components/MobileWarning";
 import PageSkeleton from "./components/PageSkeleton";
 import DevelopmentNotification from "./components/DevelopmentNotification";
 import CookieConsent from "./components/CookieConsent";
@@ -49,6 +50,7 @@ export default function RootLayout({
             <Web3Provider>
               <ToastProvider>
                 <PageSkeleton />
+                <MobileWarning />
                 <Navbar />
                 <DevelopmentNotification />
                 <CookieConsent />
