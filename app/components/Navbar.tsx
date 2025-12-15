@@ -218,24 +218,28 @@ export default function Navbar() {
               </div>
             </div>
 
-            <Link href="/create-vault">
-              <button className={`px-5 lg:px-7 py-2 text-sm lg:text-base font-bold border-4 shadow-brutal transition-all ${
-                isScrolled ? "bg-white text-black border-black hover:bg-heirlock-yellow hover:text-black hover:border-black hover:translate-x-1 hover:translate-y-1 hover:shadow-none" : "bg-black text-white border-black hover:bg-heirlock-yellow hover:text-black hover:border-black hover:translate-x-1 hover:translate-y-1 hover:shadow-none"
-              }`}>🔒 Create Vault</button>
-            </Link>
+            <div className="flex items-center gap-3 lg:gap-4 flex-1 justify-end">
+              <Link href="/create-vault">
+                <button className={`px-5 lg:px-7 py-3 text-sm lg:text-base font-bold border-4 shadow-brutal transition-all whitespace-nowrap ${
+                  isScrolled ? "bg-white text-black border-black hover:bg-heirlock-yellow hover:text-black hover:border-black hover:translate-x-1 hover:translate-y-1 hover:shadow-none" : "bg-black text-white border-black hover:bg-heirlock-yellow hover:text-black hover:border-black hover:translate-x-1 hover:translate-y-1 hover:shadow-none"
+                }`}>🔒 Create Vault</button>
+              </Link>
 
-            {mounted && <WalletButton isScrolled={isScrolled} />}
+              {mounted && <WalletButton isScrolled={isScrolled} />}
 
-            <ThemeToggle />
+              <Link href="/dashboard">
+                <button className={`px-5 lg:px-7 py-3 text-sm lg:text-base font-bold border-4 shadow-brutal transition-all flex items-center gap-2 whitespace-nowrap ${
+                  isScrolled ? "bg-white text-black border-black hover:bg-heirlock-blue hover:text-white hover:border-black hover:translate-x-1 hover:translate-y-1 hover:shadow-none" : "bg-heirlock-blue text-black border-black hover:bg-black hover:text-heirlock-blue hover:translate-x-1 hover:translate-y-1 hover:shadow-none"
+                }`}>
+                  <LayoutGrid className="w-4 h-4" />
+                  Dashboard
+                </button>
+              </Link>
 
-            <Link href="/dashboard">
-              <button className={`px-5 lg:px-7 py-2 text-sm lg:text-base font-bold border-4 shadow-brutal transition-all flex items-center gap-2 ${
-                isScrolled ? "bg-white text-black border-black hover:bg-heirlock-blue hover:text-white hover:border-black hover:translate-x-1 hover:translate-y-1 hover:shadow-none" : "bg-heirlock-blue text-black border-black hover:bg-black hover:text-heirlock-blue hover:translate-x-1 hover:translate-y-1 hover:shadow-none"
-              }`}>
-                <LayoutGrid className="w-4 h-4" />
-                Dashboard
-              </button>
-            </Link>
+              <div className="ml-2 lg:ml-4">
+                <ThemeToggle />
+              </div>
+            </div>
           </div>
 
           {/* Mobile Menu Button */}
