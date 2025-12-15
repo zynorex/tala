@@ -194,20 +194,20 @@ export default function Navbar() {
                 </div>
 
                 {/* Featured Guide Section */}
-                <div className="border-t-4 border-gray-700 p-8 bg-gray-900 bg-opacity-50">
+                <div className="border-t-4 border-black p-8 bg-heirlock-yellow bg-opacity-50">
                   <div className="grid grid-cols-2 gap-6 items-center">
                     <div>
-                      <h4 className="text-sm font-bold text-heirlock-yellow mb-2">Get Started</h4>
-                      <h3 className="text-xl font-bold mb-3 leading-tight">Secure Your Exams Today</h3>
-                      <p className="text-sm text-gray-300 mb-4">Create your first vault and start protecting exam papers in just 2 minutes.</p>
+                      <h4 className="text-sm font-bold text-black mb-2">Get Started</h4>
+                      <h3 className="text-xl font-bold mb-3 leading-tight text-black">Secure Your Exams Today</h3>
+                      <p className="text-sm text-black  mb-4">Create your first vault and start protecting exam papers in just 2 minutes.</p>
                       <Link href="/create-vault" onClick={closeMenu}>
-                        <button className="px-4 py-2 bg-heirlock-yellow text-black font-bold border-2 border-heirlock-yellow hover:translate-x-0.5 hover:translate-y-0.5 transition-all text-sm">
+                        <button className="px-4 py-2 bg-heirlock-green text-black font-bold border-2 border-black rounded-xl hover:translate-x-0.5 hover:translate-y-0.5 transition-all text-sm">
                           Create Vault →
                         </button>
                       </Link>
                     </div>
-                    <div className="bg-gradient-to-br from-heirlock-blue to-heirlock-green rounded border-4 border-black h-40 flex items-center justify-center hover:shadow-brutal transition-all">
-                      <span className="text-5xl">🔐</span>
+                    <div className="bg-heirlock-pink rounded-3xl border-4 border-black h-40 flex items-center justify-center hover:shadow-brutal transition-all">
+                      <Image src="/404.png" alt="Hero Image" width={200} height={200} />
                     </div>
                   </div>
                 </div>
@@ -217,15 +217,15 @@ export default function Navbar() {
             <div className="flex items-center gap-3 lg:gap-4 flex-1 justify-end">
               <Link href="/create-vault">
                 <button className={`px-5 lg:px-7 py-3 text-sm lg:text-base font-bold border-4 shadow-brutal transition-all whitespace-nowrap ${
-                  isScrolled ? "bg-white text-black border-black hover:bg-heirlock-yellow hover:text-black hover:border-black hover:translate-x-1 hover:translate-y-1 hover:shadow-none" : "bg-black text-white border-black hover:bg-heirlock-yellow hover:text-black hover:border-black hover:translate-x-1 hover:translate-y-1 hover:shadow-none"
-                }`}>🔒 Create Vault</button>
+                  isScrolled ? "bg-heirlock-yellow text-black border-black hover:bg-heirlock-yellow hover:text-black hover:border-black hover:translate-x-1 hover:translate-y-1 hover:shadow-none" : "bg-heirlock-yellow text-black border-black hover:bg-heirlock-pink hover:text-black hover:border-black hover:translate-x-1 hover:translate-y-1 hover:shadow-none"
+                }`}>Create Vault</button>
               </Link>
 
               {mounted && <WalletButton isScrolled={isScrolled} />}
 
               <Link href="/dashboard">
                 <button className={`px-5 lg:px-7 py-3 text-sm lg:text-base font-bold border-4 shadow-brutal transition-all flex items-center gap-2 whitespace-nowrap ${
-                  isScrolled ? "bg-white text-black border-black hover:bg-heirlock-blue hover:text-white hover:border-black hover:translate-x-1 hover:translate-y-1 hover:shadow-none" : "bg-heirlock-blue text-black border-black hover:bg-black hover:text-heirlock-blue hover:translate-x-1 hover:translate-y-1 hover:shadow-none"
+                  isScrolled ? "bg-heirlock-blue text-black border-black hover:bg-heirlock-blue hover:text-white hover:border-black hover:translate-x-1 hover:translate-y-1 hover:shadow-none" : "bg-heirlock-blue text-black border-black hover:bg-heirlock-pink hover:text-heirlock-blue hover:translate-x-1 hover:translate-y-1 hover:shadow-none"
                 }`}>
                   <LayoutGrid className="w-4 h-4" />
                   Dashboard
