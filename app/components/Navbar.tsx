@@ -223,6 +223,14 @@ export default function Navbar() {
 
               {mounted && <WalletButton isScrolled={isScrolled} />}
 
+              <Link href="/auth/login">
+                <button className={`px-5 lg:px-7 py-3 text-sm lg:text-base font-bold border-4 shadow-brutal transition-all flex items-center gap-2 whitespace-nowrap ${
+                  isScrolled ? "bg-heirlock-green text-black border-black hover:bg-heirlock-green hover:text-white hover:border-black hover:translate-x-1 hover:translate-y-1 hover:shadow-none" : "bg-heirlock-green text-black border-black hover:bg-heirlock-blue hover:text-white hover:translate-x-1 hover:translate-y-1 hover:shadow-none"
+                }`}>
+                  Sign In
+                </button>
+              </Link>
+
               <Link href="/dashboard">
                 <button className={`px-5 lg:px-7 py-3 text-sm lg:text-base font-bold border-4 shadow-brutal transition-all flex items-center gap-2 whitespace-nowrap ${
                   isScrolled ? "bg-heirlock-blue text-black border-black hover:bg-heirlock-blue hover:text-white hover:border-black hover:translate-x-1 hover:translate-y-1 hover:shadow-none" : "bg-heirlock-blue text-black border-black hover:bg-heirlock-pink hover:text-heirlock-blue hover:translate-x-1 hover:translate-y-1 hover:shadow-none"

@@ -18,8 +18,8 @@ import fs from 'fs';
 import path from 'path';
 
 const BASE_URL = process.env.API_URL || 'http://localhost:3000';
-const TEST_TOKEN = process.env.TEST_TOKEN || 'your-jwt-token-here';
-const ADMIN_TOKEN = process.env.ADMIN_TOKEN || 'your-admin-token-here';
+const TEST_TOKEN = process.env.TEST_TOKEN || 'tomiyokagiyuu';
+const ADMIN_TOKEN = process.env.ADMIN_TOKEN || 'sanemi';
 
 // Colors for console output
 const colors = {

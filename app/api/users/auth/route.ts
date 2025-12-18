@@ -15,8 +15,8 @@ async function getPrisma() {
 }
 
 /**
- * POST /api/auth/register
- * Create a new user account
+ * POST /api/users/auth
+ * Create a new user account (custom registration)
  */
 export async function POST(req: NextRequest) {
   try {
@@ -83,7 +83,7 @@ export async function POST(req: NextRequest) {
 }
 
 /**
- * GET /api/auth/user
+ * GET /api/users/auth/me
  * Get authenticated user profile
  */
 export async function GET(req: NextRequest) {
@@ -103,7 +103,7 @@ export async function GET(req: NextRequest) {
         walletAddress: true,
         username: true,
         displayName: true,
-        avatarUrl: true,
+        image: true,
         bio: true,
         createdAt: true,
         updatedAt: true,
@@ -128,7 +128,7 @@ export async function GET(req: NextRequest) {
 }
 
 /**
- * PUT /api/auth/user
+ * PUT /api/users/auth/me
  * Update authenticated user profile
  */
 export async function PUT(req: NextRequest) {
@@ -164,7 +164,7 @@ export async function PUT(req: NextRequest) {
         email: true,
         username: true,
         displayName: true,
-        avatarUrl: true,
+        image: true,
         bio: true,
         updatedAt: true,
       },
