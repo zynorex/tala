@@ -4,17 +4,9 @@ import { useState } from 'react';
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useAccount, useSignMessage } from 'wagmi';
-import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { Lock, Wallet, Mail, ChevronRight, AlertCircle } from 'lucide-react';
-
-// Dynamic import for RainbowKit to avoid SSR issues
-const ConnectButtonDynamic = dynamic(
-  () => import('@rainbow-me/rainbowkit').then(mod => ({ 
-    default: () => <mod.ConnectButton /> 
-  })),
-  { ssr: false }
-);
+import { ConnectButton } from '@rainbow-me/rainbowkit';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -24,7 +16,6 @@ export default function LoginPage() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [walletLoading, setWalletLoading] = useState(false);
-  const [mounted, setMounted] = useState(typeof window !== 'undefined');
 
   // Google Login
   const handleGoogleLogin = async () => {
@@ -97,11 +88,9 @@ export default function LoginPage() {
     }
   };
 
-  if (!mounted) return null;
-
   return (
     <div className="min-h-screen bg-black flex items-center justify-center p-4 pt-20">
-      <div className="relative z-10 w-full max-w-md">
+      <div className="w-full max-w-md">
         {/* Header */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center w-16 h-16 mb-4 bg-heirlock-yellow border-4 border-black">
@@ -144,7 +133,7 @@ export default function LoginPage() {
           <div className="space-y-2">
             <div className="p-4 bg-heirlock-blue border-4 border-black text-black shadow-brutal">
               <div className="text-xs font-bold text-black mb-3">🔗 CONNECT WALLET</div>
-              <ConnectButtonDynamic />
+              <ConnectButton />
             </div>
 
             {isConnected && address && (

@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, Space_Grotesk } from "next/font/google";
 import "./globals.css";
-import { Web3Provider } from "@/components/providers/Web3Provider";
 import { ToastProvider } from "./providers/ToastProvider";
 import { ThemeProvider } from "./providers/ThemeProvider";
 import { AdminShortcutProvider } from "./providers/AdminShortcutProvider";
@@ -12,6 +11,7 @@ import MobileWarning from "./components/MobileWarning";
 import PageSkeleton from "./components/PageSkeleton";
 import DevelopmentNotification from "./components/DevelopmentNotification";
 import CookieConsent from "./components/CookieConsent";
+import Web3ClientWrapper from "./components/Web3ClientWrapper";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -49,7 +49,7 @@ export default function RootLayout({
         <ErrorBoundary>
           <AdminShortcutProvider>
             <ThemeProvider>
-              <Web3Provider>
+              <Web3ClientWrapper>
                 <ToastProvider>
                   <PageSkeleton />
                   <MobileWarning />
@@ -61,7 +61,7 @@ export default function RootLayout({
                   </div>
                   <Footer />
                 </ToastProvider>
-              </Web3Provider>
+              </Web3ClientWrapper>
             </ThemeProvider>
           </AdminShortcutProvider>
         </ErrorBoundary>
