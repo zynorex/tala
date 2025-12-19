@@ -4,8 +4,9 @@ import Link from "next/link";
 import Image from "next/image";
 import dynamic from "next/dynamic";
 import { useState, useEffect } from "react";
-import { Menu, X, ChevronDown, BookOpen, Zap, Code, Shield, HelpCircle, Newspaper, LayoutGrid, Mail } from "lucide-react";
+import { Menu, X, ChevronDown, BookOpen, Zap, Code, Shield, HelpCircle, Newspaper, LayoutGrid, Mail, LogOut } from "lucide-react";
 import { usePathname } from "next/navigation";
+import { useSession, signOut } from "next-auth/react";
 
 // Dynamic imports to avoid hydration issues with Web3
 const WalletButton = dynamic(() => import("./WalletButton"), { 
@@ -17,7 +18,19 @@ export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isResourcesOpen, setIsResourcesOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const [session, setSession] = useState<any>(null);
   const pathname = usePathname();
+
+  // Defer session fetch to after mount to avoid SSR issues
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const { getSession } = require('next-auth/react');
+      getSession().then((ses: any) => {
+        setSession(ses);
+      });
+    }
+  }, []);
 
   const toggleMenu = () => setIsOpen(!isOpen);
 
@@ -221,15 +234,70 @@ export default function Navbar() {
                 }`}>Create Vault</button>
               </Link>
 
-              {mounted && <WalletButton isScrolled={isScrolled} />}
+              {/* Show wallet button only if not logged in with Google */}
+              {mounted && !session && <WalletButton isScrolled={isScrolled} />}
 
-              <Link href="/auth/login">
-                <button className={`px-5 lg:px-7 py-3 text-sm lg:text-base font-bold border-4 shadow-brutal transition-all flex items-center gap-2 whitespace-nowrap ${
-                  isScrolled ? "bg-heirlock-green text-black border-black hover:bg-heirlock-green hover:text-white hover:border-black hover:translate-x-1 hover:translate-y-1 hover:shadow-none" : "bg-heirlock-green text-black border-black hover:bg-heirlock-blue hover:text-white hover:translate-x-1 hover:translate-y-1 hover:shadow-none"
-                }`}>
-                  Sign In
-                </button>
-              </Link>
+              {/* Show user profile if logged in */}
+              {mounted && session?.user && (
+                <div className="relative group/profile">
+                  <button 
+                    onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+                    className={`p-2 rounded-full border-4 shadow-brutal transition-all ${
+                      isScrolled ? "border-black hover:bg-heirlock-yellow" : "border-black hover:bg-heirlock-pink"
+                    }`}
+                  >
+                    {session.user.image ? (
+                      <Image
+                        src={session.user.image}
+                        alt={session.user.name || "User"}
+                        width={40}
+                        height={40}
+                        className="rounded-full w-10 h-10"
+                      />
+                    ) : (
+                      <div className="w-10 h-10 bg-gradient-to-br from-heirlock-blue to-heirlock-pink rounded-full flex items-center justify-center text-white font-bold">
+                        {session.user.name?.charAt(0) || session.user.email?.charAt(0) || 'U'}
+                      </div>
+                    )}
+                  </button>
+
+                  {/* User menu dropdown */}
+                  {isUserMenuOpen && (
+                    <div className="absolute right-0 mt-2 w-48 bg-black border-4 border-black shadow-brutal z-50">
+                      <div className="p-4 border-b-2 border-white">
+                        <p className="text-white font-bold text-sm">{session.user.name}</p>
+                        <p className="text-gray-400 text-xs">{session.user.email}</p>
+                      </div>
+                      <Link href="/dashboard" onClick={() => setIsUserMenuOpen(false)}>
+                        <button className="w-full text-left px-4 py-2 text-white hover:bg-heirlock-blue transition-all text-sm font-bold">
+                          Dashboard
+                        </button>
+                      </Link>
+                      <button 
+                        onClick={() => {
+                          setIsUserMenuOpen(false);
+                          signOut({ redirect: true, callbackUrl: '/' });
+                        }}
+                        className="w-full text-left px-4 py-2 text-white hover:bg-heirlock-pink transition-all text-sm font-bold flex items-center gap-2 border-t-2 border-white"
+                      >
+                        <LogOut className="w-4 h-4" />
+                        Logout
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Show Sign In button if not logged in */}
+              {mounted && !session && (
+                <Link href="/auth/login">
+                  <button className={`px-5 lg:px-7 py-3 text-sm lg:text-base font-bold border-4 shadow-brutal transition-all flex items-center gap-2 whitespace-nowrap ${
+                    isScrolled ? "bg-heirlock-green text-black border-black hover:bg-heirlock-green hover:text-white hover:border-black hover:translate-x-1 hover:translate-y-1 hover:shadow-none" : "bg-heirlock-green text-black border-black hover:bg-heirlock-blue hover:text-white hover:translate-x-1 hover:translate-y-1 hover:shadow-none"
+                  }`}>
+                    Sign In
+                  </button>
+                </Link>
+              )}
 
               <Link href="/dashboard">
                 <button className={`px-5 lg:px-7 py-3 text-sm lg:text-base font-bold border-4 shadow-brutal transition-all flex items-center gap-2 whitespace-nowrap ${

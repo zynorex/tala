@@ -1,6 +1,5 @@
-import Image from 'next/image';
 import Link from 'next/link';
-import { ChevronRight, Home } from 'lucide-react';
+import { Home, Search } from 'lucide-react';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -10,82 +9,80 @@ export const metadata: Metadata = {
 
 export default function NotFound() {
   return (
-    <main className="h-screen bg-cream overflow-hidden flex flex-col">
-      {/* Image Section - Responsive Size */}
-      <div className="shrink-0 h-36 sm:h-40 md:h-48 flex items-center justify-center px-2">
-        <Image
-          src="/404.png"
-          alt="404 - Page Not Found"
-          width={1200}
-          height={600}
-          className="object-contain h-full w-auto"
-          priority
-        />
-      </div>
+    <div className="min-h-screen bg-black flex items-center justify-center p-4 pt-20">
+      <div className="max-w-3xl w-full">
+        {/* 404 Container */}
+        <div className="bg-heirlock-yellow border-4 border-black shadow-brutal p-8 md:p-12 mb-8">
+          {/* 404 Number */}
+          <div className="text-center mb-8">
+            <h1 className="text-7xl md:text-9xl font-black text-black mb-4 tracking-tighter">
+              404
+            </h1>
+            <div className="h-2 w-32 bg-black mx-auto"></div>
+          </div>
 
-      {/* Content Section - Scrollable if needed but fits in one frame */}
-      <div className="flex-1 overflow-y-auto py-6 sm:py-8 px-4 sm:px-6">
-        <div className="max-w-3xl mx-auto">
-          {/* Header - Compact */}
-          <div className="space-y-3 mb-6">
-            <div className="flex items-center gap-3">
-              <h1 className="text-6xl sm:text-7xl md:text-8xl font-black text-black font-mono leading-none">
-                404
-              </h1>
+          {/* Title */}
+          <h2 className="text-3xl md:text-4xl font-black text-black text-center mb-6">
+            PAGE NOT FOUND
+          </h2>
+
+          {/* Description */}
+          <p className="text-lg font-bold text-black text-center mb-8 leading-relaxed">
+            We couldn't find what you were looking for. The page might have been moved, deleted, or never existed.
+          </p>
+
+          {/* Illustration Placeholder */}
+          <div className="bg-black border-4 border-black rounded-lg p-8 mb-8 flex items-center justify-center h-48 bg-opacity-10">
+            <div className="text-center">
+              <Search className="w-16 h-16 text-black mx-auto mb-4 opacity-50" />
+              <p className="text-sm font-bold text-black">Nothing here...</p>
             </div>
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-black text-black leading-tight">
-              Lost in the Vault
-            </h2>
-            <p className="text-sm sm:text-base text-gray-800 font-medium">
-              The page you're looking for doesn't exist or has been removed.
-            </p>
           </div>
 
-          {/* Divider - Thin */}
-          <div className="border-t-3 border-black my-4"></div>
-
-          {/* Compact Suggestions - 2 or 3 columns */}
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-6">
-            <Link href="/">
-              <div className="border-3 border-black p-4 bg-heirlock-yellow shadow-brutal text-center cursor-pointer hover:translate-y-[-2px] hover:shadow-lg transition-all duration-200">
-                <div className="text-2xl font-black text-black mb-1">01</div>
-                <h3 className="font-black text-black text-xs sm:text-sm uppercase">Home</h3>
-              </div>
-            </Link>
-
-            <Link href="/docs">
-              <div className="border-3 border-black p-4 bg-heirlock-pink shadow-brutal text-center cursor-pointer hover:translate-y-[-2px] hover:shadow-lg transition-all duration-200">
-                <div className="text-2xl font-black text-black mb-1">02</div>
-                <h3 className="font-black text-black text-xs sm:text-sm uppercase">Docs</h3>
-              </div>
-            </Link>
-
-            <Link href="mailto:support@tala.protocol">
-              <div className="border-3 border-black p-4 bg-heirlock-blue shadow-brutal text-center cursor-pointer hover:translate-y-[-2px] hover:shadow-lg transition-all duration-200 hidden md:block">
-                <div className="text-2xl font-black text-black mb-1">03</div>
-                <h3 className="font-black text-black text-xs sm:text-sm uppercase">Support</h3>
-              </div>
-            </Link>
-          </div>
-
-          {/* CTA Buttons - Compact */}
-          <div className="flex gap-2 sm:gap-3">
+          {/* Action Buttons */}
+          <div className="flex flex-col sm:flex-row gap-4">
             <Link href="/" className="flex-1">
-              <button className="w-full px-4 py-3 sm:py-4 bg-black text-heirlock-yellow font-black border-3 border-black shadow-brutal text-xs sm:text-sm hover:translate-y-[-2px] transition-all duration-200">
-                <Home className="w-4 h-4 sm:w-5 sm:h-5 inline mr-2" />
-                <span className="hidden sm:inline">Home</span>
+              <button className="w-full px-6 py-4 bg-heirlock-green text-black font-bold border-4 border-black shadow-brutal hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all flex items-center justify-center gap-2 text-base">
+                <Home className="w-5 h-5" />
+                Back to Home
               </button>
             </Link>
-            <Link href="/docs" className="flex-1">
-              <button className="w-full px-4 py-3 sm:py-4 bg-white text-black font-black border-3 border-black shadow-brutal text-xs sm:text-sm hover:translate-y-[-2px] transition-all duration-200">
-                <span className="hidden sm:inline">Docs</span>
-                <span className="sm:hidden">View</span>
-                <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5 inline ml-2" />
+
+            <Link href="/how-it-works" className="flex-1">
+              <button className="w-full px-6 py-4 bg-heirlock-blue text-black font-bold border-4 border-black shadow-brutal hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all text-base">
+                How It Works
+              </button>
+            </Link>
+          </div>
+        </div>
+
+        {/* Suggestions */}
+        <div className="bg-heirlock-pink border-4 border-black shadow-brutal p-6">
+          <h3 className="font-bold text-black text-lg mb-4">Suggested Pages:</h3>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <Link href="/dashboard">
+              <button className="w-full px-3 py-3 bg-black text-heirlock-pink font-bold border-2 border-black hover:bg-heirlock-pink hover:text-black transition-all text-sm">
+                Dashboard
+              </button>
+            </Link>
+            <Link href="/create-vault">
+              <button className="w-full px-3 py-3 bg-black text-heirlock-green font-bold border-2 border-black hover:bg-heirlock-green hover:text-black transition-all text-sm">
+                Create Vault
+              </button>
+            </Link>
+            <Link href="/about">
+              <button className="w-full px-3 py-3 bg-black text-heirlock-yellow font-bold border-2 border-black hover:bg-heirlock-yellow hover:text-black transition-all text-sm">
+                About
+              </button>
+            </Link>
+            <Link href="/contact">
+              <button className="w-full px-3 py-3 bg-black text-heirlock-blue font-bold border-2 border-black hover:bg-heirlock-blue hover:text-black transition-all text-sm">
+                Contact
               </button>
             </Link>
           </div>
         </div>
       </div>
-    </main>
+    </div>
   );
 }
