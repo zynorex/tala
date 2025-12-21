@@ -31,7 +31,8 @@ interface ActivityEvent {
   description: string;
 }
 
-export default function VaultDetailPage({ params }: { params: { id: string } }) {
+export default function VaultDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const [id, setId] = useState<string | null>(null);
   const { isConnected, address } = useAccount();
   const { toast } = useToast();
   
@@ -47,20 +48,25 @@ export default function VaultDetailPage({ params }: { params: { id: string } }) 
 
   const timeRemaining = useCountdown(vault?.unlockTime || 0);
 
+  // Resolve params
+  useEffect(() => {
+    params.then((p) => setId(p.id));
+  }, [params]);
+
   // Load vault data
   useEffect(() => {
-    if (!isConnected) return;
+    if (!isConnected || !id) return;
 
     try {
       const storedVaults = JSON.parse(localStorage.getItem('vaults') || '[]');
-      const foundVault = storedVaults.find((v: Vault) => v.id === params.id);
+      const foundVault = storedVaults.find((v: Vault) => v.id === id);
       
       if (foundVault) {
         setVault(foundVault);
         setEditedDescription(foundVault.description);
 
         // Load activities for this vault
-        const storedActivities = JSON.parse(localStorage.getItem(`vault_activities_${params.id}`) || '[]');
+        const storedActivities = JSON.parse(localStorage.getItem(`vault_activities_${id}`) || '[]');
         setActivities(storedActivities);
       }
     } catch (error) {
@@ -69,7 +75,7 @@ export default function VaultDetailPage({ params }: { params: { id: string } }) 
     } finally {
       setIsLoading(false);
     }
-  }, [isConnected, params.id, toast]);
+  }, [isConnected, id, toast]);
 
   if (!isConnected) {
     return (

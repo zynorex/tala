@@ -73,7 +73,7 @@ export async function POST(req: NextRequest) {
         userId: payload.userId,
         vaultId: vault.id,
         action: 'VAULT_CREATED',
-        details: `Created vault: ${name}`,
+        description: `Created vault: ${name}`,
       },
     });
 

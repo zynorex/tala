@@ -31,44 +31,62 @@ export default function DashboardContent() {
   });
   const [isLoading, setIsLoading] = useState(true);
   const [showSensitiveData, setShowSensitiveData] = useState(false);
+  const [vaults, setVaults] = useState<any[]>([]);
+  const [activities, setActivities] = useState<any[]>([]);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (isConnected && address) {
-      loadDashboardData();
-    }
-  }, [isConnected, address]);
+    loadDashboardData();
+  }, []);
 
   const loadDashboardData = async () => {
     setIsLoading(true);
+    setError(null);
     try {
-      // Get vaults from localStorage (in production, this would be from API/blockchain)
-      const vaultsStr = localStorage.getItem(`vaults_${address}`);
-      const vaults = vaultsStr ? JSON.parse(vaultsStr) : [];
+      // Fetch vaults from API
+      const vaultsRes = await fetch('/api/vaults');
+      if (!vaultsRes.ok) throw new Error('Failed to fetch vaults');
+      const vaultsData = await vaultsRes.json();
+      
+      const vaultList = vaultsData.data?.data || [];
+      setVaults(vaultList);
 
-      const now = Date.now() / 1000;
-      const activeVaults = vaults.filter((v: any) => v.unlockTime > now).length;
-
+      // Calculate dashboard stats
       let totalStorage = 0;
-      let totalDuration = 0;
-
-      vaults.forEach((vault: any) => {
-        totalStorage += vault.fileSize || 0;
-        totalDuration += (vault.unlockTime - vault.createdAt) || 0;
+      vaultList.forEach((vault: any) => {
+        if (vault.files) {
+          vault.files.forEach((file: any) => {
+            totalStorage += file.fileSizeBytes || 0;
+          });
+        }
       });
 
-      const avgDuration = vaults.length > 0 ? totalDuration / vaults.length : 0;
-      const lastVault = vaults.length > 0 ? new Date(vaults[vaults.length - 1].createdAt * 1000).toLocaleDateString() : null;
+      const lastVault = vaultList.length > 0 
+        ? new Date(vaultList[0].createdAt).toLocaleDateString()
+        : null;
 
       setDashboardData({
-        totalVaults: vaults.length,
+        totalVaults: vaultList.length,
         totalStorageUsed: totalStorage,
-        activeVaults,
-        secureVaults: vaults.length, // All are secure by default
+        activeVaults: vaultList.filter((v: any) => v.isActive).length,
+        secureVaults: vaultList.length,
         lastVaultCreated: lastVault,
-        averageVaultDuration: avgDuration,
+        averageVaultDuration: 0,
       });
+
+      // Fetch activity log
+      try {
+        const activitiesRes = await fetch('/api/activity');
+        if (activitiesRes.ok) {
+          const activitiesData = await activitiesRes.json();
+          setActivities(activitiesData.data || []);
+        }
+      } catch (e) {
+        console.warn('Could not fetch activities:', e);
+      }
     } catch (error) {
       console.error('Failed to load dashboard data:', error);
+      setError(error instanceof Error ? error.message : 'Failed to load dashboard');
     } finally {
       setIsLoading(false);
     }

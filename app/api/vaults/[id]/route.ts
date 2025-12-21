@@ -41,19 +41,20 @@ export async function GET(
         createdAt: true,
         updatedAt: true,
         files: {
-          where: { isDeleted: false },
+          where: { deletedAt: null },
           select: {
             id: true,
-            name: true,
-            size: true,
+            fileName: true,
             mimeType: true,
+            fileSizeBytes: true,
+            ipfsHash: true,
             uploadedAt: true,
           },
           orderBy: { uploadedAt: 'desc' },
         },
         _count: {
           select: {
-            files: { where: { isDeleted: false } },
+            files: { where: { deletedAt: null } },
           },
         },
       },
@@ -142,7 +143,7 @@ export async function PUT(
         userId: payload.userId,
         vaultId: id,
         action: 'VAULT_UPDATED',
-        details: `Updated vault metadata`,
+        description: `Updated vault metadata`,
       },
     });
 
@@ -212,7 +213,7 @@ export async function DELETE(
         userId: payload.userId,
         vaultId: id,
         action: 'VAULT_DELETED',
-        details: `Deleted vault`,
+        description: `Deleted vault: ${vault.name}`,
       },
     });
 
