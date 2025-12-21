@@ -227,17 +227,27 @@ export default function Navbar() {
               </div>
             </div>
 
-            <div className="flex items-center gap-3 lg:gap-4 flex-1 justify-end">
+            {/* Middle Section: Create Vault | Dashboard | Profile */}
+            <div className="flex items-center gap-2 lg:gap-4 flex-1 justify-center">
               <Link href="/create-vault">
-                <button className={`px-5 lg:px-7 py-3 text-sm lg:text-base font-bold border-4 shadow-brutal transition-all whitespace-nowrap ${
+                <button className={`px-4 lg:px-6 py-2 text-sm lg:text-base font-bold border-4 shadow-brutal transition-all whitespace-nowrap ${
                   isScrolled ? "bg-heirlock-yellow text-black border-black hover:bg-heirlock-yellow hover:text-black hover:border-black hover:translate-x-1 hover:translate-y-1 hover:shadow-none" : "bg-heirlock-yellow text-black border-black hover:bg-heirlock-pink hover:text-black hover:border-black hover:translate-x-1 hover:translate-y-1 hover:shadow-none"
                 }`}>Create Vault</button>
               </Link>
 
-              {/* Show wallet button only if not logged in with Google */}
-              {mounted && !session && <WalletButton isScrolled={isScrolled} />}
+              {/* Dashboard Button - shown only when logged in */}
+              {mounted && session?.user && (
+                <Link href="/dashboard">
+                  <button className={`px-4 lg:px-6 py-2 text-sm lg:text-base font-bold border-4 shadow-brutal transition-all whitespace-nowrap flex items-center gap-1 ${
+                    isScrolled ? "bg-heirlock-blue text-black border-black hover:bg-heirlock-blue hover:text-black hover:border-black hover:translate-x-1 hover:translate-y-1 hover:shadow-none" : "bg-heirlock-blue text-black border-black hover:bg-heirlock-green hover:text-black hover:border-black hover:translate-x-1 hover:translate-y-1 hover:shadow-none"
+                  }`}>
+                    <LayoutGrid className="w-4 h-4" />
+                    Dashboard
+                  </button>
+                </Link>
+              )}
 
-              {/* Show user profile if logged in */}
+              {/* Profile Avatar - shown only when logged in */}
               {mounted && session?.user && (
                 <div className="relative group/profile">
                   <button 
@@ -268,17 +278,12 @@ export default function Navbar() {
                         <p className="text-white font-bold text-sm">{session.user.name}</p>
                         <p className="text-gray-400 text-xs">{session.user.email}</p>
                       </div>
-                      <Link href="/dashboard" onClick={() => setIsUserMenuOpen(false)}>
-                        <button className="w-full text-left px-4 py-2 text-white hover:bg-heirlock-blue transition-all text-sm font-bold">
-                          Dashboard
-                        </button>
-                      </Link>
                       <button 
                         onClick={() => {
                           setIsUserMenuOpen(false);
                           signOut({ redirect: true, callbackUrl: '/' });
                         }}
-                        className="w-full text-left px-4 py-2 text-white hover:bg-heirlock-pink transition-all text-sm font-bold flex items-center gap-2 border-t-2 border-white"
+                        className="w-full text-left px-4 py-2 text-white hover:bg-heirlock-pink transition-all text-sm font-bold flex items-center gap-2"
                       >
                         <LogOut className="w-4 h-4" />
                         Logout
@@ -287,6 +292,12 @@ export default function Navbar() {
                   )}
                 </div>
               )}
+            </div>
+
+            {/* Right Section: Wallet Button or Sign In */}
+            <div className="flex items-center gap-3 lg:gap-4 justify-end">
+              {/* Show wallet button only if not logged in with Google */}
+              {mounted && !session && <WalletButton isScrolled={isScrolled} />}
 
               {/* Show Sign In button if not logged in */}
               {mounted && !session && (
@@ -298,15 +309,6 @@ export default function Navbar() {
                   </button>
                 </Link>
               )}
-
-              <Link href="/dashboard">
-                <button className={`px-5 lg:px-7 py-3 text-sm lg:text-base font-bold border-4 shadow-brutal transition-all flex items-center gap-2 whitespace-nowrap ${
-                  isScrolled ? "bg-heirlock-blue text-black border-black hover:bg-heirlock-blue hover:text-white hover:border-black hover:translate-x-1 hover:translate-y-1 hover:shadow-none" : "bg-heirlock-blue text-black border-black hover:bg-heirlock-pink hover:text-heirlock-blue hover:translate-x-1 hover:translate-y-1 hover:shadow-none"
-                }`}>
-                  <LayoutGrid className="w-4 h-4" />
-                  Dashboard
-                </button>
-              </Link>
             </div>
           </div>
 
