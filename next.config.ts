@@ -10,15 +10,6 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-  webpack: (config, { isServer }) => {
-    config.resolve.fallback = {
-      ...config.resolve.fallback,
-      'pino': false,
-      'thread-stream': false,
-      'worker_threads': false,
-    };
-    return config;
-  },
 };
 
 export default nextConfig;

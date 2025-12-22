@@ -25,12 +25,14 @@ const config: Config = {
         'heirlock-pink': '#FFB3BA',
         'heirlock-green': '#BAFFC9',
         'heirlock-blue': '#BAE1FF',
+        'heirlock-red': '#FF6961',
       },
       backgroundColor: {
         'heirlock-yellow': '#FFFACD',
         'heirlock-pink': '#FFB3BA',
         'heirlock-green': '#BAFFC9',
         'heirlock-blue': '#BAE1FF',
+        'heirlock-red': '#FF6961',
       },
       fontFamily: {
         sans: ['var(--font-inter)', 'system-ui', 'sans-serif'],
