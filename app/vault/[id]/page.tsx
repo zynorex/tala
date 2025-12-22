@@ -6,29 +6,49 @@ import Link from 'next/link';
 import { 
   Lock, Download, Share2, Trash2, Edit2, Shield, Clock, FileText, 
   ArrowLeft, AlertCircle, CheckCircle, Eye, EyeOff, Copy, MoreVertical,
-  Calendar, HardDrive, Activity
+  Calendar, HardDrive, Activity, FileIcon, Zap, ExternalLink, RefreshCw,
+  User, Key, Hash, BarChart3, Lock as LockIcon
 } from 'lucide-react';
 import { useToast } from '@/app/hooks/useToast';
-import { useCountdown } from '@/app/hooks/useCountdown';
 
-interface Vault {
+interface VaultData {
   id: string;
-  description: string;
-  createdAt: number;
-  unlockTime: number;
-  fileSize: number;
+  userId: string;
+  name: string;
+  description: string | null;
   fileName: string;
-  txHash: string;
-  encryptionMethod: string;
-  isUnlocked: boolean;
+  fileSize: number;
+  mimeType: string | null;
   fileHash: string;
+  keyHash: string;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+  files: VaultFile[];
+  activityLogs: ActivityLogEntry[];
 }
 
-interface ActivityEvent {
+interface VaultFile {
   id: string;
-  type: 'accessed' | 'unlocked' | 'downloaded' | 'settings_changed';
-  timestamp: number;
-  description: string;
+  fileName: string;
+  fileSizeBytes: number;
+  mimeType: string | null;
+  fileHash: string;
+  ipfsHash: string;
+  encryptionKeyHash: string;
+  uploadedBy: string;
+  uploadedAt: string;
+  isActive: boolean;
+  deletedAt: string | null;
+}
+
+interface ActivityLogEntry {
+  id: string;
+  userId: string;
+  action: string;
+  description: string | null;
+  ipAddress: string | null;
+  createdAt: string;
 }
 
 export default function VaultDetailPage({ params }: { params: Promise<{ id: string }> }) {
@@ -36,47 +56,64 @@ export default function VaultDetailPage({ params }: { params: Promise<{ id: stri
   const { isConnected, address } = useAccount();
   const { toast } = useToast();
   
-  const [vault, setVault] = useState<Vault | null>(null);
-  const [activities, setActivities] = useState<ActivityEvent[]>([]);
+  const [vault, setVault] = useState<VaultData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isUpdating, setIsUpdating] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+  const [editedName, setEditedName] = useState('');
   const [editedDescription, setEditedDescription] = useState('');
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-  const [showFileHash, setShowFileHash] = useState(false);
+  const [deleteConfirmText, setDeleteConfirmText] = useState('');
+  const [showFileHash, setShowFileHash] = useState<string | null>(null);
   const [copied, setCopied] = useState<string | null>(null);
-
-  const timeRemaining = useCountdown(vault?.unlockTime || 0);
+  const [downloadingFileId, setDownloadingFileId] = useState<string | null>(null);
+  const [deletingFileId, setDeletingFileId] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<'overview' | 'files' | 'activity'>('overview');
 
   // Resolve params
   useEffect(() => {
     params.then((p) => setId(p.id));
   }, [params]);
 
-  // Load vault data
+  // Load vault data from API
   useEffect(() => {
-    if (!isConnected || !id) return;
+    if (!isConnected || !id || !address) return;
 
-    try {
-      const storedVaults = JSON.parse(localStorage.getItem('vaults') || '[]');
-      const foundVault = storedVaults.find((v: Vault) => v.id === id);
-      
-      if (foundVault) {
-        setVault(foundVault);
-        setEditedDescription(foundVault.description);
+    const fetchVault = async () => {
+      try {
+        setIsLoading(true);
+        const response = await fetch(`/api/vaults/${id}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-User-Address': address,
+          },
+        });
 
-        // Load activities for this vault
-        const storedActivities = JSON.parse(localStorage.getItem(`vault_activities_${id}`) || '[]');
-        setActivities(storedActivities);
+        if (!response.ok) {
+          throw new Error(`Failed to load vault: ${response.status}`);
+        }
+
+        const data = await response.json();
+        setVault(data);
+        setEditedName(data.name);
+        setEditedDescription(data.description || '');
+      } catch (error) {
+        console.error('Error loading vault:', error);
+        toast(
+          error instanceof Error ? error.message : 'Failed to load vault details',
+          'error'
+        );
+      } finally {
+        setIsLoading(false);
       }
-    } catch (error) {
-      console.error('Error loading vault:', error);
-      toast('Failed to load vault details', 'error');
-    } finally {
-      setIsLoading(false);
-    }
-  }, [isConnected, id, toast]);
+    };
 
+    fetchVault();
+  }, [isConnected, id, address, toast]);
+
+  // Disconnect/permission check
   if (!isConnected) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-cream to-white p-4 md:p-8 pt-24">
@@ -84,8 +121,11 @@ export default function VaultDetailPage({ params }: { params: Promise<{ id: stri
           <div className="border-4 border-black p-8 text-center bg-white">
             <AlertCircle className="w-12 h-12 mx-auto mb-4 text-red-600" />
             <h1 className="text-2xl font-black mb-4">Wallet Not Connected</h1>
-            <p className="text-sm mb-4">Please connect your wallet to view vault details</p>
-            <Link href="/dashboard" className="text-heirlock-blue underline font-black">
+            <p className="text-sm mb-6">Please connect your wallet to view vault details</p>
+            <Link 
+              href="/dashboard" 
+              className="inline-block px-6 py-3 bg-black text-white font-black border-3 border-black hover:opacity-90"
+            >
               Back to Dashboard
             </Link>
           </div>
@@ -94,13 +134,44 @@ export default function VaultDetailPage({ params }: { params: Promise<{ id: stri
     );
   }
 
-  if (isLoading || !vault) {
+  // Loading state
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-cream to-white p-4 md:p-8 pt-24">
+        <div className="max-w-6xl mx-auto">
+          <div className="animate-pulse space-y-6">
+            <div className="h-8 bg-gray-200 rounded w-1/4"></div>
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <div className="lg:col-span-2 space-y-6">
+                <div className="border-4 border-black p-6 bg-gray-100 h-32"></div>
+                <div className="border-4 border-black p-6 bg-gray-100 h-48"></div>
+              </div>
+              <div className="space-y-6">
+                <div className="border-4 border-black p-6 bg-gray-100 h-32"></div>
+                <div className="border-4 border-black p-6 bg-gray-100 h-48"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // 404 state
+  if (!vault) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-cream to-white p-4 md:p-8 pt-24">
         <div className="max-w-4xl mx-auto">
-          <div className="border-4 border-black p-8 bg-white animate-pulse">
-            <div className="h-8 bg-gray-200 rounded w-1/4 mb-4"></div>
-            <div className="h-64 bg-gray-200 rounded"></div>
+          <div className="border-4 border-black p-8 text-center bg-white">
+            <AlertCircle className="w-12 h-12 mx-auto mb-4 text-red-600" />
+            <h1 className="text-2xl font-black mb-4">Vault Not Found</h1>
+            <p className="text-sm mb-6">The vault you're looking for doesn't exist or you don't have access to it.</p>
+            <Link 
+              href="/dashboard" 
+              className="inline-block px-6 py-3 bg-black text-white font-black border-3 border-black hover:opacity-90"
+            >
+              Back to Dashboard
+            </Link>
           </div>
         </div>
       </div>
@@ -115,8 +186,15 @@ export default function VaultDetailPage({ params }: { params: Promise<{ id: stri
     return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + ' ' + sizes[i];
   };
 
-  const formatDate = (timestamp: number) => {
-    return new Date(timestamp * 1000).toLocaleString();
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit'
+    });
   };
 
   const copyToClipboard = (text: string, label: string) => {
@@ -126,43 +204,122 @@ export default function VaultDetailPage({ params }: { params: Promise<{ id: stri
     setTimeout(() => setCopied(null), 2000);
   };
 
-  const handleUpdateDescription = () => {
-    if (editedDescription.trim() === vault.description) {
-      setIsEditing(false);
+  const handleUpdateVault = async () => {
+    if (!editedName.trim()) {
+      toast('Vault name cannot be empty', 'error');
       return;
     }
 
-    const updatedVault = { ...vault, description: editedDescription };
-    const storedVaults = JSON.parse(localStorage.getItem('vaults') || '[]');
-    const updated = storedVaults.map((v: Vault) => v.id === vault.id ? updatedVault : v);
-    localStorage.setItem('vaults', JSON.stringify(updated));
-    setVault(updatedVault);
-    setIsEditing(false);
-    toast('Vault description updated', 'success');
+    try {
+      setIsUpdating(true);
+      const response = await fetch(`/api/vaults/${vault.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-User-Address': address!,
+        },
+        body: JSON.stringify({
+          name: editedName.trim(),
+          description: editedDescription.trim(),
+        }),
+      });
 
-    // Log activity
-    const newActivity: ActivityEvent = {
-      id: Date.now().toString(),
-      type: 'settings_changed',
-      timestamp: Math.floor(Date.now() / 1000),
-      description: 'Updated vault description'
-    };
-    const updatedActivities = [...activities, newActivity];
-    localStorage.setItem(`vault_activities_${vault.id}`, JSON.stringify(updatedActivities));
-    setActivities(updatedActivities);
+      if (!response.ok) {
+        throw new Error('Failed to update vault');
+      }
+
+      const updated = await response.json();
+      setVault(updated);
+      setIsEditing(false);
+      toast('Vault updated successfully', 'success');
+    } catch (error) {
+      console.error('Error updating vault:', error);
+      toast('Failed to update vault', 'error');
+    } finally {
+      setIsUpdating(false);
+    }
   };
 
-  const handleDeleteVault = () => {
-    const storedVaults = JSON.parse(localStorage.getItem('vaults') || '[]');
-    const filtered = storedVaults.filter((v: Vault) => v.id !== vault.id);
-    localStorage.setItem('vaults', JSON.stringify(filtered));
-    localStorage.removeItem(`vault_activities_${vault.id}`);
-    toast('Vault deleted successfully', 'success');
-    // Redirect after short delay
-    setTimeout(() => window.location.href = '/dashboard', 500);
+  const handleDeleteVault = async () => {
+    if (deleteConfirmText !== 'DELETE') {
+      toast('Please type DELETE to confirm', 'error');
+      return;
+    }
+
+    try {
+      setIsUpdating(true);
+      const response = await fetch(`/api/vaults/${vault.id}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-User-Address': address!,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to delete vault');
+      }
+
+      toast('Vault deleted successfully', 'success');
+      setTimeout(() => window.location.href = '/dashboard', 1000);
+    } catch (error) {
+      console.error('Error deleting vault:', error);
+      toast('Failed to delete vault', 'error');
+    } finally {
+      setIsUpdating(false);
+    }
   };
 
-  const isUnlocked = vault.unlockTime <= Math.floor(Date.now() / 1000);
+  const handleDownloadFile = async (file: VaultFile) => {
+    try {
+      setDownloadingFileId(file.id);
+      // In a real implementation, this would decrypt and download the file
+      // For now, we'll show a message that this needs the encryption key from the client
+      toast('Download functionality coming soon. File: ' + file.fileName, 'info');
+    } catch (error) {
+      console.error('Error downloading file:', error);
+      toast('Failed to download file', 'error');
+    } finally {
+      setDownloadingFileId(null);
+    }
+  };
+
+  const handleDeleteFile = async (file: VaultFile) => {
+    if (!confirm(`Delete file "${file.fileName}"? This cannot be undone.`)) {
+      return;
+    }
+
+    try {
+      setDeletingFileId(file.id);
+      const response = await fetch(`/api/vaults/${vault.id}/files/${file.id}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-User-Address': address!,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to delete file');
+      }
+
+      // Update vault data
+      setVault(prev => prev ? {
+        ...prev,
+        files: prev.files.map(f => f.id === file.id ? { ...f, deletedAt: new Date().toISOString() } : f)
+      } : null);
+
+      toast('File deleted successfully', 'success');
+    } catch (error) {
+      console.error('Error deleting file:', error);
+      toast('Failed to delete file', 'error');
+    } finally {
+      setDeletingFileId(null);
+    }
+  };
+
+  const activeFiles = vault.files.filter(f => f.isActive && !f.deletedAt);
+  const deletedFiles = vault.files.filter(f => !f.isActive || f.deletedAt);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-cream to-white p-4 md:p-8 pt-24">
@@ -171,48 +328,78 @@ export default function VaultDetailPage({ params }: { params: Promise<{ id: stri
         <div className="flex items-center justify-between mb-8">
           <Link 
             href="/dashboard" 
-            className="flex items-center gap-2 text-heirlock-blue font-black hover:underline"
+            className="flex items-center gap-2 text-heirlock-blue font-black hover:underline transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
             Back to Dashboard
           </Link>
-          <button
-            onClick={() => setShowSettings(!showSettings)}
-            className="p-2 hover:bg-gray-100 border-2 border-black rounded"
-          >
-            <MoreVertical className="w-5 h-5" />
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => window.location.reload()}
+              className="p-2 hover:bg-gray-100 border-2 border-black rounded transition-all"
+              title="Refresh vault data"
+            >
+              <RefreshCw className="w-5 h-5" />
+            </button>
+            <button
+              onClick={() => setShowSettings(!showSettings)}
+              className="p-2 hover:bg-gray-100 border-2 border-black rounded transition-all"
+              title="More options"
+            >
+              <MoreVertical className="w-5 h-5" />
+            </button>
+          </div>
         </div>
 
         {/* Main Content Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Left Column - Vault Info */}
+          {/* Left Column */}
           <div className="lg:col-span-2 space-y-6">
-            {/* Vault Header Card */}
+
+            {/* Vault Info Card */}
             <div className="border-4 border-black p-6 bg-white">
               <div className="flex items-start justify-between mb-4">
                 <div className="flex-1">
                   {isEditing ? (
-                    <div className="space-y-2">
-                      <textarea
-                        value={editedDescription}
-                        onChange={(e) => setEditedDescription(e.target.value)}
-                        className="w-full p-3 border-2 border-black font-mono text-sm resize-none"
-                        rows={3}
-                      />
+                    <div className="space-y-3">
+                      <div>
+                        <label className="text-xs font-black text-gray-600 block mb-2">VAULT NAME</label>
+                        <input
+                          type="text"
+                          value={editedName}
+                          onChange={(e) => setEditedName(e.target.value)}
+                          className="w-full p-3 border-3 border-black font-black text-lg"
+                          placeholder="Vault name"
+                          disabled={isUpdating}
+                        />
+                      </div>
+                      <div>
+                        <label className="text-xs font-black text-gray-600 block mb-2">DESCRIPTION</label>
+                        <textarea
+                          value={editedDescription}
+                          onChange={(e) => setEditedDescription(e.target.value)}
+                          className="w-full p-3 border-3 border-black font-mono text-sm resize-none"
+                          rows={3}
+                          placeholder="Optional description"
+                          disabled={isUpdating}
+                        />
+                      </div>
                       <div className="flex gap-2">
                         <button
-                          onClick={handleUpdateDescription}
-                          className="px-4 py-2 bg-heirlock-green text-white border-2 border-black font-black text-xs hover:opacity-90"
+                          onClick={handleUpdateVault}
+                          disabled={isUpdating}
+                          className="px-4 py-2 bg-heirlock-green text-white border-2 border-black font-black text-xs hover:opacity-90 disabled:opacity-50 transition-all"
                         >
-                          Save
+                          {isUpdating ? 'Updating...' : 'Save'}
                         </button>
                         <button
                           onClick={() => {
                             setIsEditing(false);
-                            setEditedDescription(vault.description);
+                            setEditedName(vault.name);
+                            setEditedDescription(vault.description || '');
                           }}
-                          className="px-4 py-2 bg-gray-200 text-black border-2 border-black font-black text-xs hover:bg-gray-300"
+                          disabled={isUpdating}
+                          className="px-4 py-2 bg-gray-200 text-black border-2 border-black font-black text-xs hover:bg-gray-300 disabled:opacity-50 transition-all"
                         >
                           Cancel
                         </button>
@@ -220,190 +407,368 @@ export default function VaultDetailPage({ params }: { params: Promise<{ id: stri
                     </div>
                   ) : (
                     <div>
-                      <h1 className="text-3xl font-black mb-2 break-words">{vault.description || 'Untitled Vault'}</h1>
+                      <h1 className="text-4xl font-black mb-2 break-words">{vault.name}</h1>
+                      {vault.description && (
+                        <p className="text-sm text-gray-700 mb-3">{vault.description}</p>
+                      )}
                       <button
                         onClick={() => setIsEditing(true)}
-                        className="text-xs font-black text-heirlock-blue underline flex items-center gap-1"
+                        className="text-xs font-black text-heirlock-blue underline flex items-center gap-1 hover:opacity-70 transition-opacity"
                       >
                         <Edit2 className="w-3 h-3" />
-                        Edit Description
+                        Edit Vault Info
                       </button>
                     </div>
                   )}
                 </div>
-                <div className={`px-4 py-2 border-3 border-black font-black text-xs ${
-                  isUnlocked 
-                    ? 'bg-heirlock-green text-white' 
-                    : 'bg-yellow-200 text-black'
-                }`}>
-                  {isUnlocked ? '🔓 UNLOCKED' : '🔒 LOCKED'}
+              </div>
+            </div>
+
+            {/* Status Badge */}
+            <div className="border-4 border-heirlock-green bg-heirlock-green text-white p-4">
+              <div className="flex items-center gap-3">
+                <CheckCircle className="w-6 h-6 flex-shrink-0" />
+                <div>
+                  <p className="text-xs font-black">ACTIVE VAULT</p>
+                  <p className="text-sm font-mono">{activeFiles.length} file{activeFiles.length !== 1 ? 's' : ''} stored</p>
                 </div>
               </div>
             </div>
 
-            {/* Unlock Status */}
-            {!isUnlocked && (
-              <div className="border-4 border-yellow-400 bg-yellow-50 p-6">
-                <div className="flex items-center gap-4">
-                  <Clock className="w-8 h-8 text-yellow-600 flex-shrink-0" />
-                  <div>
-                    <p className="text-xs font-black text-yellow-900 mb-1">TIME REMAINING</p>
-                    <p className="text-2xl font-black text-yellow-900">
-                      {timeRemaining.days}d {timeRemaining.hours}h {timeRemaining.minutes}m {timeRemaining.seconds}s
+            {/* Tab Navigation */}
+            <div className="border-4 border-black bg-white flex gap-0">
+              {(['overview', 'files', 'activity'] as const).map((tab) => (
+                <button
+                  key={tab}
+                  onClick={() => setActiveTab(tab)}
+                  className={`flex-1 py-3 font-black text-xs border-r-4 border-black last:border-r-0 transition-all uppercase ${
+                    activeTab === tab
+                      ? 'bg-black text-white'
+                      : 'bg-gray-100 hover:bg-gray-200'
+                  }`}
+                >
+                  {tab === 'overview' && '📊 Overview'}
+                  {tab === 'files' && '📁 Files'}
+                  {tab === 'activity' && '📝 Activity'}
+                </button>
+              ))}
+            </div>
+
+            {/* Overview Tab */}
+            {activeTab === 'overview' && (
+              <div className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="border-4 border-black p-4 bg-white">
+                    <p className="text-xs font-black text-gray-600 mb-2 flex items-center gap-2">
+                      <Calendar className="w-4 h-4" />
+                      CREATED
                     </p>
-                    <p className="text-xs text-yellow-800 mt-1">
-                      Unlocks at {formatDate(vault.unlockTime)}
+                    <p className="font-mono text-sm">{formatDate(vault.createdAt)}</p>
+                  </div>
+
+                  <div className="border-4 border-black p-4 bg-white">
+                    <p className="text-xs font-black text-gray-600 mb-2 flex items-center gap-2">
+                      <RefreshCw className="w-4 h-4" />
+                      LAST UPDATED
                     </p>
+                    <p className="font-mono text-sm">{formatDate(vault.updatedAt)}</p>
+                  </div>
+
+                  <div className="border-4 border-black p-4 bg-white">
+                    <p className="text-xs font-black text-gray-600 mb-2 flex items-center gap-2">
+                      <HardDrive className="w-4 h-4" />
+                      TOTAL SIZE
+                    </p>
+                    <p className="font-mono text-sm">{formatFileSize(vault.files.reduce((sum, f) => sum + f.fileSizeBytes, 0))}</p>
+                  </div>
+
+                  <div className="border-4 border-black p-4 bg-white">
+                    <p className="text-xs font-black text-gray-600 mb-2 flex items-center gap-2">
+                      <BarChart3 className="w-4 h-4" />
+                      FILE COUNT
+                    </p>
+                    <p className="font-mono text-sm">{activeFiles.length} active {deletedFiles.length > 0 && `+ ${deletedFiles.length} deleted`}</p>
+                  </div>
+                </div>
+
+                {/* Security Info */}
+                <div className="border-4 border-heirlock-blue bg-blue-50 p-6">
+                  <p className="text-xs font-black text-heirlock-blue mb-4 flex items-center gap-2">
+                    <Shield className="w-4 h-4" />
+                    ENCRYPTION & SECURITY
+                  </p>
+                  <div className="space-y-2">
+                    <div className="flex items-start gap-3">
+                      <CheckCircle className="w-4 h-4 text-heirlock-green flex-shrink-0 mt-0.5" />
+                      <div>
+                        <p className="text-xs font-black">AES-256-GCM Encryption</p>
+                        <p className="text-xs text-gray-600">Files encrypted end-to-end</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <CheckCircle className="w-4 h-4 text-heirlock-green flex-shrink-0 mt-0.5" />
+                      <div>
+                        <p className="text-xs font-black">IPFS Distributed Storage</p>
+                        <p className="text-xs text-gray-600">Decentralized file storage</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <CheckCircle className="w-4 h-4 text-heirlock-green flex-shrink-0 mt-0.5" />
+                      <div>
+                        <p className="text-xs font-black">SHA-256 Integrity Verification</p>
+                        <p className="text-xs text-gray-600">Files verified against file hash</p>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
             )}
 
-            {/* Vault Details Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="border-4 border-black p-4 bg-white">
-                <p className="text-xs font-black text-gray-600 mb-2 flex items-center gap-2">
-                  <Calendar className="w-4 h-4" />
-                  CREATED
-                </p>
-                <p className="font-mono text-sm">{formatDate(vault.createdAt)}</p>
-              </div>
+            {/* Files Tab */}
+            {activeTab === 'files' && (
+              <div className="space-y-4">
+                {activeFiles.length === 0 ? (
+                  <div className="border-4 border-dashed border-gray-300 p-8 text-center bg-gray-50">
+                    <FileText className="w-12 h-12 mx-auto mb-4 text-gray-400" />
+                    <p className="font-black text-gray-600">No files in this vault</p>
+                    <p className="text-sm text-gray-500 mt-2">Upload files to get started</p>
+                  </div>
+                ) : (
+                  activeFiles.map((file) => (
+                    <div key={file.id} className="border-4 border-black p-4 bg-white hover:shadow-lg transition-shadow">
+                      <div className="flex items-start justify-between gap-4">
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 mb-2">
+                            <FileIcon className="w-5 h-5 flex-shrink-0" />
+                            <h3 className="font-black truncate">{file.fileName}</h3>
+                          </div>
+                          <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs">
+                            <div>
+                              <p className="font-black text-gray-600">Size</p>
+                              <p className="font-mono">{formatFileSize(file.fileSizeBytes)}</p>
+                            </div>
+                            <div>
+                              <p className="font-black text-gray-600">Type</p>
+                              <p className="font-mono">{file.mimeType || 'Unknown'}</p>
+                            </div>
+                            <div>
+                              <p className="font-black text-gray-600">Uploaded</p>
+                              <p className="font-mono">{new Date(file.uploadedAt).toLocaleDateString()}</p>
+                            </div>
+                            <div>
+                              <p className="font-black text-gray-600">Status</p>
+                              <p className="font-mono text-heirlock-green font-black">Active</p>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="flex gap-2 flex-shrink-0">
+                          <button
+                            onClick={() => handleDownloadFile(file)}
+                            disabled={downloadingFileId === file.id}
+                            className="p-2 hover:bg-heirlock-green hover:text-white border-2 border-black transition-all disabled:opacity-50"
+                            title="Download file"
+                          >
+                            <Download className="w-4 h-4" />
+                          </button>
+                          <button
+                            onClick={() => handleDeleteFile(file)}
+                            disabled={deletingFileId === file.id}
+                            className="p-2 hover:bg-red-500 hover:text-white border-2 border-black transition-all disabled:opacity-50"
+                            title="Delete file"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </div>
+                      {/* File Hash */}
+                      {showFileHash === file.id && (
+                        <div className="mt-3 pt-3 border-t-2 border-gray-200">
+                          <p className="text-xs font-black text-gray-600 mb-2">FILE HASH</p>
+                          <div className="flex gap-2">
+                            <code className="flex-1 text-xs font-mono break-all p-2 bg-gray-100 border-2 border-gray-300">
+                              {file.fileHash}
+                            </code>
+                            <button
+                              onClick={() => copyToClipboard(file.fileHash, `Hash: ${file.fileName}`)}
+                              className={`px-2 py-1 font-black border-2 border-black text-xs transition-all flex-shrink-0 ${
+                                copied === `Hash: ${file.fileName}`
+                                  ? 'bg-heirlock-green text-white border-heirlock-green'
+                                  : 'bg-white hover:bg-gray-50'
+                              }`}
+                            >
+                              {copied === `Hash: ${file.fileName}` ? '✓' : <Copy className="w-3 h-3" />}
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  ))
+                )}
 
-              <div className="border-4 border-black p-4 bg-white">
-                <p className="text-xs font-black text-gray-600 mb-2 flex items-center gap-2">
-                  <HardDrive className="w-4 h-4" />
-                  FILE SIZE
-                </p>
-                <p className="font-mono text-sm">{formatFileSize(vault.fileSize)}</p>
+                {/* Deleted Files */}
+                {deletedFiles.length > 0 && (
+                  <details className="border-4 border-gray-300 p-4 bg-gray-50">
+                    <summary className="font-black cursor-pointer text-gray-600 hover:text-black">
+                      📁 Deleted Files ({deletedFiles.length})
+                    </summary>
+                    <div className="mt-4 space-y-3">
+                      {deletedFiles.map((file) => (
+                        <div key={file.id} className="border-2 border-gray-300 p-3 bg-white opacity-60">
+                          <div className="flex items-center gap-2">
+                            <FileIcon className="w-4 h-4 text-gray-400" />
+                            <span className="font-mono text-sm truncate">{file.fileName}</span>
+                            <span className="text-xs font-black text-gray-500 ml-auto">Deleted {file.deletedAt ? new Date(file.deletedAt).toLocaleDateString() : 'N/A'}</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </details>
+                )}
               </div>
+            )}
 
-              <div className="border-4 border-black p-4 bg-white md:col-span-2">
-                <p className="text-xs font-black text-gray-600 mb-2 flex items-center gap-2">
-                  <Shield className="w-4 h-4" />
-                  ENCRYPTION
-                </p>
-                <p className="font-mono text-sm">{vault.encryptionMethod}</p>
+            {/* Activity Tab */}
+            {activeTab === 'activity' && (
+              <div className="border-4 border-black p-6 bg-white">
+                {vault.activityLogs.length === 0 ? (
+                  <div className="text-center py-8">
+                    <Activity className="w-12 h-12 mx-auto mb-4 text-gray-300" />
+                    <p className="text-gray-600 font-black">No activity yet</p>
+                  </div>
+                ) : (
+                  <div className="space-y-3 max-h-96 overflow-y-auto">
+                    {vault.activityLogs.slice().reverse().map((log) => (
+                      <div key={log.id} className="border-l-4 border-heirlock-blue pl-3 py-2">
+                        <div className="flex items-center justify-between">
+                          <p className="text-xs font-black uppercase">{log.action}</p>
+                          <p className="text-xs text-gray-500 font-mono">{formatDate(log.createdAt)}</p>
+                        </div>
+                        {log.description && (
+                          <p className="text-xs text-gray-700 mt-1">{log.description}</p>
+                        )}
+                        {log.ipAddress && (
+                          <p className="text-xs text-gray-500 mt-1">IP: {log.ipAddress}</p>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* Right Column - Security & Stats */}
+          <div className="space-y-6">
+            {/* Vault ID Card */}
+            <div className="border-4 border-black p-4 bg-white">
+              <p className="text-xs font-black text-gray-600 mb-2 flex items-center gap-2">
+                <Key className="w-4 h-4" />
+                VAULT ID
+              </p>
+              <div className="flex gap-2">
+                <code className="flex-1 text-xs font-mono break-all p-2 bg-gray-100 border-2 border-black">
+                  {vault.id.substring(0, 16)}...
+                </code>
+                <button
+                  onClick={() => copyToClipboard(vault.id, 'Vault ID')}
+                  className={`px-2 py-2 font-black border-2 border-black text-xs transition-all flex-shrink-0 ${
+                    copied === 'Vault ID'
+                      ? 'bg-heirlock-green text-white border-heirlock-green'
+                      : 'bg-white hover:bg-gray-50'
+                  }`}
+                >
+                  {copied === 'Vault ID' ? '✓' : <Copy className="w-3 h-3" />}
+                </button>
               </div>
             </div>
 
-            {/* File Hash */}
-            <div className="border-4 border-black p-6 bg-white">
-              <div className="flex items-center justify-between mb-3">
-                <p className="text-xs font-black text-gray-600">FILE HASH</p>
-                <button
-                  onClick={() => setShowFileHash(!showFileHash)}
-                  className="text-xs font-black text-heirlock-blue underline"
-                >
-                  {showFileHash ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                </button>
-              </div>
+            {/* Key Hash Card */}
+            <div className="border-4 border-black p-4 bg-white">
+              <p className="text-xs font-black text-gray-600 mb-2 flex items-center gap-2">
+                <Lock className="w-4 h-4" />
+                KEY HASH
+              </p>
               <div className="flex gap-2">
                 <code className="flex-1 text-xs font-mono break-all p-2 bg-gray-100 border-2 border-black">
-                  {showFileHash ? vault.fileHash : '•'.repeat(64)}
+                  {vault.keyHash.substring(0, 16)}...
+                </code>
+                <button
+                  onClick={() => copyToClipboard(vault.keyHash, 'Key Hash')}
+                  className={`px-2 py-2 font-black border-2 border-black text-xs transition-all flex-shrink-0 ${
+                    copied === 'Key Hash'
+                      ? 'bg-heirlock-green text-white border-heirlock-green'
+                      : 'bg-white hover:bg-gray-50'
+                  }`}
+                >
+                  {copied === 'Key Hash' ? '✓' : <Copy className="w-3 h-3" />}
+                </button>
+              </div>
+            </div>
+
+            {/* File Hash Card */}
+            <div className="border-4 border-black p-4 bg-white">
+              <p className="text-xs font-black text-gray-600 mb-2 flex items-center gap-2">
+                <Hash className="w-4 h-4" />
+                FILE HASH
+              </p>
+              <div className="flex gap-2">
+                <code className="flex-1 text-xs font-mono break-all p-2 bg-gray-100 border-2 border-black">
+                  {vault.fileHash.substring(0, 16)}...
                 </code>
                 <button
                   onClick={() => copyToClipboard(vault.fileHash, 'File Hash')}
-                  className={`px-3 py-2 font-black border-2 border-black text-xs transition-all ${
+                  className={`px-2 py-2 font-black border-2 border-black text-xs transition-all flex-shrink-0 ${
                     copied === 'File Hash'
                       ? 'bg-heirlock-green text-white border-heirlock-green'
                       : 'bg-white hover:bg-gray-50'
                   }`}
                 >
-                  {copied === 'File Hash' ? '✓' : <Copy className="w-4 h-4" />}
+                  {copied === 'File Hash' ? '✓' : <Copy className="w-3 h-3" />}
                 </button>
               </div>
             </div>
 
-            {/* Action Buttons */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {isUnlocked && (
-                <button className="border-4 border-heirlock-blue bg-heirlock-blue text-white p-4 font-black text-sm hover:opacity-90 transition-all flex items-center justify-center gap-2">
-                  <Download className="w-5 h-5" />
-                  Download File
-                </button>
-              )}
-              
-              <button className={`border-4 p-4 font-black text-sm transition-all flex items-center justify-center gap-2 ${
-                isUnlocked ? '' : 'opacity-50 cursor-not-allowed'
-              }`} disabled={!isUnlocked}>
-                <Share2 className="w-5 h-5" />
-                Share Access
-              </button>
-            </div>
-          </div>
-
-          {/* Right Column - Security & Activity */}
-          <div className="space-y-6">
-            {/* Security Card */}
-            <div className="border-4 border-heirlock-blue p-6 bg-blue-50">
-              <p className="text-xs font-black text-heirlock-blue mb-4 flex items-center gap-2">
-                <Shield className="w-4 h-4" />
-                SECURITY STATUS
+            {/* Owner Info */}
+            <div className="border-4 border-heirlock-blue bg-blue-50 p-4">
+              <p className="text-xs font-black text-heirlock-blue mb-3 flex items-center gap-2">
+                <User className="w-4 h-4" />
+                OWNER
               </p>
-              <div className="space-y-3">
-                <div className="flex items-center gap-2">
-                  <CheckCircle className="w-4 h-4 text-heirlock-green" />
-                  <span className="text-xs font-black">Encrypted</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <CheckCircle className="w-4 h-4 text-heirlock-green" />
-                  <span className="text-xs font-black">Time-locked</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <CheckCircle className="w-4 h-4 text-heirlock-green" />
-                  <span className="text-xs font-black">Blockchain Verified</span>
-                </div>
-              </div>
+              <div className="font-mono text-xs break-all text-black">{vault.userId}</div>
             </div>
 
-            {/* TX Hash */}
+            {/* Stats Card */}
             <div className="border-4 border-black p-4 bg-white">
-              <p className="text-xs font-black text-gray-600 mb-2">TX HASH</p>
-              <div className="flex gap-2">
-                <code className="flex-1 text-xs font-mono break-all p-2 bg-gray-100 border-2 border-black">
-                  {vault.txHash.substring(0, 12)}...
-                </code>
-                <button
-                  onClick={() => copyToClipboard(vault.txHash, 'TX Hash')}
-                  className={`px-3 py-2 font-black border-2 border-black text-xs transition-all ${
-                    copied === 'TX Hash'
-                      ? 'bg-heirlock-green text-white border-heirlock-green'
-                      : 'bg-white hover:bg-gray-50'
-                  }`}
-                >
-                  {copied === 'TX Hash' ? '✓' : <Copy className="w-4 h-4" />}
-                </button>
-              </div>
-            </div>
-
-            {/* Recent Activity */}
-            <div className="border-4 border-black p-6 bg-white">
-              <p className="text-xs font-black text-gray-600 mb-4 flex items-center gap-2">
-                <Activity className="w-4 h-4" />
-                RECENT ACTIVITY
+              <p className="text-xs font-black text-gray-600 mb-3 flex items-center gap-2">
+                <BarChart3 className="w-4 h-4" />
+                STATISTICS
               </p>
-              <div className="space-y-3 max-h-48 overflow-y-auto">
-                {activities.length === 0 ? (
-                  <p className="text-xs text-gray-500">No activities yet</p>
-                ) : (
-                  activities.slice(-5).reverse().map((activity) => (
-                    <div key={activity.id} className="border-l-4 border-heirlock-blue pl-3 py-1">
-                      <p className="text-xs font-black capitalize">{activity.type}</p>
-                      <p className="text-xs text-gray-600">
-                        {new Date(activity.timestamp * 1000).toLocaleTimeString()}
-                      </p>
-                    </div>
-                  ))
-                )}
+              <div className="space-y-2 text-sm">
+                <div className="flex justify-between">
+                  <span className="font-black">Total Files:</span>
+                  <span className="font-mono">{vault.files.length}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="font-black">Active:</span>
+                  <span className="font-mono text-heirlock-green">{activeFiles.length}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="font-black">Deleted:</span>
+                  <span className="font-mono text-red-600">{deletedFiles.length}</span>
+                </div>
+                <div className="border-t-2 border-gray-200 pt-2 mt-2 flex justify-between">
+                  <span className="font-black">Total Size:</span>
+                  <span className="font-mono">{formatFileSize(vault.files.filter(f => !f.deletedAt && f.isActive).reduce((sum, f) => sum + f.fileSizeBytes, 0))}</span>
+                </div>
               </div>
             </div>
 
             {/* Settings Menu */}
             {showSettings && (
-              <div className="border-4 border-red-500 bg-red-50 p-4 space-y-2">
+              <div className="border-4 border-red-500 bg-red-50 p-4">
                 <button
                   onClick={() => setShowDeleteConfirm(true)}
-                  className="w-full border-4 border-red-500 bg-red-500 text-white p-3 font-black text-xs hover:opacity-90 flex items-center justify-center gap-2"
+                  className="w-full border-4 border-red-500 bg-red-500 text-white p-3 font-black text-xs hover:opacity-90 flex items-center justify-center gap-2 transition-all"
                 >
                   <Trash2 className="w-4 h-4" />
                   Delete Vault
@@ -416,21 +781,39 @@ export default function VaultDetailPage({ params }: { params: Promise<{ id: stri
         {/* Delete Confirmation Modal */}
         {showDeleteConfirm && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-            <div className="border-4 border-black bg-white p-8 max-w-sm">
-              <h2 className="text-2xl font-black mb-4">Delete Vault?</h2>
-              <p className="text-sm mb-6">This action cannot be undone. All vault data will be permanently deleted.</p>
+            <div className="border-4 border-black bg-white p-8 max-w-sm w-full animate-bounce-in">
+              <h2 className="text-2xl font-black mb-4 text-red-600">⚠️ Delete Vault?</h2>
+              <p className="text-sm mb-4 text-gray-700">
+                This will permanently delete the vault and all associated files. <span className="font-black">This cannot be undone</span>.
+              </p>
+              <p className="text-xs font-black text-gray-600 mb-4">
+                Type <span className="bg-black text-white px-2 py-1">DELETE</span> to confirm:
+              </p>
+              <input
+                type="text"
+                value={deleteConfirmText}
+                onChange={(e) => setDeleteConfirmText(e.target.value.toUpperCase())}
+                className="w-full px-4 py-3 border-3 border-black font-black mb-6 text-center text-sm uppercase"
+                placeholder="Type DELETE"
+                disabled={isUpdating}
+              />
               <div className="flex gap-4">
                 <button
-                  onClick={() => setShowDeleteConfirm(false)}
-                  className="flex-1 border-4 border-black bg-gray-200 p-3 font-black text-xs hover:bg-gray-300"
+                  onClick={() => {
+                    setShowDeleteConfirm(false);
+                    setDeleteConfirmText('');
+                  }}
+                  disabled={isUpdating}
+                  className="flex-1 border-4 border-black bg-gray-200 p-3 font-black text-xs hover:bg-gray-300 disabled:opacity-50 transition-all"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleDeleteVault}
-                  className="flex-1 border-4 border-red-500 bg-red-500 text-white p-3 font-black text-xs hover:opacity-90"
+                  disabled={deleteConfirmText !== 'DELETE' || isUpdating}
+                  className="flex-1 border-4 border-red-600 bg-red-600 text-white p-3 font-black text-xs hover:opacity-90 disabled:opacity-50 transition-all"
                 >
-                  Delete
+                  {isUpdating ? 'Deleting...' : 'Delete Forever'}
                 </button>
               </div>
             </div>
