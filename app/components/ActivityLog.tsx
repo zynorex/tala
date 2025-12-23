@@ -2,16 +2,14 @@
 
 import { useEffect, useState } from 'react';
 import { useAccount } from 'wagmi';
-import { Activity, Lock, Plus, Eye, AlertCircle } from 'lucide-react';
+import { Activity, Lock, Plus, Eye, AlertCircle, Download, Upload } from 'lucide-react';
 import Link from 'next/link';
 
 interface ActivityEvent {
   id: string;
-  type: 'vault_created' | 'vault_accessed' | 'vault_unlocked' | 'error';
+  action: string;
   description: string;
-  timestamp: number;
-  icon: typeof Lock;
-  color: string;
+  createdAt: string;
 }
 
 interface ActivityLogProps {
@@ -29,79 +27,56 @@ export default function ActivityLog({ limit = 10 }: ActivityLogProps) {
     }
   }, [address]);
 
-  const loadActivities = () => {
+  const loadActivities = async () => {
     setIsLoading(true);
     try {
-      // Get activities from localStorage
-      const activitiesStr = localStorage.getItem(`activities_${address}`);
-      const allActivities = activitiesStr ? JSON.parse(activitiesStr) : [];
-
-      // Get vaults and generate activity events
-      const vaultsStr = localStorage.getItem(`vaults_${address}`);
-      const vaults = vaultsStr ? JSON.parse(vaultsStr) : [];
-
-      const events: ActivityEvent[] = vaults.map((vault: any, index: number) => ({
-        id: `vault_${index}`,
-        type: 'vault_created' as const,
-        description: `Created vault: "${vault.description}"`,
-        timestamp: vault.createdAt,
-        icon: Plus,
-        color: 'text-heirlock-green',
-      }));
-
-      // Sort by timestamp (newest first) and limit
-      const sortedActivities = [...allActivities, ...events]
-        .sort((a, b) => b.timestamp - a.timestamp)
-        .slice(0, limit);
-
-      setActivities(sortedActivities);
+      const response = await fetch(`/api/activity?limit=${limit}`);
+      if (!response.ok) throw new Error('Failed to fetch activities');
+      
+      const data = await response.json();
+      setActivities(data.data || []);
     } catch (error) {
       console.error('Failed to load activities:', error);
+      setActivities([]);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const formatTime = (timestamp: number) => {
-    const now = Date.now() / 1000;
-    const diff = now - timestamp;
+  const formatTime = (dateString: string) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diff = now.getTime() - date.getTime();
 
-    if (diff < 60) return 'Just now';
-    if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
-    if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
-    if (diff < 604800) return `${Math.floor(diff / 86400)}d ago`;
-
-    return new Date(timestamp * 1000).toLocaleDateString();
+    const seconds = Math.floor(diff / 1000);
+    if (seconds < 60) return 'Just now';
+    
+    const minutes = Math.floor(seconds / 60);
+    if (minutes < 60) return `${minutes}m ago`;
+    
+    const hours = Math.floor(minutes / 60);
+    if (hours < 24) return `${hours}h ago`;
+    
+    const days = Math.floor(hours / 24);
+    if (days < 7) return `${days}d ago`;
+    
+    return date.toLocaleDateString();
   };
 
-  const getIcon = (type: ActivityEvent['type']) => {
-    switch (type) {
-      case 'vault_created':
-        return Plus;
-      case 'vault_accessed':
-        return Eye;
-      case 'vault_unlocked':
-        return Lock;
-      case 'error':
-        return AlertCircle;
-      default:
-        return Activity;
-    }
+  const getIcon = (action: string) => {
+    if (action.includes('CREATED')) return Plus;
+    if (action.includes('UPLOADED')) return Upload;
+    if (action.includes('DOWNLOADED')) return Download;
+    if (action.includes('DELETED')) return AlertCircle;
+    return Activity;
   };
 
-  const getColor = (type: ActivityEvent['type']) => {
-    switch (type) {
-      case 'vault_created':
-        return 'text-heirlock-green';
-      case 'vault_accessed':
-        return 'text-heirlock-blue';
-      case 'vault_unlocked':
-        return 'text-heirlock-yellow';
-      case 'error':
-        return 'text-red-600';
-      default:
-        return 'text-gray-600';
-    }
+  const getColor = (action: string) => {
+    if (action.includes('CREATED')) return 'text-heirlock-green';
+    if (action.includes('UPLOADED')) return 'text-heirlock-blue';
+    if (action.includes('DOWNLOADED')) return 'text-heirlock-yellow';
+    if (action.includes('DELETED')) return 'text-red-600';
+    return 'text-gray-600';
   };
 
   return (
@@ -125,8 +100,8 @@ export default function ActivityLog({ limit = 10 }: ActivityLogProps) {
           </div>
         ) : (
           activities.slice(0, limit).map((activity) => {
-            const Icon = getIcon(activity.type);
-            const color = getColor(activity.type);
+            const Icon = getIcon(activity.action);
+            const color = getColor(activity.action);
 
             return (
               <div key={activity.id} className="p-4 hover:bg-cream transition-colors">
@@ -137,7 +112,7 @@ export default function ActivityLog({ limit = 10 }: ActivityLogProps) {
                       {activity.description}
                     </p>
                     <p className="text-xs text-gray-600 font-medium mt-1">
-                      {formatTime(activity.timestamp)}
+                      {formatTime(activity.createdAt)}
                     </p>
                   </div>
                 </div>

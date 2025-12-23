@@ -2,18 +2,17 @@
 
 import { useState, useCallback } from 'react';
 import { useAccount } from 'wagmi';
-import { Lock, Upload, Calendar, FileText, AlertCircle, CheckCircle, Loader } from 'lucide-react';
+import { Lock, Upload, FileText, AlertCircle, CheckCircle, Loader } from 'lucide-react';
 import { useToast } from '@/app/hooks/useToast';
-import { useVaultContract } from '@/app/hooks/useVaultContract';
-import { encrypt, generateEncryptionKey, hashEncryptionKey } from '@/lib/crypto/encryption';
-import { uploadToIPFS } from '@/lib/ipfs/ipfs';
-import { validateVaultCreation, validators } from '@/lib/validators/input-validators';
+import { useRouter } from 'next/navigation';
+import { validators } from '@/lib/validators/input-validators';
 
 interface FormState {
-  description: string;
-  unlockDate: string;
-  unlockTime: string;
+  vaultName: string;
+  vaultDescription: string;
   file: File | null;
+  password: string;
+  confirmPassword: string;
   isSubmitting: boolean;
 }
 
@@ -24,42 +23,20 @@ interface ValidationErrors {
 export default function CreateVaultForm() {
   const { isConnected, address } = useAccount();
   const { toast } = useToast();
-  const { createVault, isCreatePending, error: contractError } = useVaultContract();
+  const router = useRouter();
 
   const [form, setForm] = useState<FormState>({
-    description: '',
-    unlockDate: '',
-    unlockTime: '',
+    vaultName: '',
+    vaultDescription: '',
     file: null,
+    password: '',
+    confirmPassword: '',
     isSubmitting: false,
   });
 
   const [errors, setErrors] = useState<ValidationErrors>({});
-  const [encryptionPassword, setEncryptionPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [isCopied, setIsCopied] = useState(false);
-
-  // Generate encryption password helper
-  const generatePassword = useCallback(() => {
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*';
-    let password = '';
-    for (let i = 0; i < 32; i++) {
-      password += chars.charAt(Math.floor(Math.random() * chars.length));
-    }
-    setEncryptionPassword(password);
-    toast('Encryption password generated. Save it securely!', 'success');
-  }, [toast]);
-
-  // Copy password to clipboard
-  const copyPassword = useCallback(() => {
-    if (encryptionPassword) {
-      navigator.clipboard.writeText(encryptionPassword);
-      setIsCopied(true);
-      toast('Password copied to clipboard', 'success');
-      // Reset the copied state after 2 seconds
-      setTimeout(() => setIsCopied(false), 2000);
-    }
-  }, [encryptionPassword, toast]);
+  const [vaultId, setVaultId] = useState<string | null>(null);
 
   // File change handler
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -81,10 +58,9 @@ export default function CreateVaultForm() {
   const validateForm = (): boolean => {
     const newErrors: ValidationErrors = {};
 
-    // Description
-    const descValidation = validators.description(form.description);
-    if (!descValidation.valid) {
-      newErrors.description = descValidation.error || 'Invalid description';
+    // Vault name
+    if (!form.vaultName.trim()) {
+      newErrors.vaultName = 'Vault name is required';
     }
 
     // File
@@ -92,29 +68,22 @@ export default function CreateVaultForm() {
       newErrors.file = 'Please select a file to encrypt';
     }
 
-    // Unlock date/time
-    if (!form.unlockDate || !form.unlockTime) {
-      newErrors.unlockTime = 'Please select unlock date and time';
-    } else {
-      const unlockDateTime = new Date(`${form.unlockDate}T${form.unlockTime}`).getTime() / 1000;
-      const timeValidation = validators.unlockTime(unlockDateTime);
-      if (!timeValidation.valid) {
-        newErrors.unlockTime = timeValidation.error || 'Invalid unlock time';
-      }
+    // Password strength
+    if (form.password.length < 8) {
+      newErrors.password = 'Password must be at least 8 characters';
     }
 
-    // Encryption password
-    const passwordValidation = validators.passwordStrength(encryptionPassword);
-    if (!passwordValidation.valid) {
-      newErrors.password = passwordValidation.error || 'Password is too weak';
+    // Password match
+    if (form.password !== form.confirmPassword) {
+      newErrors.confirmPassword = 'Passwords do not match';
     }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  // Submit handler
-  const handleSubmit = async (e: React.FormEvent) => {
+  // Step 1: Create vault
+  const handleCreateVault = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!isConnected || !address) {
@@ -122,94 +91,105 @@ export default function CreateVaultForm() {
       return;
     }
 
-    if (!validateForm()) {
+    if (!form.vaultName.trim()) {
+      setErrors({ ...errors, vaultName: 'Vault name is required' });
       return;
     }
 
     setForm({ ...form, isSubmitting: true });
 
     try {
-      // Read and encrypt file
-      if (!form.file) throw new Error('File is required');
+      // Create vault via API
+      const createRes = await fetch('/api/vaults', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: form.vaultName,
+          description: form.vaultDescription,
+          password: form.password || 'default',
+        }),
+      });
 
-      const fileBuffer = await form.file.arrayBuffer();
-      const fileUint8Array = new Uint8Array(fileBuffer);
+      if (!createRes.ok) {
+        const data = await createRes.json();
+        throw new Error(data.error || 'Failed to create vault');
+      }
 
-      // Generate encryption key
-      const encryptionKey = generateEncryptionKey();
+      const data = await createRes.json();
+      const newVaultId = data.data?.id;
 
-      // Encrypt file
-      toast('Encrypting file...', 'info');
-      const encrypted = encrypt(Buffer.from(fileUint8Array), encryptionKey);
+      if (!newVaultId) {
+        throw new Error('No vault ID returned from server');
+      }
 
-      // Upload to IPFS
-      toast('Uploading to IPFS...', 'info');
-      const encryptedBuffer = Buffer.from(encrypted.ciphertext, 'hex');
-      const ipfsResult = await uploadToIPFS(encryptedBuffer, form.file.name, form.description);
-
-      // Hash encryption key for on-chain storage
-      const keyHash = hashEncryptionKey(encryptionKey);
-
-      // Calculate unlock timestamp
-      const unlockDateTime = new Date(`${form.unlockDate}T${form.unlockTime}`).getTime() / 1000;
-
-      // Create vault on blockchain
-      toast('Creating vault on blockchain...', 'info');
-      await createVault(
-        ipfsResult.ipfsHash,
-        keyHash as `0x${string}`,
-        Math.floor(unlockDateTime),
-        form.description,
-        form.file.size
-      );
-
+      setVaultId(newVaultId);
       toast('Vault created successfully!', 'success');
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Failed to create vault';
+      toast(message, 'error');
+      setErrors({ submit: message });
+    } finally {
+      setForm({ ...form, isSubmitting: false });
+    }
+  };
 
-      // Store encrypted key locally (user responsibility)
-      const vaultKeyData = {
-        encryptionKey: encryptionKey.toString('hex'),
-        encryptedData: encrypted,
-        ipfsHash: ipfsResult.ipfsHash,
-        filename: form.file.name,
-        createdAt: new Date().toISOString(),
-      };
+  // Step 2: Upload file to vault
+  const handleUploadFile = async (e: React.FormEvent) => {
+    e.preventDefault();
 
-      // Log for user to save
-      console.log('Save this encryption key safely:', vaultKeyData);
+    if (!validateForm()) {
+      return;
+    }
 
-      // Reset form
+    if (!vaultId) {
+      setErrors({ submit: 'Vault ID not found' });
+      return;
+    }
+
+    setForm({ ...form, isSubmitting: true });
+
+    try {
+      const formData = new FormData();
+      if (form.file) {
+        formData.append('file', form.file);
+      }
+      formData.append('password', form.password);
+      formData.append('vaultId', vaultId);
+
+      toast('Encrypting and uploading file...', 'info');
+
+      const uploadRes = await fetch('/api/vaults/upload', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!uploadRes.ok) {
+        const data = await uploadRes.json();
+        throw new Error(data.error || 'Failed to upload file');
+      }
+
+      toast('File uploaded and encrypted successfully!', 'success');
+
+      // Reset form and redirect
       setForm({
-        description: '',
-        unlockDate: '',
-        unlockTime: '',
+        vaultName: '',
+        vaultDescription: '',
         file: null,
+        password: '',
+        confirmPassword: '',
         isSubmitting: false,
       });
-      setEncryptionPassword('');
+      setVaultId(null);
       setErrors({});
+
+      // Redirect to vault detail page
+      setTimeout(() => {
+        router.push(`/vault/${vaultId}`);
+      }, 1500);
     } catch (err) {
-      const fullError = err instanceof Error ? err.message : 'Failed to create vault';
-      
-      // Extract user-friendly error message
-      let userFriendlyMsg = 'Failed to create vault';
-      
-      if (fullError.includes('User rejected')) {
-        userFriendlyMsg = 'Transaction was rejected. Please try again.';
-      } else if (fullError.includes('insufficient funds')) {
-        userFriendlyMsg = 'Insufficient MATIC for gas fees. Please add more funds to your wallet.';
-      } else if (fullError.includes('Pinata')) {
-        userFriendlyMsg = 'Failed to upload file to IPFS. Please check your credentials.';
-      } else if (fullError.includes('Invalid')) {
-        userFriendlyMsg = 'Invalid input. Please check your inputs and try again.';
-      } else if (fullError.length > 200) {
-        // Truncate very long technical errors
-        userFriendlyMsg = fullError.substring(0, 150) + '...';
-      } else {
-        userFriendlyMsg = fullError;
-      }
-      
-      toast(userFriendlyMsg, 'error');
-      setErrors({ submit: userFriendlyMsg });
+      const message = err instanceof Error ? err.message : 'Failed to upload file';
+      toast(message, 'error');
+      setErrors({ submit: message });
     } finally {
       setForm({ ...form, isSubmitting: false });
     }
@@ -231,58 +211,133 @@ export default function CreateVaultForm() {
     );
   }
 
-  return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      {/* Security Notice */}
-      <div className="border-4 border-black p-6 bg-heirlock-pink shadow-brutal">
-        <h3 className="font-black text-black text-lg mb-3 flex items-center gap-2">
-          <Lock className="w-5 h-5" />
-          Security Notice
-        </h3>
-        <ul className="space-y-2 text-sm text-gray-800 font-medium">
-          <li>✓ Your file will be encrypted with AES-256-GCM before uploading</li>
-          <li>✓ Only you have access to the decryption key</li>
-          <li>✓ Save your encryption key in a secure location</li>
-          <li>✓ Without the key, your vault cannot be accessed</li>
-        </ul>
-      </div>
+  // If vault not created yet, show vault creation form
+  if (!vaultId) {
+    return (
+      <form onSubmit={handleCreateVault} className="space-y-6">
+        {/* Security Notice */}
+        <div className="border-4 border-black p-6 bg-heirlock-pink shadow-brutal">
+          <h3 className="font-black text-black text-lg mb-3 flex items-center gap-2">
+            <Lock className="w-5 h-5" />
+            Step 1: Create Vault
+          </h3>
+          <p className="text-sm text-gray-800 font-medium">
+            Start by creating a new vault to store your encrypted files.
+          </p>
+        </div>
 
-      {/* Description */}
-      <div className="space-y-2">
-        <label className="font-black text-black text-sm uppercase block">
-          Vault Description *
-        </label>
-        <input
-          type="text"
-          maxLength={256}
-          value={form.description}
-          onChange={(e) => {
-            setForm({ ...form, description: e.target.value });
-            setErrors({ ...errors, description: '' });
-          }}
-          placeholder="What is this vault for? (e.g., 'Important documents 2025')"
-          className={`w-full px-4 py-3 border-3 border-black bg-cream font-medium text-black placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black ${
-            errors.description ? 'ring-2 ring-red-500' : ''
-          }`}
-        />
-        <div className="flex justify-between items-center">
-          <span className="text-xs text-gray-700 font-medium">
-            {form.description.length}/256 characters
-          </span>
-          {errors.description && (
+        {/* Vault Name */}
+        <div className="space-y-2">
+          <label className="font-black text-black text-sm uppercase block">
+            Vault Name *
+          </label>
+          <input
+            type="text"
+            maxLength={256}
+            value={form.vaultName}
+            onChange={(e) => {
+              setForm({ ...form, vaultName: e.target.value });
+              setErrors({ ...errors, vaultName: '' });
+            }}
+            placeholder="e.g., 'Important Documents 2025'"
+            className={`w-full px-4 py-3 border-3 border-black bg-cream font-medium text-black placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black ${
+              errors.vaultName ? 'ring-2 ring-red-500' : ''
+            }`}
+          />
+          {errors.vaultName && (
             <span className="text-xs text-red-600 font-black flex items-center gap-1">
               <AlertCircle className="w-3 h-3" />
-              {errors.description}
+              {errors.vaultName}
             </span>
           )}
         </div>
+
+        {/* Vault Description */}
+        <div className="space-y-2">
+          <label className="font-black text-black text-sm uppercase block">
+            Description (Optional)
+          </label>
+          <textarea
+            maxLength={512}
+            value={form.vaultDescription}
+            onChange={(e) => {
+              setForm({ ...form, vaultDescription: e.target.value });
+              setErrors({ ...errors, vaultDescription: '' });
+            }}
+            placeholder="What is this vault for?"
+            className="w-full px-4 py-3 border-3 border-black bg-cream font-medium text-black placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black"
+            rows={3}
+          />
+        </div>
+
+        {/* Error Messages */}
+        {errors.submit && (
+          <div className="border-4 border-red-500 p-4 bg-red-50 shadow-brutal max-h-32 overflow-y-auto">
+            <p className="text-sm text-red-700 font-medium flex items-start gap-2 break-words">
+              <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
+              <span className="flex-1">{errors.submit}</span>
+            </p>
+          </div>
+        )}
+
+        {/* Submit Button */}
+        <button
+          type="submit"
+          disabled={form.isSubmitting}
+          className={`w-full px-8 py-4 font-black border-4 border-black shadow-brutal inline-flex items-center justify-center gap-3 text-lg transition-all duration-200 ${
+            form.isSubmitting
+              ? 'bg-gray-400 text-gray-600 cursor-not-allowed'
+              : 'bg-black text-heirlock-yellow hover:translate-y-[-3px] hover:shadow-lg'
+          }`}
+        >
+          {form.isSubmitting ? (
+            <>
+              <Loader className="w-5 h-5 animate-spin" />
+              <span>Creating Vault...</span>
+            </>
+          ) : (
+            <>
+              <Lock className="w-5 h-5" />
+              <span>Create Vault</span>
+            </>
+          )}
+        </button>
+      </form>
+    );
+  }
+
+  // Vault created, now show file upload form
+  return (
+    <form onSubmit={handleUploadFile} className="space-y-6">
+      {/* Success Notice */}
+      <div className="border-4 border-green-600 p-6 bg-green-50 shadow-brutal">
+        <div className="flex items-start gap-4">
+          <CheckCircle className="w-6 h-6 text-green-600 flex-shrink-0 mt-1" />
+          <div>
+            <h3 className="font-black text-green-900 text-lg mb-2">Vault Created!</h3>
+            <p className="text-sm text-green-800 font-medium">
+              Your vault ID: <code className="font-mono">{vaultId}</code>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Step 2 Notice */}
+      <div className="border-4 border-black p-6 bg-heirlock-yellow shadow-brutal">
+        <h3 className="font-black text-black text-lg mb-3 flex items-center gap-2">
+          <Upload className="w-5 h-5" />
+          Step 2: Upload & Encrypt File
+        </h3>
+        <p className="text-sm text-gray-800 font-medium">
+          Upload your file with a secure encryption password.
+        </p>
       </div>
 
       {/* File Upload */}
       <div className="space-y-2">
         <label className="font-black text-black text-sm uppercase block">
           <Upload className="w-4 h-4 inline mr-2" />
-          File to Encrypt * (Max 10 MB)
+          File to Encrypt * (Max 500 MB)
         </label>
         <div className="border-4 border-dashed border-black p-6 bg-cream hover:bg-gray-50 transition-colors cursor-pointer">
           <input
@@ -298,13 +353,12 @@ export default function CreateVaultForm() {
                 <div className="flex-1">
                   <p className="font-black text-black mb-1">{form.file.name}</p>
                   <p className="text-xs text-gray-700 font-medium mb-3">
-                    Size: {(form.file.size / 1024 / 1024).toFixed(2)} MB / 10 MB
+                    Size: {(form.file.size / 1024 / 1024).toFixed(2)} MB / 500 MB
                   </p>
-                  {/* File size progress bar */}
                   <div className="w-full bg-gray-300 border-2 border-black h-2">
                     <div
                       className="h-full bg-heirlock-green transition-all duration-300"
-                      style={{ width: `${Math.min((form.file.size / (10 * 1024 * 1024)) * 100, 100)}%` }}
+                      style={{ width: `${Math.min((form.file.size / (500 * 1024 * 1024)) * 100, 100)}%` }}
                     ></div>
                   </div>
                 </div>
@@ -315,7 +369,7 @@ export default function CreateVaultForm() {
                 <Upload className="w-8 h-8 text-gray-600 mx-auto mb-2" />
                 <p className="font-black text-black mb-1">Click to select file</p>
                 <p className="text-xs text-gray-600 font-medium">or drag and drop</p>
-                <p className="text-xs text-gray-500 font-medium mt-2">Maximum file size: 10 MB</p>
+                <p className="text-xs text-gray-500 font-medium mt-2">Maximum file size: 500 MB</p>
               </div>
             )}
           </label>
@@ -328,48 +382,50 @@ export default function CreateVaultForm() {
         )}
       </div>
 
-      {/* Encryption Key Management */}
+      {/* Encryption Password */}
       <div className="space-y-2">
         <label className="font-black text-black text-sm uppercase block">
           <Lock className="w-4 h-4 inline mr-2" />
-          Encryption Key (Generated Automatically) *
+          Encryption Password *
         </label>
+        <p className="text-xs text-gray-700 font-medium mb-3">
+          Create a strong password to encrypt your file. You'll need this to download and decrypt later.
+        </p>
         <div className="space-y-3">
-          <button
-            type="button"
-            onClick={generatePassword}
-            className="w-full px-4 py-3 bg-black text-heirlock-yellow font-black border-3 border-black shadow-brutal hover:translate-y-[-2px] transition-all duration-200"
-          >
-            Generate Secure Encryption Key
-          </button>
+          <div className="relative">
+            <input
+              type={showPassword ? 'text' : 'password'}
+              value={form.password}
+              onChange={(e) => {
+                setForm({ ...form, password: e.target.value });
+                setErrors({ ...errors, password: '' });
+              }}
+              placeholder="Enter encryption password (min 8 characters)"
+              className={`w-full px-4 py-3 border-3 border-black bg-cream font-medium text-black placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black pr-12 ${
+                errors.password ? 'ring-2 ring-red-500' : ''
+              }`}
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-600 font-black text-sm"
+            >
+              {showPassword ? 'Hide' : 'Show'}
+            </button>
+          </div>
 
-          {encryptionPassword && (
-            <div className="border-3 border-black p-4 bg-cream space-y-2">
-              <div className="flex items-center justify-between">
-                <code className="text-xs font-mono text-black break-all">
-                  {showPassword ? encryptionPassword : '•'.repeat(32)}
-                </code>
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="text-xs font-black text-black underline ml-2"
-                >
-                  {showPassword ? 'Hide' : 'Show'}
-                </button>
-              </div>
-              <button
-                type="button"
-                onClick={copyPassword}
-                className={`w-full px-3 py-2 font-black border-2 border-black text-xs transition-all duration-200 ${
-                  isCopied
-                    ? 'bg-heirlock-green text-black border-heirlock-green'
-                    : 'bg-white text-black hover:bg-gray-50'
-                }`}
-              >
-                {isCopied ? '✓ Copied!' : 'Copy Key'}
-              </button>
-            </div>
-          )}
+          <input
+            type={showPassword ? 'text' : 'password'}
+            value={form.confirmPassword}
+            onChange={(e) => {
+              setForm({ ...form, confirmPassword: e.target.value });
+              setErrors({ ...errors, confirmPassword: '' });
+            }}
+            placeholder="Confirm encryption password"
+            className={`w-full px-4 py-3 border-3 border-black bg-cream font-medium text-black placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black ${
+              errors.confirmPassword ? 'ring-2 ring-red-500' : ''
+            }`}
+          />
         </div>
         {errors.password && (
           <span className="text-xs text-red-600 font-black flex items-center gap-1">
@@ -377,58 +433,20 @@ export default function CreateVaultForm() {
             {errors.password}
           </span>
         )}
+        {errors.confirmPassword && (
+          <span className="text-xs text-red-600 font-black flex items-center gap-1">
+            <AlertCircle className="w-3 h-3" />
+            {errors.confirmPassword}
+          </span>
+        )}
       </div>
-
-      {/* Unlock Date/Time */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <label className="font-black text-black text-sm uppercase block">
-            <Calendar className="w-4 h-4 inline mr-2" />
-            Unlock Date *
-          </label>
-          <input
-            type="date"
-            value={form.unlockDate}
-            onChange={(e) => {
-              setForm({ ...form, unlockDate: e.target.value });
-              setErrors({ ...errors, unlockTime: '' });
-            }}
-            className={`w-full px-4 py-3 border-3 border-black bg-cream font-medium text-black focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black ${
-              errors.unlockTime ? 'ring-2 ring-red-500' : ''
-            }`}
-          />
-        </div>
-
-        <div className="space-y-2">
-          <label className="font-black text-black text-sm uppercase block">
-            Unlock Time (UTC) *
-          </label>
-          <input
-            type="time"
-            value={form.unlockTime}
-            onChange={(e) => {
-              setForm({ ...form, unlockTime: e.target.value });
-              setErrors({ ...errors, unlockTime: '' });
-            }}
-            className={`w-full px-4 py-3 border-3 border-black bg-cream font-medium text-black focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black ${
-              errors.unlockTime ? 'ring-2 ring-red-500' : ''
-            }`}
-          />
-        </div>
-      </div>
-      {errors.unlockTime && (
-        <span className="text-xs text-red-600 font-black flex items-center gap-1">
-          <AlertCircle className="w-3 h-3" />
-          {errors.unlockTime}
-        </span>
-      )}
 
       {/* Error Messages */}
-      {(errors.submit || contractError) && (
+      {errors.submit && (
         <div className="border-4 border-red-500 p-4 bg-red-50 shadow-brutal max-h-32 overflow-y-auto">
           <p className="text-sm text-red-700 font-medium flex items-start gap-2 break-words">
             <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
-            <span className="flex-1">{errors.submit || contractError}</span>
+            <span className="flex-1">{errors.submit}</span>
           </p>
         </div>
       )}
@@ -436,22 +454,22 @@ export default function CreateVaultForm() {
       {/* Submit Button */}
       <button
         type="submit"
-        disabled={form.isSubmitting || isCreatePending || !encryptionPassword}
+        disabled={form.isSubmitting || !form.file || form.password.length < 8}
         className={`w-full px-8 py-4 font-black border-4 border-black shadow-brutal inline-flex items-center justify-center gap-3 text-lg transition-all duration-200 ${
-          form.isSubmitting || isCreatePending || !encryptionPassword
+          form.isSubmitting || !form.file || form.password.length < 8
             ? 'bg-gray-400 text-gray-600 cursor-not-allowed'
             : 'bg-black text-heirlock-yellow hover:translate-y-[-3px] hover:shadow-lg'
         }`}
       >
-        {form.isSubmitting || isCreatePending ? (
+        {form.isSubmitting ? (
           <>
             <Loader className="w-5 h-5 animate-spin" />
-            <span>Creating Vault...</span>
+            <span>Uploading & Encrypting...</span>
           </>
         ) : (
           <>
-            <Lock className="w-5 h-5" />
-            <span>Create Vault</span>
+            <Upload className="w-5 h-5" />
+            <span>Upload File to Vault</span>
           </>
         )}
       </button>
@@ -460,10 +478,11 @@ export default function CreateVaultForm() {
       <div className="border-4 border-black p-6 bg-heirlock-green shadow-brutal">
         <h4 className="font-black text-black text-sm uppercase mb-3">Important</h4>
         <ul className="space-y-2 text-xs text-gray-800 font-medium">
-          <li>• Save your encryption key somewhere secure (password manager, offline storage)</li>
-          <li>• You will need this key to decrypt and access your vault contents</li>
-          <li>• If you lose the key, your vault contents cannot be recovered</li>
-          <li>• Vault creation costs a small gas fee on Polygon network</li>
+          <li>• Your file will be encrypted with AES-256-GCM</li>
+          <li>• Save your encryption password somewhere secure</li>
+          <li>• You will need this password to download and decrypt your file</li>
+          <li>• If you forget the password, the file cannot be recovered</li>
+          <li>• Your encryption key never leaves your browser</li>
         </ul>
       </div>
     </form>

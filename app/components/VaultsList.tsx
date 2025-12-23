@@ -7,11 +7,13 @@ import Link from 'next/link';
 
 interface Vault {
   id: string;
+  name: string;
   description: string;
-  createdAt: number;
-  unlockTime: number;
-  fileSize: number;
-  txHash?: string;
+  createdAt: string;
+  isActive: boolean;
+  _count?: {
+    files: number;
+  };
 }
 
 interface VaultsListProps {
@@ -30,55 +32,40 @@ export default function VaultsList({ showSensitiveData }: VaultsListProps) {
     }
   }, [address]);
 
-  const loadVaults = () => {
+  const loadVaults = async () => {
     setIsLoading(true);
     try {
-      const vaultsStr = localStorage.getItem(`vaults_${address}`);
-      const allVaults = vaultsStr ? JSON.parse(vaultsStr) : [];
-      setVaults(allVaults.reverse()); // Most recent first
+      const response = await fetch('/api/vaults?page=1&pageSize=20');
+      if (!response.ok) throw new Error('Failed to fetch vaults');
+      
+      const data = await response.json();
+      const allVaults = data.data?.data || [];
+      setVaults(allVaults);
     } catch (error) {
       console.error('Failed to load vaults:', error);
+      setVaults([]);
     } finally {
       setIsLoading(false);
     }
   };
 
   const getFilteredVaults = () => {
-    const now = Date.now() / 1000;
     switch (filter) {
       case 'active':
-        return vaults.filter(v => v.unlockTime > now);
+        return vaults.filter(v => v.isActive);
       case 'unlocked':
-        return vaults.filter(v => v.unlockTime <= now);
+        return vaults.filter(v => !v.isActive);
       default:
         return vaults;
     }
   };
 
-  const formatDate = (timestamp: number) => {
-    return new Date(timestamp * 1000).toLocaleDateString('en-US', {
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('en-US', {
       month: 'short',
       day: 'numeric',
       year: 'numeric',
     });
-  };
-
-  const formatTime = (timestamp: number) => {
-    return new Date(timestamp * 1000).toLocaleTimeString('en-US', {
-      hour: 'numeric',
-      minute: '2-digit',
-    });
-  };
-
-  const getTimeRemaining = (unlockTime: number) => {
-    const now = Date.now() / 1000;
-    const remaining = unlockTime - now;
-
-    if (remaining <= 0) return 'Unlocked';
-    if (remaining < 60) return `${Math.floor(remaining)}s`;
-    if (remaining < 3600) return `${Math.floor(remaining / 60)}m`;
-    if (remaining < 86400) return `${Math.floor(remaining / 3600)}h`;
-    return `${Math.floor(remaining / 86400)}d`;
   };
 
   const filteredVaults = getFilteredVaults();
@@ -128,8 +115,8 @@ export default function VaultsList({ showSensitiveData }: VaultsListProps) {
             <FileText className="w-12 h-12 text-gray-400 mx-auto mb-4" />
             <p className="text-gray-600 font-medium mb-4">
               {filter === 'all' && 'No vaults yet. Create your first vault to get started!'}
-              {filter === 'active' && 'No active vaults. Your vaults are either unlocked or not created yet.'}
-              {filter === 'unlocked' && 'No unlocked vaults yet. Vaults appear here once they unlock.'}
+              {filter === 'active' && 'No active vaults yet.'}
+              {filter === 'unlocked' && 'No inactive vaults yet.'}
             </p>
             <Link
               href="/create-vault"
@@ -140,8 +127,8 @@ export default function VaultsList({ showSensitiveData }: VaultsListProps) {
           </div>
         ) : (
           filteredVaults.map((vault) => {
-            const now = Date.now() / 1000;
-            const isActive = vault.unlockTime > now;
+            const filesCount = vault._count?.files || 0;
+            const createdDate = new Date(vault.createdAt);
 
             return (
               <Link
@@ -152,16 +139,21 @@ export default function VaultsList({ showSensitiveData }: VaultsListProps) {
                 <div className="flex items-start justify-between gap-4 mb-3">
                   <div className="flex-1 min-w-0">
                     <h3 className="font-black text-lg text-black group-hover:text-heirlock-blue transition-colors truncate">
-                      {showSensitiveData ? vault.description : '●●●●●●●●●●'}
+                      {showSensitiveData ? vault.name : '●●●●●●●●●●'}
                     </h3>
+                    {vault.description && (
+                      <p className="text-sm text-gray-700 font-medium mt-1 truncate">
+                        {showSensitiveData ? vault.description : 'Encrypted description'}
+                      </p>
+                    )}
                     <div className="flex gap-3 mt-2 flex-wrap text-xs text-gray-700 font-medium">
                       <span className="flex items-center gap-1">
                         <Calendar className="w-3 h-3" />
-                        {formatDate(vault.createdAt)}
+                        {createdDate.toLocaleDateString()}
                       </span>
                       <span className="flex items-center gap-1">
                         <FileText className="w-3 h-3" />
-                        {(vault.fileSize / 1024 / 1024).toFixed(2)} MB
+                        {filesCount} {filesCount === 1 ? 'file' : 'files'}
                       </span>
                     </div>
                   </div>
@@ -170,25 +162,19 @@ export default function VaultsList({ showSensitiveData }: VaultsListProps) {
                   <div className="flex flex-col items-end gap-2">
                     <span
                       className={`px-3 py-1 border-2 border-black font-black text-xs uppercase whitespace-nowrap ${
-                        isActive
+                        vault.isActive
                           ? 'bg-heirlock-green text-black'
-                          : 'bg-heirlock-pink text-black'
+                          : 'bg-gray-300 text-black'
                       }`}
                     >
-                      {isActive ? 'Active' : 'Unlocked'}
+                      {vault.isActive ? 'Active' : 'Inactive'}
                     </span>
-                    <div className="flex items-center gap-1 font-black text-xs text-gray-700">
-                      <Clock className="w-3 h-3" />
-                      {getTimeRemaining(vault.unlockTime)}
-                    </div>
                   </div>
                 </div>
 
-                {/* Unlock Info */}
+                {/* View Link */}
                 <div className="pt-3 border-t-2 border-gray-300 flex items-center justify-between text-xs text-gray-600 font-medium">
-                  <span>
-                    Unlocks {formatDate(vault.unlockTime)} at {formatTime(vault.unlockTime)}
-                  </span>
+                  <span>Vault ID: {vault.id.slice(0, 8)}...</span>
                   <Eye className="w-4 h-4 text-gray-400 group-hover:text-black transition-colors" />
                 </div>
               </Link>
