@@ -848,8 +848,8 @@ export default function VaultDetailPage({ params }: { params: Promise<{ id: stri
         <PasswordPromptModal
           isOpen={showPasswordModal}
           fileName={selectedFileForDownload?.fileName || ''}
-          onSubmit={handlePasswordSubmit}
-          onClose={() => {
+          onConfirm={handlePasswordSubmit}
+          onCancel={() => {
             setShowPasswordModal(false);
             setSelectedFileForDownload(null);
           }}

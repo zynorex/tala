@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useAccount } from 'wagmi';
+import { useConnect } from 'wagmi';
 import { BarChart, TrendingUp, Lock, Shield, Clock, Database, AlertCircle, Eye, EyeOff, User } from 'lucide-react';
 import Link from 'next/link';
 import DashboardStats from './DashboardStats';
@@ -21,6 +22,7 @@ interface DashboardData {
 
 export default function DashboardContent() {
   const { isConnected, address } = useAccount();
+  const { connectors, connect } = useConnect();
   const [dashboardData, setDashboardData] = useState<DashboardData>({
     totalVaults: 0,
     totalStorageUsed: 0,
@@ -93,6 +95,8 @@ export default function DashboardContent() {
   };
 
   if (!isConnected) {
+    const metaMaskConnector = connectors.find((c) => c.name === 'MetaMask');
+    
     return (
       <div className="min-h-screen bg-gradient-to-br from-cream via-white to-cream pt-20 pb-16">
         <div className="container mx-auto max-w-6xl px-4">
@@ -101,12 +105,16 @@ export default function DashboardContent() {
               <AlertCircle className="w-12 h-12 text-black mx-auto mb-4" />
               <h2 className="font-black text-2xl text-black mb-2">Dashboard Requires Wallet</h2>
               <p className="text-gray-800 font-medium mb-6">Connect your wallet to access your vault dashboard.</p>
-              <Link 
-                href="/" 
+              <button 
+                onClick={() => {
+                  if (metaMaskConnector) {
+                    connect({ connector: metaMaskConnector });
+                  }
+                }}
                 className="inline-block px-6 py-3 border-4 border-black bg-black text-white font-black hover:bg-gray-800 transition-all"
               >
-                Go Home & Connect Wallet
-              </Link>
+                Connect MetaMask Wallet
+              </button>
             </div>
           </div>
         </div>

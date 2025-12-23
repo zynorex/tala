@@ -1,186 +1,86 @@
+'use client';
+
 import { useState, useCallback } from 'react';
-import {
-  downloadAndDecryptFile,
-  completeFileDownload,
-  type DownloadOptions,
-  type DecryptionResult
-} from '@/lib/crypto/file-download';
 import { useToast } from './useToast';
 
-export interface FileDownloadState {
-  isLoading: boolean;
-  progress: number;
-  error: string | null;
-  isDecrypting: boolean;
-  isDownloading: boolean;
-}
-
-export interface FileDownloadResult {
-  success: boolean;
-  data?: DecryptionResult;
-  error?: string;
+interface FileDownloadParams {
+  vaultId: string;
+  fileId: string;
+  fileName: string;
+  password: string;
 }
 
 /**
  * Custom hook for file download and decryption
- * Handles:
- * - Password validation
- * - Decryption with progress tracking
- * - Error handling
- * - Browser download triggering
- * - Activity logging
- * 
- * @returns Object with download function and state
+ * Manages download state and progress tracking
  */
 export function useFileDownload() {
   const { toast } = useToast();
-  const [state, setState] = useState<FileDownloadState>({
-    isLoading: false,
-    progress: 0,
-    error: null,
-    isDecrypting: false,
-    isDownloading: false
-  });
+  const [isDownloading, setIsDownloading] = useState(false);
+  const [progress, setProgress] = useState(0);
 
-  /**
-   * Download and decrypt a single file
-   * Simple interface for one-off downloads
-   */
-  const downloadFile = useCallback(
-    async (options: DownloadOptions): Promise<FileDownloadResult> => {
-      setState({ isLoading: true, progress: 0, error: null, isDecrypting: true, isDownloading: false });
+  const downloadAndDecryptFile = useCallback(
+    async (params: FileDownloadParams): Promise<void> => {
+      const { vaultId, fileId, fileName, password } = params;
+
+      // Validate password
+      if (!password || password.trim().length === 0) {
+        throw new Error('Password is required for decryption');
+      }
 
       try {
-        // Validate password
-        if (!options.password || options.password.trim().length === 0) {
-          const error = 'Password is required';
-          setState({ isLoading: false, progress: 0, error, isDecrypting: false, isDownloading: false });
-          toast(error, 'error');
-          return { success: false, error };
-        }
+        setIsDownloading(true);
+        setProgress(10);
 
-        if (options.password.length < 1) {
-          const error = 'Password must be at least 1 character';
-          setState({ isLoading: false, progress: 0, error, isDecrypting: false, isDownloading: false });
-          toast(error, 'error');
-          return { success: false, error };
-        }
-
-        // Decrypt file
-        const result = await downloadAndDecryptFile({
-          ...options,
-          onProgress: (progress) => {
-            setState(prev => ({ ...prev, progress: Math.min(progress, 99) }));
-          }
+        // Call server action to get file data
+        const response = await fetch(`/api/vaults/${vaultId}/files/${fileId}/download`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ password }),
         });
 
-        // Warn if integrity check failed
-        if (!result.integrity) {
-          toast(
-            'Warning: File integrity check failed. File may be corrupted.',
-            'warning'
-          );
-        } else {
-          toast('File downloaded successfully!', 'success');
+        if (!response.ok) {
+          const error = await response.json();
+          throw new Error(error.message || 'Failed to download file');
         }
 
-        setState({ isLoading: false, progress: 100, error: null, isDecrypting: false, isDownloading: true });
+        setProgress(50);
 
-        // Reset after short delay
-        setTimeout(() => {
-          setState({ isLoading: false, progress: 0, error: null, isDecrypting: false, isDownloading: false });
-        }, 1000);
+        // Get the blob from response
+        const blob = await response.blob();
 
-        return { success: true, data: result };
-      } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
-        setState({ isLoading: false, progress: 0, error: errorMessage, isDecrypting: false, isDownloading: false });
-        toast(errorMessage, 'error');
-        return { success: false, error: errorMessage };
-      }
-    },
-    [toast]
-  );
+        setProgress(90);
 
-  /**
-   * Complete download flow from IPFS
-   * Used in vault detail page
-   */
-  const downloadFromIPFS = useCallback(
-    async (
-      ipfsHash: string,
-      fileName: string,
-      fileHash: string,
-      mimeType: string,
-      password: string,
-      encryptionMetadata: { iv: string; authTag: string; salt: string },
-      vaultId: string
-    ): Promise<boolean> => {
-      setState({ isLoading: true, progress: 0, error: null, isDecrypting: true, isDownloading: false });
+        // Trigger browser download
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = fileName;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
 
-      try {
-        // Validate password
-        if (!password || password.trim().length === 0) {
-          const error = 'Password is required for decryption';
-          setState({ isLoading: false, progress: 0, error, isDecrypting: false, isDownloading: false });
-          toast(error, 'error');
-          return false;
-        }
-
-        // Perform complete download
-        const success = await completeFileDownload(
-          ipfsHash,
-          fileName,
-          fileHash,
-          mimeType,
-          password,
-          encryptionMetadata,
-          vaultId,
-          (progress) => {
-            setState(prev => ({ ...prev, progress: Math.min(progress, 99) }));
-          }
-        );
-
-        if (success) {
-          toast('File downloaded successfully!', 'success');
-        }
-
-        setState({ isLoading: false, progress: 100, error: null, isDecrypting: false, isDownloading: true });
+        setProgress(100);
 
         // Reset after delay
         setTimeout(() => {
-          setState({ isLoading: false, progress: 0, error: null, isDecrypting: false, isDownloading: false });
-        }, 1000);
-
-        return true;
+          setProgress(0);
+          setIsDownloading(false);
+        }, 500);
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : 'Failed to download file';
-        setState({ isLoading: false, progress: 0, error: errorMessage, isDecrypting: false, isDownloading: false });
-        toast(errorMessage, 'error');
-        return false;
+        console.error('Error downloading file:', error);
+        throw error;
       }
     },
-    [toast]
+    []
   );
 
-  /**
-   * Reset download state
-   */
-  const reset = useCallback(() => {
-    setState({ isLoading: false, progress: 0, error: null, isDecrypting: false, isDownloading: false });
-  }, []);
-
   return {
-    // State
-    ...state,
-
-    // Methods
-    downloadFile,
-    downloadFromIPFS,
-    reset,
-
-    // Derived state
-    isActive: state.isLoading,
-    progressPercent: Math.round(state.progress)
+    downloadAndDecryptFile,
+    isDownloading,
+    progress,
   };
 }
