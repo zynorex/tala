@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { verifyRequest } from '@/lib/auth/jwt';
 import { apiSuccess, apiError, handleDbError } from '@/lib/auth/api-response';
-import { downloadFromIPFS } from '@/lib/ipfs/ipfs';
+import { downloadFromIPFS, unpinFileFromIPFS } from '@/lib/ipfs/ipfs';
 import { decryptFile } from '@/lib/crypto/encryption';
 
 let prisma: any = null;
@@ -232,13 +232,19 @@ export async function DELETE(
       },
     });
 
-    // 6. Log activity
+    // 6. Unpin file from IPFS to clean up storage
+    const unpinSuccess = await unpinFileFromIPFS(vaultFile.ipfsHash).catch(err => {
+      console.error(`Failed to unpin file from IPFS: ${err}`);
+      return false;
+    });
+
+    // 7. Log activity with unpin status
     await db.activityLog.create({
       data: {
         userId: payload.userId,
         vaultId,
         action: 'file_delete',
-        description: `Deleted file: ${vaultFile.fileName}`,
+        description: `Deleted file: ${vaultFile.fileName}${unpinSuccess ? ' (unpinned from IPFS)' : ' (IPFS unpin failed)'}`,
         ipAddress: req.headers.get('x-forwarded-for') || 'unknown',
         userAgent: req.headers.get('user-agent') || 'unknown',
       },
@@ -246,7 +252,7 @@ export async function DELETE(
 
     return NextResponse.json(
       apiSuccess(
-        { fileId, deletedAt: new Date() },
+        { fileId, deletedAt: new Date(), ipfsUnpinned: unpinSuccess },
         200
       ),
       { status: 200 }

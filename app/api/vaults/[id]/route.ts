@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { verifyRequest } from '@/lib/auth/jwt';
 import { updateVaultSchema, deleteVaultSchema } from '@/lib/auth/schemas';
 import { apiSuccess, apiError, handleValidationError, handleDbError, httpErrors } from '@/lib/auth/api-response';
+import { unpinFileFromIPFS } from '@/lib/ipfs/ipfs';
 
 let prisma: any = null;
 
@@ -195,7 +196,7 @@ export async function DELETE(
       return NextResponse.json(httpErrors.forbidden, { status: 403 });
     }
 
-    // Soft delete
+    // Soft delete vault
     const deleted = await db.vault.update({
       where: { id },
       data: { isActive: false },
@@ -207,17 +208,39 @@ export async function DELETE(
       },
     });
 
-    // Log activity
+    // Clean up IPFS files (unpin from Pinata)
+    // Get all files for this vault before deletion
+    const filesToDelete = await db.vaultFile.findMany({
+      where: { vaultId: id },
+      select: { ipfsHash: true, id: true },
+    });
+
+    // Unpin files from IPFS in parallel
+    const unpinPromises = filesToDelete.map((file: { ipfsHash: string; id: string }) =>
+      unpinFileFromIPFS(file.ipfsHash).catch(err => {
+        console.error(`Failed to unpin file ${file.id}:`, err);
+        return false;
+      })
+    );
+
+    const unpinResults = await Promise.all(unpinPromises);
+    const successCount = unpinResults.filter(r => r).length;
+
+    // Log activity with cleanup details
     await db.activityLog.create({
       data: {
         userId: payload.userId,
         vaultId: id,
         action: 'VAULT_DELETED',
-        description: `Deleted vault: ${vault.name}`,
+        description: `Deleted vault: ${deleted.name} (unpinned ${successCount}/${filesToDelete.length} files from IPFS)`,
       },
     });
 
-    return NextResponse.json(apiSuccess(deleted), { status: 200 });
+    return NextResponse.json(apiSuccess({
+      ...deleted,
+      filesDeleted: filesToDelete.length,
+      filesUnpinned: successCount,
+    }), { status: 200 });
   } catch (error) {
     return NextResponse.json(handleDbError(error), { status: 500 });
   }

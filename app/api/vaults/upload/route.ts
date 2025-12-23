@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { verifyRequest } from '@/lib/auth/jwt';
 import { apiSuccess, handleDbError, httpErrors } from '@/lib/auth/api-response';
+import { uploadToIPFS, pinFileToIPFS } from '@/lib/ipfs/ipfs';
 import crypto from 'crypto';
 
 const MAX_FILE_SIZE = 500 * 1024 * 1024; // 500MB
@@ -50,22 +51,23 @@ function encryptFileData(fileBuffer: Buffer, password: string) {
 }
 
 /**
- * Upload file to simulated IPFS (in production, use Pinata)
+ * Upload file to IPFS via Pinata (real integration)
  */
-async function simulateIPFSUpload(fileBuffer: Buffer, fileName: string) {
-  // In production, integrate with Pinata or Infura
-  // For now, return a mock IPFS hash
-  const hash = crypto
-    .createHash('sha256')
-    .update(fileBuffer)
-    .digest('hex')
-    .slice(0, 46); // Simulate IPFS hash format
+async function uploadFileToIPFS(fileBuffer: Buffer, fileName: string, description: string) {
+  try {
+    const result = await uploadToIPFS(fileBuffer, fileName, description);
+    
+    // Pin file permanently for redundancy
+    await pinFileToIPFS(result.ipfsHash).catch(err => {
+      console.warn('Failed to pin file, but upload succeeded:', err);
+    });
 
-  return {
-    ipfsHash: `Qm${hash}`,
-    size: fileBuffer.length,
-    name: fileName,
-  };
+    return result;
+  } catch (error) {
+    throw new Error(
+      `IPFS upload failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+    );
+  }
 }
 
 /**
@@ -145,8 +147,8 @@ export async function POST(req: NextRequest) {
     // Encrypt file
     const encryptionResult = encryptFileData(fileBuffer, encryptionPassword);
 
-    // Upload to IPFS (simulated)
-    const ipfsResult = await simulateIPFSUpload(fileBuffer, file.name);
+    // Upload to IPFS (real Pinata integration)
+    const ipfsResult = await uploadFileToIPFS(fileBuffer, file.name, vault.name);
 
     // Store file reference in database
     const vaultFile = await db.vaultFile.create({

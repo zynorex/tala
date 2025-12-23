@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { verifyRequest } from '@/lib/auth/jwt';
+import { downloadFromIPFS } from '@/lib/ipfs/ipfs';
 import crypto from 'crypto';
 
 let prisma: any = null;
