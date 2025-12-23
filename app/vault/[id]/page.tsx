@@ -10,6 +10,8 @@ import {
   User, Key, Hash, BarChart3, Lock as LockIcon
 } from 'lucide-react';
 import { useToast } from '@/app/hooks/useToast';
+import { useFileDownload } from '@/app/hooks/useFileDownload';
+import { PasswordPromptModal } from '@/app/components/PasswordPromptModal';
 
 interface VaultData {
   id: string;
@@ -70,6 +72,9 @@ export default function VaultDetailPage({ params }: { params: Promise<{ id: stri
   const [downloadingFileId, setDownloadingFileId] = useState<string | null>(null);
   const [deletingFileId, setDeletingFileId] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'overview' | 'files' | 'activity'>('overview');
+  const [showPasswordModal, setShowPasswordModal] = useState(false);
+  const [selectedFileForDownload, setSelectedFileForDownload] = useState<VaultFile | null>(null);
+  const { downloadAndDecryptFile, isDownloading, progress } = useFileDownload();
 
   // Resolve params
   useEffect(() => {
@@ -271,16 +276,35 @@ export default function VaultDetailPage({ params }: { params: Promise<{ id: stri
   };
 
   const handleDownloadFile = async (file: VaultFile) => {
+    setSelectedFileForDownload(file);
+    setShowPasswordModal(true);
+  };
+
+  const handlePasswordSubmit = async (password: string) => {
+    if (!selectedFileForDownload) {
+      toast('No file selected', 'error');
+      return;
+    }
+
     try {
-      setDownloadingFileId(file.id);
-      // In a real implementation, this would decrypt and download the file
-      // For now, we'll show a message that this needs the encryption key from the client
-      toast('Download functionality coming soon. File: ' + file.fileName, 'info');
+      setDownloadingFileId(selectedFileForDownload.id);
+      setShowPasswordModal(false);
+
+      await downloadAndDecryptFile({
+        vaultId: vault.id,
+        fileId: selectedFileForDownload.id,
+        fileName: selectedFileForDownload.fileName,
+        password,
+      });
+
+      toast(`File "${selectedFileForDownload.fileName}" downloaded successfully!`, 'success');
     } catch (error) {
       console.error('Error downloading file:', error);
-      toast('Failed to download file', 'error');
+      const errorMessage = error instanceof Error ? error.message : 'Failed to download file';
+      toast(errorMessage, 'error');
     } finally {
       setDownloadingFileId(null);
+      setSelectedFileForDownload(null);
     }
   };
 
@@ -819,6 +843,19 @@ export default function VaultDetailPage({ params }: { params: Promise<{ id: stri
             </div>
           </div>
         )}
+
+        {/* Password Prompt Modal */}
+        <PasswordPromptModal
+          isOpen={showPasswordModal}
+          fileName={selectedFileForDownload?.fileName || ''}
+          onSubmit={handlePasswordSubmit}
+          onClose={() => {
+            setShowPasswordModal(false);
+            setSelectedFileForDownload(null);
+          }}
+          isLoading={isDownloading}
+          progress={progress}
+        />
       </div>
     </div>
   );
