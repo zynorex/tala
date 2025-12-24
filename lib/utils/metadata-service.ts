@@ -1,6 +1,7 @@
 /**
  * TALA Encryption Metadata Database Service
  * Manages encrypted file metadata without storing encryption keys
+ * Enterprise-grade implementation with Prisma database integration
  * 
  * Data Model:
  * - Stores IPFS hash, file info, and encryption metadata
@@ -16,6 +17,10 @@
  */
 
 import crypto from 'crypto';
+import { db } from '@/lib/prisma';
+import { getLogger } from '@/lib/utils/logger';
+
+const logger = getLogger('MetadataService');
 
 /**
  * Encryption metadata stored in database

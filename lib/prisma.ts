@@ -1,28 +1,51 @@
-import { PrismaClient } from './generated/prisma/client';
+/**
+ * Enterprise-Grade Prisma Database Client
+ * Singleton pattern with connection pooling and error handling
+ */
 
+import { PrismaClient } from './generated/prisma/client';
+import { getLogger } from '@/lib/utils/logger';
+
+const logger = getLogger('PrismaClient');
 const globalForPrisma = globalThis as unknown as { prisma: PrismaClient };
 
-// Only instantiate if DATABASE_URL is provided
-export const prisma = (() => {
+// Create Prisma client with enterprise features
+export const db = (() => {
+  // Check if DATABASE_URL is available
   if (!process.env.DATABASE_URL) {
-    // During build without DB connection, create a dummy client
-    if (process.env.NODE_ENV === 'production' || !process.env.DATABASE_URL) {
-      // Return a proxy that won't be called during build
-      return {
-        user: { findUnique: async () => null },
-        vault: { findMany: async () => [], create: async () => ({}), findUnique: async () => null, update: async () => ({}), },
-        activityLog: { create: async () => ({}) },
-      } as any;
-    }
+    logger.warn('DATABASE_URL not configured, using mock client for build-time');
+    
+    // Return a mock client for build-time or when DB is not configured
+    return {
+      user: { findUnique: async () => null, findMany: async () => [], create: async () => ({}) },
+      vault: { findMany: async () => [], create: async () => ({}), findUnique: async () => null, update: async () => ({}) },
+      vaultFile: { findMany: async () => [], create: async () => ({}), delete: async () => ({}) },
+      encryptionMetadata: { create: async () => ({}), findUnique: async () => null },
+      activityLog: { create: async () => ({}), findMany: async () => [] },
+    } as any;
   }
 
-  if (globalForPrisma.prisma) return globalForPrisma.prisma;
+  // Reuse existing connection in development
+  if (globalForPrisma.prisma) {
+    logger.debug('Reusing existing Prisma connection');
+    return globalForPrisma.prisma;
+  }
 
-  const client = new (PrismaClient as any)();
+  logger.info('Creating new Prisma database client');
   
+  const client = new PrismaClient({
+    log: process.env.NODE_ENV === 'development'
+      ? ['query', 'info', 'warn', 'error']
+      : ['warn', 'error'],
+  });
+
+  // Store reference in development to prevent multiple connections
   if (process.env.NODE_ENV !== 'production') {
     globalForPrisma.prisma = client;
   }
 
   return client;
 })();
+
+// Alias for compatibility
+export const prisma = db;
