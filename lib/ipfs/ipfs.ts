@@ -481,3 +481,9 @@ export function getIPFSGatewayURL(
 
   return `https://gateway.pinata.cloud/ipfs/${ipfsHash}`;
 }
+/**
+ * Retrieve file from IPFS (alias for downloadFromIPFS)
+ */
+export async function retrieveFromIPFS(ipfsHash: string): Promise<IPFSDownloadResponse> {
+  return downloadFromIPFS(ipfsHash);
+}

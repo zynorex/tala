@@ -8,6 +8,44 @@ import { AlertCircle, CheckCircle, AlertTriangle, Info } from 'lucide-react';
  * Provides user-friendly error messages and logging
  */
 
+/**
+ * Custom error classes for application-specific errors
+ */
+export class ValidationError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'ValidationError';
+  }
+}
+
+export class EncryptionError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'EncryptionError';
+  }
+}
+
+export class AuthenticationError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'AuthenticationError';
+  }
+}
+
+export class VaultAccessError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'VaultAccessError';
+  }
+}
+
+export class IPFSError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'IPFSError';
+  }
+}
+
 export interface ErrorHandlerConfig {
   logError?: boolean;
   userMessage?: string;

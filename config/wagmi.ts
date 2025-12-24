@@ -1,14 +1,14 @@
 import { http, createConfig } from 'wagmi';
-import { polygonAmoy } from 'wagmi/chains';
+import { polygonAmoy, polygon } from 'wagmi/chains';
 import { injected } from 'wagmi/connectors';
 
-// Polygon Amoy Testnet Configuration
+// Polygon Amoy Testnet & Polygon Mainnet Configuration
 export const config = createConfig({
-  chains: [polygonAmoy],
+  chains: [polygonAmoy, polygon],
   connectors: [injected()],
   transports: {
     [polygonAmoy.id]: http(),
-  },
+    [polygon.id]: http(),
   ssr: true,
 });
 

@@ -403,3 +403,25 @@ export function getEncryptionConstants() {
     pbkdf2Digest: PBKDF2_DIGEST,
   };
 }
+/**
+ * Generate encryption key (alias for generateEncryptionKey)
+ */
+export function generateKey(): Buffer {
+  return generateEncryptionKey();
+}
+
+/**
+ * Web Crypto API wrapper for browser-based encryption
+ * Uses SubtleCrypto for secure key generation
+ */
+export async function generateKeyWebCrypto(): Promise<CryptoKey> {
+  const key = await crypto.subtle.generateKey(
+    {
+      name: 'AES-GCM',
+      length: 256,
+    },
+    true, // extractable
+    ['encrypt', 'decrypt']
+  );
+  return key;
+}
