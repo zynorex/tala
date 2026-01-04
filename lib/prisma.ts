@@ -34,6 +34,7 @@ export const db = (() => {
   logger.info('Creating new Prisma database client');
   
   const client = new PrismaClient({
+    accelerateUrl: process.env.DATABASE_URL,
     log: process.env.NODE_ENV === 'development'
       ? ['query', 'info', 'warn', 'error']
       : ['warn', 'error'],

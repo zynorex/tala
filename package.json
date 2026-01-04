@@ -47,6 +47,7 @@
     "@nomicfoundation/hardhat-verify": "^3.0.8",
     "@tailwindcss/postcss": "^4",
     "@typechain/hardhat": "^9.1.0",
+    "@types/jest": "^30.0.0",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^20",
     "@types/react": "^19",

@@ -10,17 +10,16 @@
  * - Unlock workflow management
  */
 
-import { PrismaClient } from '../lib/generated/prisma/client';
-import * as encryption from './crypto/encryption';
-import * as ipfs from './ipfs/ipfs';
-import * as logger from './logger';
+import { db } from '@/lib/prisma';
+import * as encryption from '@/lib/crypto/encryption';
+import * as ipfs from '@/lib/ipfs/ipfs';
+import { getLogger } from '@/lib/utils/logger';
 import {
   ValidationError,
-  EncryptionError,
   AuthenticationError,
-} from './utils/error-handler';
+} from '@/lib/utils/error-handler';
 
-const prisma = new PrismaClient();
+const logger = getLogger('VaultService');
 
 export interface CreateVaultInput {
   name: string;
@@ -49,11 +48,36 @@ export interface UnlockVaultInput {
 }
 
 /**
+ * Log activity to the database
+ */
+async function logActivity(
+  vaultId: string,
+  userId: string,
+  action: string,
+  description: string,
+  ipAddress?: string,
+  userAgent?: string
+): Promise<void> {
+  try {
+    await db.activityLog.create({
+      data: {
+        vaultId,
+        userId,
+        action,
+        description,
+        ipAddress: ipAddress || null,
+        userAgent: userAgent || null,
+      },
+    });
+  } catch (error) {
+    logger.error('Failed to log activity', error instanceof Error ? error : undefined);
+  }
+}
+
+/**
  * Create a new vault
  */
 export async function createVault(input: CreateVaultInput): Promise<any> {
-  const correlationId = logger.getCorrelationId();
-
   try {
     // Validate input
     if (!input.name || input.name.trim().length === 0) {
@@ -68,62 +92,46 @@ export async function createVault(input: CreateVaultInput): Promise<any> {
       throw new ValidationError('User ID is required');
     }
 
-    logger.info('Creating vault', {
-      userId: input.userId,
-      vaultName: input.name,
-      correlationId,
-    });
+    logger.info('Creating vault for user', { userId: input.userId, vaultName: input.name });
 
     // Generate encryption key from password
-    const salt = encryption.generateEncryptionKey(); // Using for salt
     const encryptionKey = encryption.generateEncryptionKey();
+    const keyHash = encryption.calculateFileHash(encryptionKey);
 
     // Create vault in database
-    const vault = await prisma.vault.create({
+    const vault = await db.vault.create({
       data: {
         name: input.name,
         description: input.description || '',
         userId: input.userId,
-        isLocked: true, // Vaults start locked
-        encryptionMetadata: {
-          keyDerivationMethod: 'PBKDF2',
-          saltLength: 32,
-          iterations: 100000,
-        },
+        encryptedData: '', // Will be populated when files are added
+        keyHash: keyHash,
+        fileHash: '',
+        fileName: '',
+        fileSize: 0,
+        isActive: true,
       },
     });
 
     // Log vault creation activity
-    await logger.logActivity(
+    await logActivity(
       vault.id,
       input.userId,
       'VAULT_CREATED',
-      {
-        vaultName: input.name,
-        timestamp: new Date().toISOString(),
-      }
+      `Created vault: ${input.name}`
     );
 
-    logger.info('Vault created successfully', {
-      vaultId: vault.id,
-      userId: input.userId,
-      correlationId,
-    });
+    logger.info('Vault created successfully', { vaultId: vault.id });
 
     return {
       id: vault.id,
       name: vault.name,
       description: vault.description,
       createdAt: vault.createdAt,
-      isLocked: vault.isLocked,
+      isActive: vault.isActive,
     };
   } catch (error) {
-    logger.error('Vault creation failed', {
-      userId: input.userId,
-      error: error instanceof Error ? error.message : String(error),
-      correlationId,
-    });
-
+    logger.error('Vault creation failed', error instanceof Error ? error : undefined);
     throw error;
   }
 }
@@ -132,8 +140,6 @@ export async function createVault(input: CreateVaultInput): Promise<any> {
  * Add file to vault
  */
 export async function addFileToVault(input: AddFileInput): Promise<any> {
-  const correlationId = logger.getCorrelationId();
-
   try {
     // Validate input
     if (!input.vaultId) {
@@ -144,14 +150,10 @@ export async function addFileToVault(input: AddFileInput): Promise<any> {
       throw new ValidationError('File is required');
     }
 
-    logger.info('Adding file to vault', {
-      vaultId: input.vaultId,
-      fileName: input.file.name,
-      correlationId,
-    });
+    logger.info('Adding file to vault', { vaultId: input.vaultId, fileName: input.file.name });
 
     // Verify vault exists and user has access
-    const vault = await prisma.vault.findUnique({
+    const vault = await db.vault.findUnique({
       where: { id: input.vaultId },
     });
 
@@ -166,60 +168,44 @@ export async function addFileToVault(input: AddFileInput): Promise<any> {
     // Encrypt file
     const encryptionKey = encryption.generateEncryptionKey();
     const encryptedData = encryption.encrypt(input.file.buffer, encryptionKey);
+    const fileHash = encryption.calculateFileHash(input.file.buffer);
 
     // Upload to IPFS
-    const ipfsHash = await ipfs.uploadToIPFS(input.file.buffer, input.file.name);
+    const ipfsResult = await ipfs.uploadToIPFS(input.file.buffer, input.file.name, `File for vault ${input.vaultId}`, fileHash);
 
     // Save file metadata
-    const vaultFile = await prisma.vaultFile.create({
+    const vaultFile = await db.vaultFile.create({
       data: {
         vaultId: input.vaultId,
         fileName: input.file.name,
+        fileSizeBytes: input.file.buffer.length,
         mimeType: input.file.mimeType,
-        fileSize: input.file.buffer.length,
-        ipfsHash: ipfsHash,
-        encryptedMetadata: {
-          ciphertext: encryptedData.ciphertext,
-          iv: encryptedData.iv,
-          authTag: encryptedData.authTag,
-          algorithm: encryptedData.algorithm,
-        },
+        fileHash: fileHash,
+        ipfsHash: ipfsResult.ipfsHash,
+        encryptionKeyHash: encryption.calculateFileHash(encryptionKey),
+        uploadedBy: input.userId,
       },
     });
 
     // Log file addition
-    await logger.logActivity(
+    await logActivity(
       input.vaultId,
       input.userId,
       'FILE_ADDED',
-      {
-        fileName: input.file.name,
-        fileSize: input.file.buffer.length,
-        ipfsHash: ipfsHash,
-        timestamp: new Date().toISOString(),
-      }
+      `Added file: ${input.file.name} (${input.file.buffer.length} bytes)`
     );
 
-    logger.info('File added to vault successfully', {
-      vaultId: input.vaultId,
-      fileName: input.file.name,
-      correlationId,
-    });
+    logger.info('File added to vault successfully', { vaultId: input.vaultId, fileId: vaultFile.id });
 
     return {
       fileId: vaultFile.id,
       fileName: vaultFile.fileName,
-      fileSize: vaultFile.fileSize,
+      fileSize: vaultFile.fileSizeBytes,
       ipfsHash: vaultFile.ipfsHash,
-      uploadedAt: vaultFile.createdAt,
+      uploadedAt: vaultFile.uploadedAt,
     };
   } catch (error) {
-    logger.error('Failed to add file to vault', {
-      vaultId: input.vaultId,
-      error: error instanceof Error ? error.message : String(error),
-      correlationId,
-    });
-
+    logger.error('Failed to add file to vault', error instanceof Error ? error : undefined);
     throw error;
   }
 }
@@ -228,8 +214,6 @@ export async function addFileToVault(input: AddFileInput): Promise<any> {
  * Unlock vault for access
  */
 export async function unlockVault(input: UnlockVaultInput): Promise<boolean> {
-  const correlationId = logger.getCorrelationId();
-
   try {
     // Validate input
     if (!input.vaultId) {
@@ -240,14 +224,10 @@ export async function unlockVault(input: UnlockVaultInput): Promise<boolean> {
       throw new ValidationError('Password is required');
     }
 
-    logger.info('Unlocking vault', {
-      vaultId: input.vaultId,
-      userId: input.userId,
-      correlationId,
-    });
+    logger.info('Unlocking vault', { vaultId: input.vaultId });
 
     // Verify vault exists
-    const vault = await prisma.vault.findUnique({
+    const vault = await db.vault.findUnique({
       where: { id: input.vaultId },
     });
 
@@ -259,36 +239,19 @@ export async function unlockVault(input: UnlockVaultInput): Promise<boolean> {
       throw new AuthenticationError('Unauthorized access to vault');
     }
 
-    // Update vault locked status
-    await prisma.vault.update({
-      where: { id: input.vaultId },
-      data: { isLocked: false },
-    });
-
     // Log unlock activity
-    await logger.logActivity(
+    await logActivity(
       input.vaultId,
       input.userId,
       'VAULT_UNLOCKED',
-      {
-        timestamp: new Date().toISOString(),
-      }
+      'Vault unlocked successfully'
     );
 
-    logger.info('Vault unlocked successfully', {
-      vaultId: input.vaultId,
-      userId: input.userId,
-      correlationId,
-    });
+    logger.info('Vault unlocked successfully', { vaultId: input.vaultId });
 
     return true;
   } catch (error) {
-    logger.error('Failed to unlock vault', {
-      vaultId: input.vaultId,
-      error: error instanceof Error ? error.message : String(error),
-      correlationId,
-    });
-
+    logger.error('Failed to unlock vault', error instanceof Error ? error : undefined);
     throw error;
   }
 }
@@ -298,7 +261,7 @@ export async function unlockVault(input: UnlockVaultInput): Promise<boolean> {
  */
 export async function getVault(vaultId: string, userId: string): Promise<any> {
   try {
-    const vault = await prisma.vault.findUnique({
+    const vault = await db.vault.findUnique({
       where: { id: vaultId },
       include: {
         files: true,
@@ -317,23 +280,19 @@ export async function getVault(vaultId: string, userId: string): Promise<any> {
       id: vault.id,
       name: vault.name,
       description: vault.description,
-      isLocked: vault.isLocked,
+      isActive: vault.isActive,
       fileCount: vault.files.length,
       files: vault.files.map((f: any) => ({
         id: f.id,
         name: f.fileName,
-        size: f.fileSize,
-        uploadedAt: f.createdAt,
+        size: f.fileSizeBytes,
+        uploadedAt: f.uploadedAt,
       })),
       createdAt: vault.createdAt,
       updatedAt: vault.updatedAt,
     };
   } catch (error) {
-    logger.error('Failed to retrieve vault', {
-      vaultId,
-      error: error instanceof Error ? error.message : String(error),
-    });
-
+    logger.error('Failed to retrieve vault', error instanceof Error ? error : undefined);
     throw error;
   }
 }
@@ -343,7 +302,7 @@ export async function getVault(vaultId: string, userId: string): Promise<any> {
  */
 export async function listUserVaults(userId: string): Promise<any[]> {
   try {
-    const vaults = await prisma.vault.findMany({
+    const vaults = await db.vault.findMany({
       where: { userId },
       include: {
         _count: {
@@ -357,17 +316,13 @@ export async function listUserVaults(userId: string): Promise<any[]> {
       id: v.id,
       name: v.name,
       description: v.description,
-      isLocked: v.isLocked,
+      isActive: v.isActive,
       fileCount: v._count.files,
       createdAt: v.createdAt,
       updatedAt: v.updatedAt,
     }));
   } catch (error) {
-    logger.error('Failed to list vaults', {
-      userId,
-      error: error instanceof Error ? error.message : String(error),
-    });
-
+    logger.error('Failed to list vaults', error instanceof Error ? error : undefined);
     throw error;
   }
 }

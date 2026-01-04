@@ -9,6 +9,7 @@ export const config = createConfig({
   transports: {
     [polygonAmoy.id]: http(),
     [polygon.id]: http(),
+  },
   ssr: true,
 });
 

@@ -11,7 +11,7 @@
  * - Transaction receipt polling
  */
 
-import { writeContract as wagmiWriteContract, readContract as wagmiReadContract } from 'wagmi/actions';
+import { writeContract, readContract } from 'wagmi/actions';
 import { keccak256, stringToBytes } from 'viem';
 import { TALA_VAULT_ABI, TALA_VAULT_CONFIG } from './tala-vault';
 import { logger } from '@/lib/utils/logger';
@@ -177,7 +177,7 @@ export async function createVault(
     });
 
     // Submit transaction to blockchain
-    const hash = await wagmiWriteContract(wagmiConfig, {
+    const hash = await writeContract(wagmiConfig, {
       address: config.contractAddress as `0x${string}`,
       abi: TALA_VAULT_ABI,
       functionName: 'createVault',
@@ -199,7 +199,7 @@ export async function createVault(
     };
   } catch (error) {
     const errorMsg = error instanceof Error ? error.message : 'Unknown error';
-    logger.error(`Vault creation failed [${txId}]: ${errorMsg}`, error);
+    logger.error(`Vault creation failed [${txId}]: ${errorMsg}`, error instanceof Error ? error : undefined);
 
     if (error instanceof VaultContractError) {
       throw error;
