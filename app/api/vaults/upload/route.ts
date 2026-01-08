@@ -82,7 +82,7 @@ export async function POST(req: NextRequest) {
   try {
     const payload = verifyRequest(req);
     if (!payload) {
-      return NextResponse.json(httpErrors.unauthorized, { status: 401 });
+      return httpErrors.unauthorized();
     }
 
     // Parse multipart form data
@@ -138,7 +138,7 @@ export async function POST(req: NextRequest) {
     }
 
     if (vault.userId !== payload.userId) {
-      return NextResponse.json(httpErrors.unauthorized, { status: 403 });
+      return httpErrors.forbidden();
     }
 
     // Read file buffer

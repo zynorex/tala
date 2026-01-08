@@ -20,7 +20,7 @@ export async function GET(req: NextRequest) {
   try {
     const payload = verifyRequest(req);
     if (!payload) {
-      return NextResponse.json(httpErrors.unauthorized, { status: 401 });
+      return httpErrors.unauthorized();
     }
 
     const db = await getPrisma();

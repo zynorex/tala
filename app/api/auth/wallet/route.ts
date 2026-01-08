@@ -53,13 +53,13 @@ export async function POST(req: NextRequest) {
       recoveredAddress = verifyMessage(message, signature);
     } catch (error) {
       console.error('Signature verification failed:', error);
-      return NextResponse.json(httpErrors.unauthorized, { status: 401 });
+      return httpErrors.unauthorized();
     }
 
     // Normalize addresses for comparison
     if (recoveredAddress.toLowerCase() !== address.toLowerCase()) {
       console.warn(`Signature mismatch: recovered ${recoveredAddress}, provided ${address}`);
-      return NextResponse.json(httpErrors.unauthorized, { status: 401 });
+      return httpErrors.unauthorized();
     }
 
     // Find or create user

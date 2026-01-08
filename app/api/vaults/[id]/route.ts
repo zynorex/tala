@@ -62,12 +62,12 @@ export async function GET(
     });
 
     if (!vault) {
-      return NextResponse.json(httpErrors.notFound, { status: 404 });
+      return httpErrors.notFound('Vault');
     }
 
     // Verify ownership
     if (vault.userId !== payload.userId) {
-      return NextResponse.json(httpErrors.forbidden, { status: 403 });
+      return httpErrors.forbidden();
     }
 
     return NextResponse.json(apiSuccess(vault), { status: 200 });
