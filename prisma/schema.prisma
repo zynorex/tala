@@ -141,8 +141,13 @@ model VaultFile {
   
   // Encryption & Storage
   fileHash              String     // SHA-256 hash of original file
-  ipfsHash              String     // IPFS content hash
+  ipfsHash              String     // IPFS content hash (encrypted file)
   encryptionKeyHash     String     // SHA-256 hash of encryption key
+  
+  // Encryption metadata (stored as JSON in encryptedData or separate fields)
+  encryptionIV          String?    // Initialization Vector (hex)
+  encryptionSalt        String?    // Salt for key derivation (hex)
+  encryptionAuthTag     String?    // GCM authentication tag (hex)
   
   // Audit
   uploadedBy            String

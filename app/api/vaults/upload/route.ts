@@ -144,24 +144,37 @@ export async function POST(req: NextRequest) {
     // Read file buffer
     const fileBuffer = Buffer.from(await file.arrayBuffer());
 
-    // Encrypt file
+    // Encrypt file first
     const encryptionResult = encryptFileData(fileBuffer, encryptionPassword);
 
-    // Upload to IPFS (real Pinata integration)
-    const ipfsResult = await uploadFileToIPFS(fileBuffer, file.name, vault.name);
+    // Convert encrypted hex string to buffer for IPFS upload
+    const encryptedBuffer = Buffer.from(encryptionResult.encrypted, 'hex');
 
-    // Store file reference in database
+    // Upload ENCRYPTED file to IPFS (security: only encrypted data stored on IPFS)
+    const ipfsResult = await uploadFileToIPFS(
+      encryptedBuffer,
+      `${file.name}.encrypted`,
+      `${vault.name} - Encrypted vault file`,
+      encryptionResult.fileHash
+    );
+
+    // Hash the encryption password for verification (NOT storing password itself)
+    const crypto = await import('crypto');
+    const passwordHash = crypto.createHash('sha256').update(encryptionPassword).digest('hex');
+
+    // Store file reference in database with encryption metadata
     const vaultFile = await db.vaultFile.create({
       data: {
         vaultId,
         fileName: file.name,
         mimeType: file.type || 'application/octet-stream',
-        fileSizeBytes: file.size,
-        ipfsHash: ipfsResult.ipfsHash,
-        fileHash: encryptionResult.fileHash,
-        encryptedIV: encryptionResult.iv,
-        encryptedAuthTag: encryptionResult.authTag,
-        encryptedSalt: encryptionResult.salt,
+        fileSizeBytes: file.size, // Original file size
+        ipfsHash: ipfsResult.ipfsHash, // Hash of encrypted file on IPFS
+        fileHash: encryptionResult.fileHash, // Hash of original unencrypted file
+        encryptionKeyHash: passwordHash, // Hash of password for verification
+        encryptionIV: encryptionResult.iv, // Store IV for decryption
+        encryptionSalt: encryptionResult.salt, // Store salt for decryption
+        encryptionAuthTag: encryptionResult.authTag, // Store auth tag for decryption
         uploadedBy: payload.userId,
         isActive: true,
       },
@@ -173,14 +186,9 @@ export async function POST(req: NextRequest) {
         userId: payload.userId,
         vaultId,
         action: 'FILE_UPLOADED',
-        description: `Uploaded file: ${file.name} (${Math.round(file.size / 1024)}KB)`,
+        description: `Uploaded encrypted file: ${file.name} (${Math.round(file.size / 1024)}KB) to IPFS`,
       },
     });
-
-    // Store encrypted file data client-side ready format
-    // In production, this would be stored in IPFS
-    // For testing, we'll return it so client can store it
-    const encryptedBase64 = Buffer.from(encryptionResult.encrypted, 'hex').toString('base64');
 
     return NextResponse.json(apiSuccess({
       file: {
@@ -191,7 +199,17 @@ export async function POST(req: NextRequest) {
         uploadedAt: vaultFile.uploadedAt,
         ipfsHash: vaultFile.ipfsHash,
         fileHash: vaultFile.fileHash,
-        encryptedData: encryptedBase64, // For client-side storage in testing
+      },
+      encryption: {
+        iv: encryptionResult.iv,
+        salt: encryptionResult.salt,
+        authTag: encryptionResult.authTag,
+        algorithm: 'AES-256-GCM',
+      },
+      ipfs: {
+        hash: ipfsResult.ipfsHash,
+        gateway: ipfsResult.gateway,
+        size: ipfsResult.size,
       },
     }), { status: 201 });
   } catch (error) {
