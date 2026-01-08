@@ -81,7 +81,7 @@ export default function Navbar() {
     return "bg-heirlock-yellow";
   };
 
-  const getNavTextColor = () => (isScrolled ? "text-white" : "text-black");
+  const getNavTextColor = () => (isScrolled ? "text-white" : "hover:text-white");
 
   const getBadgeColor = () => {
     if (isScrolled) return "bg-heirlock-yellow text-black border-2 border-heirlock-yellow group-hover:text-black group-hover:bg-heirlock-yellow";
