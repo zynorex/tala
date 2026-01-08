@@ -487,7 +487,7 @@ export default function CreateVaultForm() {
           Choose when the vault will unlock. Can be from 1 minute to 100 years in the future.
         </p>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
+          <div className="relative">
             <input
               type="date"
               min={minDate}
@@ -497,12 +497,16 @@ export default function CreateVaultForm() {
                 setForm({ ...form, unlockDate: e.target.value });
                 setErrors({ ...errors, unlockDate: '' });
               }}
-              className={`w-full px-4 py-3 border-4 border-black bg-cream font-medium text-black focus:outline-none focus:ring-4 focus:ring-black/20 ${
+              className={`w-full px-4 py-3 border-4 border-black bg-cream font-bold text-black focus:outline-none focus:ring-4 focus:ring-heirlock-yellow transition-all hover:bg-heirlock-yellow/30 cursor-pointer ${
                 errors.unlockDate ? 'ring-4 ring-red-500' : ''
               }`}
+              style={{
+                colorScheme: 'light',
+              }}
             />
+            <Calendar className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-black pointer-events-none" />
           </div>
-          <div>
+          <div className="relative">
             <input
               type="time"
               value={form.unlockTime}
@@ -510,17 +514,31 @@ export default function CreateVaultForm() {
                 setForm({ ...form, unlockTime: e.target.value });
                 setErrors({ ...errors, unlockDate: '' });
               }}
-              className={`w-full px-4 py-3 border-4 border-black bg-cream font-medium text-black focus:outline-none focus:ring-4 focus:ring-black/20 ${
+              className={`w-full px-4 py-3 border-4 border-black bg-cream font-bold text-black focus:outline-none focus:ring-4 focus:ring-heirlock-yellow transition-all hover:bg-heirlock-yellow/30 cursor-pointer ${
                 errors.unlockDate ? 'ring-4 ring-red-500' : ''
               }`}
+              style={{
+                colorScheme: 'light',
+              }}
             />
+            <Clock className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-black pointer-events-none" />
           </div>
         </div>
         {form.unlockDate && form.unlockTime && (
-          <div className="border-2 border-black p-3 bg-heirlock-yellow">
-            <p className="text-sm font-bold text-black">
-              Vault will unlock on: {new Date(`${form.unlockDate}T${form.unlockTime}`).toLocaleString()}
-            </p>
+          <div className="border-4 border-black p-4 bg-heirlock-yellow shadow-brutal">
+            <div className="flex items-center gap-2">
+              <CheckCircle className="w-5 h-5 text-black" />
+              <p className="text-sm font-black text-black">
+                Vault unlocks: {new Date(`${form.unlockDate}T${form.unlockTime}`).toLocaleString('en-US', {
+                  weekday: 'long',
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
+                  hour: '2-digit',
+                  minute: '2-digit'
+                })}
+              </p>
+            </div>
           </div>
         )}
         {errors.unlockDate && (
