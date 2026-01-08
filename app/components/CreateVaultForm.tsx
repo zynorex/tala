@@ -128,7 +128,7 @@ export default function CreateVaultForm() {
   }, []);
 
   const handleFileSelection = (file: File) => {
-    const sizeValidation = validators.fileSize(file.size, 500 * 1024 * 1024);
+    const sizeValidation = validators.fileSize(file.size, 50 * 1024 * 1024);
     if (!sizeValidation.valid) {
       setErrors({ ...errors, file: sizeValidation.error || 'File size invalid' });
       toast(sizeValidation.error || 'File size invalid', 'error');
@@ -402,7 +402,7 @@ export default function CreateVaultForm() {
       <div className="space-y-2">
         <label className="font-black text-black text-sm uppercase block">
           <Upload className="w-4 h-4 inline mr-2" />
-          File to Encrypt * (Max 500 MB)
+          File to Encrypt * (Max 50 MB)
         </label>
         <div
           className={`border-4 border-dashed p-8 transition-all ${
@@ -434,14 +434,14 @@ export default function CreateVaultForm() {
                     <p className="font-black text-black truncate">{form.file.name}</p>
                   </div>
                   <p className="text-sm text-gray-700 font-medium mb-3">
-                    Size: {(form.file.size / 1024 / 1024).toFixed(2)} MB / 500 MB
+                    Size: {(form.file.size / 1024 / 1024).toFixed(2)} MB / 50 MB
                   </p>
                   <div className="w-full bg-gray-300 border-2 border-black h-3 rounded-sm overflow-hidden">
                     <div
                       className={`h-full transition-all duration-300 ${
-                        form.file.size > 500 * 1024 * 1024 ? 'bg-red-500' : 'bg-heirlock-green'
+                        form.file.size > 50 * 1024 * 1024 ? 'bg-red-500' : 'bg-heirlock-green'
                       }`}
-                      style={{ width: `${Math.min((form.file.size / (500 * 1024 * 1024)) * 100, 100)}%` }}
+                      style={{ width: `${Math.min((form.file.size / (50 * 1024 * 1024)) * 100, 100)}%` }}
                     />
                   </div>
                 </div>
@@ -461,7 +461,7 @@ export default function CreateVaultForm() {
               <div className="text-center py-4">
                 <Upload className="w-12 h-12 text-gray-600 mx-auto mb-3" />
                 <p className="font-black text-black mb-1">Click to select file or drag & drop</p>
-                <p className="text-xs text-gray-600 font-medium mt-2">Maximum file size: 500 MB</p>
+                <p className="text-xs text-gray-600 font-medium mt-2">Maximum file size: 50 MB</p>
                 <p className="text-xs text-gray-500 font-medium mt-1">
                   Supported: All file types except executables (.exe, .bat, .sh, etc.)
                 </p>

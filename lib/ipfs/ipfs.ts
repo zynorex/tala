@@ -18,7 +18,7 @@ const IPFS_PROVIDERS = {
 } as const;
 
 // Configuration constants
-const MAX_UPLOAD_SIZE = 500 * 1024 * 1024; // 500 MB
+const MAX_UPLOAD_SIZE = 50 * 1024 * 1024; // 50 MB
 const UPLOAD_TIMEOUT = 300000; // 5 minutes
 const DOWNLOAD_TIMEOUT = 120000; // 2 minutes
 const MAX_RETRIES = 3;

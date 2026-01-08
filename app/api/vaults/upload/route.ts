@@ -4,7 +4,7 @@ import { apiSuccess, handleDbError, httpErrors } from '@/lib/auth/api-response';
 import { uploadToIPFS, pinFileToIPFS } from '@/lib/ipfs/ipfs';
 import crypto from 'crypto';
 
-const MAX_FILE_SIZE = 500 * 1024 * 1024; // 500MB
+const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB
 
 let prisma: any = null;
 

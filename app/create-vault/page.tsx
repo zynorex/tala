@@ -15,7 +15,7 @@ export default function CreateVault() {
     {
       number: "2",
       title: "Upload Your File",
-      description: "Select any file up to 500MB. Encrypted with AES-256 before it leaves your device.",
+      description: "Select any file up to 50MB. Encrypted with AES-256 before it leaves your device.",
       icon: Upload,
     },
     {
