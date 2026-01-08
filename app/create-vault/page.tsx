@@ -60,7 +60,7 @@ export default function CreateVault() {
       {/* Hero Section */}
       <section className="bg-heirlock-blue border-b-4 border-black py-12 md:py-20 pt-24 md:pt-32">
         <div className="container mx-auto max-w-7xl px-3 sm:px-4">
-          <div className="space-y-4 md:space-y-6">
+          <div className="space-y-6 md:space-y-8">
             <h1 className="text-5xl md:text-7xl font-bold text-black leading-tight">
               Create Your <br />
               Secure Vault
@@ -68,12 +68,22 @@ export default function CreateVault() {
             <p className="text-lg md:text-xl text-black max-w-3xl">
               Time-lock any sensitive file with military-grade encryption. Perfect for exams, contracts, medical records, intellectual property, and more.
             </p>
+            <div className="pt-4">
+              <a
+                href="#vault-form"
+                className="inline-flex items-center gap-3 px-8 py-4 bg-black text-heirlock-yellow font-black text-lg border-4 border-black shadow-brutal hover:translate-y-[-4px] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-all duration-200"
+              >
+                <Lock className="w-5 h-5" />
+                <span>Start Creating Vault</span>
+                <ArrowRight className="w-5 h-5" />
+              </a>
+            </div>
           </div>
         </div>
       </section>
 
       {/* Form Section - PROMINENT */}
-      <section className="py-12 md:py-20 bg-white border-t-4 border-heirlock-blue">
+      <section id="vault-form" className="py-12 md:py-20 bg-white border-t-4 border-heirlock-blue scroll-mt-20">
         <div className="container mx-auto max-w-4xl px-3 sm:px-4">
           <div className="mb-12 text-center">
             <h2 className="text-4xl md:text-5xl font-bold text-black mb-6">
