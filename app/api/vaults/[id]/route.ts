@@ -87,7 +87,7 @@ export async function PUT(
   try {
     const payload = verifyRequest(req);
     if (!payload) {
-      return NextResponse.json(httpErrors.unauthorized, { status: 401 });
+      return httpErrors.unauthorized();
     }
 
     const { id } = await params;
@@ -111,11 +111,11 @@ export async function PUT(
     });
 
     if (!vault) {
-      return NextResponse.json(httpErrors.notFound, { status: 404 });
+      return httpErrors.notFound('Vault');
     }
 
     if (vault.userId !== payload.userId) {
-      return NextResponse.json(httpErrors.forbidden, { status: 403 });
+      return httpErrors.forbidden();
     }
 
     // Update vault
@@ -165,7 +165,7 @@ export async function DELETE(
   try {
     const payload = verifyRequest(req);
     if (!payload) {
-      return NextResponse.json(httpErrors.unauthorized, { status: 401 });
+      return httpErrors.unauthorized();
     }
 
     const { id } = await params;
@@ -189,11 +189,11 @@ export async function DELETE(
     });
 
     if (!vault) {
-      return NextResponse.json(httpErrors.notFound, { status: 404 });
+      return httpErrors.notFound('Vault');
     }
 
     if (vault.userId !== payload.userId) {
-      return NextResponse.json(httpErrors.forbidden, { status: 403 });
+      return httpErrors.forbidden();
     }
 
     // Soft delete vault
