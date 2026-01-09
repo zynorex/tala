@@ -258,7 +258,7 @@ export default function CreateVault() {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="/how-it-works">
-              <button className="px-8 py-3 bg-black text-heirlock-blue font-bold border-4 border-black hover:bg-white hover:text-black shadow-brutal hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all flex items-center justify-center gap-2">
+              <button className="px-8 py-3 bg-black text-heirlock-blue font-bold border-4 border-black hover:bg-white hover:text-shadow-heirlock-green shadow-brutal hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all flex items-center justify-center gap-2">
                 How It Works <ChevronRight className="w-4 h-4" />
               </button>
             </Link>

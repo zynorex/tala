@@ -2,7 +2,7 @@
 
 import { useState, useCallback, useRef } from 'react';
 import { useAccount } from 'wagmi';
-import { Lock, Upload, FileText, AlertCircle, CheckCircle, Loader, Calendar, Eye, EyeOff, Info, Shield, Clock, X } from 'lucide-react';
+import { Lock, Upload, FileText, AlertCircle, CheckCircle, Loader, Calendar, Info, Shield, Clock, X, Key, Copy, Download } from 'lucide-react';
 import { useToast } from '@/app/hooks/useToast';
 import { useRouter } from 'next/navigation';
 import { validators } from '@/lib/validators/input-validators';
@@ -11,8 +11,7 @@ interface FormState {
   vaultName: string;
   vaultDescription: string;
   file: File | null;
-  password: string;
-  confirmPassword: string;
+  decryptionKey: string;
   unlockDate: string;
   unlockTime: string;
   isSubmitting: boolean;
@@ -47,8 +46,7 @@ export default function CreateVaultForm() {
     vaultName: '',
     vaultDescription: '',
     file: null,
-    password: '',
-    confirmPassword: '',
+    decryptionKey: '',
     unlockDate: '',
     unlockTime: '12:00',
     isSubmitting: false,
@@ -56,55 +54,50 @@ export default function CreateVaultForm() {
   });
 
   const [errors, setErrors] = useState<ValidationErrors>({});
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [passwordStrength, setPasswordStrength] = useState<PasswordStrength>({
-    score: 0,
-    label: 'Too weak',
-    color: 'bg-red-500',
-    suggestions: [],
-  });
+  const [keyCopied, setKeyCopied] = useState(false);
+  const [keyDownloaded, setKeyDownloaded] = useState(false);
   const [dragActive, setDragActive] = useState(false);
 
-  // Password strength checker
-  const checkPasswordStrength = useCallback((password: string): PasswordStrength => {
-    let score = 0;
-    const suggestions: string[] = [];
-
-    if (password.length === 0) {
-      return { score: 0, label: 'Too weak', color: 'bg-gray-300', suggestions: ['Enter a password'] };
-    }
-
-    if (password.length >= 8) score++;
-    else suggestions.push('Use at least 8 characters');
-
-    if (password.length >= 12) score++;
-    else if (password.length >= 8) suggestions.push('Use 12+ characters for better security');
-
-    if (/[a-z]/.test(password) && /[A-Z]/.test(password)) score++;
-    else suggestions.push('Include both uppercase and lowercase letters');
-
-    if (/\d/.test(password)) score++;
-    else suggestions.push('Include numbers');
-
-    if (/[^a-zA-Z0-9]/.test(password)) score++;
-    else suggestions.push('Include special characters (!@#$%^&*)');
-
-    if (/^(123|abc|qwe|password|admin)/i.test(password)) {
-      score = Math.max(0, score - 2);
-      suggestions.push('Avoid common patterns');
-    }
-
-    const labels = ['Too weak', 'Weak', 'Fair', 'Good', 'Strong'];
-    const colors = ['bg-red-500', 'bg-orange-500', 'bg-yellow-500', 'bg-green-500', 'bg-green-600'];
-
-    return {
-      score: Math.min(score, 4),
-      label: labels[Math.min(score, 4)],
-      color: colors[Math.min(score, 4)],
-      suggestions,
-    };
+  // Generate secure decryption key
+  const generateDecryptionKey = useCallback((): string => {
+    const array = new Uint8Array(32); // 256 bits
+    crypto.getRandomValues(array);
+    return Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('');
   }, []);
+
+  // Generate key on file selection
+  const handleFileSelect = useCallback((file: File | null) => {
+    if (file && !form.decryptionKey) {
+      const newKey = generateDecryptionKey();
+      setForm(prev => ({ ...prev, file, decryptionKey: newKey }));
+      setKeyCopied(false);
+      setKeyDownloaded(false);
+    } else {
+      setForm(prev => ({ ...prev, file }));
+    }
+  }, [form.decryptionKey, generateDecryptionKey]);
+
+  // Copy key to clipboard
+  const copyKeyToClipboard = useCallback(() => {
+    navigator.clipboard.writeText(form.decryptionKey);
+    setKeyCopied(true);
+    toast('Decryption key copied to clipboard!', 'success');
+  }, [form.decryptionKey, toast]);
+
+  // Download key as text file
+  const downloadKey = useCallback(() => {
+    const blob = new Blob([`TALA Vault Decryption Key\n\nVault: ${form.vaultName || 'Unnamed'}\nGenerated: ${new Date().toLocaleString()}\n\nDecryption Key:\n${form.decryptionKey}\n\nIMPORTANT: Keep this key safe! You will need it to decrypt your vault after the unlock time.\nTALA cannot recover lost keys.`], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `tala-vault-key-${Date.now()}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    setKeyDownloaded(true);
+    toast('Decryption key downloaded!', 'success');
+  }, [form.decryptionKey, form.vaultName, toast]);
 
   // Drag & drop handlers
   const handleDrag = useCallback((e: React.DragEvent) => {
@@ -142,7 +135,7 @@ export default function CreateVaultForm() {
       return;
     }
 
-    setForm({ ...form, file });
+    handleFileSelect(file);
     setErrors({ ...errors, file: '' });
     toast(`File selected: ${file.name}`, 'success');
   };
@@ -172,14 +165,12 @@ export default function CreateVaultForm() {
       newErrors.file = 'Please select a file to encrypt';
     }
 
-    if (form.password.length < 8) {
-      newErrors.password = 'Password must be at least 8 characters';
-    } else if (passwordStrength.score < 2) {
-      newErrors.password = 'Password is too weak. Please use a stronger password.';
+    if (!form.decryptionKey) {
+      newErrors.decryptionKey = 'Decryption key is required (auto-generated when file is selected)';
     }
 
-    if (form.password !== form.confirmPassword) {
-      newErrors.confirmPassword = 'Passwords do not match';
+    if (!keyCopied && !keyDownloaded) {
+      newErrors.decryptionKey = 'You must copy or download the decryption key before proceeding';
     }
 
     if (!form.unlockDate) {
@@ -233,7 +224,7 @@ export default function CreateVaultForm() {
         body: JSON.stringify({
           name: form.vaultName,
           description: form.vaultDescription,
-          password: form.password,
+          password: form.decryptionKey,
           unlockTime: unlockTimestamp,
         }),
       });
@@ -257,7 +248,7 @@ export default function CreateVaultForm() {
       if (form.file) {
         formData.append('file', form.file);
       }
-      formData.append('encryptionPassword', form.password);
+      formData.append('encryptionPassword', form.decryptionKey);
       formData.append('vaultId', vaultId);
 
       const uploadRes = await fetch('/api/vaults/upload', {
@@ -277,20 +268,15 @@ export default function CreateVaultForm() {
         vaultName: '',
         vaultDescription: '',
         file: null,
-        password: '',
-        confirmPassword: '',
+        decryptionKey: '',
         unlockDate: '',
         unlockTime: '12:00',
         isSubmitting: false,
         acceptTerms: false,
       });
       setErrors({});
-      setPasswordStrength({
-        score: 0,
-        label: 'Too weak',
-        color: 'bg-red-500',
-        suggestions: [],
-      });
+      setKeyCopied(false);
+      setKeyDownloaded(false);
 
       if (fileInputRef.current) {
         fileInputRef.current.value = '';
@@ -549,110 +535,91 @@ export default function CreateVaultForm() {
         )}
       </div>
 
-      {/* Encryption Password */}
-      <div className="space-y-2">
-        <label className="font-black text-black text-sm uppercase block">
-          <Lock className="w-4 h-4 inline mr-2" />
-          Encryption Password *
-        </label>
-        <p className="text-xs text-gray-700 font-medium mb-3">
-          This password encrypts your file. <span className="font-black text-red-600">NEVER share or lose this password!</span> It cannot be recovered.
-        </p>
-        <div className="relative">
-          <input
-            type={showPassword ? 'text' : 'password'}
-            value={form.password}
-            onChange={(e) => {
-              const newPassword = e.target.value;
-              setForm({ ...form, password: newPassword });
-              setPasswordStrength(checkPasswordStrength(newPassword));
-              setErrors({ ...errors, password: '' });
-            }}
-            placeholder="Enter a strong password"
-            className={`w-full px-4 py-3 pr-12 border-4 border-black bg-cream font-medium text-black placeholder-gray-600 focus:outline-none focus:ring-4 focus:ring-black/20 ${
-              errors.password ? 'ring-4 ring-red-500' : ''
-            }`}
-          />
-          <button
-            type="button"
-            onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-3 top-1/2 -translate-y-1/2 p-1 hover:bg-gray-200 rounded"
-          >
-            {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-          </button>
-        </div>
-
-        {/* Password Strength Indicator */}
-        {form.password && (
-          <div className="space-y-2">
-            <div className="flex items-center gap-2">
-              <div className="flex-1 h-2 bg-gray-300 border-2 border-black rounded-sm overflow-hidden">
-                <div
-                  className={`h-full transition-all duration-300 ${passwordStrength.color}`}
-                  style={{ width: `${(passwordStrength.score / 4) * 100}%` }}
-                />
+      {/* Decryption Key */}
+      {form.decryptionKey && (
+        <div className="border-4 border-black p-6 bg-gradient-to-br from-heirlock-yellow to-yellow-100 shadow-brutal">
+          <div className="flex items-start gap-3 mb-4">
+            <Key className="w-6 h-6 text-black flex-shrink-0 mt-1" />
+            <div className="flex-1">
+              <h3 className="font-black text-black text-lg mb-2">Your Decryption Key</h3>
+              <p className="text-sm text-gray-800 font-medium mb-4">
+                <span className="font-black text-red-600">IMPORTANT:</span> This auto-generated key encrypts your file. 
+                <span className="font-black"> Save it now!</span> TALA cannot recover lost keys.
+              </p>
+              
+              {/* Key Display */}
+              <div className="border-3 border-black p-4 bg-white mb-4 break-all font-mono text-sm">
+                {form.decryptionKey}
               </div>
-              <span className="text-xs font-black text-black">{passwordStrength.label}</span>
+
+              {/* Action Buttons */}
+              <div className="grid grid-cols-2 gap-3">
+                <button
+                  type="button"
+                  onClick={copyKeyToClipboard}
+                  className={`px-4 py-3 border-3 border-black font-black text-sm flex items-center justify-center gap-2 transition-all ${
+                    keyCopied 
+                      ? 'bg-heirlock-green text-white' 
+                      : 'bg-white hover:bg-gray-50'
+                  }`}
+                >
+                  {keyCopied ? (
+                    <>
+                      <CheckCircle className="w-4 h-4" />
+                      Copied!
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="w-4 h-4" />
+                      Copy Key
+                    </>
+                  )}
+                </button>
+                <button
+                  type="button"
+                  onClick={downloadKey}
+                  className={`px-4 py-3 border-3 border-black font-black text-sm flex items-center justify-center gap-2 transition-all ${
+                    keyDownloaded 
+                      ? 'bg-heirlock-green text-white' 
+                      : 'bg-white hover:bg-gray-50'
+                  }`}
+                >
+                  {keyDownloaded ? (
+                    <>
+                      <CheckCircle className="w-4 h-4" />
+                      Downloaded!
+                    </>
+                  ) : (
+                    <>
+                      <Download className="w-4 h-4" />
+                      Download Key
+                    </>
+                  )}
+                </button>
+              </div>
+
+              {/* Warning */}
+              {!keyCopied && !keyDownloaded && (
+                <div className="border-3 border-red-500 bg-red-50 p-3 mt-4">
+                  <p className="text-xs font-black text-red-700 flex items-center gap-2">
+                    <AlertCircle className="w-4 h-4" />
+                    You must copy or download this key before creating the vault!
+                  </p>
+                </div>
+              )}
             </div>
-            {passwordStrength.suggestions.length > 0 && (
-              <div className="border-2 border-orange-500 bg-orange-50 p-3">
-                <p className="text-xs font-black text-orange-800 mb-1">Suggestions:</p>
-                <ul className="text-xs text-orange-700 font-medium space-y-1 list-disc list-inside">
-                  {passwordStrength.suggestions.map((suggestion, idx) => (
-                    <li key={idx}>{suggestion}</li>
-                  ))}
-                </ul>
-              </div>
-            )}
           </div>
-        )}
-        {errors.password && (
-          <span className="text-xs text-red-600 font-black flex items-center gap-1">
-            <AlertCircle className="w-3 h-3" />
-            {errors.password}
-          </span>
-        )}
-      </div>
-
-      {/* Confirm Password */}
-      <div className="space-y-2">
-        <label className="font-black text-black text-sm uppercase block">
-          Confirm Password *
-        </label>
-        <div className="relative">
-          <input
-            type={showConfirmPassword ? 'text' : 'password'}
-            value={form.confirmPassword}
-            onChange={(e) => {
-              setForm({ ...form, confirmPassword: e.target.value });
-              setErrors({ ...errors, confirmPassword: '' });
-            }}
-            placeholder="Re-enter your password"
-            className={`w-full px-4 py-3 pr-12 border-4 border-black bg-cream font-medium text-black placeholder-gray-600 focus:outline-none focus:ring-4 focus:ring-black/20 ${
-              errors.confirmPassword ? 'ring-4 ring-red-500' : ''
-            }`}
-          />
-          <button
-            type="button"
-            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-            className="absolute right-3 top-1/2 -translate-y-1/2 p-1 hover:bg-gray-200 rounded"
-          >
-            {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-          </button>
         </div>
-        {form.confirmPassword && form.password === form.confirmPassword && (
-          <div className="flex items-center gap-2 text-green-600">
-            <CheckCircle className="w-4 h-4" />
-            <span className="text-xs font-black">Passwords match</span>
-          </div>
-        )}
-        {errors.confirmPassword && (
-          <span className="text-xs text-red-600 font-black flex items-center gap-1">
-            <AlertCircle className="w-3 h-3" />
-            {errors.confirmPassword}
+      )}
+
+      {errors.decryptionKey && (
+        <div className="border-4 border-red-500 p-4 bg-red-50 shadow-brutal">
+          <span className="text-sm text-red-600 font-black flex items-center gap-2">
+            <AlertCircle className="w-4 h-4" />
+            {errors.decryptionKey}
           </span>
-        )}
-      </div>
+        </div>
+      )}
 
       {/* Terms Acceptance */}
       <div className="border-4 border-black p-4 bg-gray-50">
@@ -667,8 +634,8 @@ export default function CreateVaultForm() {
             className="mt-1 w-5 h-5 border-2 border-black"
           />
           <span className="text-sm text-gray-800 font-medium">
-            I understand that <span className="font-black">I am solely responsible</span> for my encryption password. 
-            TALA cannot recover lost passwords or decrypt files. I accept the{' '}
+            I understand that <span className="font-black">I am solely responsible</span> for my decryption key. 
+            TALA cannot recover lost keys or decrypt files. I accept the{' '}
             <a href="/terms" className="underline font-black hover:text-black" target="_blank" rel="noopener">
               Terms of Service
             </a>.

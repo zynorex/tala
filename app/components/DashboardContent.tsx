@@ -130,7 +130,9 @@ export default function DashboardContent() {
           <div>
             <h1 className="font-black text-4xl text-black mb-2">Dashboard</h1>
             <p className="text-gray-700 font-medium">
-              Welcome back, <span className="font-black text-heirlock-pink">{address?.slice(0, 6)}...{address?.slice(-4)}</span>
+              Welcome back, <span className="font-black text-heirlock-pink">
+                {showSensitiveData ? address : `${address?.slice(0, 6)}...${address?.slice(-4)}`}
+              </span>
             </p>
           </div>
           <button
