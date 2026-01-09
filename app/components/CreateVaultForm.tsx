@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useCallback, useRef } from 'react';
-import { useAccount } from 'wagmi';
+import { useState, useCallback, useRef, useEffect } from 'react';
+import { useAccount, useSignMessage } from 'wagmi';
 import { Lock, Upload, FileText, AlertCircle, CheckCircle, Loader, Calendar, Info, Shield, Clock, X, Key, Copy, Download } from 'lucide-react';
 import { useToast } from '@/app/hooks/useToast';
 import { useRouter } from 'next/navigation';
@@ -31,6 +31,7 @@ interface PasswordStrength {
 
 export default function CreateVaultForm() {
   const { isConnected, address } = useAccount();
+  const { signMessageAsync } = useSignMessage();
   const { toast } = useToast();
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -57,6 +58,44 @@ export default function CreateVaultForm() {
   const [keyCopied, setKeyCopied] = useState(false);
   const [keyDownloaded, setKeyDownloaded] = useState(false);
   const [dragActive, setDragActive] = useState(false);
+  const [isAuthenticating, setIsAuthenticating] = useState(false);
+
+  // Auto-authenticate when wallet connects
+  useEffect(() => {
+    const authenticateWallet = async () => {
+      if (!isConnected || !address) return;
+      
+      // Check if already authenticated
+      const token = localStorage.getItem('auth_token');
+      if (token) return;
+
+      setIsAuthenticating(true);
+      try {
+        const message = `Sign in to TALA\n\nWallet: ${address}\nTimestamp: ${new Date().toISOString()}`;
+        const signature = await signMessageAsync({ message });
+
+        const response = await fetch('/api/auth/wallet', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ address, message, signature }),
+        });
+
+        const data = await response.json();
+        if (response.ok && data.data?.token) {
+          localStorage.setItem('auth_token', data.data.token);
+          localStorage.setItem('user', JSON.stringify(data.data.user));
+          toast('Wallet authenticated successfully!', 'success');
+        }
+      } catch (error) {
+        console.error('Auto-auth failed:', error);
+        toast('Please sign the message to authenticate', 'info');
+      } finally {
+        setIsAuthenticating(false);
+      }
+    };
+
+    authenticateWallet();
+  }, [isConnected, address, signMessageAsync, toast]);
 
   // Generate secure decryption key
   const generateDecryptionKey = useCallback((): string => {
@@ -214,13 +253,23 @@ export default function CreateVaultForm() {
     setForm({ ...form, isSubmitting: true });
 
     try {
+      // Get auth token
+      const token = localStorage.getItem('auth_token');
+      if (!token) {
+        toast('Please sign in with your wallet first', 'error');
+        return;
+      }
+
       // Step 1: Create vault
       const unlockDateTime = new Date(`${form.unlockDate}T${form.unlockTime}`);
       const unlockTimestamp = Math.floor(unlockDateTime.getTime() / 1000);
 
       const createRes = await fetch('/api/vaults', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
         body: JSON.stringify({
           name: form.vaultName,
           description: form.vaultDescription,
@@ -253,6 +302,9 @@ export default function CreateVaultForm() {
 
       const uploadRes = await fetch('/api/vaults/upload', {
         method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
         body: formData,
       });
 
@@ -305,6 +357,22 @@ export default function CreateVaultForm() {
             <h3 className="font-black text-black text-xl mb-2">Wallet Required</h3>
             <p className="text-gray-800 font-medium">
               Please connect your wallet to create a vault. Click the "Connect Wallet" button in the navbar.
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (isAuthenticating) {
+    return (
+      <div className="border-4 border-black p-8 bg-heirlock-blue shadow-brutal">
+        <div className="flex items-start gap-4">
+          <Loader className="w-6 h-6 text-black flex-shrink-0 mt-1 animate-spin" />
+          <div>
+            <h3 className="font-black text-black text-xl mb-2">Authenticating Wallet</h3>
+            <p className="text-gray-800 font-medium">
+              Please sign the message in your wallet to continue...
             </p>
           </div>
         </div>

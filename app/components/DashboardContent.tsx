@@ -45,8 +45,18 @@ export default function DashboardContent() {
     setIsLoading(true);
     setError(null);
     try {
+      const token = localStorage.getItem('auth_token');
+      if (!token) {
+        setError('Please sign in with your wallet');
+        return;
+      }
+
       // Fetch vaults from API
-      const vaultsRes = await fetch('/api/vaults');
+      const vaultsRes = await fetch('/api/vaults', {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
       if (!vaultsRes.ok) throw new Error('Failed to fetch vaults');
       const vaultsData = await vaultsRes.json();
       
@@ -78,7 +88,11 @@ export default function DashboardContent() {
 
       // Fetch activity log
       try {
-        const activitiesRes = await fetch('/api/activity');
+        const activitiesRes = await fetch('/api/activity', {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        });
         if (activitiesRes.ok) {
           const activitiesData = await activitiesRes.json();
           setActivities(activitiesData.data || []);
