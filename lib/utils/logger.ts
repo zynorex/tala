@@ -10,8 +10,6 @@
  * - Request correlation IDs
  */
 
-import { pino } from 'pino';
-
 type LogLevel = 'debug' | 'info' | 'warn' | 'error';
 
 interface LogContext {
@@ -19,27 +17,27 @@ interface LogContext {
 }
 
 /**
- * Creates a logger instance with configured transport
+ * Simple console-based logger (no external dependencies)
  */
-function createLogger() {
-  const isProduction = process.env.NODE_ENV === 'production';
-  
-  const pinoLogger = pino({
-    level: process.env.LOG_LEVEL || (isProduction ? 'info' : 'debug'),
-    transport: !isProduction ? {
-      target: 'pino-pretty',
-      options: {
-        colorize: true,
-        translateTime: 'SYS:standard',
-        ignore: 'pid,hostname',
-      },
-    } : undefined,
-  });
+const isProduction = process.env.NODE_ENV === 'production';
+const logLevel = process.env.LOG_LEVEL || (isProduction ? 'info' : 'debug');
 
-  return pinoLogger;
+const LOG_LEVELS: Record<LogLevel, number> = {
+  debug: 0,
+  info: 1,
+  warn: 2,
+  error: 3,
+};
+
+function shouldLog(level: LogLevel): boolean {
+  return LOG_LEVELS[level] >= LOG_LEVELS[logLevel as LogLevel];
 }
 
-const pinoInstance = createLogger();
+function formatLog(level: LogLevel, message: string, context?: any): string {
+  const timestamp = new Date().toISOString();
+  const contextStr = context ? ` ${JSON.stringify(context)}` : '';
+  return `[${timestamp}] ${level.toUpperCase()}: ${message}${contextStr}`;
+}
 
 /**
  * Enterprise Logger Class
@@ -71,27 +69,35 @@ export class Logger {
    * Debug level logging
    */
   debug(message: string, extra?: LogContext) {
-    pinoInstance.debug({ ...this.context, ...extra }, message);
+    if (shouldLog('debug')) {
+      console.debug(formatLog('debug', message, { ...this.context, ...extra }));
+    }
   }
 
   /**
    * Info level logging
    */
   info(message: string, extra?: LogContext) {
-    pinoInstance.info({ ...this.context, ...extra }, message);
+    if (shouldLog('info')) {
+      console.info(formatLog('info', message, { ...this.context, ...extra }));
+    }
   }
 
   /**
    * Warning level logging
    */
   warn(message: string, extra?: LogContext) {
-    pinoInstance.warn({ ...this.context, ...extra }, message);
+    if (shouldLog('warn')) {
+      console.warn(formatLog('warn', message, { ...this.context, ...extra }));
+    }
   }
 
   /**
    * Error level logging with full error details
    */
   error(message: string, extra?: LogContext | Error) {
+    if (!shouldLog('error')) return;
+
     const errorContext = extra instanceof Error
       ? {
           error: extra.message,
@@ -100,7 +106,7 @@ export class Logger {
         }
       : extra;
 
-    pinoInstance.error({ ...this.context, ...errorContext }, message);
+    console.error(formatLog('error', message, { ...this.context, ...errorContext }));
   }
 
   /**
