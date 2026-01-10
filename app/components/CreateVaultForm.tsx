@@ -121,9 +121,9 @@ export default function CreateVaultForm() {
       });
 
       const data = await response.json();
-      console.log('📡 Backend response:', { status: response.status, hasToken: !!data.data?.token });
+      console.log('📡 Backend response:', data);
 
-      if (response.ok && data.data?.token) {
+      if (response.ok && data.success && data.data?.token) {
         console.log('✅ Authentication successful! Storing token...');
         localStorage.setItem('auth_token', data.data.token);
         localStorage.setItem('user', JSON.stringify(data.data.user));
@@ -131,7 +131,7 @@ export default function CreateVaultForm() {
         toast('Wallet authenticated successfully!', 'success');
         return true;
       } else {
-        console.error('❌ Authentication failed:', data.error);
+        console.error('❌ Authentication failed:', data);
         toast(data.error || 'Authentication failed', 'error');
         return false;
       }

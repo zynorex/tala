@@ -114,8 +114,9 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    return NextResponse.json(
-      apiSuccess({
+    return NextResponse.json({
+      success: true,
+      data: {
         token,
         user: {
           id: user.id,
@@ -123,11 +124,15 @@ export async function POST(req: NextRequest) {
           image: user.image,
           walletAddress: address.toLowerCase(),
         },
-      }),
-      { status: 200 }
-    );
+      },
+      timestamp: new Date().toISOString(),
+    }, { status: 200 });
   } catch (error) {
     console.error('Wallet authentication error:', error);
-    return NextResponse.json(handleDbError(error), { status: 500 });
+    return NextResponse.json({
+      success: false,
+      error: 'Authentication failed',
+      timestamp: new Date().toISOString(),
+    }, { status: 500 });
   }
 }
