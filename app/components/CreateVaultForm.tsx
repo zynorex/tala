@@ -59,42 +59,93 @@ export default function CreateVaultForm() {
   const [keyDownloaded, setKeyDownloaded] = useState(false);
   const [dragActive, setDragActive] = useState(false);
   const [isAuthenticating, setIsAuthenticating] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  // Auto-authenticate when wallet connects
+  // Check authentication status on mount and address change
   useEffect(() => {
-    const authenticateWallet = async () => {
-      if (!isConnected || !address) return;
-      
-      // Check if already authenticated
-      const token = localStorage.getItem('auth_token');
-      if (token) return;
-
-      setIsAuthenticating(true);
+    if (!isConnected || !address) {
+      setIsAuthenticated(false);
+      return;
+    }
+    
+    const token = localStorage.getItem('auth_token');
+    const storedUser = localStorage.getItem('user');
+    
+    if (token && storedUser) {
       try {
-        const message = `Sign in to TALA\n\nWallet: ${address}\nTimestamp: ${new Date().toISOString()}`;
-        const signature = await signMessageAsync({ message });
-
-        const response = await fetch('/api/auth/wallet', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ address, message, signature }),
-        });
-
-        const data = await response.json();
-        if (response.ok && data.data?.token) {
-          localStorage.setItem('auth_token', data.data.token);
-          localStorage.setItem('user', JSON.stringify(data.data.user));
-          toast('Wallet authenticated successfully!', 'success');
+        const user = JSON.parse(storedUser);
+        // Check if token is for the current address
+        if (user.walletAddress?.toLowerCase() === address.toLowerCase()) {
+          console.log('✅ User already authenticated:', user.walletAddress);
+          setIsAuthenticated(true);
+          return;
         }
-      } catch (error) {
-        console.error('Auto-auth failed:', error);
-        toast('Please sign the message to authenticate', 'info');
-      } finally {
-        setIsAuthenticating(false);
+      } catch (e) {
+        console.error('Failed to parse stored user:', e);
       }
-    };
+    }
+    
+    // Clear old tokens if address changed
+    console.log('🔄 Clearing old auth tokens for new address');
+    localStorage.removeItem('auth_token');
+    localStorage.removeItem('user');
+    setIsAuthenticated(false);
+  }, [isConnected, address]);
 
-    authenticateWallet();
+  // Manual authentication function
+  const authenticateWallet = useCallback(async () => {
+    if (!isConnected || !address) {
+      toast('Please connect your wallet first', 'error');
+      return false;
+    }
+
+    const existingToken = localStorage.getItem('auth_token');
+    if (existingToken) {
+      console.log('✅ Already authenticated, token exists');
+      setIsAuthenticated(true);
+      return true;
+    }
+
+    console.log('🔐 Starting wallet authentication...');
+    setIsAuthenticating(true);
+    try {
+      const message = `Sign in to TALA\n\nWallet: ${address}\nTimestamp: ${new Date().toISOString()}`;
+      console.log('📝 Requesting signature for message');
+      const signature = await signMessageAsync({ message });
+
+      console.log('✍️ Signature received, sending to backend');
+      const response = await fetch('/api/auth/wallet', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ address, message, signature }),
+      });
+
+      const data = await response.json();
+      console.log('📡 Backend response:', { status: response.status, hasToken: !!data.data?.token });
+
+      if (response.ok && data.data?.token) {
+        console.log('✅ Authentication successful! Storing token...');
+        localStorage.setItem('auth_token', data.data.token);
+        localStorage.setItem('user', JSON.stringify(data.data.user));
+        setIsAuthenticated(true);
+        toast('Wallet authenticated successfully!', 'success');
+        return true;
+      } else {
+        console.error('❌ Authentication failed:', data.error);
+        toast(data.error || 'Authentication failed', 'error');
+        return false;
+      }
+    } catch (error: any) {
+      console.error('❌ Auth error:', error);
+      if (error.message?.includes('User rejected')) {
+        toast('Signature rejected. Please sign to continue.', 'error');
+      } else {
+        toast('Authentication failed. Please try again.', 'error');
+      }
+      return false;
+    } finally {
+      setIsAuthenticating(false);
+    }
   }, [isConnected, address, signMessageAsync, toast]);
 
   // Generate secure decryption key
@@ -240,29 +291,48 @@ export default function CreateVaultForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    console.log('Form submission started', { isConnected, address, form });
+
     if (!isConnected || !address) {
       toast('Please connect your wallet first', 'error');
       return;
     }
 
-    if (!validateForm()) {
+    const isValid = validateForm();
+    console.log('Form validation result:', isValid, 'Errors:', errors);
+    
+    if (!isValid) {
       toast('Please fix all errors before submitting', 'error');
       return;
+    }
+
+    // Check authentication
+    let token = localStorage.getItem('auth_token');
+    console.log('Current auth token:', token ? 'exists' : 'missing');
+    
+    if (!token) {
+      console.log('Attempting to authenticate wallet...');
+      const authenticated = await authenticateWallet();
+      if (!authenticated) {
+        return;
+      }
+      token = localStorage.getItem('auth_token');
     }
 
     setForm({ ...form, isSubmitting: true });
 
     try {
-      // Get auth token
-      const token = localStorage.getItem('auth_token');
-      if (!token) {
-        toast('Please sign in with your wallet first', 'error');
-        return;
-      }
 
       // Step 1: Create vault
       const unlockDateTime = new Date(`${form.unlockDate}T${form.unlockTime}`);
       const unlockTimestamp = Math.floor(unlockDateTime.getTime() / 1000);
+
+      console.log('Creating vault with data:', {
+        name: form.vaultName,
+        description: form.vaultDescription,
+        unlockTimestamp,
+        unlockDate: unlockDateTime.toISOString(),
+      });
 
       const createRes = await fetch('/api/vaults', {
         method: 'POST',
@@ -278,8 +348,11 @@ export default function CreateVaultForm() {
         }),
       });
 
+      console.log('Create vault response status:', createRes.status);
+
       if (!createRes.ok) {
         const data = await createRes.json();
+        console.error('Create vault error:', data);
         throw new Error(data.error || 'Failed to create vault');
       }
 
@@ -374,6 +447,29 @@ export default function CreateVaultForm() {
             <p className="text-gray-800 font-medium">
               Please sign the message in your wallet to continue...
             </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (isConnected && !isAuthenticated) {
+    return (
+      <div className="border-4 border-black p-8 bg-heirlock-yellow shadow-brutal">
+        <div className="flex items-start gap-4">
+          <Shield className="w-6 h-6 text-black flex-shrink-0 mt-1" />
+          <div className="flex-1">
+            <h3 className="font-black text-black text-xl mb-2">Authentication Required</h3>
+            <p className="text-gray-800 font-medium mb-4">
+              Please sign a message to authenticate your wallet and create vaults.
+            </p>
+            <button
+              onClick={authenticateWallet}
+              disabled={isAuthenticating}
+              className="px-6 py-3 border-4 border-black bg-black text-white font-black hover:bg-gray-800 transition-all disabled:opacity-50"
+            >
+              {isAuthenticating ? 'Signing...' : 'Sign to Authenticate'}
+            </button>
           </div>
         </div>
       </div>
