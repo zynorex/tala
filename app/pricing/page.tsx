@@ -2,6 +2,7 @@
 
 import { CheckCircle, Lock, Upload, Users, BarChart3, Shield, Zap, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
+import { useState } from 'react';
 
 interface PricingTier {
   name: string;
@@ -14,16 +15,18 @@ interface PricingTier {
 }
 
 export default function PricingPage() {
+  const [isYearly, setIsYearly] = useState(false);
+
   const pricingTiers: PricingTier[] = [
     {
       name: 'Starter',
-      price: 4999,
-      description: 'Perfect for individuals and small teams getting started with vault protection.',
+      price: 999,
+      description: 'Perfect for individuals getting started with vault protection.',
       color: 'bg-heirlock-blue',
       icon: Lock,
       features: [
-        'Up to 5 vaults',
-        'Up to 100MB per vault',
+        'Up to 99 vaults',
+        'Up to 500MB per vault',
         'Basic encryption (AES-256)',
         'Community support',
         'Single user account',
@@ -33,7 +36,7 @@ export default function PricingPage() {
     },
     {
       name: 'Professional',
-      price: 14999,
+      price: 4999,
       description: 'Ideal for institutions and organizations with moderate vault needs.',
       color: 'bg-heirlock-yellow',
       icon: Shield,
@@ -53,7 +56,7 @@ export default function PricingPage() {
     },
     {
       name: 'Enterprise',
-      price: 49999,
+      price: 9999,
       description: 'Complete solution for large-scale operations with advanced security needs.',
       color: 'bg-heirlock-green',
       icon: Zap,
@@ -102,14 +105,14 @@ export default function PricingPage() {
   const comparisonFeatures = [
     {
       feature: 'Number of Vaults',
-      starter: '5',
+      starter: '99',
       professional: 'Unlimited',
       enterprise: 'Unlimited',
       government: 'Unlimited',
     },
     {
       feature: 'Storage per Vault',
-      starter: '100 MB',
+      starter: '500 MB',
       professional: '1 GB',
       enterprise: 'Unlimited',
       government: 'Unlimited',
@@ -170,11 +173,14 @@ export default function PricingPage() {
             Choose the perfect plan for your vault protection needs. All plans include military-grade encryption and blockchain-verified security.
           </p>
           <div className="flex items-center justify-center gap-4">
-            <span className="text-lg font-bold text-black">Pay Monthly</span>
-            <div className="w-12 h-8 bg-heirlock-yellow border-2 border-black rounded-full flex items-center">
-              <div className="w-6 h-6 bg-black rounded-full ml-1"></div>
-            </div>
-            <span className="text-lg font-bold text-gray-500">Pay Yearly (Save 20%)</span>
+            <span className={`text-lg font-bold ${!isYearly ? 'text-black' : 'text-gray-500'}`}>Pay Monthly</span>
+            <button
+              onClick={() => setIsYearly(!isYearly)}
+              className="w-12 h-8 bg-heirlock-yellow border-2 border-black rounded-full flex items-center cursor-pointer transition-all"
+            >
+              <div className={`w-6 h-6 bg-black rounded-full transition-all ${isYearly ? 'ml-5' : 'ml-1'}`}></div>
+            </button>
+            <span className={`text-lg font-bold ${isYearly ? 'text-black' : 'text-gray-500'}`}>Pay Yearly (Save 20%)</span>
           </div>
         </div>
       </section>
@@ -188,10 +194,10 @@ export default function PricingPage() {
               return (
                 <div
                   key={index}
-                  className={`border-4 border-black rounded-lg p-8 relative transition-all hover:shadow-brutal ${
+                  className={`border-4 border-black rounded-lg p-8 relative transition-all ${
                     tier.highlighted
                       ? `${tier.color} transform scale-105 shadow-brutal`
-                      : 'bg-white hover:shadow-brutal'
+                      : `${tier.color} hover:shadow-brutal`
                   }`}
                 >
                   {/* Highlighted Badge */}
@@ -216,12 +222,12 @@ export default function PricingPage() {
                   <div className="mb-6">
                     <div className="flex items-baseline gap-2">
                       <span className="text-4xl font-black text-black">
-                        ₹{tier.price.toLocaleString('en-IN')}
+                        ₹{isYearly ? Math.round(tier.price * 12 * 0.8).toLocaleString('en-IN') : tier.price.toLocaleString('en-IN')}
                       </span>
-                      <span className="text-gray-700 font-medium">/month</span>
+                      <span className="text-gray-700 font-medium">/{isYearly ? 'year' : 'month'}</span>
                     </div>
                     <p className="text-xs text-gray-600 mt-2">
-                      Billed monthly. No credit card required.
+                      {isYearly ? 'Billed annually. Save 20%!' : 'Billed monthly. No credit card required.'}
                     </p>
                   </div>
 
@@ -367,6 +373,46 @@ export default function PricingPage() {
               {
                 question: 'What happens if I exceed my storage limit?',
                 answer: 'You will be notified when you reach 80% of your limit. You can then upgrade your plan or delete old vaults. No automatic overage charges.',
+              },
+              {
+                question: 'How is my data encrypted and stored?',
+                answer: 'All vaults use military-grade AES-256 encryption. Your data is encrypted on your device before being sent to our servers. We use IPFS for decentralized storage, ensuring your data is secure and immutable.',
+              },
+              {
+                question: 'Can I export my vaults?',
+                answer: 'Yes! You can export your vaults anytime in encrypted format. The Professional plan and above also support bulk export operations for batch vault management.',
+              },
+              {
+                question: 'What happens if I delete a vault?',
+                answer: 'Deleted vaults are moved to trash for 30 days. You can restore them within this period. After 30 days, they are permanently deleted from all servers.',
+              },
+              {
+                question: 'Is T.A.L.A. compliant with international regulations?',
+                answer: 'Yes, our Enterprise and Government plans comply with ISO 27001, SOC 2, GDPR, and other international data protection standards. Contact us for specific compliance requirements.',
+              },
+              {
+                question: 'Can I invite team members to access my vaults?',
+                answer: 'The Professional plan includes up to 10 team members, Enterprise supports unlimited team members. You can set granular permissions for each member (view-only, edit, admin).',
+              },
+              {
+                question: 'What is included in the API access?',
+                answer: 'API access allows you to programmatically create, manage, and retrieve vaults. The Professional plan includes up to 1,000 API calls/month. Enterprise includes unlimited API calls with webhook support.',
+              },
+              {
+                question: 'Do you offer white-label solutions?',
+                answer: 'Yes! White-label solutions are available on our Government and custom Enterprise plans. You can customize branding, colors, and domain.',
+              },
+              {
+                question: 'What is your uptime guarantee?',
+                answer: 'Enterprise plans come with 99.9% uptime SLA. Government plans include 99.99% uptime guarantee with dedicated infrastructure.',
+              },
+              {
+                question: 'Can I use T.A.L.A. for business purposes?',
+                answer: 'Absolutely! T.A.L.A. is designed for businesses, educational institutions, government agencies, and legal firms. Choose a plan that matches your needs.',
+              },
+              {
+                question: 'What support options are available?',
+                answer: 'Starter: Community forum. Professional: Priority email support. Enterprise: 24/7 phone and email. Government: Dedicated account manager with 24/7 phone support.',
               },
             ].map((faq, index) => (
               <div key={index} className="border-4 border-black p-6 rounded-lg hover:shadow-brutal transition-all">

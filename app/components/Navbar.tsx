@@ -74,7 +74,7 @@ export default function Navbar() {
     if (isActive("/about")) return "bg-heirlock-green";
     if (isActive("/how-it-works")) return "bg-heirlock-blue";
     if (isActive("/admin")) return "bg-heirlock-pink";
-    if (isActive("/student")) return "bg-heirlock-green";
+    if (isActive("/access-portal")) return "bg-heirlock-green";
     if (isActive("/create-vault")) return "bg-gradient-to-r from-heirlock-blue to-heirlock-green";
     if (isActive("/documentation") || isActive("/smart-contracts") || isActive("/faq") || isActive("/blog")) return "bg-heirlock-green";
     if (isActive("/dashboard")) return "bg-heirlock-pink";
@@ -89,7 +89,7 @@ export default function Navbar() {
     if (isActive("/about")) return "bg-heirlock-green text-black border-4 border-heirlock-green group-hover:text-black";
     if (isActive("/how-it-works")) return "bg-heirlock-blue text-black border-4 border-heirlock-blue group-hover:text-black";
     if (isActive("/admin")) return "bg-heirlock-pink text-black border-4 border-heirlock-pink group-hover:text-black";
-    if (isActive("/student")) return "bg-heirlock-green text-black border-4 border-heirlock-green group-hover:text-black";
+    if (isActive("/access-portal")) return "bg-heirlock-green text-black border-4 border-heirlock-green group-hover:text-black";
     if (isActive("/create-vault")) return "bg-heirlock-blue text-black border-4 border-heirlock-blue group-hover:text-black";
     if (isActive("/dashboard")) return "bg-heirlock-pink text-black border-4 border-heirlock-pink group-hover:text-black";
     if (isActive("/documentation") || isActive("/smart-contracts") || isActive("/faq") || isActive("/blog")) return "bg-heirlock-green text-black border-4 border-heirlock-green group-hover:text-black";
@@ -124,14 +124,6 @@ export default function Navbar() {
                   ? isScrolled ? "border-heirlock-yellow text-white" : "border-black"
                   : isScrolled ? "border-transparent hover:bg-heirlock-yellow hover:text-black" : "border-transparent group-hover:text-white"
               }`}>How It Works</button>
-            </Link>
-
-            <Link href="/pricing">
-              <button className={`px-4 lg:px-6 py-2 text-sm lg:text-base font-bold transition-all border-b-4 ${
-                isActive("/pricing")
-                  ? isScrolled ? "border-heirlock-pink text-white" : "border-black"
-                  : isScrolled ? "border-transparent hover:bg-heirlock-pink hover:text-black" : "border-transparent group-hover:text-white"
-              }`}>Pricing</button>
             </Link>
 
             <Link href="/about">
@@ -177,6 +169,12 @@ export default function Navbar() {
                           <span>FAQ</span>
                         </div>
                       </Link>
+                      <Link href="/pricing" onClick={closeMenu}>
+                        <div className="flex items-center gap-3 px-3 py-2 rounded hover:bg-heirlock-pink hover:text-black transition-all font-bold cursor-pointer">
+                          <Zap className="w-5 h-5" />
+                          <span>Pricing</span>
+                        </div>
+                      </Link>
                     </div>
                   </div>
 
@@ -209,10 +207,10 @@ export default function Navbar() {
                   <div>
                     <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Access</h3>
                     <div className="space-y-3">
-                      <Link href="/student" onClick={closeMenu}>
+                      <Link href="/access-portal" onClick={closeMenu}>
                         <div className="flex items-center gap-3 px-3 py-2 rounded hover:bg-heirlock-green hover:text-black transition-all font-bold cursor-pointer">
                           <Zap className="w-5 h-5" />
-                          <span>Student Download</span>
+                          <span>Access Portal</span>
                         </div>
                       </Link>
                       <Link href="/blog" onClick={closeMenu}>
@@ -422,14 +420,17 @@ export default function Navbar() {
                   <Link href="/admin" onClick={closeMenu}>
                     <button className="w-full text-left px-3 py-2 text-xs font-bold bg-black text-white hover:bg-heirlock-pink hover:text-black transition-all border-l-2 border-heirlock-pink">🔐 Admin Upload</button>
                   </Link>
-                  <Link href="/student" onClick={closeMenu}>
-                    <button className="w-full text-left px-3 py-2 text-xs font-bold bg-black text-white hover:bg-heirlock-green hover:text-black transition-all border-l-2 border-heirlock-green">📥 Student Download</button>
+                  <Link href="/access-portal" onClick={closeMenu}>
+                    <button className="w-full text-left px-3 py-2 text-xs font-bold bg-black text-white hover:bg-heirlock-green hover:text-black transition-all border-l-2 border-heirlock-green">🔓 Access Portal</button>
                   </Link>
                   <Link href="/blog" onClick={closeMenu}>
                     <button className="w-full text-left px-3 py-2 text-xs font-bold bg-black text-white hover:bg-heirlock-pink hover:text-black transition-all border-l-2 border-heirlock-pink">📰 Blog</button>
                   </Link>
                   <Link href="/changelog" onClick={closeMenu}>
                     <button className="w-full text-left px-3 py-2 text-xs font-bold bg-black text-white hover:bg-heirlock-yellow hover:text-black transition-all border-l-2 border-heirlock-yellow">📝 Changelog</button>
+                  </Link>
+                  <Link href="/pricing" onClick={closeMenu}>
+                    <button className="w-full text-left px-3 py-2 text-xs font-bold bg-black text-white hover:bg-heirlock-pink hover:text-black transition-all border-l-2 border-heirlock-pink">💰 Pricing</button>
                   </Link>
                 </div>
               )}
