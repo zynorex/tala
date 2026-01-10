@@ -40,6 +40,7 @@ export async function POST(req: NextRequest) {
 
     // Derive encryption key from password (used for files)
     const key = deriveVaultKeyFromPassword(password);
+    const keyHash = require('crypto').createHash('sha256').update(key).digest('hex');
 
     // Store vault with metadata (actual file encryption happens on file upload)
     const vault = await db.vault.create({
@@ -47,8 +48,11 @@ export async function POST(req: NextRequest) {
         userId: payload.userId,
         name,
         description: description || '',
-        encryptedData: '{}', // Metadata stored in name/description
-        passwordHash: '', // Will be stored if needed
+        encryptedData: '{}',
+        keyHash: keyHash,
+        fileHash: '',  // Will be set when file is uploaded
+        fileName: '',  // Will be set when file is uploaded
+        fileSize: 0,   // Will be set when file is uploaded
         isActive: true,
       },
       select: {
