@@ -39,8 +39,7 @@ export async function POST(req: NextRequest) {
     const db = await getPrisma();
 
     // Derive encryption key from password (used for files)
-    const key = deriveVaultKeyFromPassword(password);
-    const keyHash = require('crypto').createHash('sha256').update(key).digest('hex');
+    const vaultKey = deriveVaultKeyFromPassword(password);
 
     // Store vault with metadata (actual file encryption happens on file upload)
     const vault = await db.vault.create({
@@ -49,7 +48,7 @@ export async function POST(req: NextRequest) {
         name,
         description: description || '',
         encryptedData: '{}',
-        keyHash: keyHash,
+        keyHash: vaultKey.keyHash,
         fileHash: '',  // Will be set when file is uploaded
         fileName: '',  // Will be set when file is uploaded
         fileSize: 0,   // Will be set when file is uploaded
