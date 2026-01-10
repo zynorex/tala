@@ -138,7 +138,10 @@ export async function uploadToIPFS(
   try {
     // Prepare FormData with encryption metadata
     const formData = new FormData();
-    const blob = new Blob([Buffer.isBuffer(encryptedFile) ? encryptedFile.toString('binary') : encryptedFile], { type: 'application/octet-stream' });
+    
+    // Convert Buffer to Uint8Array for proper Blob creation in Node.js
+    const uint8Array = new Uint8Array(encryptedFile);
+    const blob = new Blob([uint8Array], { type: 'application/octet-stream' });
     formData.append('file', blob, filename);
 
     // Add comprehensive Pinata metadata
