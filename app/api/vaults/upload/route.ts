@@ -190,7 +190,7 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    return NextResponse.json(apiSuccess({
+    return apiSuccess({
       file: {
         id: vaultFile.id,
         fileName: vaultFile.fileName,
@@ -211,7 +211,7 @@ export async function POST(req: NextRequest) {
         gateway: ipfsResult.gateway,
         size: ipfsResult.size,
       },
-    }), { status: 201 });
+    }, 201);
   } catch (error) {
     console.error('File upload error:', error);
     if (error instanceof Error) {

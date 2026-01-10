@@ -80,7 +80,7 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    return NextResponse.json(apiSuccess(vault), { status: 201 });
+    return apiSuccess(vault, 201);
   } catch (error) {
     return NextResponse.json(handleDbError(error), { status: 500 });
   }

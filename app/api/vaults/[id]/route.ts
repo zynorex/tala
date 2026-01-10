@@ -70,7 +70,7 @@ export async function GET(
       return httpErrors.forbidden();
     }
 
-    return NextResponse.json(apiSuccess(vault), { status: 200 });
+    return apiSuccess(vault);
   } catch (error) {
     return NextResponse.json(handleDbError(error), { status: 500 });
   }
@@ -148,7 +148,7 @@ export async function PUT(
       },
     });
 
-    return NextResponse.json(apiSuccess(updated), { status: 200 });
+    return apiSuccess(updated);
   } catch (error) {
     return NextResponse.json(handleDbError(error), { status: 500 });
   }
@@ -236,11 +236,11 @@ export async function DELETE(
       },
     });
 
-    return NextResponse.json(apiSuccess({
+    return apiSuccess({
       ...deleted,
       filesDeleted: filesToDelete.length,
       filesUnpinned: successCount,
-    }), { status: 200 });
+    });
   } catch (error) {
     return NextResponse.json(handleDbError(error), { status: 500 });
   }
