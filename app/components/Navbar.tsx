@@ -126,6 +126,14 @@ export default function Navbar() {
               }`}>How It Works</button>
             </Link>
 
+            <Link href="/pricing">
+              <button className={`px-4 lg:px-6 py-2 text-sm lg:text-base font-bold transition-all border-b-4 ${
+                isActive("/pricing")
+                  ? isScrolled ? "border-heirlock-pink text-white" : "border-black"
+                  : isScrolled ? "border-transparent hover:bg-heirlock-pink hover:text-black" : "border-transparent group-hover:text-white"
+              }`}>Pricing</button>
+            </Link>
+
             <Link href="/about">
               <button className={`px-4 lg:px-6 py-2 text-sm lg:text-base font-bold transition-all border-b-4 ${
                 isActive("/about")
@@ -211,6 +219,12 @@ export default function Navbar() {
                         <div className="flex items-center gap-3 px-3 py-2 rounded hover:bg-heirlock-pink hover:text-black transition-all font-bold cursor-pointer">
                           <Newspaper className="w-5 h-5" />
                           <span>Blog</span>
+                        </div>
+                      </Link>
+                      <Link href="/changelog" onClick={closeMenu}>
+                        <div className="flex items-center gap-3 px-3 py-2 rounded hover:bg-heirlock-yellow hover:text-black transition-all font-bold cursor-pointer">
+                          <Code className="w-5 h-5" />
+                          <span>Changelog</span>
                         </div>
                       </Link>
                       <Link href="/contact" onClick={closeMenu}>
@@ -413,6 +427,9 @@ export default function Navbar() {
                   </Link>
                   <Link href="/blog" onClick={closeMenu}>
                     <button className="w-full text-left px-3 py-2 text-xs font-bold bg-black text-white hover:bg-heirlock-pink hover:text-black transition-all border-l-2 border-heirlock-pink">📰 Blog</button>
+                  </Link>
+                  <Link href="/changelog" onClick={closeMenu}>
+                    <button className="w-full text-left px-3 py-2 text-xs font-bold bg-black text-white hover:bg-heirlock-yellow hover:text-black transition-all border-l-2 border-heirlock-yellow">📝 Changelog</button>
                   </Link>
                 </div>
               )}

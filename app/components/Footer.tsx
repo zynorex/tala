@@ -27,6 +27,7 @@ export default function Footer() {
   const footerLinks = {
     product: [
       { label: "How It Works", href: "/how-it-works" },
+      { label: "Pricing", href: "/pricing" },
       { label: "Create Vault", href: "/create-vault" },
       { label: "Dashboard", href: "/dashboard" },
       { label: "Smart Contracts", href: "/smart-contracts" },
@@ -36,6 +37,7 @@ export default function Footer() {
       { label: "Developer Docs", href: "/docs" },
       { label: "FAQ", href: "/faq" },
       { label: "Blog", href: "/blog" },
+      { label: "Changelog", href: "/changelog" },
     ],
     legal: [
       { label: "Terms of Service", href: "/terms" },
