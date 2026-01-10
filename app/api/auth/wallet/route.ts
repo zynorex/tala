@@ -97,7 +97,7 @@ export async function POST(req: NextRequest) {
         data: {
           userId: user.id,
           action: 'USER_CREATED_WALLET',
-          details: `New user registered with wallet ${address}`,
+          description: `New user registered with wallet ${address}`,
         },
       });
     }
@@ -110,7 +110,7 @@ export async function POST(req: NextRequest) {
       data: {
         userId: user.id,
         action: 'AUTH_WALLET_LOGIN',
-        details: `Wallet authentication successful from ${address}`,
+        description: `Wallet authentication successful from ${address}`,
       },
     });
 
