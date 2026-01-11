@@ -12,6 +12,7 @@ import PageSkeleton from "./components/PageSkeleton";
 import DevelopmentNotification from "./components/DevelopmentNotification";
 import CookieConsent from "./components/CookieConsent";
 import Web3ClientWrapper from "./components/Web3ClientWrapper";
+import LaunchAnnouncementModal from "./components/LaunchAnnouncementModal";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -51,6 +52,7 @@ export default function RootLayout({
             <ThemeProvider>
               <Web3ClientWrapper>
                 <ToastProvider>
+                  <LaunchAnnouncementModal />
                   <PageSkeleton />
                   <MobileWarning />
                   <Navbar />

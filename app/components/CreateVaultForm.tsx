@@ -826,24 +826,11 @@ export default function CreateVaultForm() {
       {/* Submit Button */}
       <button
         type="submit"
-        disabled={form.isSubmitting}
-        className={`w-full px-8 py-5 font-black border-4 border-black shadow-brutal inline-flex items-center justify-center gap-3 text-xl transition-all duration-200 ${
-          form.isSubmitting
-            ? 'bg-gray-400 text-gray-600 cursor-not-allowed'
-            : 'bg-black text-heirlock-yellow hover:translate-y-[-4px] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]'
-        }`}
+        disabled
+        className="w-full px-8 py-5 font-black border-4 border-black shadow-brutal inline-flex items-center justify-center gap-3 text-xl transition-all duration-200 bg-gray-400 text-gray-600 cursor-not-allowed opacity-70"
       >
-        {form.isSubmitting ? (
-          <>
-            <Loader className="w-6 h-6 animate-spin" />
-            <span>Creating Vault & Encrypting...</span>
-          </>
-        ) : (
-          <>
-            <Lock className="w-6 h-6" />
-            <span>Create Secure Vault</span>
-          </>
-        )}
+        <Lock className="w-6 h-6" />
+        <span>Create Secure Vault (Coming Soon)</span>
       </button>
 
       {/* Security Info Footer */}
