@@ -38,6 +38,7 @@ export default function Footer() {
       { label: "FAQ", href: "/faq" },
       { label: "Blog", href: "/blog" },
       { label: "Changelog", href: "/changelog" },
+      { label: "Status", href: "/status" },
     ],
     legal: [
       { label: "Terms of Service", href: "/terms" },
