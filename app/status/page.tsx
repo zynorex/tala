@@ -76,7 +76,7 @@ export default function StatusPage() {
     };
 
     fetchStatus();
-    const interval = setInterval(fetchStatus, 60000); // Refresh every 60 seconds
+    const interval = setInterval(fetchStatus, 10000); // Refresh every 10 seconds for real-time feel
 
     return () => clearInterval(interval);
   }, []);
