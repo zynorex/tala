@@ -83,14 +83,14 @@ export default function LaunchAnnouncementModal() {
               </h3>
               <div className="space-y-1 md:space-y-2">
                 {[
-                  { icon: '🔐', text: 'Military-grade AES-256 encryption' },
-                  { icon: '⛓️', text: 'Blockchain-verified security' },
-                  { icon: '📦', text: 'Decentralized IPFS storage' },
-                  { icon: '🛡️', text: 'Zero-knowledge architecture' },
+                  'Military-grade AES-256 encryption',
+                  'Blockchain-verified security',
+                  'Decentralized IPFS storage',
+                  'Zero-knowledge architecture',
                 ].map((feature, index) => (
                   <div key={index} className="flex items-center gap-2 md:gap-3 text-xs md:text-sm">
-                    <span className="text-base md:text-lg flex-shrink-0">{feature.icon}</span>
-                    <span className="text-gray-800 font-medium">{feature.text}</span>
+                    <span className="text-black font-black">→</span>
+                    <span className="text-gray-800 font-medium">{feature}</span>
                   </div>
                 ))}
               </div>
