@@ -175,6 +175,12 @@ export default function Navbar() {
                           <span>Pricing</span>
                         </div>
                       </Link>
+                      <Link href="/security" onClick={closeMenu}>
+                        <div className="flex items-center gap-3 px-3 py-2 rounded hover:bg-heirlock-green hover:text-black transition-all font-bold cursor-pointer">
+                          <Shield className="w-5 h-5" />
+                          <span>Security</span>
+                        </div>
+                      </Link>
                     </div>
                   </div>
 

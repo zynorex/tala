@@ -31,6 +31,7 @@ export default function Footer() {
       { label: "Create Vault", href: "/create-vault" },
       { label: "Dashboard", href: "/dashboard" },
       { label: "Smart Contracts", href: "/smart-contracts" },
+      { label: "Security", href: "/security" },
     ],
     resources: [
       { label: "Documentation", href: "/documentation" },
