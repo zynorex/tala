@@ -748,16 +748,16 @@ export default function SecurityPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {[
-              { title: 'Security Whitepaper', icon: '📄', description: 'Comprehensive security architecture overview' },
-              { title: 'SOC 2 Type II Report', icon: '✓', description: 'Annual third-party audit report' },
-              { title: 'Data Processing Agreement', icon: '📋', description: 'GDPR DPA for enterprise customers' },
-              { title: 'Incident Response Plan', icon: '🚨', description: 'Our response procedures for security events' },
+              { title: 'Security Whitepaper', icon: '📄', description: 'Comprehensive security architecture overview', file: '/docs/security-whitepaper.pdf' },
+              { title: 'SOC 2 Type II Report', icon: '✓', description: 'Annual third-party audit report', file: '/docs/soc2-audit-report.pdf' },
+              { title: 'Data Processing Agreement', icon: '📋', description: 'GDPR DPA for enterprise customers', file: '/docs/data-processing-agreement.pdf' },
+              { title: 'Incident Response Plan', icon: '🚨', description: 'Our response procedures for security events', file: '/docs/incident-response-plan.pdf' },
             ].map((doc, index) => (
               <div key={index} className="border-4 border-black p-6 bg-white rounded-lg hover:shadow-brutal transition-all cursor-pointer">
                 <p className="text-3xl mb-3">{doc.icon}</p>
                 <h3 className="text-lg font-black text-black mb-2">{doc.title}</h3>
                 <p className="text-gray-700 mb-4">{doc.description}</p>
-                <a href="#" className="font-bold text-black hover:underline flex items-center gap-2">
+                <a href={doc.file} download className="font-bold text-black hover:underline flex items-center gap-2">
                   <Download className="w-4 h-4" />
                   Download PDF
                 </a>

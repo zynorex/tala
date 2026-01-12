@@ -1,0 +1,89 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 4 0 R /Resources << /Font << /F1 5 0 R >> >> >>
+endobj
+4 0 obj
+<< /Length 700 >>
+stream
+BT
+/F1 24 Tf
+50 700 Td
+(Data Processing Agreement) Tj
+0 -40 Td
+/F1 12 Tf
+(GDPR Data Processing Agreement for T.A.L.A.) Tj
+0 -20 Td
+(Version: 2.0 - January 2026) Tj
+0 -60 Td
+/F1 14 Tf
+(1. Purpose) Tj
+0 -20 Td
+/F1 12 Tf
+(This Data Processing Agreement (DPA) establishes the terms under which) Tj
+0 -15 Td
+(T.A.L.A. processes personal data as a data processor on behalf of clients) Tj
+0 -15 Td
+(as data controllers, in compliance with GDPR Article 28.) Tj
+0 -40 Td
+/F1 14 Tf
+(2. Definitions) Tj
+0 -20 Td
+/F1 12 Tf
+(- Data Controller: Client organization) Tj
+0 -15 Td
+(- Data Processor: T.A.L.A. Inc.) Tj
+0 -15 Td
+(- Personal Data: Information relating to identified/identifiable persons) Tj
+0 -15 Td
+(- Processing: Any operation performed on personal data) Tj
+0 -40 Td
+/F1 14 Tf
+(3. Processor Obligations) Tj
+0 -20 Td
+/F1 12 Tf
+(- Process personal data only on documented instructions) Tj
+0 -15 Td
+(- Ensure persons authorized are subject to confidentiality) Tj
+0 -15 Td
+(- Implement appropriate security measures) Tj
+0 -15 Td
+(- Assist controller with data subject rights) Tj
+0 -15 Td
+(- Delete or return personal data after end of service) Tj
+0 -15 Td
+(- Allow audits and inspections) Tj
+0 -40 Td
+/F1 14 Tf
+(4. Data Security) Tj
+0 -20 Td
+/F1 12 Tf
+(T.A.L.A. implements technical and organizational measures to ensure) Tj
+0 -15 Td
+(appropriate security levels including encryption, access controls,) Tj
+0 -15 Td
+(and regular security assessments.) Tj
+ET
+endstream
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000214 00000 n 
+0000000964 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+1043
+%%EOF
