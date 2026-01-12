@@ -188,6 +188,12 @@ export default function Navbar() {
                           <span>Developer Docs</span>
                         </div>
                       </Link>
+                      <Link href="/docs/api" onClick={closeMenu}>
+                        <div className="flex items-center gap-3 px-3 py-2 rounded hover:bg-heirlock-blue hover:text-black transition-all font-bold cursor-pointer">
+                          <Code className="w-5 h-5" />
+                          <span>API Documentation</span>
+                        </div>
+                      </Link>
                       <Link href="/smart-contracts" onClick={closeMenu}>
                         <div className="flex items-center gap-3 px-3 py-2 rounded hover:bg-heirlock-pink hover:text-black transition-all font-bold cursor-pointer">
                           <Code className="w-5 h-5" />

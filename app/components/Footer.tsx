@@ -35,6 +35,7 @@ export default function Footer() {
     resources: [
       { label: "Documentation", href: "/documentation" },
       { label: "Developer Docs", href: "/docs" },
+      { label: "API Documentation", href: "/docs/api" },
       { label: "FAQ", href: "/faq" },
       { label: "Blog", href: "/blog" },
       { label: "Changelog", href: "/changelog" },
