@@ -71,14 +71,80 @@ export default function Blog() {
       category: "Case Study",
       image: "🎓",
     },
+    {
+      id: 7,
+      title: "Understanding Smart Contracts: The Foundation of T.A.L.A.",
+      excerpt:
+        "A beginner's guide to smart contracts and how they enable tamper-proof, automated exam administration without intermediaries.",
+      author: "Rohan Patel",
+      date: "Nov 20, 2024",
+      readTime: "6 min read",
+      category: "Technology",
+      image: "🧠",
+    },
+    {
+      id: 8,
+      title: "Web3 for Education: From Centralized to Decentralized Systems",
+      excerpt:
+        "Exploring how Web3 principles are transforming education from bottom-up. Real ownership, real control, real security.",
+      author: "Dr. Rajesh Kumar",
+      date: "Nov 15, 2024",
+      readTime: "7 min read",
+      category: "Architecture",
+      image: "🌐",
+    },
+    {
+      id: 9,
+      title: "Polygon Amoy: Why We Chose It for T.A.L.A.",
+      excerpt:
+        "Technical deep-dive into why Polygon Amoy provides the ideal environment: low gas fees, high throughput, Ethereum security.",
+      author: "Priya Sharma",
+      date: "Nov 10, 2024",
+      readTime: "5 min read",
+      category: "Technology",
+      image: "⛓️",
+    },
+    {
+      id: 10,
+      title: "Cryptographic Hashing: How T.A.L.A. Detects Document Tampering",
+      excerpt:
+        "Learn how SHA-256 and cryptographic hashing protect exam papers from modification, deletion, or forgery attempts.",
+      author: "Rohan Patel",
+      date: "Nov 5, 2024",
+      readTime: "4 min read",
+      category: "Security",
+      image: "🔒",
+    },
+    {
+      id: 11,
+      title: "Zero-Knowledge Proofs: Verification Without Exposure",
+      excerpt:
+        "Discover how zero-knowledge cryptography allows document verification while maintaining complete privacy of contents.",
+      author: "Dr. Rajesh Kumar",
+      date: "Oct 30, 2024",
+      readTime: "8 min read",
+      category: "Security",
+      image: "🎯",
+    },
+    {
+      id: 12,
+      title: "T.A.L.A. Roadmap 2026: What's Coming Next",
+      excerpt:
+        "A preview of our 2026 development roadmap: cross-chain support, zero-knowledge rollups, advanced analytics, and institutional features.",
+      author: "Team T.A.L.A.",
+      date: "Oct 25, 2024",
+      readTime: "5 min read",
+      category: "Announcement",
+      image: "📋",
+    },
   ];
 
   const categories = [
     "All",
     "Security",
     "Technology",
-    "Announcement",
     "Architecture",
+    "Announcement",
     "Case Study",
   ];
 
