@@ -5,7 +5,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { getLogger } from "@/lib/utils/logger";
-import prisma from "@/lib/prisma";
+import { db } from "@/lib/prisma";
 
 const logger = getLogger("HealthCheck");
 
@@ -90,9 +90,9 @@ export async function GET(request: NextRequest) {
     const dbStartTime = Date.now();
     try {
       // Test database connection with a simple query
-      const userCount = await prisma.user.count();
-      const vaultCount = await prisma.vault.count();
-      const fileCount = await prisma.vaultFile.count();
+      const userCount = await db.user.count();
+      const vaultCount = await db.vault.count();
+      const fileCount = await db.vaultFile.count();
 
       response.checks.database = {
         status: "ok",
@@ -248,7 +248,7 @@ export async function GET(request: NextRequest) {
 export async function HEAD(request: NextRequest) {
   try {
     // Quick database check
-    await prisma.$queryRaw`SELECT 1`;
+    await db.$queryRaw`SELECT 1`;
     return new NextResponse(null, { status: 200 });
   } catch (error) {
     logger.error("Health check (HEAD) failed", error instanceof Error ? error : undefined);

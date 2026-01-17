@@ -4,7 +4,7 @@
  */
 
 import { ethers } from 'ethers';
-import { getLogger } from './logger';
+import { getLogger } from '@/lib/utils/logger';
 
 const logger = getLogger('SignatureVerify');
 
