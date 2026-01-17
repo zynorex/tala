@@ -1,21 +1,77 @@
-import NextAuth from "next-auth";
+import NextAuth, { type NextAuthOptions } from "next-auth";
 import Google from "next-auth/providers/google";
 import Credentials from "next-auth/providers/credentials";
+import { db } from "@/lib/prisma";
+import { verifySignatureWithValidation } from "@/lib/auth/signature-verify";
+import { getLogger } from "@/lib/utils/logger";
 
-const providers = [];
+const logger = getLogger('NextAuth');
 
-// Always include Credentials provider as fallback
+const providers: any[] = [];
+
+// Credentials provider for Web3 wallet authentication
 providers.push(
   Credentials({
-    name: "Wallet",
+    name: "Web3",
     credentials: {
       address: { label: "Wallet Address", type: "text" },
       signature: { label: "Signature", type: "text" },
       message: { label: "Message", type: "text" },
     },
-    async authorize() {
-      // This will be handled by the wallet endpoint
-      return null;
+    async authorize(credentials) {
+      if (!credentials?.address || !credentials?.signature || !credentials?.message) {
+        logger.warn('Missing authentication credentials');
+        throw new Error("Missing credentials");
+      }
+
+      try {
+        // Verify signature with validation
+        const verification = await verifySignatureWithValidation(
+          credentials.message,
+          credentials.signature,
+          credentials.address,
+          300 // 5 minute expiration
+        );
+
+        if (!verification.valid) {
+          logger.warn('Invalid signature', { address: credentials.address, error: verification.error });
+          throw new Error(verification.error || "Invalid signature");
+        }
+
+        // Get or create user
+        let user = await db.user.findUnique({
+          where: { walletAddress: credentials.address.toLowerCase() },
+        });
+
+        if (!user) {
+          logger.info('Creating new user', { address: credentials.address });
+          user = await db.user.create({
+            data: {
+              walletAddress: credentials.address.toLowerCase(),
+              plan: "free",
+              role: "user",
+            },
+          });
+        }
+
+        // Check if user is blocked
+        if (user.isBlocked) {
+          logger.warn('Blocked user attempted login', { userId: user.id });
+          throw new Error("Your account has been suspended");
+        }
+
+        logger.info('User authenticated', { userId: user.id, address: credentials.address });
+
+        return {
+          id: user.id,
+          name: user.walletAddress,
+          email: user.email,
+          image: null,
+        };
+      } catch (error) {
+        logger.error('Authentication failed', error instanceof Error ? error : undefined);
+        throw error;
+      }
     },
   })
 );
@@ -31,11 +87,13 @@ if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
   );
 }
 
-const auth = NextAuth({
+export const authOptions: NextAuthOptions = {
   session: {
     strategy: "jwt",
     maxAge: 30 * 24 * 60 * 60, // 30 days
+    updateAge: 24 * 60 * 60, // Refresh every 24 hours
   },
+  secret: process.env.NEXTAUTH_SECRET,
   providers,
   pages: {
     signIn: "/auth/login",
@@ -46,10 +104,12 @@ const auth = NextAuth({
       if (user) {
         token.id = user.id;
         token.email = user.email;
-        token.image = user.image;
+        token.name = user.name;
       }
       if (account?.provider === "google") {
         token.provider = "google";
+      } else if (account?.provider === "credentials") {
+        token.provider = "web3";
       }
       return token;
     },
@@ -60,8 +120,27 @@ const auth = NextAuth({
       }
       return session;
     },
+    async redirect({ url, baseUrl }) {
+      // Only allow redirects to the same origin
+      if (url.startsWith("/")) return `${baseUrl}${url}`;
+      else if (new URL(url).origin === baseUrl) return url;
+      return baseUrl;
+    },
   },
-});
+  events: {
+    async signIn({ user, account }) {
+      logger.info('User signed in', { userId: user.id, provider: account?.provider });
+    },
+    async signOut() {
+      logger.info('User signed out');
+    },
+    async error({ error }) {
+      logger.error('Auth error', new Error(error));
+    },
+  },
+};
 
-export const GET = auth;
-export const POST = auth;
+const handler = NextAuth(authOptions);
+
+export const GET = handler;
+export const POST = handler;
