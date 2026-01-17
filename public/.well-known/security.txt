@@ -1,0 +1,30 @@
+Contact: security@tala.ai
+Expires: 2026-12-31T23:59:59.000Z
+Preferred-Languages: en
+Canonical: https://tala.ai/.well-known/security.txt
+
+# Security Policy
+# Report security vulnerabilities to: security@tala.ai
+# Do not publicly disclose security issues
+
+# Supported vulnerability disclosure practices
+# - Email: security@tala.ai
+# - Response time: 24-48 hours
+# - Acknowledgment: Yes
+# - Safe harbor: Encouraged
+
+# Security headers expected
+# - HSTS: max-age=31536000; includeSubDomains; preload
+# - X-Content-Type-Options: nosniff
+# - X-Frame-Options: SAMEORIGIN
+# - Content-Security-Policy: strict
+
+# PGP Key fingerprint (if applicable)
+# Key-Contact: security@tala.ai
+
+# Bug bounty program
+# Bounty-Program: https://tala.ai/security#bounty
+
+# Latest security audit
+# Audit-Date: 2026-01-01
+# Audit-Provider: Independent Security Firm

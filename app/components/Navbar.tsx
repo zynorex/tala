@@ -187,12 +187,6 @@ export default function Navbar() {
                           <span>Security</span>
                         </div>
                       </Link>
-                      <Link href="/team" onClick={closeMenu}>
-                        <div className="flex items-center gap-3 px-3 py-2 rounded hover:bg-heirlock-blue hover:text-black transition-all font-bold cursor-pointer">
-                          <BookOpen className="w-5 h-5" />
-                          <span>Team</span>
-                        </div>
-                      </Link>
                       <Link href="/roadmap" onClick={closeMenu}>
                         <div className="flex items-center gap-3 px-3 py-2 rounded hover:bg-heirlock-yellow hover:text-black transition-all font-bold cursor-pointer">
                           <Zap className="w-5 h-5" />

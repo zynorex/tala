@@ -1,0 +1,39 @@
+# robots.txt
+
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /api
+Disallow: /auth
+Disallow: /profile
+Disallow: /_next
+Disallow: /public
+
+# Allow specific crawlers
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: DuckDuckGoBot
+Allow: /
+
+# Crawl delay (in seconds)
+Crawl-delay: 1
+
+# Sitemap location
+Sitemap: https://tala.ai/sitemap.xml
+
+# Block bad bots
+User-agent: AhrefsBot
+Disallow: /
+
+User-agent: SemrushBot
+Disallow: /
+
+User-agent: MJ12bot
+Disallow: /
+
+User-agent: DotBot
+Disallow: /
