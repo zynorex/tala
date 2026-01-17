@@ -169,6 +169,12 @@ export default function Navbar() {
                           <span>FAQ</span>
                         </div>
                       </Link>
+                      <Link href="/case-studies" onClick={closeMenu}>
+                        <div className="flex items-center gap-3 px-3 py-2 rounded hover:bg-heirlock-pink hover:text-black transition-all font-bold cursor-pointer">
+                          <Zap className="w-5 h-5" />
+                          <span>Case Studies</span>
+                        </div>
+                      </Link>
                       <Link href="/pricing" onClick={closeMenu}>
                         <div className="flex items-center gap-3 px-3 py-2 rounded hover:bg-heirlock-pink hover:text-black transition-all font-bold cursor-pointer">
                           <Zap className="w-5 h-5" />
@@ -179,6 +185,18 @@ export default function Navbar() {
                         <div className="flex items-center gap-3 px-3 py-2 rounded hover:bg-heirlock-green hover:text-black transition-all font-bold cursor-pointer">
                           <Shield className="w-5 h-5" />
                           <span>Security</span>
+                        </div>
+                      </Link>
+                      <Link href="/team" onClick={closeMenu}>
+                        <div className="flex items-center gap-3 px-3 py-2 rounded hover:bg-heirlock-blue hover:text-black transition-all font-bold cursor-pointer">
+                          <BookOpen className="w-5 h-5" />
+                          <span>Team</span>
+                        </div>
+                      </Link>
+                      <Link href="/roadmap" onClick={closeMenu}>
+                        <div className="flex items-center gap-3 px-3 py-2 rounded hover:bg-heirlock-yellow hover:text-black transition-all font-bold cursor-pointer">
+                          <Zap className="w-5 h-5" />
+                          <span>Roadmap</span>
                         </div>
                       </Link>
                     </div>
