@@ -2,10 +2,11 @@
 
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { useAccount, useSignMessage } from 'wagmi';
-import { Lock, Upload, FileText, AlertCircle, CheckCircle, Loader, Calendar, Info, Shield, Clock, X, Key, Copy, Download } from 'lucide-react';
+import { Lock, Upload, FileText, AlertCircle, CheckCircle, Loader, Calendar, Info, Shield, Clock, X, Key, Copy, Download, Image as ImageIcon } from 'lucide-react';
 import { useToast } from '@/app/hooks/useToast';
 import { useRouter } from 'next/navigation';
 import { validators } from '@/lib/validators/input-validators';
+import { generatePreview, detectFileCategory } from '@/lib/utils/file-preview';
 
 interface FormState {
   vaultName: string;
@@ -60,6 +61,8 @@ export default function CreateVaultForm() {
   const [dragActive, setDragActive] = useState(false);
   const [isAuthenticating, setIsAuthenticating] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [filePreview, setFilePreview] = useState<any>(null);
+  const [previewLoading, setPreviewLoading] = useState(false);
 
   // Check authentication status on mount and address change
   useEffect(() => {
@@ -228,6 +231,22 @@ export default function CreateVaultForm() {
     handleFileSelect(file);
     setErrors({ ...errors, file: '' });
     toast(`File selected: ${file.name}`, 'success');
+
+    // Generate preview
+    generateFilePreview(file);
+  };
+
+  const generateFilePreview = async (file: File) => {
+    try {
+      setPreviewLoading(true);
+      const preview = await generatePreview(file, file.type || 'application/octet-stream');
+      setFilePreview(preview);
+    } catch (error) {
+      console.error('Failed to generate preview:', error);
+      setFilePreview(null);
+    } finally {
+      setPreviewLoading(false);
+    }
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -600,6 +619,7 @@ export default function CreateVaultForm() {
                   onClick={(e) => {
                     e.preventDefault();
                     setForm({ ...form, file: null });
+                    setFilePreview(null);
                     if (fileInputRef.current) fileInputRef.current.value = '';
                   }}
                   className="p-2 border-2 border-black bg-white hover:bg-red-100 transition-colors"
@@ -624,6 +644,50 @@ export default function CreateVaultForm() {
             <AlertCircle className="w-3 h-3" />
             {errors.file}
           </span>
+        )}
+
+        {/* File Preview */}
+        {form.file && filePreview && (
+          <div className="mt-4 border-4 border-black bg-cream p-4">
+            {previewLoading ? (
+              <div className="flex items-center justify-center py-8">
+                <Loader className="w-6 h-6 animate-spin text-heirlock-blue" />
+                <p className="ml-2 font-bold">Generating preview...</p>
+              </div>
+            ) : filePreview.type === 'image' && filePreview.preview ? (
+              <div className="space-y-2">
+                <p className="text-xs font-black text-black uppercase">Preview</p>
+                <div className="relative w-full max-h-48 overflow-hidden border-2 border-black bg-black">
+                  <img
+                    src={filePreview.preview}
+                    alt="File preview"
+                    className="w-full h-full object-contain"
+                  />
+                </div>
+              </div>
+            ) : filePreview.type === 'text' && filePreview.preview ? (
+              <div className="space-y-2">
+                <p className="text-xs font-black text-black uppercase">Preview (First 200 characters)</p>
+                <div className="bg-black text-heirlock-green p-3 font-mono text-xs overflow-x-auto max-h-32 overflow-y-auto border-2 border-black">
+                  <p className="whitespace-pre-wrap break-words">{filePreview.preview}</p>
+                </div>
+                {filePreview.metadata && (
+                  <div className="text-xs text-gray-700 mt-2 grid grid-cols-3 gap-2">
+                    <span>Lines: {filePreview.metadata.lines}</span>
+                    <span>Words: {filePreview.metadata.words}</span>
+                    <span>Chars: {filePreview.metadata.characters}</span>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div className="flex items-center gap-2 p-3 bg-gray-50 border-2 border-black">
+                <FileText className="w-5 h-5 text-gray-600" />
+                <p className="text-sm font-bold text-gray-700">
+                  Preview not available for {filePreview.type} files
+                </p>
+              </div>
+            )}
+          </div>
         )}
       </div>
 
