@@ -1,10 +1,10 @@
 /**
  * Smart Contract Verification Script
- * STEP 2 of PHASE 1: Verify TALAVault contract is properly configured
+ * STEP 2 of PHASE 1: Verify NilVault contract is properly configured
  */
 
 import { ethers } from "hardhat";
-import { TALAVault } from "../typechain-types";
+import { NilVault } from "../typechain-types";
 
 const POLYGON_AMOY_EXPLORER = "https://amoy.polygonscan.com";
 const VAULT_CHAIN_ID = 80002; // Polygon Amoy
@@ -79,8 +79,8 @@ async function verifySmartContract(): Promise<VerificationResult> {
     console.log("✓ Contract deployed at address\n");
 
     // 4. Get contract details
-    const TALAVault = await ethers.getContractFactory("TALAVault");
-    const vault = TALAVault.attach(contractAddress) as TALAVault;
+    const NilVault = await ethers.getContractFactory("NilVault");
+    const vault = NilVault.attach(contractAddress) as NilVault;
 
     result.checks.accessible = true;
     console.log("✓ Contract accessible via ABI\n");
@@ -131,7 +131,7 @@ async function verifySmartContract(): Promise<VerificationResult> {
     // 9. Check encryption support
     try {
       // Verify encryption-related functions exist
-      const iface = TALAVault.interface;
+      const iface = NilVault.interface;
       const hasEncryptionFunctions = iface.fragments.some(
         (fragment: any) => 
           fragment.name && 
@@ -150,7 +150,7 @@ async function verifySmartContract(): Promise<VerificationResult> {
 
     // 10. Display contract functions
     console.log("📋 Available Contract Functions:\n");
-    const iface = TALAVault.interface;
+    const iface = NilVault.interface;
     const functions = iface.fragments
       .filter((f: any) => f.type === "function")
       .map((f: any) => ({

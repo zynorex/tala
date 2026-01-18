@@ -1,7 +1,7 @@
 import crypto from 'crypto';
 
 /**
- * TALA Encryption Module - Enterprise Grade
+ * NIL Encryption Module - Enterprise Grade
  * Implements AES-256-GCM encryption with advanced security features
  * 
  * Security Standards:

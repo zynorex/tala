@@ -1,5 +1,5 @@
 /**
- * TALA Vault Service - Enterprise Grade
+ * NIL Vault Service - Enterprise Grade
  * Handles vault creation, management, file operations, and security
  * 
  * Features:

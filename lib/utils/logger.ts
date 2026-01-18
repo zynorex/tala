@@ -148,7 +148,7 @@ export class Logger {
 /**
  * Global logger instance
  */
-export const logger = new Logger('TALA');
+export const logger = new Logger('NIL');
 
 /**
  * Create a logger for a specific module

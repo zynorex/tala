@@ -40,14 +40,14 @@ export default function Support() {
       icon: MessageSquare,
       title: 'Discord Community',
       description: 'Join our Discord for real-time support and community discussions.',
-      link: 'https://discord.gg/tala',
+      link: 'https://discord.gg/nil',
       color: 'bg-heirlock-blue',
     },
     {
       icon: Mail,
       title: 'Email Support',
-      description: 'Email our team directly at support@tala.protocol for detailed assistance.',
-      link: 'mailto:support@tala.protocol',
+      description: 'Email our team directly at support@nil.protocol for detailed assistance.',
+      link: 'mailto:support@nil.protocol',
       color: 'bg-heirlock-pink',
     },
     {

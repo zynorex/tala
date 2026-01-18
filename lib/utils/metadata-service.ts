@@ -1,5 +1,5 @@
 /**
- * TALA Encryption Metadata Database Service
+ * NIL Encryption Metadata Database Service
  * Manages encrypted file metadata without storing encryption keys
  * Enterprise-grade implementation with Prisma database integration
  * 

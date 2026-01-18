@@ -1,14 +1,14 @@
-Contact: security@tala.ai
+Contact: security@nil.ai
 Expires: 2026-12-31T23:59:59.000Z
 Preferred-Languages: en
-Canonical: https://tala.ai/.well-known/security.txt
+Canonical: https://nil.ai/.well-known/security.txt
 
 # Security Policy
-# Report security vulnerabilities to: security@tala.ai
+# Report security vulnerabilities to: security@nil.ai
 # Do not publicly disclose security issues
 
 # Supported vulnerability disclosure practices
-# - Email: security@tala.ai
+# - Email: security@nil.ai
 # - Response time: 24-48 hours
 # - Acknowledgment: Yes
 # - Safe harbor: Encouraged
@@ -20,10 +20,10 @@ Canonical: https://tala.ai/.well-known/security.txt
 # - Content-Security-Policy: strict
 
 # PGP Key fingerprint (if applicable)
-# Key-Contact: security@tala.ai
+# Key-Contact: security@nil.ai
 
 # Bug bounty program
-# Bounty-Program: https://tala.ai/security#bounty
+# Bounty-Program: https://nil.ai/security#bounty
 
 # Latest security audit
 # Audit-Date: 2026-01-01

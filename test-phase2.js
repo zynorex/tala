@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * TALA Phase 2 Comprehensive Test Suite
+ * NIL Phase 2 Comprehensive Test Suite
  * Tests: Build, Database, API Routes, and Core Functionality
  */
 
@@ -82,7 +82,7 @@ runTest('Environment configuration exists', () => {
   if (!envContent.includes('DATABASE_URL')) {
     throw new Error('DATABASE_URL not configured');
   }
-  if (!envContent.includes('NEXT_PUBLIC_TALA_VAULT_ADDRESS')) {
+  if (!envContent.includes('NEXT_PUBLIC_NIL_VAULT_ADDRESS')) {
     throw new Error('Smart contract address not configured');
   }
 });

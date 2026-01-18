@@ -16,7 +16,7 @@ import {
 } from '../crypto/encryption';
 
 /**
- * TALA Vault Encryption Service
+ * NIL Vault Encryption Service
  * High-end enterprise-grade encryption for exam vault storage
  * 
  * Features:
@@ -191,7 +191,7 @@ export function createVaultBackup(
     backup: {
       createdAt: Date.now(),
       version: '2.0',
-      format: 'tala-vault-backup',
+      format: 'nil-vault-backup',
     },
   };
 
@@ -205,7 +205,7 @@ export function restoreVaultFromBackup(backupJson: string): EncryptedVaultData {
   try {
     const backup = JSON.parse(backupJson);
 
-    if (backup.backup?.format !== 'tala-vault-backup') {
+    if (backup.backup?.format !== 'nil-vault-backup') {
       throw new Error('Invalid backup format');
     }
 

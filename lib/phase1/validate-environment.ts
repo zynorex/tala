@@ -115,7 +115,7 @@ export function validateEnvironment(): ValidationResult {
     {
       name: "NEXT_PUBLIC_VAULT_CONTRACT_ADDRESS",
       category: "blockchain" as const,
-      description: "TALAVault contract address on Polygon Amoy",
+      description: "NilVault contract address on Polygon Amoy",
       pattern: /^0x[a-fA-F0-9]{40}$/,
     },
   ];

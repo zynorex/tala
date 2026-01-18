@@ -4,7 +4,7 @@
 # Run these commands to quickly test all the new features
 
 echo "========================================="
-echo "TALA VAULT - QUICK TEST SUITE"
+echo "NIL VAULT - QUICK TEST SUITE"
 echo "========================================="
 echo ""
 

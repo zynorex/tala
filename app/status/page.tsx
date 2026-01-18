@@ -534,9 +534,9 @@ export default function StatusPage() {
                 <div>
                   <h3 className="font-black text-black text-lg mb-3">Support</h3>
                   <ul className="space-y-2 text-sm text-gray-700">
-                    <li>Email: support@tala.io</li>
-                    <li>Status Page: status.tala.io</li>
-                    <li>Incident Escalation: critical@tala.io</li>
+                    <li>Email: support@nil.io</li>
+                    <li>Status Page: status.nil.io</li>
+                    <li>Incident Escalation: critical@nil.io</li>
                     <li>Response Time: &lt; 1 hour</li>
                   </ul>
                 </div>

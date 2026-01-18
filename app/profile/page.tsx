@@ -124,7 +124,7 @@ export default function ProfilePage() {
 
     if (!address) return;
 
-    const key = `tala_${Math.random().toString(36).substring(2, 15)}_${Math.random().toString(36).substring(2, 15)}`;
+    const key = `nil_${Math.random().toString(36).substring(2, 15)}_${Math.random().toString(36).substring(2, 15)}`;
     const newKey: ApiKey = {
       id: Math.random().toString(36).substring(7),
       name: newKeyName,
@@ -736,7 +736,7 @@ export default function ProfilePage() {
             <div className="border-4 border-heirlock-blue bg-blue-50 p-8">
               <h3 className="font-black text-sm mb-3">API Documentation</h3>
               <p className="text-xs text-gray-700 mb-4">
-                Use your API keys to integrate TALA with your applications. Keep your keys secure and never share them publicly.
+                Use your API keys to integrate NIL with your applications. Keep your keys secure and never share them publicly.
               </p>
               <Link
                 href="#"

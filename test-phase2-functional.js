@@ -375,19 +375,19 @@ try {
 console.log('\nTEST 14: Smart Contract Deployment & Integration');
 console.log('----------------------------------------');
 try {
-  const contractPath = path.join(__dirname, 'contracts', 'TALAVault.sol');
-  assert(fileExists(contractPath), 'Smart contract file exists at contracts/TALAVault.sol');
+  const contractPath = path.join(__dirname, 'contracts', 'NILVault.sol');
+  assert(fileExists(contractPath), 'Smart contract file exists at contracts/NILVault.sol');
   
   const contractContent = readFile(contractPath);
   assert(contractContent !== null, 'Smart contract is readable');
   
   if (contractContent) {
-    assert(contractContent.includes('contract TALAVault'), 'TALAVault contract defined');
+    assert(contractContent.includes('contract NILVault'), 'NILVault contract defined');
     assert(contractContent.includes('function') || contractContent.includes('pragma'), 'Contract has functions');
   }
   
   // Check for contract ABI/types
-  const libContractPath = path.join(__dirname, 'lib', 'contracts', 'tala-vault.ts');
+  const libContractPath = path.join(__dirname, 'lib', 'contracts', 'NIL-vault.ts');
   assert(fileExists(libContractPath), 'Contract integration library exists');
   
   const libContent = readFile(libContractPath);

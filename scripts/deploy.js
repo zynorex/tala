@@ -6,7 +6,7 @@ import { ethers } from "ethers";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export default async function main() {
-  console.log("🚀 Starting TALAVault deployment...\n");
+  console.log("🚀 Starting NilVault deployment...\n");
 
   // Get provider from hardhat
   const provider = ethers.getDefaultProvider("https://rpc-amoy.polygon.technology/");
@@ -26,30 +26,30 @@ export default async function main() {
   console.log(`💰 Account balance: ${ethers.formatEther(balance)} MATIC\n`);
 
   // Read and compile the contract
-  console.log("⏳ Deploying TALAVault contract...");
+  console.log("⏳ Deploying NilVault contract...");
   
   // Get the contract bytecode and ABI from the artifacts
-  const artifactPath = path.join(__dirname, "..", "artifacts", "contracts", "TALAVault.sol", "TALAVault.json");
+  const artifactPath = path.join(__dirname, "..", "artifacts", "contracts", "NilVault.sol", "NilVault.json");
   const artifact = JSON.parse(fs.readFileSync(artifactPath, "utf-8"));
   
   const factory = new ethers.ContractFactory(artifact.abi, artifact.bytecode, deployer);
-  const talaVault = await factory.deploy();
-  await talaVault.waitForDeployment();
+  const nilVault = await factory.deploy();
+  await nilVault.waitForDeployment();
 
-  const contractAddress = await talaVault.getAddress();
-  console.log(`✅ TALAVault deployed to: ${contractAddress}\n`);
+  const contractAddress = await nilVault.getAddress();
+  console.log(`✅ NilVault deployed to: ${contractAddress}\n`);
 
   // Save contract address to .env
   const envPath = path.join(__dirname, "..", ".env");
   const envContent = fs.readFileSync(envPath, "utf-8");
   
-  // Replace or add the NEXT_PUBLIC_TALA_VAULT_ADDRESS
-  const updatedEnv = envContent.includes("NEXT_PUBLIC_TALA_VAULT_ADDRESS=")
+  // Replace or add the NEXT_PUBLIC_NIL_VAULT_ADDRESS
+  const updatedEnv = envContent.includes("NEXT_PUBLIC_NIL_VAULT_ADDRESS=")
     ? envContent.replace(
-        /NEXT_PUBLIC_TALA_VAULT_ADDRESS=.*/,
-        `NEXT_PUBLIC_TALA_VAULT_ADDRESS=${contractAddress}`
+        /NEXT_PUBLIC_NIL_VAULT_ADDRESS=.*/,
+        `NEXT_PUBLIC_NIL_VAULT_ADDRESS=${contractAddress}`
       )
-    : envContent + `\n\nNEXT_PUBLIC_TALA_VAULT_ADDRESS=${contractAddress}`;
+    : envContent + `\n\nNEXT_PUBLIC_NIL_VAULT_ADDRESS=${contractAddress}`;
 
   fs.writeFileSync(envPath, updatedEnv);
   console.log(`📝 Updated .env with contract address\n`);
@@ -59,7 +59,7 @@ export default async function main() {
   console.log("📋 DEPLOYMENT SUMMARY");
   console.log("=".repeat(50));
   console.log(`Network: Polygon Amoy (ChainId: 80002)`);
-  console.log(`Contract: TALAVault`);
+  console.log(`Contract: NilVault`);
   console.log(`Address: ${contractAddress}`);
   console.log(`Deployer: ${deployer.address}`);
   console.log("=".repeat(50));

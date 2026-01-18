@@ -1,5 +1,5 @@
 /**
- * TALA Vault Deletion Service
+ * NIL Vault Deletion Service
  * Handles complete vault deletion including smart contract, IPFS cleanup, and database records
  * 
  * Deletion Process:
@@ -226,14 +226,14 @@ export async function checkVaultDeletionStatus(
 function clearVaultEncryptionKey(vaultId: number): void {
   try {
     // Clear from sessionStorage (frontend only)
-    const keyName = `tala_vault_key_${vaultId}`;
+    const keyName = `nil_vault_key_${vaultId}`;
     if (typeof window !== 'undefined' && window.sessionStorage) {
       window.sessionStorage.removeItem(keyName);
     }
 
     // Clear from memory cache if exists
-    if (typeof window !== 'undefined' && (window as any).__talaVaultCache) {
-      delete (window as any).__talaVaultCache[keyName];
+    if (typeof window !== 'undefined' && (window as any).__nilVaultCache) {
+      delete (window as any).__nilVaultCache[keyName];
     }
   } catch (error) {
     console.error('Failed to clear encryption key:', error);

@@ -1,4 +1,4 @@
-# TALA - Time-locked Asset/Archive Vault
+# NIL — Non-Intervenable Integrity-Locked Ledger
 ## Complete Production-Ready Smart Contract System
 
 A non-custodial, blockchain-based time-locked vault system with end-to-end encryption and decentralized file storage on IPFS.
@@ -12,7 +12,7 @@ A non-custodial, blockchain-based time-locked vault system with end-to-end encry
 
 ## 🎯 Project Overview
 
-TALA enables users to:
+NIL enables users to:
 - 🔐 Create encrypted time-locked vaults on blockchain
 - 📁 Store encrypted files on IPFS (decentralized)
 - ⏰ Access vaults only after specified unlock time
@@ -58,7 +58,7 @@ TALA enables users to:
 ## 📦 What's Included
 
 ### Smart Contracts
-- **TALAVault.sol** - Main contract (256 lines, fully commented)
+- **NilVault.sol** - Main contract (256 lines, fully commented)
   - Gas-optimized for Polygon
   - Comprehensive error handling
   - OpenZeppelin security standards
@@ -90,8 +90,8 @@ Wallet with testnet tokens
 
 ### 1. Installation
 ```bash
-git clone https://github.com/ayush/tala.git
-cd tala
+git clone https://github.com/ayush/nil.git
+cd nil
 npm install
 ```
 
@@ -113,7 +113,7 @@ npx hardhat test          # Contract tests
 
 ### 4. Deploy Contract
 ```bash
-npx hardhat ignition deploy ./ignition/modules/TALAVault.js --network amoy
+npx hardhat ignition deploy ./ignition/modules/NilVault.js --network amoy
 ```
 
 ---
@@ -227,9 +227,9 @@ const decrypted = decryptFile(encrypted, key);
 
 ### Run Test Suite
 ```typescript
-import { TALATestSuite } from '@/lib/utils/test-suite';
+import { NilTestSuite } from '@/lib/utils/test-suite';
 
-const suite = new TALATestSuite();
+const suite = new NilTestSuite();
 const results = await suite.runAllTests();
 console.log(suite.getTestReport());
 ```

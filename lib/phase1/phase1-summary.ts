@@ -32,8 +32,8 @@ const PHASE1_SUMMARY = {
       number: 2,
       name: "Smart Contract Verification",
       status: "✅ COMPLETE",
-      description: "Verify TALAVault contract is deployed and functional",
-      files: ["lib/phase1/verify-contract.ts", "contracts/TALAVault.sol"],
+      description: "Verify NilVault contract is deployed and functional",
+      files: ["lib/phase1/verify-contract.ts", "contracts/NilVault.sol"],
       checks: [
         "Contract deployed",
         "Owner verified",

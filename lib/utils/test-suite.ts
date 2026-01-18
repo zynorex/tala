@@ -1,5 +1,5 @@
 /**
- * TALA Integration Test Suite
+ * NIL Integration Test Suite
  * Comprehensive testing for vault creation, encryption, and deletion flows
  * 
  * Test Coverage:
@@ -28,7 +28,7 @@ export interface TestError {
 }
 
 // Test utilities
-export class TALATestSuite {
+export class NilTestSuite {
   private testResults: Map<string, TestResult> = new Map();
   private errorLog: TestError[] = [];
 
@@ -62,7 +62,7 @@ export class TALATestSuite {
 
     try {
       const password = 'test-password-12345';
-      const salt = TALATestSuite.generateTestSalt();
+      const salt = NilTestSuite.generateTestSalt();
       const iterations = 100000;
 
       const key = crypto.pbkdf2Sync(

@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * TALA Phase 2 Functional Tests
+ * NIL Phase 2 Functional Tests
  * Tests application runtime functionality
  */
 
