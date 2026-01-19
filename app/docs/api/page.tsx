@@ -40,7 +40,7 @@ export default function APIDocumentationPage() {
     setTimeout(() => setCopiedCode(null), 2000);
   };
 
-  const baseUrl = 'https://api.tala.io/v1';
+  const baseUrl = 'https://api.nil.io/v1';
   const apiKey = 'sk_live_your_api_key_here';
 
   const endpoints: Endpoint[] = [
@@ -55,7 +55,7 @@ export default function APIDocumentationPage() {
         {
           language: 'javascript',
           label: 'JavaScript',
-          code: `const response = await fetch('https://api.tala.io/v1/vaults', {
+          code: `const response = await fetch('https://api.nil.io/v1/vaults', {
   method: 'POST',
   headers: {
     'Authorization': 'Bearer sk_live_your_api_key',
@@ -79,7 +79,7 @@ console.log('Vault created:', vault.id);`,
 import json
 from datetime import datetime
 
-url = 'https://api.tala.io/v1/vaults'
+url = 'https://api.nil.io/v1/vaults'
 headers = {
     'Authorization': 'Bearer sk_live_your_api_key',
     'Content-Type': 'application/json'
@@ -98,7 +98,7 @@ print(f"Vault created: {vault['id']}")`,
         {
           language: 'curl',
           label: 'cURL',
-          code: `curl -X POST https://api.tala.io/v1/vaults \\
+          code: `curl -X POST https://api.nil.io/v1/vaults \\
   -H "Authorization: Bearer sk_live_your_api_key" \\
   -H "Content-Type: application/json" \\
   -d '{
@@ -156,7 +156,7 @@ print(f"Vault created: {vault['id']}")`,
           label: 'JavaScript',
           code: `const vaultId = 'vault_1234567890';
 
-const response = await fetch(\`https://api.tala.io/v1/vaults/\${vaultId}\`, {
+const response = await fetch(\`https://api.nil.io/v1/vaults/\${vaultId}\`, {
   method: 'GET',
   headers: {
     'Authorization': 'Bearer sk_live_your_api_key'
@@ -172,7 +172,7 @@ console.log('Vault details:', vault);`,
           code: `import requests
 
 vault_id = 'vault_1234567890'
-url = f'https://api.tala.io/v1/vaults/{vault_id}'
+url = f'https://api.nil.io/v1/vaults/{vault_id}'
 headers = {'Authorization': 'Bearer sk_live_your_api_key'}
 
 response = requests.get(url, headers=headers)
@@ -182,7 +182,7 @@ print(f"Vault status: {vault['status']}")`,
         {
           language: 'curl',
           label: 'cURL',
-          code: `curl -X GET https://api.tala.io/v1/vaults/vault_1234567890 \\
+          code: `curl -X GET https://api.nil.io/v1/vaults/vault_1234567890 \\
   -H "Authorization: Bearer sk_live_your_api_key"`,
         },
       ],
@@ -224,7 +224,7 @@ const formData = new FormData();
 formData.append('file', file);
 formData.append('name', file.name);
 
-const response = await fetch(\`https://api.tala.io/v1/vaults/\${vaultId}/files\`, {
+const response = await fetch(\`https://api.nil.io/v1/vaults/\${vaultId}/files\`, {
   method: 'POST',
   headers: {
     'Authorization': 'Bearer sk_live_your_api_key'
@@ -248,7 +248,7 @@ with open(file_path, 'rb') as f:
     headers = {'Authorization': 'Bearer sk_live_your_api_key'}
     
     response = requests.post(
-        f'https://api.tala.io/v1/vaults/{vault_id}/files',
+        f'https://api.nil.io/v1/vaults/{vault_id}/files',
         headers=headers,
         files=files
     )
@@ -259,7 +259,7 @@ print(f"File uploaded: {uploaded['id']}")`,
         {
           language: 'curl',
           label: 'cURL',
-          code: `curl -X POST https://api.tala.io/v1/vaults/vault_1234567890/files \\
+          code: `curl -X POST https://api.nil.io/v1/vaults/vault_1234567890/files \\
   -H "Authorization: Bearer sk_live_your_api_key" \\
   -F "file=@exam_paper.pdf"`,
         },
@@ -280,7 +280,7 @@ print(f"File uploaded: {uploaded['id']}")`,
 const fileId = 'file_001';
 
 const response = await fetch(
-  \`https://api.tala.io/v1/vaults/\${vaultId}/files/\${fileId}\`,
+  \`https://api.nil.io/v1/vaults/\${vaultId}/files/\${fileId}\`,
   {
     method: 'GET',
     headers: {
@@ -305,7 +305,7 @@ vault_id = 'vault_1234567890'
 file_id = 'file_001'
 
 response = requests.get(
-    f'https://api.tala.io/v1/vaults/{vault_id}/files/{file_id}',
+    f'https://api.nil.io/v1/vaults/{vault_id}/files/{file_id}',
     headers={'Authorization': 'Bearer sk_live_your_api_key'}
 )
 
@@ -316,7 +316,7 @@ print('File downloaded successfully')`,
         {
           language: 'curl',
           label: 'cURL',
-          code: `curl -X GET https://api.tala.io/v1/vaults/vault_1234567890/files/file_001 \\
+          code: `curl -X GET https://api.nil.io/v1/vaults/vault_1234567890/files/file_001 \\
   -H "Authorization: Bearer sk_live_your_api_key" \\
   -o exam_paper.pdf`,
         },
@@ -335,7 +335,7 @@ print('File downloaded successfully')`,
           label: 'JavaScript',
           code: `const vaultId = 'vault_1234567890';
 
-const response = await fetch(\`https://api.tala.io/v1/vaults/\${vaultId}\`, {
+const response = await fetch(\`https://api.nil.io/v1/vaults/\${vaultId}\`, {
   method: 'DELETE',
   headers: {
     'Authorization': 'Bearer sk_live_your_api_key'
@@ -353,7 +353,7 @@ console.log('Vault deleted:', result.message);`,
 vault_id = 'vault_1234567890'
 
 response = requests.delete(
-    f'https://api.tala.io/v1/vaults/{vault_id}',
+    f'https://api.nil.io/v1/vaults/{vault_id}',
     headers={'Authorization': 'Bearer sk_live_your_api_key'}
 )
 
@@ -363,7 +363,7 @@ print(f"Vault deleted: {result['message']}")`,
         {
           language: 'curl',
           label: 'cURL',
-          code: `curl -X DELETE https://api.tala.io/v1/vaults/vault_1234567890 \\
+          code: `curl -X DELETE https://api.nil.io/v1/vaults/vault_1234567890 \\
   -H "Authorization: Bearer sk_live_your_api_key"`,
         },
       ],
@@ -388,23 +388,23 @@ print(f"Vault deleted: {result['message']}")`,
   ];
 
   const sdks = [
-    { name: 'JavaScript/TypeScript', package: 'npm install @tala/sdk-js', code: `import { TALAClient } from '@tala/sdk-js';
+    { name: 'JavaScript/TypeScript', package: 'npm install @nil/sdk-js', code: `import { nilClient } from '@nil/sdk-js';
 
-const client = new TALAClient('sk_live_your_api_key');
+const client = new nilClient('sk_live_your_api_key');
 const vault = await client.vaults.create({
   name: 'My Vault',
   unlockDate: new Date('2026-03-14')
 });` },
-    { name: 'Python', package: 'pip install tala-sdk', code: `from tala import TALAClient
+    { name: 'Python', package: 'pip install nil-sdk', code: `from nil import nilClient
 
-client = TALAClient('sk_live_your_api_key')
+client = nilClient('sk_live_your_api_key')
 vault = client.vaults.create(
     name='My Vault',
     unlock_date='2026-03-14'
 )` },
-    { name: 'Go', package: 'go get github.com/tala/sdk-go', code: `package main
+    { name: 'Go', package: 'go get github.com/nil/sdk-go', code: `package main
 
-import "github.com/tala/sdk-go"
+import "github.com/nil/sdk-go"
 
 client := sdk.NewClient("sk_live_your_api_key")
 vault, err := client.Vaults.Create(ctx, &sdk.CreateVaultRequest{
@@ -428,7 +428,7 @@ vault, err := client.Vaults.Create(ctx, &sdk.CreateVaultRequest{
     {
       name: 'Webhook Signatures',
       description: 'Verify webhook authenticity using HMAC-SHA256',
-      example: `X-TALA-Signature: sha256=...`,
+      example: `X-nil-Signature: sha256=...`,
       useCases: ['Webhook verification', 'Security validation', 'Message integrity'],
     },
   ];
@@ -534,7 +534,7 @@ vault, err := client.Vaults.Create(ctx, &sdk.CreateVaultRequest{
           <div className="border-4 border-black p-8 bg-heirlock-blue rounded-lg mb-12">
             <h3 className="text-2xl font-black text-black mb-4">API Key Example</h3>
             <div className="bg-black text-white p-4 font-mono text-sm rounded border-2 border-black mb-4 overflow-x-auto">
-              <code>curl -H "Authorization: Bearer sk_live_your_api_key" https://api.tala.io/v1/vaults</code>
+              <code>curl -H "Authorization: Bearer sk_live_your_api_key" https://api.nil.io/v1/vaults</code>
             </div>
             <p className="text-sm text-gray-800">
               <strong>Never expose your API key in client-side code.</strong> Use OAuth 2.0 for browser-based applications.

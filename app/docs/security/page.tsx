@@ -203,7 +203,7 @@ export default function SecurityPage() {
             <div>
               <h3 className="text-xl font-black mb-2 font-mono">🐛 BUG BOUNTY</h3>
               <p className="font-medium">
-                Report security vulnerabilities to: <span className="font-mono font-black">security@tala.protocol</span>
+                Report security vulnerabilities to: <span className="font-mono font-black">security@nil.protocol</span>
               </p>
               <p className="text-sm text-gray-300 mt-2">
                 Responsible disclosure encouraged. We reward severity and impact.

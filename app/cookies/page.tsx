@@ -3,8 +3,8 @@ import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Cookie Policy | TALA",
-  description: "Cookie Policy for TALA vault system",
+  title: "Cookie Policy | NIL",
+  description: "Cookie Policy for NIL vault system",
 };
 
 export default function CookiesPage() {
@@ -38,7 +38,7 @@ export default function CookiesPage() {
               <ul className="list-disc pl-6 space-y-2 mt-2">
                 <li><strong>Session Cookies:</strong> Temporary cookies deleted when you close your browser</li>
                 <li><strong>Persistent Cookies:</strong> Stored on your device for a specified duration</li>
-                <li><strong>First-Party Cookies:</strong> Set by TALA directly</li>
+                <li><strong>First-Party Cookies:</strong> Set by NIL directly</li>
                 <li><strong>Third-Party Cookies:</strong> Set by external services we use</li>
               </ul>
             </section>
@@ -46,7 +46,7 @@ export default function CookiesPage() {
             <section>
               <h2 className="font-black text-xl text-black mb-3">2. Why We Use Cookies</h2>
               <p>
-                TALA uses cookies to:
+                NIL uses cookies to:
               </p>
               <ul className="list-disc pl-6 space-y-3 mt-3">
                 <li>
@@ -62,7 +62,7 @@ export default function CookiesPage() {
                   <strong>User Preferences:</strong> Store your theme choice, language preference, and layout settings
                 </li>
                 <li>
-                  <strong>Analytics:</strong> Understand how users interact with TALA to improve the service
+                  <strong>Analytics:</strong> Understand how users interact with NIL to improve the service
                 </li>
                 <li>
                   <strong>Performance:</strong> Track page load times, errors, and service performance metrics
@@ -74,7 +74,7 @@ export default function CookiesPage() {
               <h2 className="font-black text-xl text-black mb-3">3. Types of Cookies We Use</h2>
               <p className="font-bold mb-3">Essential Cookies (Required):</p>
               <p className="mb-3">
-                These cookies are absolutely necessary for TALA to function. You cannot disable them without severely impacting Service functionality:
+                These cookies are absolutely necessary for NIL to function. You cannot disable them without severely impacting Service functionality:
               </p>
               <ul className="list-disc pl-6 space-y-2 mb-4">
                 <li><strong>Session ID:</strong> Identifies your session (expires when you close browser)</li>
@@ -85,7 +85,7 @@ export default function CookiesPage() {
 
               <p className="font-bold mb-3">Performance/Analytics Cookies (Non-Essential):</p>
               <p className="mb-3">
-                These cookies help us understand how TALA is used and identify performance issues:
+                These cookies help us understand how NIL is used and identify performance issues:
               </p>
               <ul className="list-disc pl-6 space-y-2 mb-4">
                 <li><strong>Google Analytics:</strong> Tracks anonymous user behavior and usage statistics</li>
@@ -131,7 +131,7 @@ export default function CookiesPage() {
 
             <section>
               <h2 className="font-black text-xl text-black mb-3">5. Detailed Cookie Inventory</h2>
-              <p className="font-bold mb-3">First-Party Cookies Set by TALA:</p>
+              <p className="font-bold mb-3">First-Party Cookies Set by NIL:</p>
               <div className="overflow-x-auto mt-3">
                 <table className="w-full text-sm border-collapse">
                   <thead>
@@ -212,15 +212,15 @@ export default function CookiesPage() {
                 Most modern browsers allow you to view, manage, and delete cookies:
               </p>
               <ul className="list-disc pl-6 space-y-2 mb-4">
-                <li><strong>View Cookies:</strong> See all cookies stored for TALA</li>
+                <li><strong>View Cookies:</strong> See all cookies stored for NIL</li>
                 <li><strong>Delete Cookies:</strong> Remove cookies from your device</li>
-                <li><strong>Block Cookies:</strong> Prevent TALA from setting new cookies</li>
+                <li><strong>Block Cookies:</strong> Prevent NIL from setting new cookies</li>
                 <li><strong>Clear On Exit:</strong> Automatically delete cookies when closing browser</li>
               </ul>
 
               <p className="font-bold mb-3">Important Note:</p>
               <p>
-                Disabling essential cookies will prevent TALA from functioning properly. You may not be able to log in, maintain your session, or use vault features.
+                Disabling essential cookies will prevent NIL from functioning properly. You may not be able to log in, maintain your session, or use vault features.
               </p>
             </section>
 
@@ -264,7 +264,7 @@ export default function CookiesPage() {
 
               <p className="font-bold mb-3 mt-4">Do Not Track (DNT):</p>
               <p>
-                You can enable "Do Not Track" in your browser. However, we note that this is not a universal standard and many services (including TALA) do not honor DNT requests.
+                You can enable "Do Not Track" in your browser. However, we note that this is not a universal standard and many services (including NIL) do not honor DNT requests.
               </p>
 
               <p className="font-bold mb-3 mt-4">Privacy Browser Extensions:</p>
@@ -302,10 +302,10 @@ export default function CookiesPage() {
             <section>
               <h2 className="font-black text-xl text-black mb-3">11. Changes to This Policy</h2>
               <p>
-                As TALA evolves, we may update this Cookie Policy to reflect new features, technologies, or legal requirements. Changes will be effective immediately upon posting.
+                As NIL evolves, we may update this Cookie Policy to reflect new features, technologies, or legal requirements. Changes will be effective immediately upon posting.
               </p>
               <p className="mt-3">
-                Continued use of TALA after policy updates constitutes your acceptance of the new terms.
+                Continued use of NIL after policy updates constitutes your acceptance of the new terms.
               </p>
             </section>
 

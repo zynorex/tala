@@ -3,8 +3,8 @@ import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy | TALA",
-  description: "Privacy Policy for TALA vault system",
+  title: "Privacy Policy | NIL",
+  description: "Privacy Policy for NIL vault system",
 };
 
 export default function PrivacyPage() {
@@ -24,7 +24,7 @@ export default function PrivacyPage() {
             <section>
               <h2 className="font-black text-xl text-black mb-3">1. Introduction</h2>
               <p>
-                TALA ("we", "our", or "us") operates as a non-custodial vault platform. This Privacy Policy explains how we collect, use, disclose, and otherwise handle information. Since TALA is non-custodial, we do not have access to your vault contents or encryption keys.
+                NIL ("we", "our", or "us") operates as a non-custodial vault platform. This Privacy Policy explains how we collect, use, disclose, and otherwise handle information. Since NIL is non-custodial, we do not have access to your vault contents or encryption keys.
               </p>
               <p className="mt-3">
                 We are committed to protecting your privacy and ensuring you have a positive experience on our platform. Please read this policy carefully to understand our practices.
@@ -61,7 +61,7 @@ export default function PrivacyPage() {
             <section>
               <h2 className="font-black text-xl text-black mb-3">3. Information We DO NOT Collect</h2>
               <p>
-                The following information is explicitly NOT collected or stored by TALA:
+                The following information is explicitly NOT collected or stored by NIL:
               </p>
               <ul className="list-disc pl-6 space-y-2 mt-3">
                 <li>Encryption keys (stored only on your device)</li>
@@ -82,7 +82,7 @@ export default function PrivacyPage() {
                 We collect information through:
               </p>
               <ul className="list-disc pl-6 space-y-2 mt-3">
-                <li><strong>Wallet Connection:</strong> When you connect your wallet to TALA</li>
+                <li><strong>Wallet Connection:</strong> When you connect your wallet to NIL</li>
                 <li><strong>Smart Contract Interaction:</strong> When you create or access vaults</li>
                 <li><strong>Website Browsing:</strong> Cookies and analytics when you visit our website</li>
                 <li><strong>Email Communications:</strong> When you voluntarily subscribe or contact us</li>
@@ -112,7 +112,7 @@ export default function PrivacyPage() {
                   <strong>Compliance:</strong> Complying with legal obligations and law enforcement requests
                 </li>
                 <li>
-                  <strong>Analytics:</strong> Understanding how users interact with TALA to enhance features
+                  <strong>Analytics:</strong> Understanding how users interact with NIL to enhance features
                 </li>
               </ul>
             </section>
@@ -137,14 +137,14 @@ export default function PrivacyPage() {
                 </li>
               </ul>
               <p className="mt-3 font-bold text-red-600">
-                ⚠️ No security system is impenetrable. We cannot guarantee absolute security, and you use TALA at your own risk.
+                ⚠️ No security system is impenetrable. We cannot guarantee absolute security, and you use NIL at your own risk.
               </p>
             </section>
 
             <section>
               <h2 className="font-black text-xl text-black mb-3">7. Third-Party Services</h2>
               <p>
-                TALA integrates with third-party services that may collect or process data:
+                NIL integrates with third-party services that may collect or process data:
               </p>
               <ul className="list-disc pl-6 space-y-3 mt-3">
                 <li>
@@ -171,7 +171,7 @@ export default function PrivacyPage() {
             <section>
               <h2 className="font-black text-xl text-black mb-3">8. Blockchain Transparency</h2>
               <p>
-                Since TALA operates on blockchain:
+                Since NIL operates on blockchain:
               </p>
               <ul className="list-disc pl-6 space-y-3 mt-3">
                 <li>
@@ -266,7 +266,7 @@ export default function PrivacyPage() {
             <section>
               <h2 className="font-black text-xl text-black mb-3">13. Children's Privacy</h2>
               <p>
-                TALA is not intended for users under 18 years of age. We do not knowingly collect information from minors. If we become aware that we have collected information from a minor, we will take steps to delete it immediately.
+                NIL is not intended for users under 18 years of age. We do not knowingly collect information from minors. If we become aware that we have collected information from a minor, we will take steps to delete it immediately.
               </p>
               <p className="mt-3">
                 If you believe we have collected information from a child, please <Link href="/contact" className="text-blue-600 font-black underline">contact us</Link> immediately.
@@ -292,7 +292,7 @@ export default function PrivacyPage() {
             <section>
               <h2 className="font-black text-xl text-black mb-3">15. International Data Transfers</h2>
               <p>
-                Your information may be transferred, stored, and processed in countries other than your country of residence. By using TALA, you consent to such transfers.
+                Your information may be transferred, stored, and processed in countries other than your country of residence. By using NIL, you consent to such transfers.
               </p>
               <p className="mt-3">
                 We implement appropriate safeguards for international data transfers, including standard contractual clauses where applicable.
@@ -302,7 +302,7 @@ export default function PrivacyPage() {
             <section>
               <h2 className="font-black text-xl text-black mb-3">16. Policy Changes</h2>
               <p>
-                We may update this Privacy Policy periodically to reflect changes in our practices or applicable laws. Changes will be effective immediately upon posting. Continued use of TALA constitutes your acceptance of updated policies.
+                We may update this Privacy Policy periodically to reflect changes in our practices or applicable laws. Changes will be effective immediately upon posting. Continued use of NIL constitutes your acceptance of updated policies.
               </p>
               <p className="mt-3">
                 We encourage you to review this policy regularly to stay informed about how we protect your information.

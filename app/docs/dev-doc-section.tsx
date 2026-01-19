@@ -14,7 +14,7 @@ const devDocSections = [
 \`\`\`bash
 # Clone and install
 git clone <repo-url>
-cd tala
+cd nil
 npm install
 
 # Setup environment
@@ -307,7 +307,7 @@ JWT_SECRET="min-32-characters-long-secret-key"
 
 # Web3
 NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID="project-id"
-NEXT_PUBLIC_TALA_VAULT_ADDRESS="0x..."
+NEXT_PUBLIC_NIL_VAULT_ADDRESS="0x..."
 PRIVATE_KEY="private-key"
 
 # IPFS
