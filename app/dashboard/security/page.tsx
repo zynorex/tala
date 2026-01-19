@@ -129,7 +129,7 @@ export default function SecuritySettingsPage() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `tala_encryption_backup_${Date.now()}.json`;
+    a.download = `nil_encryption_backup_${Date.now()}.json`;
     a.click();
     URL.revokeObjectURL(url);
 

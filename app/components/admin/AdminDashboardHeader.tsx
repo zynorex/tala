@@ -20,7 +20,7 @@ export default function AdminDashboardHeader({
             <Shield className="w-5 h-5 text-white" />
           </div>
           <div>
-            <h1 className="text-lg font-black text-white">TALA ADMIN</h1>
+            <h1 className="text-lg font-black text-white">NIL ADMIN</h1>
             <p className="text-xs text-slate-400">Owner Portal</p>
           </div>
         </div>

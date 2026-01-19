@@ -71,7 +71,7 @@ export default function AdminLogin() {
           <div className="inline-flex items-center justify-center w-16 h-16 mb-4 bg-white/10 border border-white/20 rounded">
             <Lock className="w-8 h-8 text-white" />
           </div>
-          <h1 className="text-3xl font-black text-white mb-2">TALA ADMIN</h1>
+          <h1 className="text-3xl font-black text-white mb-2">NIL ADMIN</h1>
           <p className="text-slate-400 text-sm">Owner Access Required</p>
         </div>
 

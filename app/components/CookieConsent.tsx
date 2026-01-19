@@ -71,7 +71,7 @@ export default function CookieConsent() {
                 🍪 Cookie Policy
               </h2>
               <p className="text-gray-800 font-medium mb-4">
-                We use cookies to enhance your experience, remember your preferences, and understand how you use TALA. 
+                We use cookies to enhance your experience, remember your preferences, and understand how you use NIL. 
               </p>
               <p className="text-sm text-gray-700 font-medium mb-6">
                 <strong>Essential cookies</strong> are required for the site to function. <strong>Analytics & preference cookies</strong> help us improve.{' '}

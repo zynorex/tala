@@ -3,8 +3,8 @@ import Link from 'next/link';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Contact Us | T.A.L.A.',
-  description: 'Get in touch with the T.A.L.A. team. Send us a message and we\'ll respond within 24 hours.',
+  title: 'Contact Us | NIL',
+  description: 'Get in touch with the NIL team. Send us a message and we\'ll respond within 24 hours.',
 };
 
 export default function Contact() {
@@ -12,22 +12,22 @@ export default function Contact() {
     {
       icon: Mail,
       label: 'Email',
-      value: 'support@tala.protocol',
-      link: 'mailto:support@tala.protocol',
+      value: 'support@nil.protocol',
+      link: 'mailto:support@nil.protocol',
       color: 'bg-heirlock-yellow',
     },
     {
       icon: Mail,
       label: 'Security Issues',
-      value: 'security@tala.protocol',
-      link: 'mailto:security@tala.protocol',
+      value: 'security@nil.protocol',
+      link: 'mailto:security@nil.protocol',
       color: 'bg-heirlock-pink',
     },
     {
       icon: Phone,
       label: 'Discord',
       value: 'Join our community',
-      link: 'https://discord.gg/tala',
+      link: 'https://discord.gg/nil',
       color: 'bg-heirlock-blue',
     },
     {

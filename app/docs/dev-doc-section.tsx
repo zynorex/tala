@@ -298,7 +298,7 @@ curl -H "Authorization: Bearer TOKEN" \\
 
 \`\`\`env
 # Database
-DATABASE_URL="postgresql://user:password@localhost:5432/tala"
+DATABASE_URL="postgresql://user:password@localhost:5432/nil"
 # OR
 DATABASE_URL="prisma+postgres://accelerate.prisma-data.net/?api_key=..."
 

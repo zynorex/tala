@@ -29,7 +29,7 @@ export default function QuickActions() {
     {
       icon: HelpCircle,
       label: 'Help',
-      description: 'Learn how to use TALA',
+      description: 'Learn how to use NIL',
       href: '/docs',
       color: 'bg-heirlock-yellow',
     },

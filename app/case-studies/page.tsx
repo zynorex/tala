@@ -293,7 +293,7 @@ export default function CaseStudiesPage() {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <a
-              href="mailto:sales@tala.ai?subject=Enterprise%20Partnership"
+              href="mailto:sales@nil.ai?subject=Enterprise%20Partnership"
               className="px-8 py-4 bg-black text-white font-bold border-4 border-black rounded-lg hover:opacity-90 transition-opacity"
             >
               Schedule Demo
