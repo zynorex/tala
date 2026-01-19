@@ -118,7 +118,7 @@ export default function HowItWorksPage() {
             Zero-Knowledge Delivery Protocol.
           </h2>
           <p className="text-lg md:text-xl text-black leading-relaxed max-w-3xl">
-            How T.A.L.A. uses a hybrid architecture of Client-Side Encryption, IPFS Storage, and Smart Contracts to guarantee absolute secrecy until the exact moment intended.
+            How NIL uses a hybrid architecture of Client-Side Encryption, IPFS Storage, and Smart Contracts to guarantee absolute secrecy until the exact moment intended.
           </p>
         </div>
       </section>
@@ -264,7 +264,7 @@ export default function HowItWorksPage() {
           <h2 className="text-5xl md:text-6xl font-black text-black mb-4 border-b-4 border-black pb-4">
             Security Guarantees
           </h2>
-          <p className="text-lg text-black font-bold mb-12">The cryptographic assurances that make T.A.L.A. unbreakable:</p>
+          <p className="text-lg text-black font-bold mb-12">The cryptographic assurances that make NIL unbreakable:</p>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {securityGuarantees.map((guarantee, idx) => {
@@ -282,7 +282,7 @@ export default function HowItWorksPage() {
           <div className="mt-8 border-4 border-black bg-black p-8 shadow-brutal">
             <h3 className="text-2xl font-bold text-heirlock-yellow mb-4">The Bottom Line</h3>
             <p className="text-white text-lg leading-relaxed">
-              Once a file is locked in T.A.L.A., there is <span className="text-heirlock-yellow font-bold">no mechanism</span> on Earth to unlock it before the scheduled time. Not hacking. Not bribery. Not executive orders. Only mathematics.
+              Once a file is locked in NIL, there is <span className="text-heirlock-yellow font-bold">no mechanism</span> on Earth to unlock it before the scheduled time. Not hacking. Not bribery. Not executive orders. Only mathematics.
             </p>
           </div>
         </div>
@@ -388,7 +388,7 @@ export default function HowItWorksPage() {
             Ready to Implement?
           </h2>
           <p className="text-lg text-black mb-8 font-bold max-w-2xl mx-auto">
-            Now that you understand the operational logic, explore the technical documentation or deploy T.A.L.A. for your institution.
+            Now that you understand the operational logic, explore the technical documentation or deploy NIL for your institution.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="/documentation">

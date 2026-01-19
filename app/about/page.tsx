@@ -72,21 +72,21 @@ export default function About() {
     {
       title: "Education",
       subtitle: "Stopping Leaks in NEET/UGC Exams",
-      description: "Exam papers are the heartbeat of fair assessment. T.A.L.A. ensures that papers reach students at the exact moment intended. No premature access. No leaks. Just trust in mathematics.",
+      description: "Exam papers are the heartbeat of fair assessment. NIL ensures that papers reach students at the exact moment intended. No premature access. No leaks. Just trust in mathematics.",
       icon: BookOpen,
       color: "bg-heirlock-yellow"
     },
     {
       title: "Governance",
       subtitle: "Preventing Corruption in Tenders",
-      description: "Government bids for roads, bridges, schools—all of these are sealed in traditional processes that depend on human honesty. T.A.L.A. seals tenders cryptographically until the official opening ceremony.",
+      description: "Government bids for roads, bridges, schools—all of these are sealed in traditional processes that depend on human honesty. NIL seals tenders cryptographically until the official opening ceremony.",
       icon: Briefcase,
       color: "bg-heirlock-pink"
     },
     {
       title: "Justice",
       subtitle: "Securing Whistleblower Evidence & Digital Wills",
-      description: "Sensitive legal documents, whistleblower evidence, and testamentary records need absolute confidentiality until the right moment. T.A.L.A. guarantees cryptographic permanence.",
+      description: "Sensitive legal documents, whistleblower evidence, and testamentary records need absolute confidentiality until the right moment. NIL guarantees cryptographic permanence.",
       icon: Gavel,
       color: "bg-heirlock-green"
     }
@@ -99,11 +99,11 @@ export default function About() {
         <div className="container mx-auto max-w-5xl">
           <div className="space-y-6 md:space-y-8">
             <div>
-              <h1 className="text-6xl md:text-8xl font-black text-black mb-4">T.A.L.A.</h1>
+              <h1 className="text-6xl md:text-8xl font-black text-black mb-4">NIL</h1>
               <div className="h-2 w-24 bg-black"></div>
             </div>
             <h2 className="text-3xl md:text-5xl font-bold text-black leading-tight">
-              Tamper-proof Automated Locking Algorithm.
+              Non-Intervenable Integrity-Locked Ledger.
             </h2>
             <div className="border-4 border-black bg-black p-6 inline-block shadow-brutal">
               <p className="text-2xl md:text-3xl font-black text-heirlock-green">
@@ -147,7 +147,7 @@ export default function About() {
 
           <div className="border-4 border-black bg-black p-8 md:p-10 shadow-brutal">
             <p className="text-white text-lg md:text-xl font-bold leading-relaxed">
-              <span className="text-heirlock-yellow">"If a human CAN open the file early, they eventually WILL."</span> Whether through greed, coercion, or negligence. T.A.L.A. removes the human option entirely. No admin, no official, no hacker can access the data before the blockchain timestamp permits it.
+              <span className="text-heirlock-yellow">"If a human CAN open the file early, they eventually WILL."</span> Whether through greed, coercion, or negligence. NIL removes the human option entirely. No admin, no official, no hacker can access the data before the blockchain timestamp permits it.
             </p>
           </div>
         </div>
@@ -264,7 +264,7 @@ export default function About() {
 
           <div className="border-4 border-black bg-heirlock-yellow p-8 shadow-brutal">
             <p className="text-black text-lg font-bold leading-relaxed">
-              No shortcuts. No experimental protocols. The stack that powers T.A.L.A. is trusted by enterprises, audited by security firms, and battle-tested in production.
+              No shortcuts. No experimental protocols. The stack that powers NIL is trusted by enterprises, audited by security firms, and battle-tested in production.
             </p>
           </div>
         </div>
@@ -277,7 +277,7 @@ export default function About() {
             <h2 className="text-5xl md:text-6xl font-black text-black mb-4">
               One Protocol, Three Pillars
             </h2>
-            <p className="text-lg text-black font-bold">T.A.L.A. is not just for exams. It's a universal solution for any moment that demands cryptographic truth.</p>
+            <p className="text-lg text-black font-bold">NIL is not just for exams. It's a universal solution for any moment that demands cryptographic truth.</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -296,7 +296,7 @@ export default function About() {
 
           <div className="mt-12 border-4 border-black bg-black p-8 md:p-10 shadow-brutal">
             <p className="text-white text-lg md:text-xl font-bold leading-relaxed">
-              <span className="text-heirlock-green">T.A.L.A. is infrastructure for a world where secrets are mathematically enforced, not socially promised.</span> Where the question "Can I trust this person?" becomes "Can I verify this cryptographic proof?"
+              <span className="text-heirlock-green">NIL is infrastructure for a world where secrets are mathematically enforced, not socially promised.</span> Where the question "Can I trust this person?" becomes "Can I verify this cryptographic proof?"
             </p>
           </div>
         </div>
@@ -329,7 +329,7 @@ export default function About() {
             Ready to Secure Your Institution?
           </h2>
           <p className="text-lg text-black mb-8 font-bold max-w-2xl mx-auto">
-            Join institutions that trust mathematics over humans. Deploy T.A.L.A. today.
+            Join institutions that trust mathematics over humans. Deploy NIL today.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="/create-vault">
