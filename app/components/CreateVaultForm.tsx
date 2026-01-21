@@ -112,7 +112,7 @@ export default function CreateVaultForm() {
     console.log('🔐 Starting wallet authentication...');
     setIsAuthenticating(true);
     try {
-      const message = `Sign in to NIL\n\nWallet: ${address}\nTimestamp: ${new Date().toISOString()}`;
+      const message = `Sign in to TALA\n\nWallet: ${address}\nTimestamp: ${new Date().toISOString()}`;
       console.log('📝 Requesting signature for message');
       const signature = await signMessageAsync({ message });
 
@@ -179,11 +179,11 @@ export default function CreateVaultForm() {
 
   // Download key as text file
   const downloadKey = useCallback(() => {
-    const blob = new Blob([`NIL Vault Decryption Key\n\nVault: ${form.vaultName || 'Unnamed'}\nGenerated: ${new Date().toLocaleString()}\n\nDecryption Key:\n${form.decryptionKey}\n\nIMPORTANT: Keep this key safe! You will need it to decrypt your vault after the unlock time.\nNIL cannot recover lost keys.`], { type: 'text/plain' });
+    const blob = new Blob([`TALA Vault Decryption Key\n\nVault: ${form.vaultName || 'Unnamed'}\nGenerated: ${new Date().toLocaleString()}\n\nDecryption Key:\n${form.decryptionKey}\n\nIMPORTANT: Keep this key safe! You will need it to decrypt your vault after the unlock time.\nTALA cannot recover lost keys.`], { type: 'text/plain' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `nil-vault-key-${Date.now()}.txt`;
+    a.download = `TALA-vault-key-${Date.now()}.txt`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -772,7 +772,7 @@ export default function CreateVaultForm() {
               <h3 className="font-black text-black text-lg mb-2">Your Decryption Key</h3>
               <p className="text-sm text-gray-800 font-medium mb-4">
                 <span className="font-black text-red-600">IMPORTANT:</span> This auto-generated key encrypts your file. 
-                <span className="font-black"> Save it now!</span> NIL cannot recover lost keys.
+                <span className="font-black"> Save it now!</span> TALA cannot recover lost keys.
               </p>
               
               {/* Key Display */}
@@ -863,7 +863,7 @@ export default function CreateVaultForm() {
           />
           <span className="text-sm text-gray-800 font-medium">
             I understand that <span className="font-black">I am solely responsible</span> for my decryption key. 
-            NIL cannot recover lost keys or decrypt files. I accept the{' '}
+            TALA cannot recover lost keys or decrypt files. I accept the{' '}
             <a href="/terms" className="underline font-black hover:text-black" target="_blank" rel="noopener">
               Terms of Service
             </a>.
@@ -911,3 +911,4 @@ export default function CreateVaultForm() {
     </form>
   );
 }
+

@@ -3,8 +3,8 @@ import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Terms of Service | NIL",
-  description: "Terms of Service for NIL vault system",
+  title: "Terms of Service | TALA",
+  description: "Terms of Service for TALA vault system",
 };
 
 export default function TermsPage() {
@@ -24,17 +24,17 @@ export default function TermsPage() {
             <section>
               <h2 className="font-black text-xl text-black mb-3">1. Acceptance of Terms</h2>
               <p>
-                By accessing and using NIL ("the Service"), you accept and agree to be bound by the terms and provision of this agreement. If you do not agree to abide by the above, please do not use this Service. Your use of NIL constitutes your acceptance of these terms, our Privacy Policy, Disclaimer, and all other policies referenced herein.
+                By accessing and using TALA ("the Service"), you accept and agree to be bound by the terms and provision of this agreement. If you do not agree to abide by the above, please do not use this Service. Your use of TALA constitutes your acceptance of these terms, our Privacy Policy, Disclaimer, and all other policies referenced herein.
               </p>
               <p className="mt-3">
-                NIL reserves the right to modify these terms at any time. Changes will be effective immediately upon posting. Your continued use of the Service after changes have been posted constitutes your acceptance of the modified terms.
+                TALA reserves the right to modify these terms at any time. Changes will be effective immediately upon posting. Your continued use of the Service after changes have been posted constitutes your acceptance of the modified terms.
               </p>
             </section>
 
             <section>
               <h2 className="font-black text-xl text-black mb-3">2. Service Description</h2>
               <p>
-                NIL is a time-locked, non-custodial vault system built on blockchain technology (primarily Polygon network). The Service allows users to:
+                TALA is a time-locked, non-custodial vault system built on blockchain technology (primarily Polygon network). The Service allows users to:
               </p>
               <ul className="list-disc pl-6 space-y-2 mt-3">
                 <li>Encrypt files using AES-256-GCM encryption</li>
@@ -44,14 +44,14 @@ export default function TermsPage() {
                 <li>Manage multiple vaults through a user dashboard</li>
               </ul>
               <p className="mt-3">
-                NIL does not store your encryption keys, wallet credentials, or have custody of your files. You maintain complete control and responsibility for your vault's contents and encryption keys at all times.
+                TALA does not store your encryption keys, wallet credentials, or have custody of your files. You maintain complete control and responsibility for your vault's contents and encryption keys at all times.
               </p>
             </section>
 
             <section>
               <h2 className="font-black text-xl text-black mb-3">3. Eligibility and Account Requirements</h2>
               <p>
-                To use NIL, you must:
+                To use TALA, you must:
               </p>
               <ul className="list-disc pl-6 space-y-2 mt-3">
                 <li>Be at least 18 years old (or the legal age in your jurisdiction)</li>
@@ -81,7 +81,7 @@ export default function TermsPage() {
                   <strong>Account Activity:</strong> All activity that occurs under your wallet address is your responsibility. You are liable for all transactions and actions performed.
                 </li>
                 <li>
-                  <strong>Compliance:</strong> Ensuring your use of NIL complies with all applicable laws, regulations, and sanctions requirements in your jurisdiction and any jurisdiction where the recipient of your vault may be located.
+                  <strong>Compliance:</strong> Ensuring your use of TALA complies with all applicable laws, regulations, and sanctions requirements in your jurisdiction and any jurisdiction where the recipient of your vault may be located.
                 </li>
                 <li>
                   <strong>Content Responsibility:</strong> You are solely responsible for ensuring that vault contents do not violate laws, infringe on intellectual property, or contain illegal materials.
@@ -95,7 +95,7 @@ export default function TermsPage() {
             <section>
               <h2 className="font-black text-xl text-black mb-3">5. Non-Custodial Nature</h2>
               <p>
-                NIL is explicitly a non-custodial service. This means:
+                TALA is explicitly a non-custodial service. This means:
               </p>
               <ul className="list-disc pl-6 space-y-2 mt-3">
                 <li>We do not control, store, or have access to your encrypted files</li>
@@ -113,7 +113,7 @@ export default function TermsPage() {
             <section>
               <h2 className="font-black text-xl text-black mb-3">6. Blockchain Network Risks</h2>
               <p>
-                NIL operates on blockchain networks, primarily Polygon. You acknowledge and accept:
+                TALA operates on blockchain networks, primarily Polygon. You acknowledge and accept:
               </p>
               <ul className="list-disc pl-6 space-y-3 mt-3">
                 <li>
@@ -126,10 +126,10 @@ export default function TermsPage() {
                   <strong>Network Failures:</strong> Blockchain networks may experience congestion, outages, or technical failures beyond our control.
                 </li>
                 <li>
-                  <strong>Network Changes:</strong> Blockchain networks may undergo updates, forks, or changes that could affect NIL functionality.
+                  <strong>Network Changes:</strong> Blockchain networks may undergo updates, forks, or changes that could affect TALA functionality.
                 </li>
                 <li>
-                  <strong>RPC Provider Issues:</strong> NIL relies on RPC providers that may experience downtime or service degradation.
+                  <strong>RPC Provider Issues:</strong> TALA relies on RPC providers that may experience downtime or service degradation.
                 </li>
                 <li>
                   <strong>Smart Contract Risk:</strong> While our smart contracts are thoroughly tested, all smart contracts carry inherent security risks.
@@ -154,14 +154,14 @@ export default function TermsPage() {
                 <li>Any damages arising from use or inability to use the Service</li>
               </ul>
               <p className="mt-3 font-bold text-red-600">
-                IN NO EVENT SHALL OUR TOTAL LIABILITY EXCEED THE AMOUNT YOU PAID TO USE NIL (IF ANY).
+                IN NO EVENT SHALL OUR TOTAL LIABILITY EXCEED THE AMOUNT YOU PAID TO USE TALA (IF ANY).
               </p>
             </section>
 
             <section>
               <h2 className="font-black text-xl text-black mb-3">8. Prohibited Activities</h2>
               <p>
-                You agree not to use NIL to:
+                You agree not to use TALA to:
               </p>
               <ul className="list-disc pl-6 space-y-3 mt-3">
                 <li>Store, distribute, or access illegal content or materials</li>
@@ -169,40 +169,40 @@ export default function TermsPage() {
                 <li>Harass, threaten, defame, or harm others</li>
                 <li>Engage in fraud, deception, or misrepresentation</li>
                 <li>Attempt to circumvent security measures or access unauthorized systems</li>
-                <li>Use NIL for money laundering, sanctions evasion, or terrorist financing</li>
+                <li>Use TALA for money laundering, sanctions evasion, or terrorist financing</li>
                 <li>Infringe on intellectual property rights</li>
                 <li>Use bots or automated systems without permission</li>
                 <li>Reverse engineer or attempt to extract the source code</li>
-                <li>Interfere with or disrupt the normal operation of NIL</li>
+                <li>Interfere with or disrupt the normal operation of TALA</li>
               </ul>
             </section>
 
             <section>
               <h2 className="font-black text-xl text-black mb-3">9. Intellectual Property Rights</h2>
               <p>
-                The NIL platform, including its source code, design, documentation, logos, and branding, is protected by copyright and other intellectual property laws. You may:
+                The TALA platform, including its source code, design, documentation, logos, and branding, is protected by copyright and other intellectual property laws. You may:
               </p>
               <ul className="list-disc pl-6 space-y-2 mt-3">
                 <li>Use the Service for personal, non-commercial purposes</li>
                 <li>Review our open-source smart contracts</li>
-                <li>Use NIL documentation for educational purposes</li>
+                <li>Use TALA documentation for educational purposes</li>
               </ul>
               <p className="mt-3">
                 You may NOT:
               </p>
               <ul className="list-disc pl-6 space-y-2 mt-3">
-                <li>Copy or reproduce any part of NIL without permission</li>
+                <li>Copy or reproduce any part of TALA without permission</li>
                 <li>Modify or create derivative works</li>
-                <li>Use NIL for commercial purposes without authorization</li>
+                <li>Use TALA for commercial purposes without authorization</li>
                 <li>Remove copyright or attribution notices</li>
-                <li>Claim NIL or its components as your own</li>
+                <li>Claim TALA or its components as your own</li>
               </ul>
             </section>
 
             <section>
               <h2 className="font-black text-xl text-black mb-3">10. Third-Party Services</h2>
               <p>
-                NIL integrates with third-party services. We are not responsible for:
+                TALA integrates with third-party services. We are not responsible for:
               </p>
               <ul className="list-disc pl-6 space-y-2 mt-3">
                 <li>IPFS/Pinata failures or service disruptions</li>
@@ -211,7 +211,7 @@ export default function TermsPage() {
                 <li>Third-party terms or privacy policies</li>
               </ul>
               <p className="mt-3">
-                You are responsible for reviewing and understanding the terms and privacy policies of all third-party services you use with NIL.
+                You are responsible for reviewing and understanding the terms and privacy policies of all third-party services you use with TALA.
               </p>
             </section>
 
@@ -221,12 +221,12 @@ export default function TermsPage() {
                 We reserve the right to:
               </p>
               <ul className="list-disc pl-6 space-y-2 mt-3">
-                <li>Modify, suspend, or discontinue NIL at any time, with or without notice</li>
+                <li>Modify, suspend, or discontinue TALA at any time, with or without notice</li>
                 <li>Change features, functionality, or pricing</li>
                 <li>Remove content or accounts that violate these terms</li>
               </ul>
               <p className="mt-3">
-                We are not liable for any modification, suspension, or discontinuation of the Service. Your only recourse is to stop using NIL.
+                We are not liable for any modification, suspension, or discontinuation of the Service. Your only recourse is to stop using TALA.
               </p>
             </section>
 
@@ -243,14 +243,14 @@ export default function TermsPage() {
                 <li>Consumer protection laws</li>
               </ul>
               <p className="mt-3">
-                We make no representations regarding NIL's legality in any jurisdiction. Consult with local legal counsel before using NIL.
+                We make no representations regarding TALA's legality in any jurisdiction. Consult with local legal counsel before using TALA.
               </p>
             </section>
 
             <section>
               <h2 className="font-black text-xl text-black mb-3">13. Dispute Resolution</h2>
               <p>
-                These Terms are governed by applicable law. By using NIL, you irrevocably consent to:
+                These Terms are governed by applicable law. By using TALA, you irrevocably consent to:
               </p>
               <ul className="list-disc pl-6 space-y-2 mt-3">
                 <li>Exclusive jurisdiction in relevant courts</li>
@@ -272,7 +272,7 @@ export default function TermsPage() {
             <section>
               <h2 className="font-black text-xl text-black mb-3">15. Entire Agreement</h2>
               <p>
-                These Terms, together with our Privacy Policy, Disclaimer, and Cookie Policy, constitute the entire agreement between you and NIL regarding your use of the Service. These Terms supersede all prior agreements and understandings.
+                These Terms, together with our Privacy Policy, Disclaimer, and Cookie Policy, constitute the entire agreement between you and TALA regarding your use of the Service. These Terms supersede all prior agreements and understandings.
               </p>
             </section>
 
@@ -285,7 +285,7 @@ export default function TermsPage() {
 
             <div className="pt-6 border-t-2 border-gray-300 mt-8 bg-yellow-50 p-4 border-4 border-yellow-300">
               <p className="text-sm font-black text-yellow-800">
-                ✓ By using NIL, you agree that you have read, understood, and accept all terms in this agreement.
+                ✓ By using TALA, you agree that you have read, understood, and accept all terms in this agreement.
               </p>
             </div>
           </div>
@@ -294,3 +294,4 @@ export default function TermsPage() {
     </div>
   );
 }
+

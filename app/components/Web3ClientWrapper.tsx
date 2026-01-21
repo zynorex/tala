@@ -19,3 +19,4 @@ export default function Web3ClientWrapper({ children }: { children: ReactNode })
     </WagmiProvider>
   );
 }
+

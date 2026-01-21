@@ -368,7 +368,7 @@ export default function PricingPage() {
               },
               {
                 question: 'Can I get a custom plan?',
-                answer: 'For organizations with unique requirements, we offer custom plans. Contact our sales team at sales@nil.io to discuss your needs.',
+                answer: 'For organizations with unique requirements, we offer custom plans. Contact our sales team at sales@TALA.io to discuss your needs.',
               },
               {
                 question: 'What happens if I exceed my storage limit?',
@@ -450,3 +450,4 @@ export default function PricingPage() {
     </main>
   );
 }
+

@@ -208,3 +208,4 @@ function StatsCard({ icon: Icon, label, value, growth, loading }: StatsCardProps
     </div>
   );
 }
+

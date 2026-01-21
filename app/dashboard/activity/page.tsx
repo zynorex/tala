@@ -384,3 +384,4 @@ export default function ActivityHistoryPage() {
     </div>
   );
 }
+

@@ -860,7 +860,7 @@ const blogContent = {
         <li><strong>Partners:</strong> Integrations with other educational platforms</li>
       </ul>
 
-      <p>Interested? Reach out at founders@nil.ai</p>
+      <p>Interested? Reach out at founders@tala.ai</p>
 
       <h2>The March 14, 2026 Milestone</h2>
       <p>Our goal is to have Q1 features (mainnet, analytics, API) live by March 14, 2026. This represents a fully production-ready platform serving educational institutions globally.</p>

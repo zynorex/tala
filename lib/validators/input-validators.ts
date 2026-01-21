@@ -1,5 +1,5 @@
 /**
- * NIL Validation Utilities
+ * TALA Validation Utilities
  * Comprehensive input validation for security
  */
 
@@ -223,3 +223,4 @@ export function validateVaultCreation(data: {
     errors,
   };
 }
+

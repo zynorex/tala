@@ -14,7 +14,7 @@ const devDocSections = [
 \`\`\`bash
 # Clone and install
 git clone <repo-url>
-cd nil
+cd TALA
 npm install
 
 # Setup environment
@@ -298,7 +298,7 @@ curl -H "Authorization: Bearer TOKEN" \\
 
 \`\`\`env
 # Database
-DATABASE_URL="postgresql://user:password@localhost:5432/nil"
+DATABASE_URL="postgresql://user:password@localhost:5432/TALA"
 # OR
 DATABASE_URL="prisma+postgres://accelerate.prisma-data.net/?api_key=..."
 
@@ -307,7 +307,7 @@ JWT_SECRET="min-32-characters-long-secret-key"
 
 # Web3
 NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID="project-id"
-NEXT_PUBLIC_NIL_VAULT_ADDRESS="0x..."
+NEXT_PUBLIC_TALA_VAULT_ADDRESS="0x..."
 PRIVATE_KEY="private-key"
 
 # IPFS
@@ -473,3 +473,4 @@ export function DevDocSection() {
     </div>
   );
 }
+

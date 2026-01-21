@@ -12,7 +12,7 @@ export default function TeamPage() {
       expertise: ["Smart Contracts", "Cryptography", "System Design"],
       image: "👨‍💼",
       social: {
-        email: "rajesh@nil.ai",
+        email: "rajesh@tala.ai",
         linkedin: "https://linkedin.com",
         twitter: "https://twitter.com",
         github: "https://github.com"
@@ -25,7 +25,7 @@ export default function TeamPage() {
       expertise: ["Solidity", "Web3", "DevOps"],
       image: "👩‍💻",
       social: {
-        email: "priya@nil.ai",
+        email: "priya@tala.ai",
         linkedin: "https://linkedin.com",
         twitter: "https://twitter.com",
         github: "https://github.com"
@@ -38,7 +38,7 @@ export default function TeamPage() {
       expertise: ["Product Strategy", "Education", "Government Relations"],
       image: "👨‍🔬",
       social: {
-        email: "rohan@nil.ai",
+        email: "rohan@tala.ai",
         linkedin: "https://linkedin.com",
         twitter: "https://twitter.com",
         github: "https://github.com"
@@ -51,7 +51,7 @@ export default function TeamPage() {
       expertise: ["Security Audit", "Compliance", "Penetration Testing"],
       image: "👩‍🏫",
       social: {
-        email: "aisha@nil.ai",
+        email: "aisha@tala.ai",
         linkedin: "https://linkedin.com",
         twitter: "https://twitter.com",
         github: "https://github.com"
@@ -64,7 +64,7 @@ export default function TeamPage() {
       expertise: ["React", "UX Design", "Design Systems"],
       image: "👨‍🎨",
       social: {
-        email: "marcus@nil.ai",
+        email: "marcus@tala.ai",
         linkedin: "https://linkedin.com",
         twitter: "https://twitter.com",
         github: "https://github.com"
@@ -77,7 +77,7 @@ export default function TeamPage() {
       expertise: ["Growth Strategy", "Enterprise Sales", "Partnerships"],
       image: "👩‍💼",
       social: {
-        email: "elena@nil.ai",
+        email: "elena@tala.ai",
         linkedin: "https://linkedin.com",
         twitter: "https://twitter.com",
         github: "https://github.com"
@@ -270,7 +270,7 @@ export default function TeamPage() {
             We're hiring engineers, product managers, and security researchers. Interested in building the future of education security?
           </p>
           <a
-            href="mailto:careers@nil.ai"
+            href="mailto:careers@tala.ai"
             className="inline-flex items-center gap-2 px-8 py-4 bg-black text-white font-bold border-4 border-black rounded-lg hover:opacity-90 transition-opacity"
           >
             View Open Positions
@@ -280,3 +280,4 @@ export default function TeamPage() {
     </main>
   );
 }
+

@@ -55,7 +55,7 @@ export default function Footer() {
       { label: "Twitter", href: "https://twitter.com", icon: Twitter, bg: "bg-heirlock-blue" },
       { label: "GitHub", href: "https://github.com", icon: Github, bg: "bg-heirlock-green" },
       { label: "LinkedIn", href: "https://linkedin.com", icon: Linkedin, bg: "bg-heirlock-pink" },
-      { label: "Email", href: "mailto:hello@nil.io", icon: Mail, bg: "bg-heirlock-yellow" },
+      { label: "Email", href: "mailto:hello@TALA.io", icon: Mail, bg: "bg-heirlock-yellow" },
     ],
   };
 
@@ -260,7 +260,7 @@ export default function Footer() {
               </Link>
               <span className="text-gray-400">•</span>
               <a
-                href="mailto:hello@nil.io"
+                href="mailto:hello@TALA.io"
                 className="text-sm font-bold text-gray-700 hover:text-black border-b-2 border-transparent hover:border-black pb-1 transition-all"
               >
                 Support
@@ -272,3 +272,4 @@ export default function Footer() {
     </footer>
   );
 }
+

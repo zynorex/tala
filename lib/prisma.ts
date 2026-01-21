@@ -50,3 +50,4 @@ export const db = (() => {
 
 // Alias for compatibility
 export const prisma = db;
+

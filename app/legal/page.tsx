@@ -2,8 +2,8 @@ import { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Legal | NIL",
-  description: "Legal information for NIL vault system",
+  title: "Legal | TALA",
+  description: "Legal information for TALA vault system",
 };
 
 export default function LegalHub() {
@@ -85,3 +85,4 @@ export default function LegalHub() {
     </div>
   );
 }
+

@@ -534,9 +534,9 @@ export default function StatusPage() {
                 <div>
                   <h3 className="font-black text-black text-lg mb-3">Support</h3>
                   <ul className="space-y-2 text-sm text-gray-700">
-                    <li>Email: support@nil.io</li>
-                    <li>Status Page: status.nil.io</li>
-                    <li>Incident Escalation: critical@nil.io</li>
+                    <li>Email: support@TALA.io</li>
+                    <li>Status Page: status.TALA.io</li>
+                    <li>Incident Escalation: critical@TALA.io</li>
                     <li>Response Time: &lt; 1 hour</li>
                   </ul>
                 </div>
@@ -558,3 +558,4 @@ export default function StatusPage() {
     </main>
   );
 }
+

@@ -64,3 +64,4 @@ export function verifyRequest(req: NextRequest): JWTPayload | null {
   }
   return verifyToken(token);
 }
+

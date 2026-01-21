@@ -1,5 +1,5 @@
 /**
- * NIL Vault Smart Contract Service
+ * TALA Vault Smart Contract Service
  * Enterprise-grade contract interaction with full error handling and logging
  * 
  * Enterprise Features:
@@ -13,7 +13,7 @@
 
 import { writeContract, readContract } from 'wagmi/actions';
 import { keccak256, stringToBytes } from 'viem';
-import { NIL_VAULT_ABI, NIL_VAULT_CONFIG } from './nil-vault';
+import { TALA_VAULT_ABI, TALA_VAULT_CONFIG } from './tala-vault';
 import { logger } from '@/lib/utils/logger';
 
 // Enhanced error class for vault operations
@@ -179,7 +179,7 @@ export async function createVault(
     // Submit transaction to blockchain
     const hash = await writeContract(wagmiConfig, {
       address: config.contractAddress as `0x${string}`,
-      abi: NIL_VAULT_ABI,
+      abi: TALA_VAULT_ABI,
       functionName: 'createVault',
       args: [
         params.ipfsHash,
@@ -254,7 +254,7 @@ export async function getVault(
   try {
     const vault = await readContract(wagmiConfig, {
       address: config.contractAddress,
-      abi: NIL_VAULT_ABI,
+      abi: TALA_VAULT_ABI,
       functionName: 'getVault',
       args: [BigInt(vaultId)],
     }) as any;
@@ -307,7 +307,7 @@ export async function unlockVault(
     // First check if vault can be unlocked
     const canUnlock = await readContract(wagmiConfig, {
       address: config.contractAddress,
-      abi: NIL_VAULT_ABI,
+      abi: TALA_VAULT_ABI,
       functionName: 'canUnlock',
       args: [BigInt(vaultId)],
     });
@@ -315,7 +315,7 @@ export async function unlockVault(
     if (!canUnlock) {
       const timeToUnlock = await readContract(wagmiConfig, {
         address: config.contractAddress,
-        abi: NIL_VAULT_ABI,
+        abi: TALA_VAULT_ABI,
         functionName: 'getTimeToUnlock',
         args: [BigInt(vaultId)],
       });
@@ -329,7 +329,7 @@ export async function unlockVault(
     // Unlock vault
     const hash = await writeContract(wagmiConfig, {
       address: config.contractAddress,
-      abi: NIL_VAULT_ABI,
+      abi: TALA_VAULT_ABI,
       functionName: 'unlockVault',
       args: [BigInt(vaultId)],
     });
@@ -369,7 +369,7 @@ export async function voidVault(
   try {
     const hash = await writeContract(wagmiConfig, {
       address: config.contractAddress,
-      abi: NIL_VAULT_ABI,
+      abi: TALA_VAULT_ABI,
       functionName: 'voidVault',
       args: [BigInt(vaultId)],
     });
@@ -414,7 +414,7 @@ export async function getUserVaults(
   try {
     const vaultIds = await readContract(wagmiConfig, {
       address: config.contractAddress,
-      abi: NIL_VAULT_ABI,
+      abi: TALA_VAULT_ABI,
       functionName: 'getUserVaults',
       args: [userAddress as `0x${string}`],
     });
@@ -450,7 +450,7 @@ export async function getUserVaultCount(
   try {
     const count = await readContract(wagmiConfig, {
       address: config.contractAddress,
-      abi: NIL_VAULT_ABI,
+      abi: TALA_VAULT_ABI,
       functionName: 'getUserVaultCount',
       args: [userAddress as `0x${string}`],
     });
@@ -482,7 +482,7 @@ export async function getTimeToUnlock(
   try {
     const timeSeconds = await readContract(wagmiConfig, {
       address: config.contractAddress,
-      abi: NIL_VAULT_ABI,
+      abi: TALA_VAULT_ABI,
       functionName: 'getTimeToUnlock',
       args: [BigInt(vaultId)],
     });
@@ -498,3 +498,4 @@ export async function getTimeToUnlock(
  * Export error messages for UI usage
  */
 export { VAULT_SERVICE_ERRORS };
+

@@ -268,13 +268,13 @@ export default function RoadmapPage() {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <a
-                href="https://feature-voting.nil.ai"
+                href="https://feature-voting.TALA.ai"
                 className="px-8 py-4 bg-black text-white font-bold border-4 border-black rounded-lg hover:opacity-90 transition-opacity"
               >
                 Vote on Features
               </a>
               <a
-                href="mailto:product@nil.ai?subject=Feature%20Request"
+                href="mailto:product@tala.ai?subject=Feature%20Request"
                 className="px-8 py-4 bg-white text-black font-bold border-4 border-black rounded-lg hover:bg-gray-50 transition-colors"
               >
                 Submit Feedback
@@ -286,3 +286,4 @@ export default function RoadmapPage() {
     </main>
   );
 }
+

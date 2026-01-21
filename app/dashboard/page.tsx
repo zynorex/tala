@@ -2,10 +2,11 @@ import { Metadata } from "next";
 import DashboardContent from "@/app/components/DashboardContent";
 
 export const metadata: Metadata = {
-  title: "Dashboard | NIL",
+  title: "Dashboard | TALA",
   description: "Manage your encrypted vaults and view security metrics",
 };
 
 export default function DashboardPage() {
   return <DashboardContent />;
 }
+

@@ -395,3 +395,4 @@ export async function getAdminLogs(req: NextRequest) {
     return NextResponse.json(handleDbError(error), { status: 500 });
   }
 }
+

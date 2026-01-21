@@ -27,7 +27,7 @@ export default function Changelog() {
         '✓ Database Infrastructure: PostgreSQL with 6 verified tables, migrations, and foreign key constraints',
         '✓ Web3 Authentication: Wallet-based sign-in with ECDSA signature verification and replay attack prevention',
         '✓ File Encryption & Storage: 8-layer validation, AES-256-GCM encryption, storage quotas, and IPFS integration',
-        '✓ Smart Contract Deployment: NilVault deployed on Polygon Amoy with time-lock mechanism and reentrancy protection',
+        '✓ Smart Contract Deployment: TALAVault deployed on Polygon Amoy with time-lock mechanism and reentrancy protection',
         '✓ 1570+ lines of production-grade code with TypeScript strict mode',
         '✓ 2000+ lines of comprehensive documentation and implementation guides',
         '✓ 9 new implementation files with enterprise-grade security standards',
@@ -306,9 +306,9 @@ export default function Changelog() {
       category: 'feature',
       icon: Database,
       title: 'Smart Contract Development',
-      description: 'NilVault smart contract implementation on Polygon.',
+      description: 'TALAVault smart contract implementation on Polygon.',
       changes: [
-        'Developed NilVault smart contract in Solidity',
+        'Developed TALAVault smart contract in Solidity',
         'Implemented time-locking mechanism',
         'Created key storage and release logic',
         'Added access control and ownership verification',
@@ -527,3 +527,4 @@ export default function Changelog() {
     </main>
   );
 }
+

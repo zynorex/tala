@@ -14,7 +14,7 @@ const logger = getLogger('SignatureVerify');
  */
 export function generateSignMessage(address: string): string {
   const timestamp = Math.floor(Date.now() / 1000);
-  return `Sign this message to authenticate with NIL.\n\nWallet: ${address}\nTimestamp: ${timestamp}\nNonce: ${Math.random().toString(36).substring(2, 15)}`;
+  return `Sign this message to authenticate with TALA.\n\nWallet: ${address}\nTimestamp: ${timestamp}\nNonce: ${Math.random().toString(36).substring(2, 15)}`;
 }
 
 /**
@@ -95,3 +95,4 @@ export async function verifySignatureWithValidation(
     };
   }
 }
+

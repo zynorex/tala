@@ -386,3 +386,4 @@ export function formatFileInfo(fileName: string, sizeBytes: number): string {
 
   return `${fileName} (${size.toFixed(2)} ${sizes[sizeIndex]})`;
 }
+

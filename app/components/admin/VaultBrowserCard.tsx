@@ -153,3 +153,4 @@ export default function VaultBrowserCard() {
     </div>
   );
 }
+

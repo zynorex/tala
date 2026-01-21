@@ -314,3 +314,4 @@ export async function scheduleCleanup(): Promise<void> {
     logger.error('Scheduled cleanup failed', error instanceof Error ? error : undefined);
   }
 }
+

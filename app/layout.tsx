@@ -36,11 +36,11 @@ export const metadata: Metadata = {
     title: "T.A.L.A. | Trust is Code",
     description: "Decentralized time-locked vault for exam papers",
     type: "website",
-    url: "https://nil.ai",
+    url: "https://TALA.ai",
     siteName: "T.A.L.A.",
     images: [
       {
-        url: "https://nil.ai/og-image.png",
+        url: "https://TALA.ai/og-image.png",
         width: 1200,
         height: 630,
         alt: "T.A.L.A. - Trust is Code",
@@ -51,8 +51,8 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "T.A.L.A. | Trust is Code",
     description: "Decentralized time-locked vault for exam papers",
-    images: ["https://nil.ai/twitter-image.png"],
-    creator: "@nil_official",
+    images: ["https://TALA.ai/twitter-image.png"],
+    creator: "@TALA_official",
   },
   robots: {
     index: true,
@@ -66,9 +66,9 @@ export const metadata: Metadata = {
     },
   },
   alternates: {
-    canonical: "https://nil.ai",
+    canonical: "https://TALA.ai",
     languages: {
-      "en-US": "https://nil.ai",
+      "en-US": "https://TALA.ai",
     },
   },
 };
@@ -105,3 +105,4 @@ export default function RootLayout({
     </html>
   );
 }
+

@@ -32,3 +32,4 @@ export default function WalletButton({ isScrolled = false }: { isScrolled?: bool
     </button>
   );
 }
+

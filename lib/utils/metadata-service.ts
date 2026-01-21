@@ -1,5 +1,5 @@
 /**
- * NIL Encryption Metadata Database Service
+ * TALA Encryption Metadata Database Service
  * Manages encrypted file metadata without storing encryption keys
  * Enterprise-grade implementation with Prisma database integration
  * 
@@ -403,3 +403,4 @@ export const METADATA_SERVICE_CONFIG = {
   RETENTION_DAYS: 7 * 365, // 7 years
   AUTO_CLEANUP_ENABLED: true,
 };
+

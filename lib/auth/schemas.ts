@@ -83,3 +83,4 @@ export type UpdateUserInput = z.infer<typeof updateUserSchema>;
 export type CreateVaultInput = z.infer<typeof createVaultSchema>;
 export type UpdateVaultInput = z.infer<typeof updateVaultSchema>;
 export type DeleteVaultInput = z.infer<typeof deleteVaultSchema>;
+

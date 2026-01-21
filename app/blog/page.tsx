@@ -268,3 +268,4 @@ export default function Blog() {
     </main>
   );
 }
+

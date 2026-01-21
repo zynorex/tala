@@ -39,7 +39,7 @@ export async function uploadToIPFS(file: File | Blob, fileName?: string): Promis
       name: fileName || (file instanceof File ? file.name : "file"),
       keyvalues: {
         uploadedAt: new Date().toISOString(),
-        uploader: "NIL",
+        uploader: "TALA",
       },
     };
     formData.append("pinataMetadata", JSON.stringify(metadata));
@@ -378,3 +378,4 @@ export async function healthCheck(): Promise<{ healthy: boolean; message: string
     };
   }
 }
+

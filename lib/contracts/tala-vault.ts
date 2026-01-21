@@ -1,4 +1,4 @@
-export const NIL_VAULT_ABI = [
+export const TALA_VAULT_ABI = [
   {
     inputs: [
       { internalType: 'string', name: '_ipfsHash', type: 'string' },
@@ -34,7 +34,7 @@ export const NIL_VAULT_ABI = [
           { internalType: 'string', name: 'description', type: 'string' },
           { internalType: 'uint256', name: 'fileSize', type: 'uint256' },
         ],
-        internalType: 'struct NilVault.Vault',
+        internalType: 'struct TALAVault.Vault',
         name: '',
         type: 'tuple',
       },
@@ -57,7 +57,7 @@ export const NIL_VAULT_ABI = [
           { internalType: 'string', name: 'description', type: 'string' },
           { internalType: 'uint256', name: 'fileSize', type: 'uint256' },
         ],
-        internalType: 'struct NilVault.Vault',
+        internalType: 'struct TALAVault.Vault',
         name: '',
         type: 'tuple',
       },
@@ -127,9 +127,9 @@ export const NIL_VAULT_ABI = [
 ] as const;
 
 // Contract deployment configuration
-export const NIL_VAULT_CONFIG = {
+export const TALA_VAULT_CONFIG = {
   // This will be set after deployment
-  contractAddress: (process.env.NEXT_PUBLIC_NIL_VAULT_ADDRESS || '0x') as `0x${string}`,
+  contractAddress: (process.env.NEXT_PUBLIC_TALA_VAULT_ADDRESS || '0x') as `0x${string}`,
   
   // Polygon Amoy testnet
   chainId: 80002,
@@ -163,3 +163,4 @@ export const VAULT_SUCCESS = {
   VaultUnlocked: 'Vault unlocked successfully!',
   VaultVoided: 'Vault voided successfully!',
 } as const;
+

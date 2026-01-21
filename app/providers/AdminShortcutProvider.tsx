@@ -6,3 +6,4 @@ export function AdminShortcutProvider({ children }: { children: React.ReactNode 
   useAdminShortcut();
   return <>{children}</>;
 }
+

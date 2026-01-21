@@ -120,3 +120,4 @@ export const httpErrors = {
   payloadTooLarge: () => apiError('File size exceeds maximum limit', 413),
   serverError: (msg: string = 'Internal server error') => apiError(msg, 500),
 };
+

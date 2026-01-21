@@ -36,14 +36,14 @@ export default function SecurityPage() {
     {
       name: 'ISO/IEC 27001:2022',
       issuer: 'International Organization for Standardization',
-      certId: 'ISO-27001-2026-nil',
+      certId: 'ISO-27001-2026-TALA',
       validUntil: 'December 31, 2027',
       icon: '🔐',
     },
     {
       name: 'SOC 2 Type II',
       issuer: 'American Institute of CPAs',
-      certId: 'SOC2-nil-2026',
+      certId: 'SOC2-TALA-2026',
       validUntil: 'December 31, 2027',
       icon: '✓',
     },
@@ -647,7 +647,7 @@ export default function SecurityPage() {
               </p>
               <div className="space-y-3">
                 <p className="font-bold text-black">📧 Email us at:</p>
-                <p className="font-mono text-sm text-black">security@nil.io</p>
+                <p className="font-mono text-sm text-black">security@TALA.io</p>
                 <p className="text-sm text-gray-700 mt-4">
                   <strong>Do not:</strong> Publicly disclose the vulnerability until we've had time to fix it
                 </p>
@@ -793,3 +793,4 @@ export default function SecurityPage() {
     </main>
   );
 }
+

@@ -51,7 +51,7 @@ export default function LoginPage() {
 
     try {
       // Create message to sign
-      const message = `Sign in to NIL\n\nWallet: ${address}\nTimestamp: ${new Date().toISOString()}`;
+      const message = `Sign in to TALA\n\nWallet: ${address}\nTimestamp: ${new Date().toISOString()}`;
 
       // Sign message
       const signature = await signMessageAsync({ message });
@@ -96,7 +96,7 @@ export default function LoginPage() {
           <div className="inline-flex items-center justify-center w-16 h-16 mb-4 bg-heirlock-yellow border-4 border-black">
             <Lock className="w-8 h-8 text-black" />
           </div>
-          <h1 className="text-5xl font-black text-heirlock-yellow mb-2">NIL</h1>
+          <h1 className="text-5xl font-black text-heirlock-yellow mb-2">TALA</h1>
           <p className="text-lg text-white font-bold">Secure Authentication</p>
           <p className="text-sm text-gray-400">Sign in to continue</p>
         </div>
@@ -168,3 +168,4 @@ export default function LoginPage() {
     </div>
   );
 }
+

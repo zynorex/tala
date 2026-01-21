@@ -148,7 +148,7 @@ export class Logger {
 /**
  * Global logger instance
  */
-export const logger = new Logger('NIL');
+export const logger = new Logger('TALA');
 
 /**
  * Create a logger for a specific module
@@ -166,3 +166,4 @@ export const consoleLogger = {
   warn: (msg: string, data?: any) => console.warn(`[WARN] ${msg}`, data),
   error: (msg: string, data?: any) => console.error(`[ERROR] ${msg}`, data),
 };
+

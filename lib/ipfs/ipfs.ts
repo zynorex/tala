@@ -1,5 +1,5 @@
 /**
- * NIL IPFS Integration - Production Ready
+ * TALA IPFS Integration - Production Ready
  * Manages encrypted file upload/download from IPFS
  * Uses Pinata as primary provider with fallback to IPFS.io gateway
  * 
@@ -148,8 +148,8 @@ export async function uploadToIPFS(
     const pinataMetadata = {
       name: filename,
       keyvalues: {
-        description: description || 'NIL encrypted vault file',
-        app: 'nil-vault',
+        description: description || 'TALA encrypted vault file',
+        app: 'tala-vault',
         encrypted: 'true',
         fileHash: fileHash || '', // Original file hash for verification
         uploadedAt: new Date().toISOString(),
@@ -385,7 +385,7 @@ export async function pinFileToIPFS(ipfsHash: string): Promise<boolean> {
             pinataMetadata: {
               name: `pinned-${ipfsHash}`,
               keyvalues: {
-                app: 'nil-vault',
+                app: 'tala-vault',
                 pinnedAt: new Date().toISOString(),
               },
             },

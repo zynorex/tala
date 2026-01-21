@@ -134,7 +134,7 @@ export default function Documentation() {
                 Visit FAQ
               </button>
             </Link>
-            <a href="mailto:support@nil.edu" className="px-8 py-3 bg-white text-black font-bold border-4 border-black hover:bg-black hover:text-white shadow-brutal hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all flex items-center justify-center gap-2">
+            <a href="mailto:support@TALA.edu" className="px-8 py-3 bg-white text-black font-bold border-4 border-black hover:bg-black hover:text-white shadow-brutal hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all flex items-center justify-center gap-2">
               Contact Support <ChevronRight className="w-4 h-4" />
             </a>
           </div>
@@ -143,3 +143,4 @@ export default function Documentation() {
     </main>
   );
 }
+
