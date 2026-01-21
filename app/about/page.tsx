@@ -103,7 +103,7 @@ export default function About() {
               <div className="h-2 w-24 bg-black"></div>
             </div>
             <h2 className="text-3xl md:text-5xl font-bold text-black leading-tight">
-              Non-Intervenable Integrity-Locked Ledger.
+              Tamper-proof Automated Locking Algorithm.
             </h2>
             <div className="border-4 border-black bg-black p-6 inline-block shadow-brutal">
               <p className="text-2xl md:text-3xl font-black text-heirlock-green">
