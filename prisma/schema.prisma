@@ -115,6 +115,10 @@ model Vault {
   fileSize      Int        // Size in bytes
   mimeType      String?
   
+  // Demo vault flag
+  isDemo        Boolean    @default(false)
+  demoExpiresAt DateTime?  // Demo vaults can expire after period
+  
   // Status
   isActive      Boolean    @default(true)
   createdAt     DateTime   @default(now())
@@ -126,6 +130,7 @@ model Vault {
   
   @@index([userId])
   @@index([createdAt])
+  @@index([isDemo])
 }
 
 // VaultFile Model - Stores individual files in a vault

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useAccount } from 'wagmi';
-import { Lock, Clock, Trash2, Eye, FileText, Calendar } from 'lucide-react';
+import { Lock, Clock, Trash2, Eye, FileText, Calendar, Zap } from 'lucide-react';
 import Link from 'next/link';
 
 interface Vault {
@@ -11,6 +11,7 @@ interface Vault {
   description: string;
   createdAt: string;
   isActive: boolean;
+  isDemo?: boolean;
   _count?: {
     files: number;
   };
@@ -138,9 +139,17 @@ export default function VaultsList({ showSensitiveData }: VaultsListProps) {
               >
                 <div className="flex items-start justify-between gap-4 mb-3">
                   <div className="flex-1 min-w-0">
-                    <h3 className="font-black text-lg text-black group-hover:text-heirlock-blue transition-colors truncate">
-                      {showSensitiveData ? vault.name : '●●●●●●●●●●'}
-                    </h3>
+                    <div className="flex items-center gap-2">
+                      <h3 className="font-black text-lg text-black group-hover:text-heirlock-blue transition-colors truncate">
+                        {showSensitiveData ? vault.name : '●●●●●●●●●●'}
+                      </h3>
+                      {vault.isDemo && (
+                        <span className="flex items-center gap-1 bg-heirlock-green text-black px-2 py-1 font-black text-xs border-2 border-black whitespace-nowrap">
+                          <Zap className="w-3 h-3" />
+                          DEMO
+                        </span>
+                      )}
+                    </div>
                     {vault.description && (
                       <p className="text-sm text-gray-700 font-medium mt-1 truncate">
                         {showSensitiveData ? vault.description : 'Encrypted description'}

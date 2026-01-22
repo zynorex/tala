@@ -10,6 +10,7 @@ import VaultsList from './VaultsList';
 import ActivityLog from './ActivityLog';
 import SecurityMetrics from './SecurityMetrics';
 import QuickActions from './QuickActions';
+import DemoVaultComponent from './DemoVaultComponent';
 
 interface DashboardData {
   totalVaults: number;
@@ -36,6 +37,7 @@ export default function DashboardContent() {
   const [vaults, setVaults] = useState<any[]>([]);
   const [activities, setActivities] = useState<any[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [hasDemoVault, setHasDemoVault] = useState(false);
 
   useEffect(() => {
     loadDashboardData();
@@ -62,6 +64,10 @@ export default function DashboardContent() {
       
       const vaultList = vaultsData.data?.data || [];
       setVaults(vaultList);
+
+      // Check if there's a demo vault
+      const demoVault = vaultList.some((vault: any) => vault.isDemo);
+      setHasDemoVault(!!demoVault);
 
       // Calculate dashboard stats
       let totalStorage = 0;
@@ -170,6 +176,15 @@ export default function DashboardContent() {
 
         {/* Quick Actions */}
         <QuickActions />
+
+        {/* Demo Vault CTA or Active Status */}
+        <DemoVaultComponent 
+          existingDemo={hasDemoVault}
+          onDemoCreated={() => {
+            // Reload dashboard data
+            loadDashboardData();
+          }}
+        />
 
         {/* Stats Grid */}
         {isLoading ? (

@@ -85,13 +85,42 @@ export default function CreateVault() {
       {/* Form Section - PROMINENT */}
       <section id="vault-form" className="py-12 md:py-20 bg-white border-t-4 border-heirlock-blue scroll-mt-20">
         <div className="container mx-auto max-w-4xl px-3 sm:px-4">
-          <div className="mb-12 text-center">
-            <h2 className="text-4xl md:text-5xl font-bold text-black mb-6">
-              Create Your Vault Now
-            </h2>
-            <p className="text-lg text-gray-700 max-w-2xl mx-auto">
-              Upload a file, set an unlock date, and secure it forever. No complications.
-            </p>
+          <div className="mb-12">
+            {/* Demo Vault CTA */}
+            <div className="mb-12 p-8 bg-gradient-to-r from-heirlock-green to-heirlock-blue border-4 border-black shadow-brutal">
+              <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+                <div>
+                  <h3 className="text-2xl font-black text-black mb-3">👀 Want to Test Drive First?</h3>
+                  <p className="text-black font-bold mb-4">
+                    Create a demo vault instantly. Download sample files, decrypt them, and see exactly how T.A.L.A. protects your data. Zero commitment, zero risk, no credit card needed.
+                  </p>
+                  <ul className="space-y-2 text-sm font-bold text-black">
+                    <li>✓ Download and decrypt sample files</li>
+                    <li>✓ Understand encryption in action</li>
+                    <li>✓ Explore all vault features</li>
+                    <li>✓ Delete anytime, no questions asked</li>
+                  </ul>
+                  <p className="text-xs text-black mt-4 italic opacity-90">
+                  We're still in beta. We're not perfect. There will be bugs. There will be rough edges. But we are honest, transparent, and here to help. Your feedback drives us forward.
+                  </p>
+                </div>
+                <Link href="/dashboard">
+                  <button className="px-6 py-3 bg-black text-heirlock-green font-black border-4 border-black shadow-brutal hover:translate-y-[-4px] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-all duration-200 whitespace-nowrap flex items-center gap-2">
+                    <Zap className="w-5 h-5" />
+                    Try Demo Vault
+                  </button>
+                </Link>
+              </div>
+            </div>
+
+            <div className="text-center mb-8">
+              <h2 className="text-4xl md:text-5xl font-bold text-black mb-6">
+                Create Your Vault Now
+              </h2>
+              <p className="text-lg text-gray-700 max-w-2xl mx-auto">
+                Upload a file, set an unlock date, and secure it forever. No complications.
+              </p>
+            </div>
           </div>
           <CreateVaultForm />
         </div>
