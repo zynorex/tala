@@ -2,20 +2,47 @@
 
 import { useState } from 'react';
 import { signIn } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useAccount, useSignMessage } from 'wagmi';
 import Link from 'next/link';
 import { Lock, Wallet, Mail, ChevronRight, AlertCircle } from 'lucide-react';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
+import { Suspense, useEffect } from 'react';
 
-export default function LoginPage() {
+function LoginContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { address, isConnected } = useAccount();
   const { signMessageAsync } = useSignMessage();
   
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [walletLoading, setWalletLoading] = useState(false);
+
+  // Check if we just completed Google login
+  useEffect(() => {
+    const completeGoogleLogin = async () => {
+      const sessionReady = searchParams.get('sessionReady');
+      if (sessionReady === 'true') {
+        try {
+          // Generate JWT token from session
+          const tokenResponse = await fetch('/api/auth/generate-token', {
+            method: 'POST',
+          });
+
+          if (tokenResponse.ok) {
+            const data = await tokenResponse.json();
+            localStorage.setItem('auth_token', data.token);
+            localStorage.setItem('user', JSON.stringify(data.user));
+            router.push('/dashboard');
+          }
+        } catch (err) {
+          console.error('Failed to generate token:', err);
+        }
+      }
+    };
+    completeGoogleLogin();
+  }, [searchParams, router]);
 
   // Google Login
   const handleGoogleLogin = async () => {
@@ -29,7 +56,8 @@ export default function LoginPage() {
       if (result?.error) {
         setError(result.error);
       } else if (result?.ok) {
-        router.push('/dashboard');
+        // Redirect to callback that generates token
+        router.push('/auth/login?sessionReady=true');
       }
     } catch (err) {
       setError('Failed to sign in with Google');
@@ -168,4 +196,13 @@ export default function LoginPage() {
     </div>
   );
 }
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-black" />}>
+      <LoginContent />
+    </Suspense>
+  );
+}
+
 

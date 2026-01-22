@@ -38,6 +38,7 @@ model User {
   // Account status
   role          String     @default("user") // "user", "admin"
   isActive      Boolean    @default(true)
+  isBlocked     Boolean    @default(false)
   createdAt     DateTime   @default(now())
   updatedAt     DateTime   @updatedAt
   deletedAt     DateTime?
