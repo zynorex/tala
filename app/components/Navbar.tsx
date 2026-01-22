@@ -151,6 +151,12 @@ export default function Navbar() {
                   <div>
                     <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Learn</h3>
                     <div className="space-y-3">
+                      <Link href="/learn" onClick={closeMenu}>
+                        <div className="flex items-center gap-3 px-3 py-2 rounded hover:bg-heirlock-yellow hover:text-black transition-all font-bold cursor-pointer">
+                          <BookOpen className="w-5 h-5" />
+                          <span>Learn T.A.L.A.</span>
+                        </div>
+                      </Link>
                       <Link href="/documentation" onClick={closeMenu}>
                         <div className="flex items-center gap-3 px-3 py-2 rounded hover:bg-heirlock-green hover:text-black transition-all font-bold cursor-pointer">
                           <BookOpen className="w-5 h-5" />
