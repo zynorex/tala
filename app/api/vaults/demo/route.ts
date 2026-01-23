@@ -15,7 +15,7 @@ async function getPrisma() {
 
 /**
  * POST /api/vaults/demo
- * Create a demo vault for user education
+ * Create a demo vault with user-provided details
  */
 export async function POST(req: NextRequest) {
   try {
@@ -25,32 +25,22 @@ export async function POST(req: NextRequest) {
     }
 
     const db = await getPrisma();
+    const body = await req.json();
+    const { name, description, password, unlockTime } = body;
 
-    // Check if user already has a demo vault
-    const existingDemo = await db.vault.findFirst({
-      where: {
-        userId: payload.userId,
-        isDemo: true,
-      },
-    });
-
-    if (existingDemo) {
-      return apiSuccess(
-        { message: 'You already have a demo vault', vault: existingDemo },
-        200
-      );
+    // Validate required fields
+    if (!name || !password || !unlockTime) {
+      return apiError('Missing required fields: name, password, unlockTime', 400);
     }
 
-    // Create demo vault (empty - user will add files like a real vault)
-    const demoPassword = 'DEMO_VAULT_' + Date.now();
-    const vaultKey = deriveVaultKeyFromPassword(demoPassword);
+    // Create demo vault with user's specifications
+    const vaultKey = deriveVaultKeyFromPassword(password);
 
     const demoVault = await db.vault.create({
       data: {
         userId: payload.userId,
-        name: '⏱️ Demo Vault (Auto-unlocks in 10 minutes)',
-        description:
-          'This is your demo vault! Upload files, download the encryption key, and experience the full T.A.L.A. workflow. After 10 minutes, this vault will automatically unlock to demonstrate our time-locking technology.',
+        name: name,
+        description: description || '',
         encryptedData: '{}',
         keyHash: vaultKey.keyHash,
         fileHash: '',
@@ -58,7 +48,7 @@ export async function POST(req: NextRequest) {
         fileSize: 0,
         isActive: true,
         isDemo: true,
-        demoExpiresAt: new Date(Date.now() + 10 * 60 * 1000), // 10 minutes
+        demoExpiresAt: new Date(unlockTime * 1000), // Convert from timestamp
       },
       select: {
         id: true,
@@ -72,7 +62,7 @@ export async function POST(req: NextRequest) {
         updatedAt: true,
         _count: {
           select: {
-            files: true,
+            vaultFiles: true,
           },
         },
       },
@@ -84,15 +74,22 @@ export async function POST(req: NextRequest) {
         userId: payload.userId,
         vaultId: demoVault.id,
         action: 'DEMO_VAULT_CREATED',
-        description: 'Created demo vault - will auto-unlock in 10 minutes',
+        description: `Created demo vault "${name}" - will auto-unlock in ${Math.round((unlockTime * 1000 - Date.now()) / 60000)} minutes`,
       },
     });
 
     return apiSuccess(
       {
-        message: 'Demo vault created! You have 10 minutes to explore. Upload files, download the key, and experience T.A.L.A. After 10 minutes, the vault will auto-unlock to show our time-locking technology in action!',
-        vault: demoVault,
-        expiresAt: demoVault.demoExpiresAt,
+        message: 'Demo vault created! Upload your file and download the encryption key. The vault will auto-unlock after the specified time.',
+        data: {
+          id: demoVault.id,
+          name: demoVault.name,
+          description: demoVault.description,
+          isDemo: demoVault.isDemo,
+          demoExpiresAt: demoVault.demoExpiresAt,
+          createdAt: demoVault.createdAt,
+          fileCount: demoVault._count.vaultFiles,
+        },
       },
       201
     );
@@ -126,6 +123,16 @@ export async function DELETE(req: NextRequest) {
       return apiError('No demo vault found', 404);
     }
 
+    // Log activity BEFORE deleting vault
+    await db.activityLog.create({
+      data: {
+        userId: payload.userId,
+        vaultId: demoVault.id,
+        action: 'DEMO_VAULT_DELETED',
+        description: 'Deleted demo vault',
+      },
+    });
+
     // Delete all files in demo vault
     await db.vaultFile.deleteMany({
       where: {
@@ -137,16 +144,6 @@ export async function DELETE(req: NextRequest) {
     await db.vault.delete({
       where: {
         id: demoVault.id,
-      },
-    });
-
-    // Log activity
-    await db.activityLog.create({
-      data: {
-        userId: payload.userId,
-        vaultId: demoVault.id,
-        action: 'DEMO_VAULT_DELETED',
-        description: 'Deleted demo vault',
       },
     });
 

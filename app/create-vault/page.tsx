@@ -1,8 +1,82 @@
 'use client';
 
+import { useState } from 'react';
 import { Lock, Users, Upload, Settings, Zap, Shield, Clock, CheckCircle, ChevronRight, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import CreateVaultForm from "@/app/components/CreateVaultForm";
+import DemoVaultForm from "@/app/components/DemoVaultForm";
+
+function DemoVaultFormTab() {
+  const [activeTab, setActiveTab] = useState<'demo' | 'real'>('demo');
+
+  return (
+    <div className="space-y-6">
+      {/* Tab Navigation */}
+      <div className="flex gap-3 border-b-4 border-black">
+        <button
+          onClick={() => setActiveTab('demo')}
+          className={`px-6 py-4 font-black text-lg transition-all border-b-4 ${
+            activeTab === 'demo'
+              ? 'border-black bg-heirlock-green text-black'
+              : 'border-transparent text-gray-600 hover:text-black'
+          }`}
+        >
+          ⏱️ Demo Vault (2 Minutes)
+        </button>
+        <button
+          onClick={() => setActiveTab('real')}
+          className={`px-6 py-4 font-black text-lg transition-all border-b-4 ${
+            activeTab === 'real'
+              ? 'border-black bg-heirlock-blue text-black'
+              : 'border-transparent text-gray-600 hover:text-black'
+          }`}
+        >
+          🔒 Real Vault (Custom Time)
+        </button>
+      </div>
+
+      {/* Tab Content */}
+      {activeTab === 'demo' && (
+        <div className="space-y-6">
+          <div className="border-4 border-black p-6 bg-gradient-to-r from-heirlock-green to-yellow-100 shadow-brutal">
+            <h2 className="text-3xl font-black text-black mb-3">See It In Action</h2>
+            <p className="text-black font-bold mb-4">
+              Test the full T.A.L.A. experience with a real vault that unlocks in just 2 minutes. Upload any file, download your encryption key, and watch time-locking technology work.
+            </p>
+            <ul className="space-y-2 text-sm font-bold text-black">
+              <li>✓ Real AES-256-GCM encryption</li>
+              <li>✓ Upload any file (max 50MB)</li>
+              <li>✓ Get an encryption key</li>
+              <li>✓ Auto-unlock after 2 minutes</li>
+            </ul>
+            <p className="text-xs text-black mt-4 italic opacity-90">
+              We are still building. We are not perfect. There will be bugs. There will be rough edges. But we are honest, transparent, and here to help. Your feedback drives us forward.
+            </p>
+          </div>
+          <DemoVaultForm />
+        </div>
+      )}
+
+      {activeTab === 'real' && (
+        <div className="space-y-6">
+          <div className="border-4 border-black p-6 bg-gradient-to-r from-heirlock-blue to-blue-100 shadow-brutal">
+            <h2 className="text-3xl font-black text-black mb-3">Secure Forever</h2>
+            <p className="text-black font-bold mb-4">
+              Create a real vault with your own unlock date. Time-lock anything from hours to 100 years in the future. Complete control, military-grade security.
+            </p>
+            <ul className="space-y-2 text-sm font-bold text-black">
+              <li>✓ Custom unlock dates (up to 100 years)</li>
+              <li>✓ Blockchain-enforced time-locking</li>
+              <li>✓ Military-grade encryption</li>
+              <li>✓ Decentralized IPFS storage</li>
+            </ul>
+          </div>
+          <CreateVaultForm />
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default function CreateVault() {
   const steps = [
@@ -86,43 +160,11 @@ export default function CreateVault() {
       <section id="vault-form" className="py-12 md:py-20 bg-white border-t-4 border-heirlock-blue scroll-mt-20">
         <div className="container mx-auto max-w-4xl px-3 sm:px-4">
           <div className="mb-12">
-            {/* Demo Vault CTA */}
-            <div className="mb-12 p-8 bg-gradient-to-r from-heirlock-green to-heirlock-blue border-4 border-black shadow-brutal">
-              <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-                <div>
-                  <h3 className="text-2xl font-black text-black mb-3">⏱️ Want to See It In Action?</h3>
-                  <p className="text-black font-bold mb-4">
-                    Create a demo vault instantly. Upload files, download encryption keys, experience the full T.A.L.A. workflow. After 10 minutes, watch your vault auto-unlock to see our time-locking technology in action.
-                  </p>
-                  <ul className="space-y-2 text-sm font-bold text-black">
-                    <li>✓ Upload any files you want</li>
-                    <li>✓ Download and test encryption keys</li>
-                    <li>✓ Experience the complete workflow</li>
-                    <li>✓ Watch it auto-unlock after 10 minutes</li>
-                  </ul>
-                  <p className="text-xs text-black mt-4 italic opacity-90">
-                  We are still building. We are not perfect. There will be bugs. There will be rough edges. But we are honest, transparent, and here to help. Your feedback drives us forward.
-                  </p>
-                </div>
-                <Link href="/dashboard">
-                  <button className="px-6 py-3 bg-black text-heirlock-green font-black border-4 border-black shadow-brutal hover:translate-y-[-4px] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-all duration-200 whitespace-nowrap flex items-center gap-2">
-                    <Zap className="w-5 h-5" />
-                    Try Demo Vault
-                  </button>
-                </Link>
-              </div>
-            </div>
-
-            <div className="text-center mb-8">
-              <h2 className="text-4xl md:text-5xl font-bold text-black mb-6">
-                Create Your Vault Now
-              </h2>
-              <p className="text-lg text-gray-700 max-w-2xl mx-auto">
-                Upload a file, set an unlock date, and secure it forever. No complications.
-              </p>
+            {/* Vault Form Tabs */}
+            <div className="mb-12">
+              <DemoVaultFormTab />
             </div>
           </div>
-          <CreateVaultForm />
         </div>
       </section>
 
