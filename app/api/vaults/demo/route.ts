@@ -20,6 +20,9 @@ async function getPrisma() {
 export async function POST(req: NextRequest) {
   try {
     console.log('POST /api/vaults/demo - handling request');
+    console.log('Content-Type:', req.headers.get('content-type'));
+    console.log('Content-Length:', req.headers.get('content-length'));
+    console.log('Authorization:', req.headers.get('authorization') ? 'present' : 'missing');
     
     // Verify auth first
     const payload = verifyRequest(req);
@@ -27,10 +30,23 @@ export async function POST(req: NextRequest) {
       return httpErrors.unauthorized();
     }
 
+    console.log('Auth verified for user:', payload.userId);
+
     // Parse body
     let body;
     try {
-      body = await req.json();
+      // Clone request to read body as text first for debugging
+      const bodyText = await req.clone().text();
+      console.log('Raw body text:', bodyText);
+      console.log('Body length:', bodyText.length);
+      
+      if (!bodyText || bodyText.length === 0) {
+        console.error('Body is empty!');
+        return apiError('Request body is empty', 400);
+      }
+      
+      body = JSON.parse(bodyText);
+      console.log('Parsed body successfully:', body);
     } catch (parseError) {
       console.error('Failed to parse JSON body:', parseError);
       return apiError('Invalid JSON in request body', 400);

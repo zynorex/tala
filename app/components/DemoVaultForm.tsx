@@ -201,6 +201,7 @@ export default function DemoVaultForm({ onSuccess }: { onSuccess?: () => void })
 
       console.log('Sending demo vault request with payload:', requestPayload);
       console.log('Request body JSON:', JSON.stringify(requestPayload));
+      console.log('Request body length:', JSON.stringify(requestPayload).length);
 
       const createRes = await fetch('/api/vaults/demo', {
         method: 'POST',
@@ -213,14 +214,28 @@ export default function DemoVaultForm({ onSuccess }: { onSuccess?: () => void })
 
       console.log('Response status:', createRes.status);
       console.log('Response ok:', createRes.ok);
+      
+      const responseText = await createRes.text();
+      console.log('Response text:', responseText);
+
+      console.log('Response status:', createRes.status);
+      console.log('Response ok:', createRes.ok);
+      
+      const responseText = await createRes.text();
+      console.log('Response text:', responseText);
 
       if (!createRes.ok) {
-        const data = await createRes.json();
+        let data;
+        try {
+          data = JSON.parse(responseText);
+        } catch {
+          data = { error: responseText };
+        }
         console.error('Create demo vault error:', data);
         throw new Error(data.error || 'Failed to create demo vault');
       }
 
-      const vaultData = await createRes.json();
+      const vaultData = JSON.parse(responseText);
       const vaultId = vaultData.data?.id;
 
       if (!vaultId) {
