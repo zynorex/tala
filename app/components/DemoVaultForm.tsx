@@ -186,16 +186,21 @@ export default function DemoVaultForm({ onSuccess }: { onSuccess?: () => void })
         throw new Error('Authentication token not found. Please sign in first.');
       }
 
+      console.log('Token:', token);
+
       // Create demo vault
       const unlockDateTime = getUnlockDateTime();
       const unlockTimestamp = Math.floor(new Date(unlockDateTime).getTime() / 1000);
 
-      console.log('Creating demo vault with data:', {
+      const requestPayload = {
         name: form.vaultName,
         description: form.vaultDescription,
-        unlockTimestamp,
-        isDemo: true,
-      });
+        password: form.decryptionKey,
+        unlockTime: unlockTimestamp,
+      };
+
+      console.log('Sending demo vault request with payload:', requestPayload);
+      console.log('Request body JSON:', JSON.stringify(requestPayload));
 
       const createRes = await fetch('/api/vaults/demo', {
         method: 'POST',
@@ -203,13 +208,11 @@ export default function DemoVaultForm({ onSuccess }: { onSuccess?: () => void })
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`,
         },
-        body: JSON.stringify({
-          name: form.vaultName,
-          description: form.vaultDescription,
-          password: form.decryptionKey,
-          unlockTime: unlockTimestamp,
-        }),
+        body: JSON.stringify(requestPayload),
       });
+
+      console.log('Response status:', createRes.status);
+      console.log('Response ok:', createRes.ok);
 
       if (!createRes.ok) {
         const data = await createRes.json();

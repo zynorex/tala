@@ -19,17 +19,30 @@ async function getPrisma() {
  */
 export async function POST(req: NextRequest) {
   try {
+    console.log('POST /api/vaults/demo - handling request');
+    
+    // Verify auth first
     const payload = verifyRequest(req);
     if (!payload) {
       return httpErrors.unauthorized();
     }
 
+    // Parse body
+    let body;
+    try {
+      body = await req.json();
+    } catch (parseError) {
+      console.error('Failed to parse JSON body:', parseError);
+      return apiError('Invalid JSON in request body', 400);
+    }
+
     const db = await getPrisma();
-    const body = await req.json();
+    
     const { name, description, password, unlockTime } = body;
 
     // Validate required fields
     if (!name || !password || !unlockTime) {
+      console.error('Missing required fields:', { name, description, password, unlockTime });
       return apiError('Missing required fields: name, password, unlockTime', 400);
     }
 
