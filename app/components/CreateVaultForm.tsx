@@ -2,11 +2,15 @@
 
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { useAccount, useSignMessage } from 'wagmi';
-import { Lock, Upload, FileText, AlertCircle, CheckCircle, Loader, Calendar, Info, Shield, Clock, X, Key, Copy, Download, Image as ImageIcon } from 'lucide-react';
+import { Lock, Upload, FileText, AlertCircle, CheckCircle, Loader, Calendar, Info, Shield, Clock, X, Key, Copy, Download, Image as ImageIcon, Zap } from 'lucide-react';
 import { useToast } from '@/app/hooks/useToast';
 import { useRouter } from 'next/navigation';
 import { validators } from '@/lib/validators/input-validators';
 import { generatePreview, detectFileCategory } from '@/lib/utils/file-preview';
+
+interface CreateVaultFormProps {
+  demoMode?: boolean;
+}
 
 interface FormState {
   vaultName: string;
@@ -30,7 +34,7 @@ interface PasswordStrength {
   suggestions: string[];
 }
 
-export default function CreateVaultForm() {
+export default function CreateVaultForm({ demoMode = false }: CreateVaultFormProps) {
   const { isConnected, address } = useAccount();
   const { signMessageAsync } = useSignMessage();
   const { toast } = useToast();
@@ -44,9 +48,13 @@ export default function CreateVaultForm() {
     .toISOString()
     .split('T')[0];
 
+  // For demo mode, set defaults
+  const defaultVaultName = demoMode ? 'My Demo Vault' : '';
+  const defaultDescription = demoMode ? 'Testing TALA time-locking technology (auto-unlocks in 2 minutes)' : '';
+
   const [form, setForm] = useState<FormState>({
-    vaultName: '',
-    vaultDescription: '',
+    vaultName: defaultVaultName,
+    vaultDescription: defaultDescription,
     file: null,
     decryptionKey: '',
     unlockDate: '',
@@ -282,19 +290,22 @@ export default function CreateVaultForm() {
       newErrors.decryptionKey = 'You must copy or download the decryption key before proceeding';
     }
 
-    if (!form.unlockDate) {
-      newErrors.unlockDate = 'Unlock date is required';
-    } else {
-      const unlockDateTime = new Date(`${form.unlockDate}T${form.unlockTime}`);
-      const now = new Date();
-      
-      if (unlockDateTime <= now) {
-        newErrors.unlockDate = 'Unlock time must be in the future';
-      }
+    // Skip date validation for demo mode (auto-set to 2 minutes)
+    if (!demoMode) {
+      if (!form.unlockDate) {
+        newErrors.unlockDate = 'Unlock date is required';
+      } else {
+        const unlockDateTime = new Date(`${form.unlockDate}T${form.unlockTime}`);
+        const now = new Date();
+        
+        if (unlockDateTime <= now) {
+          newErrors.unlockDate = 'Unlock time must be in the future';
+        }
 
-      const minUnlockTime = new Date(now.getTime() + 60 * 1000); // 1 minute from now
-      if (unlockDateTime < minUnlockTime) {
-        newErrors.unlockDate = 'Unlock time must be at least 1 minute in the future';
+        const minUnlockTime = new Date(now.getTime() + 60 * 1000); // 1 minute from now
+        if (unlockDateTime < minUnlockTime) {
+          newErrors.unlockDate = 'Unlock time must be at least 1 minute in the future';
+        }
       }
     }
 
@@ -343,15 +354,36 @@ export default function CreateVaultForm() {
     try {
 
       // Step 1: Create vault
-      const unlockDateTime = new Date(`${form.unlockDate}T${form.unlockTime}`);
-      const unlockTimestamp = Math.floor(unlockDateTime.getTime() / 1000);
+      // For demo mode, use 2 minutes from now; otherwise use form values
+      let unlockTimestamp: number;
+      
+      if (demoMode) {
+        // Demo: 2 minutes from now
+        unlockTimestamp = Math.floor((Date.now() + 2 * 60 * 1000) / 1000);
+        console.log('[DEMO] Creating demo vault with 2-minute auto-unlock');
+      } else {
+        // Regular: use form date/time
+        const unlockDateTime = new Date(`${form.unlockDate}T${form.unlockTime}`);
+        unlockTimestamp = Math.floor(unlockDateTime.getTime() / 1000);
+      }
 
-      console.log('Creating vault with data:', {
+      console.log('[VAULT] Creating vault with data:', {
         name: form.vaultName,
         description: form.vaultDescription,
         unlockTimestamp,
-        unlockDate: unlockDateTime.toISOString(),
+        isDemo: demoMode,
+        unlockDate: new Date(unlockTimestamp * 1000).toISOString(),
       });
+
+      const requestBody = {
+        name: form.vaultName,
+        description: form.vaultDescription,
+        password: form.decryptionKey,
+        unlockTime: unlockTimestamp,
+        isDemo: demoMode,
+      };
+
+      console.log('[VAULT] Request body:', JSON.stringify(requestBody));
 
       const createRes = await fetch('/api/vaults', {
         method: 'POST',
@@ -359,30 +391,30 @@ export default function CreateVaultForm() {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`,
         },
-        body: JSON.stringify({
-          name: form.vaultName,
-          description: form.vaultDescription,
-          password: form.decryptionKey,
-          unlockTime: unlockTimestamp,
-        }),
+        body: JSON.stringify(requestBody),
       });
 
-      console.log('Create vault response status:', createRes.status);
+      console.log('[VAULT] Create vault response status:', createRes.status);
 
       if (!createRes.ok) {
         const data = await createRes.json();
-        console.error('Create vault error:', data);
+        console.error('[VAULT] Create vault error:', data);
         throw new Error(data.error || 'Failed to create vault');
       }
 
       const vaultData = await createRes.json();
+      console.log('[VAULT] Vault created successfully:', vaultData);
+      
       const vaultId = vaultData.data?.id;
 
       if (!vaultId) {
+        console.error('[VAULT] No vault ID in response:', vaultData);
         throw new Error('No vault ID returned from server');
       }
 
-      toast('Vault created! Encrypting and uploading file...', 'info');
+      toast(demoMode 
+        ? 'Demo vault created! Encrypting and uploading file...' 
+        : 'Vault created! Encrypting and uploading file...', 'info');
 
       // Step 2: Upload file
       const formData = new FormData();
@@ -402,15 +434,20 @@ export default function CreateVaultForm() {
 
       if (!uploadRes.ok) {
         const data = await uploadRes.json();
+        console.error('[VAULT] Upload error:', data);
         throw new Error(data.error || 'Failed to upload file');
       }
 
-      toast('Vault created and file encrypted successfully!', 'success');
+      console.log('[VAULT] File uploaded successfully');
+
+      toast(demoMode 
+        ? 'Demo vault created! It will auto-unlock in 2 minutes. Download your key!' 
+        : 'Vault created and file encrypted successfully!', 'success');
 
       // Reset form
       setForm({
-        vaultName: '',
-        vaultDescription: '',
+        vaultName: demoMode ? 'My Demo Vault' : '',
+        vaultDescription: demoMode ? 'Testing TALA time-locking technology (auto-unlocks in 2 minutes)' : '',
         file: null,
         decryptionKey: '',
         unlockDate: '',
@@ -497,8 +534,29 @@ export default function CreateVaultForm() {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
+      {/* Demo Mode Notice */}
+      {demoMode && (
+        <div className="border-4 border-black p-6 bg-heirlock-green shadow-brutal">
+          <div className="flex items-start gap-3">
+            <Zap className="w-6 h-6 text-black flex-shrink-0 mt-1" />
+            <div>
+              <h3 className="font-black text-black text-lg mb-2">⏱️ Demo Vault Mode (2 Minutes)</h3>
+              <p className="text-sm text-gray-800 font-medium mb-2">
+                Experience the full TALA workflow! This vault uses real encryption and will auto-unlock in 2 minutes.
+              </p>
+              <ul className="text-sm text-gray-800 font-medium space-y-1 list-disc list-inside">
+                <li>Real AES-256-GCM encryption</li>
+                <li>Upload any file up to 50MB</li>
+                <li>Download and save your encryption key</li>
+                <li>Auto-unlocks in 2 minutes for testing</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Security Notice */}
-      <div className="border-4 border-black p-6 bg-heirlock-blue shadow-brutal">
+      <div className={`border-4 border-black p-6 ${demoMode ? 'bg-heirlock-yellow' : 'bg-heirlock-blue'} shadow-brutal`}>
         <div className="flex items-start gap-3">
           <Shield className="w-6 h-6 text-black flex-shrink-0 mt-1" />
           <div>
@@ -691,77 +749,91 @@ export default function CreateVaultForm() {
         )}
       </div>
 
-      {/* Unlock Date & Time */}
-      <div className="space-y-2">
-        <label className="font-black text-black text-sm uppercase block">
-          <Clock className="w-4 h-4 inline mr-2" />
-          Unlock Date & Time *
-        </label>
-        <p className="text-xs text-gray-700 font-medium mb-3">
-          Choose when the vault will unlock. Can be from 1 minute to 100 years in the future.
-        </p>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="relative">
-            <input
-              type="date"
-              min={minDate}
-              max={maxDate}
-              value={form.unlockDate}
-              onChange={(e) => {
-                setForm({ ...form, unlockDate: e.target.value });
-                setErrors({ ...errors, unlockDate: '' });
-              }}
-              className={`w-full px-4 py-3 border-4 border-black bg-cream font-bold text-black focus:outline-none focus:ring-4 focus:ring-heirlock-yellow transition-all hover:bg-heirlock-yellow/30 cursor-pointer ${
-                errors.unlockDate ? 'ring-4 ring-red-500' : ''
-              }`}
-              style={{
-                colorScheme: 'light',
-              }}
-            />
-            <Calendar className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-black pointer-events-none" />
+      {/* Unlock Date & Time - Hidden in Demo Mode */}
+      {!demoMode ? (
+        <div className="space-y-2">
+          <label className="font-black text-black text-sm uppercase block">
+            <Clock className="w-4 h-4 inline mr-2" />
+            Unlock Date & Time *
+          </label>
+          <p className="text-xs text-gray-700 font-medium mb-3">
+            Choose when the vault will unlock. Can be from 1 minute to 100 years in the future.
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="relative">
+              <input
+                type="date"
+                min={minDate}
+                max={maxDate}
+                value={form.unlockDate}
+                onChange={(e) => {
+                  setForm({ ...form, unlockDate: e.target.value });
+                  setErrors({ ...errors, unlockDate: '' });
+                }}
+                className={`w-full px-4 py-3 border-4 border-black bg-cream font-bold text-black focus:outline-none focus:ring-4 focus:ring-heirlock-yellow transition-all hover:bg-heirlock-yellow/30 cursor-pointer ${
+                  errors.unlockDate ? 'ring-4 ring-red-500' : ''
+                }`}
+                style={{
+                  colorScheme: 'light',
+                }}
+              />
+              <Calendar className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-black pointer-events-none" />
+            </div>
+            <div className="relative">
+              <input
+                type="time"
+                value={form.unlockTime}
+                onChange={(e) => {
+                  setForm({ ...form, unlockTime: e.target.value });
+                  setErrors({ ...errors, unlockDate: '' });
+                }}
+                className={`w-full px-4 py-3 border-4 border-black bg-cream font-bold text-black focus:outline-none focus:ring-4 focus:ring-heirlock-yellow transition-all hover:bg-heirlock-yellow/30 cursor-pointer ${
+                  errors.unlockDate ? 'ring-4 ring-red-500' : ''
+                }`}
+                style={{
+                  colorScheme: 'light',
+                }}
+              />
+              <Clock className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-black pointer-events-none" />
+            </div>
           </div>
-          <div className="relative">
-            <input
-              type="time"
-              value={form.unlockTime}
-              onChange={(e) => {
-                setForm({ ...form, unlockTime: e.target.value });
-                setErrors({ ...errors, unlockDate: '' });
-              }}
-              className={`w-full px-4 py-3 border-4 border-black bg-cream font-bold text-black focus:outline-none focus:ring-4 focus:ring-heirlock-yellow transition-all hover:bg-heirlock-yellow/30 cursor-pointer ${
-                errors.unlockDate ? 'ring-4 ring-red-500' : ''
-              }`}
-              style={{
-                colorScheme: 'light',
-              }}
-            />
-            <Clock className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-black pointer-events-none" />
-          </div>
+          {form.unlockDate && form.unlockTime && (
+            <div className="border-4 border-black p-4 bg-heirlock-yellow shadow-brutal">
+              <div className="flex items-center gap-2">
+                <CheckCircle className="w-5 h-5 text-black" />
+                <p className="text-sm font-black text-black">
+                  Vault unlocks: {new Date(`${form.unlockDate}T${form.unlockTime}`).toLocaleString('en-US', {
+                    weekday: 'long',
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                  })}
+                </p>
+              </div>
+            </div>
+          )}
+          {errors.unlockDate && (
+            <span className="text-xs text-red-600 font-black flex items-center gap-1">
+              <AlertCircle className="w-3 h-3" />
+              {errors.unlockDate}
+            </span>
+        )}
         </div>
-        {form.unlockDate && form.unlockTime && (
-          <div className="border-4 border-black p-4 bg-heirlock-yellow shadow-brutal">
-            <div className="flex items-center gap-2">
-              <CheckCircle className="w-5 h-5 text-black" />
-              <p className="text-sm font-black text-black">
-                Vault unlocks: {new Date(`${form.unlockDate}T${form.unlockTime}`).toLocaleString('en-US', {
-                  weekday: 'long',
-                  year: 'numeric',
-                  month: 'long',
-                  day: 'numeric',
-                  hour: '2-digit',
-                  minute: '2-digit'
-                })}
+      ) : (
+        <div className="border-4 border-black p-6 bg-heirlock-blue shadow-brutal">
+          <div className="flex items-center gap-3">
+            <Clock className="w-6 h-6 text-black flex-shrink-0" />
+            <div>
+              <h3 className="font-black text-black text-lg mb-1">⏱️ Auto-Unlock: 2 Minutes</h3>
+              <p className="text-sm text-gray-800 font-medium">
+                This demo vault will automatically unlock 2 minutes after creation. Perfect for testing the full TALA experience!
               </p>
             </div>
           </div>
-        )}
-        {errors.unlockDate && (
-          <span className="text-xs text-red-600 font-black flex items-center gap-1">
-            <AlertCircle className="w-3 h-3" />
-            {errors.unlockDate}
-          </span>
-        )}
-      </div>
+        </div>
+      )}
 
       {/* Decryption Key */}
       {form.decryptionKey && (
@@ -890,11 +962,31 @@ export default function CreateVaultForm() {
       {/* Submit Button */}
       <button
         type="submit"
-        disabled
-        className="w-full px-8 py-5 font-black border-4 border-black shadow-brutal inline-flex items-center justify-center gap-3 text-xl transition-all duration-200 bg-gray-400 text-gray-600 cursor-not-allowed opacity-70"
+        disabled={form.isSubmitting}
+        className={`w-full px-8 py-5 font-black border-4 border-black shadow-brutal inline-flex items-center justify-center gap-3 text-xl transition-all duration-200 ${
+          form.isSubmitting
+            ? 'bg-gray-400 text-gray-600 cursor-not-allowed opacity-70'
+            : demoMode
+            ? 'bg-heirlock-green hover:bg-green-500 text-black hover:-translate-y-1 hover:shadow-brutal-lg'
+            : 'bg-heirlock-yellow hover:bg-yellow-400 text-black hover:-translate-y-1 hover:shadow-brutal-lg'
+        }`}
       >
-        <Lock className="w-6 h-6" />
-        <span>Create Secure Vault (Coming Soon)</span>
+        {form.isSubmitting ? (
+          <>
+            <Loader className="w-6 h-6 animate-spin" />
+            <span>{form.encryptionProgress > 0 ? `Encrypting... ${form.encryptionProgress}%` : 'Creating Vault...'}</span>
+          </>
+        ) : demoMode ? (
+          <>
+            <Zap className="w-6 h-6" />
+            <span>Create Demo Vault (2 Min)</span>
+          </>
+        ) : (
+          <>
+            <Lock className="w-6 h-6" />
+            <span>Create Secure Vault</span>
+          </>
+        )}
       </button>
 
       {/* Security Info Footer */}

@@ -35,11 +35,28 @@ export async function POST(req: NextRequest) {
       return NextResponse.json(handleValidationError(validation.error), { status: 400 });
     }
 
-    const { name, description, password } = validation.data;
+    const { name, description, password, unlockTime, isDemo } = validation.data;
     const db = await getPrisma();
+
+    // For demo vaults, check if user already has one
+    if (isDemo) {
+      const existingDemo = await db.vault.findFirst({
+        where: { userId: payload.userId, isDemo: true, isActive: true },
+      });
+      if (existingDemo) {
+        console.log(`[DEMO] User ${payload.userId} already has demo vault: ${existingDemo.id}`);
+        return apiError('You already have a demo vault. Delete it first to create a new one.', 409);
+      }
+    }
 
     // Derive encryption key from password (used for files)
     const vaultKey = deriveVaultKeyFromPassword(password);
+
+    // Calculate demo expiry if demo mode
+    const demoExpiresAt = isDemo ? new Date(Date.now() + 2 * 60 * 1000) : null; // 2 minutes for demo
+
+    console.log(`[VAULT] Creating ${isDemo ? 'DEMO' : 'regular'} vault for user: ${payload.userId}`);
+    console.log(`[VAULT] Name: ${name}, UnlockTime: ${unlockTime}, IsDemo: ${isDemo}`);
 
     // Store vault with metadata (actual file encryption happens on file upload)
     const vault = await db.vault.create({
@@ -53,6 +70,8 @@ export async function POST(req: NextRequest) {
         fileName: '',  // Will be set when file is uploaded
         fileSize: 0,   // Will be set when file is uploaded
         isActive: true,
+        isDemo: isDemo || false,
+        demoExpiresAt: demoExpiresAt,
       },
       select: {
         id: true,
@@ -60,11 +79,13 @@ export async function POST(req: NextRequest) {
         name: true,
         description: true,
         isActive: true,
+        isDemo: true,
+        demoExpiresAt: true,
         createdAt: true,
         updatedAt: true,
         _count: {
           select: {
-            files: true,
+            vaultFiles: true,
           },
         },
       },
@@ -75,12 +96,23 @@ export async function POST(req: NextRequest) {
       data: {
         userId: payload.userId,
         vaultId: vault.id,
-        action: 'VAULT_CREATED',
-        description: `Created vault: ${name}`,
+        action: isDemo ? 'DEMO_VAULT_CREATED' : 'VAULT_CREATED',
+        description: isDemo 
+          ? `Created demo vault: ${name} (auto-unlocks in 2 minutes)`
+          : `Created vault: ${name}`,
       },
     });
 
-    return apiSuccess(vault, 201);
+    console.log(`[VAULT] Successfully created vault: ${vault.id}`);
+
+    return apiSuccess({
+      ...vault,
+      isDemo: isDemo || false,
+      demoExpiresAt: demoExpiresAt,
+      message: isDemo 
+        ? 'Demo vault created! It will auto-unlock in 2 minutes.'
+        : 'Vault created successfully!',
+    }, 201);
   } catch (error) {
     return NextResponse.json(handleDbError(error), { status: 500 });
   }
@@ -119,11 +151,13 @@ export async function GET(req: NextRequest) {
         name: true,
         description: true,
         isActive: true,
+        isDemo: true,
+        demoExpiresAt: true,
         createdAt: true,
         updatedAt: true,
         _count: {
           select: {
-            files: true,
+            vaultFiles: true,
           },
         },
       },

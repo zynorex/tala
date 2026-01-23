@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useAccount } from 'wagmi';
 import { useConnect } from 'wagmi';
-import { BarChart, TrendingUp, Lock, Shield, Clock, Database, AlertCircle, Eye, EyeOff, User } from 'lucide-react';
+import { BarChart, TrendingUp, Lock, Shield, Clock, Database, AlertCircle, Eye, EyeOff, User, Zap } from 'lucide-react';
 import Link from 'next/link';
 import { useAuthToken } from '@/app/hooks/useAuthToken';
 import DashboardStats from './DashboardStats';
@@ -11,7 +11,6 @@ import VaultsList from './VaultsList';
 import ActivityLog from './ActivityLog';
 import SecurityMetrics from './SecurityMetrics';
 import QuickActions from './QuickActions';
-import DemoVaultComponent from './DemoVaultComponent';
 
 interface DashboardData {
   totalVaults: number;
@@ -183,14 +182,29 @@ export default function DashboardContent() {
         {/* Quick Actions */}
         <QuickActions />
 
-        {/* Demo Vault CTA or Active Status */}
-        <DemoVaultComponent 
-          existingDemo={hasDemoVault}
-          onDemoCreated={() => {
-            // Reload dashboard data
-            loadDashboardData();
-          }}
-        />
+        {/* Demo Vault CTA - Links to create-vault page with demo tab */}
+        {!hasDemoVault && (
+          <div className="border-4 border-black p-6 bg-gradient-to-r from-heirlock-green to-yellow-100 shadow-brutal">
+            <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+              <div className="flex items-start gap-3">
+                <Zap className="w-8 h-8 text-black flex-shrink-0 mt-1" />
+                <div>
+                  <h3 className="text-xl font-black text-black mb-1">⏱️ Try Demo Vault</h3>
+                  <p className="text-black font-medium">
+                    Experience the full TALA workflow! Create a real vault that auto-unlocks in 2 minutes.
+                  </p>
+                </div>
+              </div>
+              <Link 
+                href="/create-vault" 
+                className="inline-flex items-center gap-2 px-6 py-3 bg-black text-heirlock-green font-black border-4 border-black shadow-brutal hover:-translate-y-1 hover:shadow-brutal-lg transition-all whitespace-nowrap"
+              >
+                <Zap className="w-5 h-5" />
+                Create Demo Vault
+              </Link>
+            </div>
+          </div>
+        )}
 
         {/* Stats Grid */}
         {isLoading ? (

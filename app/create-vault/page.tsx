@@ -4,7 +4,6 @@ import { useState } from 'react';
 import { Lock, Users, Upload, Settings, Zap, Shield, Clock, CheckCircle, ChevronRight, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import CreateVaultForm from "@/app/components/CreateVaultForm";
-import DemoVaultForm from "@/app/components/DemoVaultForm";
 
 function DemoVaultFormTab() {
   const [activeTab, setActiveTab] = useState<'demo' | 'real'>('demo');
@@ -53,7 +52,8 @@ function DemoVaultFormTab() {
               We are still building. We are not perfect. There will be bugs. There will be rough edges. But we are honest, transparent, and here to help. Your feedback drives us forward.
             </p>
           </div>
-          <DemoVaultForm />
+          {/* Use CreateVaultForm in demo mode */}
+          <CreateVaultForm demoMode={true} />
         </div>
       )}
 
@@ -71,7 +71,8 @@ function DemoVaultFormTab() {
               <li>✓ Decentralized IPFS storage</li>
             </ul>
           </div>
-          <CreateVaultForm />
+          {/* Use CreateVaultForm in normal mode */}
+          <CreateVaultForm demoMode={false} />
         </div>
       )}
     </div>
