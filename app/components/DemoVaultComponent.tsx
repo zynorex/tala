@@ -51,7 +51,7 @@ export default function DemoVaultComponent({ onDemoCreated, existingDemo = false
         console.log('Demo vault created successfully');
         toast({
           title: 'Demo Vault Created 🎉',
-          description: 'Download the sample files, decrypt them, and experience encryption in action',
+          description: 'You have 10 minutes to upload files and test encryption. The vault will auto-unlock after that!',
           type: 'success',
         });
         setShowDemo(true);
@@ -61,7 +61,7 @@ export default function DemoVaultComponent({ onDemoCreated, existingDemo = false
         console.log('Demo vault already exists');
         toast({
           title: 'Demo Vault Already Exists',
-          description: 'You already have a demo vault ready. Visit your dashboard to explore it',
+          description: 'You already have a demo vault. Visit your dashboard to upload files and test it',
           type: 'info',
         });
         setShowDemo(true);

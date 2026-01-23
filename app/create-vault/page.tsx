@@ -90,18 +90,18 @@ export default function CreateVault() {
             <div className="mb-12 p-8 bg-gradient-to-r from-heirlock-green to-heirlock-blue border-4 border-black shadow-brutal">
               <div className="flex flex-col md:flex-row items-center justify-between gap-6">
                 <div>
-                  <h3 className="text-2xl font-black text-black mb-3">👀 Want to Test Drive First?</h3>
+                  <h3 className="text-2xl font-black text-black mb-3">⏱️ Want to See It In Action?</h3>
                   <p className="text-black font-bold mb-4">
-                    Create a demo vault instantly. Download sample files, decrypt them, and see exactly how T.A.L.A. protects your data. Zero commitment, zero risk, no credit card needed.
+                    Create a demo vault instantly. Upload files, download encryption keys, experience the full T.A.L.A. workflow. After 10 minutes, watch your vault auto-unlock to see our time-locking technology in action.
                   </p>
                   <ul className="space-y-2 text-sm font-bold text-black">
-                    <li>✓ Download and decrypt sample files</li>
-                    <li>✓ Understand encryption in action</li>
-                    <li>✓ Explore all vault features</li>
-                    <li>✓ Delete anytime, no questions asked</li>
+                    <li>✓ Upload any files you want</li>
+                    <li>✓ Download and test encryption keys</li>
+                    <li>✓ Experience the complete workflow</li>
+                    <li>✓ Watch it auto-unlock after 10 minutes</li>
                   </ul>
                   <p className="text-xs text-black mt-4 italic opacity-90">
-                  We're still in beta. We're not perfect. There will be bugs. There will be rough edges. But we are honest, transparent, and here to help. Your feedback drives us forward.
+                  We are still building. We are not perfect. There will be bugs. There will be rough edges. But we are honest, transparent, and here to help. Your feedback drives us forward.
                   </p>
                 </div>
                 <Link href="/dashboard">

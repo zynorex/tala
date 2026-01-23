@@ -48,9 +48,9 @@ export async function POST(req: NextRequest) {
     const demoVault = await db.vault.create({
       data: {
         userId: payload.userId,
-        name: '⏱️ Demo Vault (expires in 10 minutes)',
+        name: '⏱️ Demo Vault (Auto-unlocks in 10 minutes)',
         description:
-          'This is your demo vault! Upload files, download the encryption key, and experience the full T.A.L.A. workflow. This vault will automatically expire and delete in 10 minutes.',
+          'This is your demo vault! Upload files, download the encryption key, and experience the full T.A.L.A. workflow. After 10 minutes, this vault will automatically unlock to demonstrate our time-locking technology.',
         encryptedData: '{}',
         keyHash: vaultKey.keyHash,
         fileHash: '',
@@ -84,13 +84,13 @@ export async function POST(req: NextRequest) {
         userId: payload.userId,
         vaultId: demoVault.id,
         action: 'DEMO_VAULT_CREATED',
-        description: 'Created demo vault - will expire in 10 minutes',
+        description: 'Created demo vault - will auto-unlock in 10 minutes',
       },
     });
 
     return apiSuccess(
       {
-        message: 'Demo vault created! You have 10 minutes to explore. Upload files, download the key, and experience T.A.L.A. Try it out!',
+        message: 'Demo vault created! You have 10 minutes to explore. Upload files, download the key, and experience T.A.L.A. After 10 minutes, the vault will auto-unlock to show our time-locking technology in action!',
         vault: demoVault,
         expiresAt: demoVault.demoExpiresAt,
       },
