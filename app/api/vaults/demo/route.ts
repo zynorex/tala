@@ -41,16 +41,16 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Create demo vault
+    // Create demo vault (empty - user will add files like a real vault)
     const demoPassword = 'DEMO_VAULT_' + Date.now();
     const vaultKey = deriveVaultKeyFromPassword(demoPassword);
 
     const demoVault = await db.vault.create({
       data: {
         userId: payload.userId,
-        name: '📚 Demo Vault - Explore T.A.L.A.',
+        name: '⏱️ Demo Vault (expires in 10 minutes)',
         description:
-          'This is a demonstration vault showing how T.A.L.A. works. Explore the features, download sample files, and understand the encryption flow. You can delete this vault anytime to start fresh.',
+          'This is your demo vault! Upload files, download the encryption key, and experience the full T.A.L.A. workflow. This vault will automatically expire and delete in 10 minutes.',
         encryptedData: '{}',
         keyHash: vaultKey.keyHash,
         fileHash: '',
@@ -58,7 +58,7 @@ export async function POST(req: NextRequest) {
         fileSize: 0,
         isActive: true,
         isDemo: true,
-        demoExpiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days
+        demoExpiresAt: new Date(Date.now() + 10 * 60 * 1000), // 10 minutes
       },
       select: {
         id: true,
@@ -67,6 +67,7 @@ export async function POST(req: NextRequest) {
         description: true,
         isActive: true,
         isDemo: true,
+        demoExpiresAt: true,
         createdAt: true,
         updatedAt: true,
         _count: {
@@ -77,59 +78,21 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    // Create demo files
-    const demoFiles = [
-      {
-        name: 'TALA_Getting_Started_Guide.pdf',
-        description: 'Learn how to use T.A.L.A. in 5 minutes',
-        mimeType: 'application/pdf',
-        fileSizeBytes: 2500000,
-      },
-      {
-        name: 'Security_Best_Practices.txt',
-        description: 'Industry-standard security recommendations',
-        mimeType: 'text/plain',
-        fileSizeBytes: 15000,
-      },
-      {
-        name: 'Encryption_Whitepaper.pdf',
-        description: 'Technical deep-dive into our encryption standards',
-        mimeType: 'application/pdf',
-        fileSizeBytes: 3200000,
-      },
-    ];
-
-    for (const file of demoFiles) {
-      await db.file.create({
-        data: {
-          vaultId: demoVault.id,
-          fileName: file.name,
-          description: file.description,
-          mimeType: file.mimeType,
-          fileSizeBytes: file.fileSizeBytes,
-          ipfsHash: 'QmDemoHash_' + Math.random().toString(36).substring(7),
-          encryptedFileData: '{}',
-          isEncrypted: true,
-          uploadedAt: new Date(),
-        },
-      });
-    }
-
     // Log activity
     await db.activityLog.create({
       data: {
         userId: payload.userId,
         vaultId: demoVault.id,
         action: 'DEMO_VAULT_CREATED',
-        description: 'Created demo vault for learning',
+        description: 'Created demo vault - will expire in 10 minutes',
       },
     });
 
     return apiSuccess(
       {
-        message: 'Demo vault created successfully! Explore the features and understand how T.A.L.A. works.',
+        message: 'Demo vault created! You have 10 minutes to explore. Upload files, download the key, and experience T.A.L.A. Try it out!',
         vault: demoVault,
-        totalFiles: demoFiles.length,
+        expiresAt: demoVault.demoExpiresAt,
       },
       201
     );
@@ -164,7 +127,7 @@ export async function DELETE(req: NextRequest) {
     }
 
     // Delete all files in demo vault
-    await db.file.deleteMany({
+    await db.vaultFile.deleteMany({
       where: {
         vaultId: demoVault.id,
       },

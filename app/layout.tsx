@@ -4,6 +4,7 @@ import "./globals.css";
 import { ToastProvider } from "./providers/ToastProvider";
 import { ThemeProvider } from "./providers/ThemeProvider";
 import { AdminShortcutProvider } from "./providers/AdminShortcutProvider";
+import { NextAuthSessionProvider } from "./providers/SessionProvider";
 import { ErrorBoundary } from "./components/ErrorBoundary";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
@@ -82,24 +83,26 @@ export default function RootLayout({
     <html lang="en" className={`${inter.variable} ${spaceGrotesk.variable}`}>
       <body className={inter.className}>
         <ErrorBoundary>
-          <AdminShortcutProvider>
-            <ThemeProvider>
-              <Web3ClientWrapper>
-                <ToastProvider>
-                  <LaunchAnnouncementModal />
-                  <PageSkeleton />
-                  <MobileWarning />
-                  <Navbar />
-                  <DevelopmentNotification />
-                  <CookieConsent />
-                  <div className="pt-16 md:pt-20">
-                    {children}
-                  </div>
-                  <Footer />
-                </ToastProvider>
-              </Web3ClientWrapper>
-            </ThemeProvider>
-          </AdminShortcutProvider>
+          <NextAuthSessionProvider>
+            <AdminShortcutProvider>
+              <ThemeProvider>
+                <Web3ClientWrapper>
+                  <ToastProvider>
+                    <LaunchAnnouncementModal />
+                    <PageSkeleton />
+                    <MobileWarning />
+                    <Navbar />
+                    <DevelopmentNotification />
+                    <CookieConsent />
+                    <div className="pt-16 md:pt-20">
+                      {children}
+                    </div>
+                    <Footer />
+                  </ToastProvider>
+                </Web3ClientWrapper>
+              </ThemeProvider>
+            </AdminShortcutProvider>
+          </NextAuthSessionProvider>
         </ErrorBoundary>
       </body>
     </html>

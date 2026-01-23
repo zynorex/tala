@@ -5,6 +5,7 @@ import { useAccount } from 'wagmi';
 import { useConnect } from 'wagmi';
 import { BarChart, TrendingUp, Lock, Shield, Clock, Database, AlertCircle, Eye, EyeOff, User } from 'lucide-react';
 import Link from 'next/link';
+import { useAuthToken } from '@/app/hooks/useAuthToken';
 import DashboardStats from './DashboardStats';
 import VaultsList from './VaultsList';
 import ActivityLog from './ActivityLog';
@@ -24,6 +25,8 @@ interface DashboardData {
 export default function DashboardContent() {
   const { isConnected, address } = useAccount();
   const { connectors, connect } = useConnect();
+  const { isReady: isAuthReady } = useAuthToken(); // Ensure token is available
+  
   const [dashboardData, setDashboardData] = useState<DashboardData>({
     totalVaults: 0,
     totalStorageUsed: 0,
@@ -40,8 +43,11 @@ export default function DashboardContent() {
   const [hasDemoVault, setHasDemoVault] = useState(false);
 
   useEffect(() => {
-    loadDashboardData();
-  }, []);
+    // Load dashboard data when auth is ready
+    if (isAuthReady || localStorage.getItem('auth_token')) {
+      loadDashboardData();
+    }
+  }, [isAuthReady]);
 
   const loadDashboardData = async () => {
     setIsLoading(true);

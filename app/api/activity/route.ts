@@ -48,7 +48,7 @@ export async function GET(req: NextRequest) {
       select: {
         id: true,
         action: true,
-        details: true,
+        description: true,
         vaultId: true,
         createdAt: true,
       },

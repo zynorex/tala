@@ -25,19 +25,30 @@ function LoginContent() {
       const sessionReady = searchParams.get('sessionReady');
       if (sessionReady === 'true') {
         try {
+          console.log('Session ready detected, generating token...');
           // Generate JWT token from session
           const tokenResponse = await fetch('/api/auth/generate-token', {
             method: 'POST',
           });
 
+          console.log('Token response status:', tokenResponse.status);
+          
           if (tokenResponse.ok) {
             const data = await tokenResponse.json();
+            console.log('Token generated, storing in localStorage');
             localStorage.setItem('auth_token', data.token);
             localStorage.setItem('user', JSON.stringify(data.user));
+            console.log('Redirecting to dashboard');
             router.push('/dashboard');
+          } else {
+            console.error('Failed to generate token, status:', tokenResponse.status);
+            const error = await tokenResponse.text();
+            console.error('Error:', error);
+            setError('Failed to generate authentication token. Please try again.');
           }
         } catch (err) {
           console.error('Failed to generate token:', err);
+          setError('An error occurred during authentication. Please try again.');
         }
       }
     };

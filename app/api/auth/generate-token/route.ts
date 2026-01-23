@@ -8,10 +8,14 @@ const logger = getLogger('GenerateToken');
 
 export async function POST(req: Request) {
   try {
+    console.log('Generate token endpoint called');
+    
     // Get the current session
     const session = await getServerSession(authOptions);
+    console.log('Session retrieved:', !!session, session?.user?.email);
 
     if (!session || !session.user?.email) {
+      console.log('No valid session found');
       logger.warn('No valid session found');
       return Response.json(
         { error: 'Not authenticated' },
@@ -19,21 +23,26 @@ export async function POST(req: Request) {
       );
     }
 
+    console.log('Looking up user with email:', session.user.email);
+    
     // Get or create user for Google auth
     let user = await db.user.findUnique({
       where: { email: session.user.email },
     });
 
     if (!user) {
+      console.log('Creating new user from Google auth');
       logger.info('Creating new user from Google auth', { email: session.user.email });
       user = await db.user.create({
         data: {
           email: session.user.email,
           name: session.user.name || session.user.email,
-          plan: 'free',
           role: 'user',
         },
       });
+      console.log('User created:', user.id);
+    } else {
+      console.log('User found:', user.id);
     }
 
     // Generate JWT token
@@ -43,6 +52,7 @@ export async function POST(req: Request) {
       user.walletAddress || undefined
     );
 
+    console.log('Token generated successfully');
     logger.info('Token generated', { userId: user.id, email: user.email });
 
     return Response.json({
@@ -54,6 +64,7 @@ export async function POST(req: Request) {
       },
     });
   } catch (error) {
+    console.error('Failed to generate token:', error);
     logger.error('Failed to generate token', error instanceof Error ? error : undefined);
     return Response.json(
       { error: 'Failed to generate token' },
