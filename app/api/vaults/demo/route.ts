@@ -32,19 +32,18 @@ export async function POST(req: NextRequest) {
 
     console.log('Auth verified for user:', payload.userId);
 
-    // Parse body
+    // Read body as text first
+    const bodyText = await req.text();
+    console.log('Raw body text:', bodyText);
+    console.log('Body length:', bodyText.length);
+    
+    if (!bodyText || bodyText.length === 0) {
+      console.error('Body is empty!');
+      return apiError('Request body is empty', 400);
+    }
+    
     let body;
     try {
-      // Clone request to read body as text first for debugging
-      const bodyText = await req.clone().text();
-      console.log('Raw body text:', bodyText);
-      console.log('Body length:', bodyText.length);
-      
-      if (!bodyText || bodyText.length === 0) {
-        console.error('Body is empty!');
-        return apiError('Request body is empty', 400);
-      }
-      
       body = JSON.parse(bodyText);
       console.log('Parsed body successfully:', body);
     } catch (parseError) {
