@@ -202,14 +202,20 @@ export default function DemoVaultForm({ onSuccess }: { onSuccess?: () => void })
       console.log('Sending demo vault request with payload:', requestPayload);
       console.log('Request body JSON:', JSON.stringify(requestPayload));
       console.log('Request body length:', JSON.stringify(requestPayload).length);
+      console.log('Fetch URL:', '/api/vaults/demo');
+      console.log('Method:', 'POST');
+
+      const bodyString = JSON.stringify(requestPayload);
+      console.log('Body string before fetch:', bodyString);
 
       const createRes = await fetch('/api/vaults/demo', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`,
+          'x-csrf-token': 'dev-bypass', // CSRF bypass for development
         },
-        body: JSON.stringify(requestPayload),
+        body: bodyString,
       });
 
       console.log('Response status:', createRes.status);

@@ -3,6 +3,10 @@ import { verifyRequest } from '@/lib/auth/jwt';
 import { apiSuccess, apiError, handleDbError, httpErrors } from '@/lib/auth/api-response';
 import { deriveVaultKeyFromPassword } from '@/lib/vault/vaultEncryption';
 
+// Configure route
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
+
 let prisma: any = null;
 
 async function getPrisma() {
