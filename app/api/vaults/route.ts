@@ -38,14 +38,30 @@ export async function POST(req: NextRequest) {
     const { name, description, password, unlockTime, isDemo } = validation.data;
     const db = await getPrisma();
 
-    // For demo vaults, check if user already has one
+    // For demo vaults, auto-delete existing demo vault (one at a time policy)
     if (isDemo) {
       const existingDemo = await db.vault.findFirst({
         where: { userId: payload.userId, isDemo: true, isActive: true },
       });
       if (existingDemo) {
-        console.log(`[DEMO] User ${payload.userId} already has demo vault: ${existingDemo.id}`);
-        return apiError('You already have a demo vault. Delete it first to create a new one.', 409);
+        console.log(`[DEMO] User ${payload.userId} has existing demo vault: ${existingDemo.id} - Auto-deleting...`);
+        
+        // Delete associated files first
+        await db.vaultFile.deleteMany({
+          where: { vaultId: existingDemo.id },
+        });
+        
+        // Delete associated activity logs
+        await db.activityLog.deleteMany({
+          where: { vaultId: existingDemo.id },
+        });
+        
+        // Delete the old demo vault
+        await db.vault.delete({
+          where: { id: existingDemo.id },
+        });
+        
+        console.log(`[DEMO] Old demo vault ${existingDemo.id} deleted successfully`);
       }
     }
 
@@ -85,7 +101,7 @@ export async function POST(req: NextRequest) {
         updatedAt: true,
         _count: {
           select: {
-            vaultFiles: true,
+            files: true,
           },
         },
       },
@@ -157,7 +173,7 @@ export async function GET(req: NextRequest) {
         updatedAt: true,
         _count: {
           select: {
-            vaultFiles: true,
+            files: true,
           },
         },
       },

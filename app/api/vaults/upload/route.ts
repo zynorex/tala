@@ -12,6 +12,7 @@ import { uploadToIPFS } from "@/lib/ipfs/ipfs";
 import { getLogger } from "@/lib/utils/logger";
 import { NextRequest } from "next/server";
 import crypto from "crypto";
+import { verifyRequest } from "@/lib/auth/jwt";
 
 const logger = getLogger('FileUpload');
 
@@ -27,10 +28,24 @@ export async function POST(req: NextRequest): Promise<Response> {
   const startTime = Date.now();
 
   try {
-    // 1. Verify authentication
-    const session = await getServerSession(authOptions);
+    // 1. Verify authentication - Support both NextAuth session and JWT Bearer token
+    let userId: string | undefined;
+    
+    // First try JWT Bearer token (from Authorization header)
+    const jwtPayload = verifyRequest(req);
+    if (jwtPayload?.userId) {
+      userId = jwtPayload.userId;
+      logger.info("Authenticated via JWT token", { userId });
+    } else {
+      // Fallback to NextAuth session
+      const session = await getServerSession(authOptions);
+      if (session?.user?.id) {
+        userId = session.user.id;
+        logger.info("Authenticated via NextAuth session", { userId });
+      }
+    }
 
-    if (!session?.user?.id) {
+    if (!userId) {
       logger.warn("Upload attempt: No authentication");
       return Response.json<UploadResponse>(
         { success: false, error: "Unauthorized. Please sign in first." },
@@ -38,7 +53,6 @@ export async function POST(req: NextRequest): Promise<Response> {
       );
     }
 
-    const userId = session.user.id;
     logger.info("Upload started", { userId });
 
     // 2. Parse form data
@@ -92,9 +106,13 @@ export async function POST(req: NextRequest): Promise<Response> {
       );
     }
 
-    // 4. Validate file (security checks)
-    logger.info("Validating file", { fileName: file.name });
-    const validation = await validateFile(file, true); // strict mode
+    // 4. Convert File to Buffer for validation
+    const arrayBuffer = await file.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
+
+    // 5. Validate file (security checks)
+    logger.info("Validating file", { fileName: file.name, fileSize: file.size, mimeType: file.type });
+    const validation = validateFile(file.name, buffer, file.type, { strict: true });
 
     if (!validation.valid) {
       logger.warn("Upload failed: File validation failed", {
@@ -112,13 +130,8 @@ export async function POST(req: NextRequest): Promise<Response> {
       );
     }
 
-    // 5. Get user plan and check storage quota
-    const user = await db.user.findUnique({
-      where: { id: userId },
-      select: { plan: true },
-    });
-
-    const userPlan = user?.plan || "free";
+    // 5. Check storage quota (default to 'free' plan since plan system is not yet implemented)
+    const userPlan = "free";
     logger.info("Checking storage quota", { userId, userPlan, fileSize: file.size });
 
     const canUpload = await canUserUpload(userId, file.size, userPlan);
@@ -138,8 +151,8 @@ export async function POST(req: NextRequest): Promise<Response> {
       );
     }
 
-    // 6. Read file buffer
-    const fileBuffer = Buffer.from(await file.arrayBuffer());
+    // 6. Use the buffer we already created for validation (reuse instead of reading again)
+    const fileBuffer = buffer;
 
     // 7. Calculate original file hash
     const fileHash = crypto.createHash('sha256').update(fileBuffer).digest('hex');
