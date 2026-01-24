@@ -17,6 +17,29 @@ interface ChangelogEntry {
 export default function Changelog() {
   const changelog: ChangelogEntry[] = [
     {
+      version: '1.7.0',
+      date: 'January 25, 2026',
+      category: 'feature',
+      icon: Zap,
+      title: 'Demo Vault Feature & Home Page Design',
+      description: 'Interactive demo vault with auto-expiration and complete home page redesign with pricing synchronization.',
+      changes: [
+        '✓ Demo Vault Feature: Pre-created demo vaults with automatic expiration after 24 hours',
+        '✓ Auto-Unlock Mechanism: Demo vaults automatically unlock and clean up without user interaction',
+        '✓ Demo Mode UI: Integrated demo mode into CreateVaultForm with clear messaging',
+        '✓ Home Page Population: Complete landing page with 15 sections and conversion funnel',
+        '✓ Use Cases Section: 4 detailed use case cards (Education, Governance, Legal, Security)',
+        '✓ Trust Metrics: Live statistics dashboard (2.4K vaults, 847GB secured, 99.9% uptime)',
+        '✓ FAQ Integration: 5 top questions with answers directly on home page',
+        '✓ Pricing Design: 3-column home page pricing with CTA to /pricing for Professional tier',
+        '✓ Roadmap Section: Q1-Q4 2026 development milestones and features',
+        '✓ Pricing Synchronization: Consistent 4-tier model across all platforms (documentation, home page, /pricing)',
+        '✓ Documentation Expansion: 3,600+ lines of production-ready documentation with getting started guide',
+        '✓ Version History: Comprehensive changelog with all features documented',
+      ],
+      impact: 'major',
+    },
+    {
       version: '1.6.0',
       date: 'January 17, 2026',
       category: 'feature',
