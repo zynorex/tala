@@ -18,16 +18,14 @@ interface VaultData {
   userId: string;
   name: string;
   description: string | null;
-  fileName: string;
-  fileSize: number;
-  mimeType: string | null;
-  fileHash: string;
-  keyHash: string;
+  fileHash?: string;
+  keyHash?: string;
   isActive: boolean;
+  isDemo?: boolean;
+  demoExpiresAt?: string;
   createdAt: string;
   updatedAt: string;
   files: VaultFile[];
-  activityLogs: ActivityLogEntry[];
 }
 
 interface VaultFile {
@@ -35,13 +33,10 @@ interface VaultFile {
   fileName: string;
   fileSizeBytes: number;
   mimeType: string | null;
-  fileHash: string;
   ipfsHash: string;
-  encryptionKeyHash: string;
-  uploadedBy: string;
   uploadedAt: string;
-  isActive: boolean;
-  deletedAt: string | null;
+  isActive?: boolean;
+  deletedAt?: string | null;
 }
 
 interface ActivityLogEntry {
@@ -760,6 +755,7 @@ export default function VaultDetailPage({ params }: { params: Promise<{ id: stri
             </div>
 
             {/* Key Hash Card */}
+            {vault.keyHash && (
             <div className="border-4 border-black p-4 bg-white">
               <p className="text-xs font-black text-gray-600 mb-2 flex items-center gap-2">
                 <Lock className="w-4 h-4" />
@@ -781,8 +777,10 @@ export default function VaultDetailPage({ params }: { params: Promise<{ id: stri
                 </button>
               </div>
             </div>
+            )}
 
             {/* File Hash Card */}
+            {vault.fileHash && (
             <div className="border-4 border-black p-4 bg-white">
               <p className="text-xs font-black text-gray-600 mb-2 flex items-center gap-2">
                 <Hash className="w-4 h-4" />
@@ -804,6 +802,7 @@ export default function VaultDetailPage({ params }: { params: Promise<{ id: stri
                 </button>
               </div>
             </div>
+            )}
 
             {/* Owner Info */}
             <div className="border-4 border-heirlock-blue bg-blue-50 p-4">

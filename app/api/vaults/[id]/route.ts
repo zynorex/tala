@@ -38,6 +38,8 @@ export async function GET(
         userId: true,
         name: true,
         description: true,
+        keyHash: true,
+        fileHash: true,
         isActive: true,
         isDemo: true,
         demoExpiresAt: true,
