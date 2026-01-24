@@ -88,22 +88,34 @@ export default function VaultDetailPage({ params }: { params: Promise<{ id: stri
     const fetchVault = async () => {
       try {
         setIsLoading(true);
+        
+        // Get auth token from localStorage
+        const token = localStorage.getItem('auth_token');
+        if (!token) {
+          toast('Please sign in to view vault details', 'error');
+          setIsLoading(false);
+          return;
+        }
+
         const response = await fetch(`/api/vaults/${id}`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
-            'X-User-Address': address,
+            'Authorization': `Bearer ${token}`,
           },
         });
 
         if (!response.ok) {
-          throw new Error(`Failed to load vault: ${response.status}`);
+          const errorData = await response.json();
+          throw new Error(errorData.error || `Failed to load vault: ${response.status}`);
         }
 
         const data = await response.json();
-        setVault(data);
-        setEditedName(data.name);
-        setEditedDescription(data.description || '');
+        // Handle API response structure
+        const vaultData = data.data || data;
+        setVault(vaultData);
+        setEditedName(vaultData.name);
+        setEditedDescription(vaultData.description || '');
       } catch (error) {
         console.error('Error loading vault:', error);
         toast(
@@ -215,13 +227,19 @@ export default function VaultDetailPage({ params }: { params: Promise<{ id: stri
       return;
     }
 
+    const token = localStorage.getItem('auth_token');
+    if (!token) {
+      toast('Please sign in to update vault', 'error');
+      return;
+    }
+
     try {
       setIsUpdating(true);
-      const response = await fetch(`/api/vaults/${vault.id}`, {
+      const response = await fetch(`/api/vaults/${vault?.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          'X-User-Address': address!,
+          'Authorization': `Bearer ${token}`,
         },
         body: JSON.stringify({
           name: editedName.trim(),
@@ -251,13 +269,19 @@ export default function VaultDetailPage({ params }: { params: Promise<{ id: stri
       return;
     }
 
+    const token = localStorage.getItem('auth_token');
+    if (!token) {
+      toast('Please sign in to delete vault', 'error');
+      return;
+    }
+
     try {
       setIsUpdating(true);
-      const response = await fetch(`/api/vaults/${vault.id}`, {
+      const response = await fetch(`/api/vaults/${vault?.id}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
-          'X-User-Address': address!,
+          'Authorization': `Bearer ${token}`,
         },
       });
 
@@ -315,11 +339,18 @@ export default function VaultDetailPage({ params }: { params: Promise<{ id: stri
 
     try {
       setDeletingFileId(file.id);
-      const response = await fetch(`/api/vaults/${vault.id}/files/${file.id}`, {
+      const token = localStorage.getItem('auth_token');
+      if (!token) {
+        toast('Please sign in to delete file', 'error');
+        setDeletingFileId(null);
+        return;
+      }
+
+      const response = await fetch(`/api/vaults/${vault?.id}/files/${file.id}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
-          'X-User-Address': address!,
+          'Authorization': `Bearer ${token}`,
         },
       });
 
@@ -342,8 +373,30 @@ export default function VaultDetailPage({ params }: { params: Promise<{ id: stri
     }
   };
 
-  const activeFiles = vault.files.filter(f => f.isActive && !f.deletedAt);
-  const deletedFiles = vault.files.filter(f => !f.isActive || f.deletedAt);
+  // Safe access to files with fallback to empty array
+  const activeFiles = vault?.files?.filter(f => f.isActive && !f.deletedAt) || [];
+  const deletedFiles = vault?.files?.filter(f => !f.isActive || f.deletedAt) || [];
+
+  // Show not found state
+  if (!vault && !isLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-cream to-white p-4 md:p-8 pt-24">
+        <div className="max-w-4xl mx-auto">
+          <div className="border-4 border-black p-8 text-center bg-white">
+            <AlertCircle className="w-12 h-12 mx-auto mb-4 text-red-600" />
+            <h1 className="text-2xl font-black mb-4">Vault Not Found</h1>
+            <p className="text-sm mb-6">The vault you're looking for doesn't exist or you don't have access to it.</p>
+            <Link 
+              href="/dashboard" 
+              className="inline-block px-6 py-3 bg-black text-white font-black border-3 border-black hover:opacity-90"
+            >
+              Back to Dashboard
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-cream to-white p-4 md:p-8 pt-24">

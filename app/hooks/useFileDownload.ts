@@ -116,11 +116,18 @@ export function useFileDownload() {
         setIsDownloading(true);
         setProgress(10);
 
+        // Get auth token
+        const token = localStorage.getItem('auth_token');
+        if (!token) {
+          throw new Error('Please sign in to download files');
+        }
+
         // Step 1: Get file metadata from server
         const response = await fetch(`/api/vaults/${vaultId}/files/${fileId}/download`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
           },
           body: JSON.stringify({ password }),
         });
