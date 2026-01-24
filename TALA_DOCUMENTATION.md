@@ -2321,7 +2321,7 @@ Best for: Universities, law firms, healthcare
 
 ```bash
 # Clone repository
-git clone https://github.com/your-org/tala.git
+git clone https://github.com/ayushedith/tala.git
 cd tala
 
 # Install dependencies
