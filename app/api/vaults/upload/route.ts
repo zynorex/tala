@@ -195,13 +195,16 @@ export async function POST(req: NextRequest): Promise<Response> {
     let ipfsHash: string;
 
     try {
-      // Create a File object for IPFS
-      const encryptedFile = new File([encryptedBuffer], `${file.name}.encrypted`, {
-        type: "application/octet-stream",
-      });
+      // Upload buffer directly to IPFS with proper parameters
+      const ipfsResult = await uploadToIPFS(
+        encryptedBuffer,
+        `${file.name}.encrypted`,
+        `TALA encrypted vault file for vault ${vaultId}`,
+        fileHash
+      );
       
-      ipfsHash = await uploadToIPFS(encryptedFile);
-      logger.info("IPFS upload successful", { ipfsHash, fileName: file.name });
+      ipfsHash = ipfsResult.ipfsHash;
+      logger.info("IPFS upload successful", { ipfsHash, fileName: file.name, size: ipfsResult.size });
     } catch (error) {
       logger.error("IPFS upload failed", error instanceof Error ? error : undefined);
       return Response.json<UploadResponse>(
@@ -217,13 +220,14 @@ export async function POST(req: NextRequest): Promise<Response> {
         vaultId,
         fileName: file.name,
         ipfsHash,
-        fileSize: file.size,
         fileSizeBytes: file.size,
         mimeType: file.type || "application/octet-stream",
         fileHash,
-        encryptionIV: encryptionMetadata.iv,
-        encryptionSalt: encryptionMetadata.salt,
-        encryptionAuthTag: encryptionMetadata.authTag,
+        encryptionKeyHash: encryptionMetadata.passwordHash || crypto.createHash('sha256').update('default').digest('hex'),
+        encryptionIV: encryptionMetadata.iv || null,
+        encryptionSalt: encryptionMetadata.salt || null,
+        encryptionAuthTag: encryptionMetadata.authTag || null,
+        uploadedBy: userId,
         uploadedAt: new Date(),
       },
     });
@@ -236,15 +240,9 @@ export async function POST(req: NextRequest): Promise<Response> {
     await db.activityLog.create({
       data: {
         userId,
-        type: "FILE_UPLOADED",
-        description: `Uploaded ${file.name} (${(file.size / 1024 / 1024).toFixed(2)}MB)`,
-        metadata: {
-          vaultId,
-          fileId: vaultFile.id,
-          fileName: file.name,
-          fileSize: file.size,
-          ipfsHash,
-        },
+        vaultId,
+        action: "FILE_UPLOADED",
+        description: `Uploaded ${file.name} (${(file.size / 1024 / 1024).toFixed(2)}MB) to vault`,
       },
     });
 

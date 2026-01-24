@@ -25,7 +25,7 @@ export async function GET(
   try {
     const payload = verifyRequest(req);
     if (!payload) {
-      return NextResponse.json(httpErrors.unauthorized, { status: 401 });
+      return httpErrors.unauthorized();
     }
 
     const { id } = await params;
@@ -39,10 +39,12 @@ export async function GET(
         name: true,
         description: true,
         isActive: true,
+        isDemo: true,
+        demoExpiresAt: true,
         createdAt: true,
         updatedAt: true,
         files: {
-          where: { deletedAt: null },
+          where: { isActive: true },
           select: {
             id: true,
             fileName: true,
@@ -55,7 +57,7 @@ export async function GET(
         },
         _count: {
           select: {
-            files: { where: { deletedAt: null } },
+            files: true,
           },
         },
       },
