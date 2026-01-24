@@ -36,11 +36,25 @@ export default function VaultsList({ showSensitiveData }: VaultsListProps) {
   const loadVaults = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch('/api/vaults?page=1&pageSize=20');
+      // Get auth token from localStorage
+      const token = localStorage.getItem('auth_token');
+      if (!token) {
+        console.warn('[VaultsList] No auth token found');
+        setVaults([]);
+        setIsLoading(false);
+        return;
+      }
+
+      const response = await fetch('/api/vaults?page=1&pageSize=20', {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
       if (!response.ok) throw new Error('Failed to fetch vaults');
       
       const data = await response.json();
-      const allVaults = data.data?.data || [];
+      const allVaults = data.data?.data || data.data || [];
+      console.log('[VaultsList] Loaded vaults:', allVaults.length, allVaults);
       setVaults(allVaults);
     } catch (error) {
       console.error('Failed to load vaults:', error);
