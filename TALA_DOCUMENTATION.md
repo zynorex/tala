@@ -3070,7 +3070,7 @@ Based on pricing tiers (Starter: Free, Professional: $99.99/mo, Enterprise: $499
 
 ```bash
 # Clone repository
-git clone https://github.com/your-org/tala.git
+git clone https://github.com/ayushedith/tala.git
 cd tala
 
 # Install dependencies
