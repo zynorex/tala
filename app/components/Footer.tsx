@@ -27,6 +27,7 @@ export default function Footer() {
   const footerLinks = {
     product: [
       { label: "How It Works", href: "/how-it-works" },
+      { label: "Launch", href: "/launch" },
       { label: "Pricing", href: "/pricing" },
       { label: "Create Vault", href: "/create-vault" },
       { label: "Dashboard", href: "/dashboard" },

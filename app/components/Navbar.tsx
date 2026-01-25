@@ -4,7 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import dynamic from "next/dynamic";
 import { useState, useEffect, useRef } from "react";
-import { Menu, X, ChevronDown, BookOpen, Zap, Code, Shield, HelpCircle, Newspaper, LayoutGrid, Mail, LogOut } from "lucide-react";
+import { Menu, X, ChevronDown, BookOpen, Zap, Code, Shield, HelpCircle, Newspaper, LayoutGrid, Mail, LogOut, Rocket } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
 
@@ -167,6 +167,12 @@ export default function Navbar() {
                         <div className="flex items-center gap-3 px-3 py-2 rounded hover:bg-heirlock-blue hover:text-black transition-all font-bold cursor-pointer">
                           <Zap className="w-5 h-5" />
                           <span>How It Works</span>
+                        </div>
+                      </Link>
+                      <Link href="/launch" onClick={closeMenu}>
+                        <div className="flex items-center gap-3 px-3 py-2 rounded hover:bg-heirlock-pink hover:text-black transition-all font-bold cursor-pointer">
+                          <Rocket className="w-5 h-5" />
+                          <span>Launch Details</span>
                         </div>
                       </Link>
                       <Link href="/faq" onClick={closeMenu}>
