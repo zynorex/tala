@@ -88,6 +88,8 @@ export async function POST(req: NextRequest) {
         isActive: true,
         isDemo: isDemo || false,
         demoExpiresAt: demoExpiresAt,
+        unlockTime: unlockTime ? new Date(unlockTime) : null,
+        lockStatus: unlockTime ? 'LOCKED' : 'UNLOCKED',
       },
       select: {
         id: true,
