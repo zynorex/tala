@@ -171,6 +171,17 @@ export async function GET(req: NextRequest) {
         demoExpiresAt: true,
         createdAt: true,
         updatedAt: true,
+        files: {
+          where: { isActive: true },
+          select: {
+            id: true,
+            fileName: true,
+            mimeType: true,
+            fileSizeBytes: true,
+            ipfsHash: true,
+            uploadedAt: true,
+          },
+        },
         _count: {
           select: {
             files: true,
