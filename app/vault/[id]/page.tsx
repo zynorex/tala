@@ -12,6 +12,7 @@ import {
 import { useToast } from '@/app/hooks/useToast';
 import { useFileDownload } from '@/app/hooks/useFileDownload';
 import { PasswordPromptModal } from '@/app/components/PasswordPromptModal';
+import { VaultUnlockStatusComponent } from '@/app/components/VaultUnlockStatus';
 
 interface VaultData {
   id: string;
@@ -20,6 +21,8 @@ interface VaultData {
   description: string | null;
   fileHash?: string;
   keyHash?: string;
+  unlockTime?: string;
+  lockStatus?: string;
   isActive: boolean;
   isDemo?: boolean;
   demoExpiresAt?: string;
@@ -506,6 +509,14 @@ export default function VaultDetailPage({ params }: { params: Promise<{ id: stri
                 </div>
               </div>
             </div>
+
+            {/* ⏰ VAULT UNLOCK STATUS - RIGID STATE CHECK */}
+            <VaultUnlockStatusComponent 
+              vaultId={vault.id}
+              onUnlockEligibilityChange={(canUnlock, status) => {
+                // You can use this callback to enable/disable file downloads
+              }}
+            />
 
             {/* Tab Navigation */}
             <div className="border-4 border-black bg-white flex gap-0">

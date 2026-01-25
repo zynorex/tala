@@ -120,18 +120,55 @@ model Vault {
   isDemo        Boolean    @default(false)
   demoExpiresAt DateTime?  // Demo vaults can expire after period
   
+  // ⏰ TIME-LOCK MECHANISM (RIGID STATE MANAGEMENT)
+  unlockTime    DateTime?  // Unix timestamp when vault becomes accessible
+  lockStatus    String     @default("LOCKED")  // "LOCKED", "WAITING", "UNLOCKED", "EXPIRED", "VOIDED"
+  
+  // Blockchain verification
+  blockchainTxHash  String?  // Smart contract transaction hash
+  smartContractId   Int?     // Vault ID on smart contract
+  lastBlockchainSync DateTime? // Last time we verified unlock status on-chain
+  
   // Status
   isActive      Boolean    @default(true)
   createdAt     DateTime   @default(now())
   updatedAt     DateTime   @updatedAt
+  voidedAt      DateTime?  // Timestamp when vault was voided/deleted
   
   // Relations
   files         VaultFile[]
   activityLogs  ActivityLog[]
+  unlockEvents  UnlockEvent[]
   
   @@index([userId])
   @@index([createdAt])
   @@index([isDemo])
+  @@index([lockStatus])
+  @@index([unlockTime])
+}
+
+// UnlockEvent Model - Audit trail for unlock attempts
+model UnlockEvent {
+  id              String     @id @default(cuid())
+  vaultId         String
+  vault           Vault      @relation(fields: [vaultId], references: [id], onDelete: Cascade)
+  
+  userId          String
+  user            User       @relation(fields: [userId], references: [id], onDelete: SetNull, name: "UnlockEventUser")
+  
+  // Unlock attempt details
+  status          String     // "PENDING", "SUCCESS", "FAILED", "LOCKED"
+  failureReason   String?    // Why unlock failed if it did
+  
+  // Verification
+  timeVerified    DateTime   // Time this unlock event was created
+  blockTimestamp  BigInt?    // Block timestamp from blockchain
+  
+  createdAt       DateTime   @default(now())
+  
+  @@index([vaultId])
+  @@index([userId])
+  @@index([createdAt])
 }
 
 // VaultFile Model - Stores individual files in a vault
@@ -177,7 +214,7 @@ model ActivityLog {
   vault         Vault?     @relation(fields: [vaultId], references: [id], onDelete: SetNull)
   
   // Action details
-  action        String     // "view", "download", "update", "share", "delete"
+  action        String     // "VAULT_CREATED", "VAULT_UNLOCKED", "FILE_DOWNLOADED", "FILE_DECRYPTED", "UNLOCK_ATTEMPT_FAILED"
   description   String?
   ipAddress     String?
   userAgent     String?
@@ -187,6 +224,7 @@ model ActivityLog {
   @@index([userId])
   @@index([vaultId])
   @@index([createdAt])
+  @@index([action])
 }
 
 // ApiKey Model - For programmatic access
