@@ -214,23 +214,57 @@ export async function POST(req: NextRequest): Promise<Response> {
     }
 
     // 10. Save file record to database
-    logger.info("Creating file record", { ipfsHash, vaultId });
-    const vaultFile = await db.vaultFile.create({
-      data: {
-        vaultId,
-        fileName: file.name,
-        ipfsHash,
-        fileSizeBytes: file.size,
-        mimeType: file.type || "application/octet-stream",
-        fileHash,
-        encryptionKeyHash: encryptionMetadata.passwordHash || crypto.createHash('sha256').update('default').digest('hex'),
-        encryptionIV: encryptionMetadata.iv || null,
-        encryptionSalt: encryptionMetadata.salt || null,
-        encryptionAuthTag: encryptionMetadata.authTag || null,
-        uploadedBy: userId,
-        uploadedAt: new Date(),
-      },
-    });
+    logger.info("Creating file record", { ipfsHash, vaultId, fileName: file.name });
+    let vaultFile;
+    
+    try {
+      vaultFile = await db.vaultFile.create({
+        data: {
+          vaultId,
+          fileName: file.name,
+          ipfsHash,
+          fileSizeBytes: file.size,
+          mimeType: file.type || "application/octet-stream",
+          fileHash,
+          encryptionKeyHash: encryptionMetadata.passwordHash || crypto.createHash('sha256').update('default').digest('hex'),
+          encryptionIV: encryptionMetadata.iv || null,
+          encryptionSalt: encryptionMetadata.salt || null,
+          encryptionAuthTag: encryptionMetadata.authTag || null,
+          uploadedBy: userId,
+          uploadedAt: new Date(),
+          isActive: true,
+          deletedAt: null,
+          deletedBy: null,
+        },
+      });
+      
+      // Validate file was created correctly
+      if (!vaultFile.id || vaultFile.isActive !== true || vaultFile.deletedAt !== null) {
+        logger.error("File created with invalid state", {
+          fileId: vaultFile.id,
+          isActive: vaultFile.isActive,
+          deletedAt: vaultFile.deletedAt,
+        });
+        throw new Error('File created with invalid state - please try again');
+      }
+      
+      logger.info("File record created successfully", {
+        fileId: vaultFile.id,
+        fileName: vaultFile.fileName,
+        isActive: vaultFile.isActive,
+        deletedAt: vaultFile.deletedAt,
+        uploadedAt: vaultFile.uploadedAt,
+      });
+    } catch (dbError) {
+      logger.error("Failed to create file record in database", dbError instanceof Error ? dbError : undefined);
+      
+      // If database save fails, don't throw silently - report it
+      if (dbError instanceof Error && dbError.message.includes('invalid state')) {
+        throw dbError;
+      }
+      
+      throw new Error(`Failed to save file to database: ${dbError instanceof Error ? dbError.message : 'Unknown error'}`);
+    }
 
     // 11. Record bandwidth usage
     logger.info("Recording bandwidth usage", { userId, bytes: file.size });

@@ -501,8 +501,19 @@ export default function CreateVaultForm({ demoMode = false }: CreateVaultFormPro
 
           // Call smart contract and wait for confirmation
           // This will show the user a wallet popup to approve the transaction and pay gas fees
+          let transactionRejected = false;
+          
           await new Promise<void>((resolve, reject) => {
             try {
+              // Set up timeout for wallet confirmation (30 seconds)
+              const confirmationTimeout = setTimeout(() => {
+                if (!transactionRejected) {
+                  clearTimeout(confirmationTimeout);
+                  transactionRejected = true;
+                  reject(new Error('Wallet confirmation timeout - please try again'));
+                }
+              }, 30000);
+
               createVaultOnChain(
                 placeholderIpfsHash,
                 encryptedKeyHash,
@@ -511,72 +522,163 @@ export default function CreateVaultForm({ demoMode = false }: CreateVaultFormPro
                 fileSize
               );
 
-              // Give wallet time to open and user to confirm
-              // The contract hook will handle the transaction
-              updateStep('blockchain', 'in-progress', 'Transaction submitted - waiting for confirmation...');
+              // Monitor for transaction success or rejection
+              updateStep('blockchain', 'in-progress', 'Confirm transaction in your wallet...');
               
-              // Wait a bit longer for the transaction to be confirmed (up to 90 seconds)
-              const maxWaitTime = 90000; // 90 seconds
+              // Check if transaction was submitted (hook will update isChainLoading)
+              const transactionCheck = setInterval(() => {
+                // If user rejected, isChainLoading stays false and no hash is generated
+                // We need a way to detect rejection - check if enough time has passed
+                if (transactionRejected) {
+                  clearInterval(transactionCheck);
+                  clearTimeout(confirmationTimeout);
+                  return;
+                }
+              }, 500);
+
+              // Wait up to 120 seconds for final confirmation
+              const maxWaitTime = 120000;
               const startTime = Date.now();
               
-              const confirmationCheck = setInterval(() => {
+              const finalCheck = setInterval(() => {
                 const elapsed = Date.now() - startTime;
                 if (elapsed > maxWaitTime) {
-                  clearInterval(confirmationCheck);
-                  // Transaction might still be pending, but we'll proceed
-                  updateStep('blockchain', 'completed', 'Transaction submitted to blockchain');
-                  resolve();
+                  clearInterval(finalCheck);
+                  clearInterval(transactionCheck);
+                  clearTimeout(confirmationTimeout);
+                  
+                  if (!transactionRejected) {
+                    updateStep('blockchain', 'completed', 'Transaction submitted to blockchain');
+                    resolve();
+                  }
                 }
               }, 1000);
 
             } catch (err) {
+              transactionRejected = true;
               reject(err);
             }
           });
 
-          updateStep('blockchain', 'completed', 'Transaction confirmed on blockchain');
+          if (!transactionRejected) {
+            updateStep('blockchain', 'completed', 'Transaction confirmed on blockchain');
+          }
         } catch (blockchainError) {
           console.error('[BLOCKCHAIN] Error creating vault on-chain:', blockchainError);
-          updateStep('blockchain', 'error', blockchainError instanceof Error ? blockchainError.message : 'Transaction failed');
-          throw new Error(`Blockchain transaction failed: ${blockchainError instanceof Error ? blockchainError.message : 'Unknown error'}`);
+          const errorMessage = blockchainError instanceof Error ? blockchainError.message : 'Transaction failed or was rejected';
+          
+          // Check if it's a user rejection
+          const isRejection = errorMessage.toLowerCase().includes('rejected') || 
+                             errorMessage.toLowerCase().includes('user denied') ||
+                             errorMessage.toLowerCase().includes('denied');
+          
+          updateStep('blockchain', 'error', isRejection ? 'Transaction rejected by user' : errorMessage);
+          throw new Error(`Blockchain transaction failed: ${errorMessage}`);
         }
       }
 
       updateStep('process-file', 'in-progress');
       updateStep('encrypt-file', 'in-progress');
 
-      // Step 2: Upload file
-      const formData = new FormData();
+      // Step 2: Upload file (only if file exists)
+      let fileUploadSuccess = false;
+      let uploadError = null;
+      
       if (form.file) {
-        formData.append('file', form.file);
+        try {
+          const formData = new FormData();
+          formData.append('file', form.file);
+          formData.append('encryptionPassword', form.decryptionKey);
+          formData.append('vaultId', vaultId);
+
+          updateStep('process-file', 'completed');
+          updateStep('encrypt-file', 'in-progress', 'Encrypting file with AES-256...');
+          updateStep('upload-ipfs', 'in-progress', 'Uploading to IPFS...');
+
+          const uploadRes = await fetch('/api/vaults/upload', {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${token}`,
+            },
+            body: formData,
+          });
+
+          if (!uploadRes.ok) {
+            const errorData = await uploadRes.json().catch(() => ({ error: `HTTP ${uploadRes.status}` }));
+            uploadError = errorData.error || `Upload failed with status ${uploadRes.status}`;
+            console.error('[VAULT] Upload HTTP error:', uploadRes.status, errorData);
+            updateStep('encrypt-file', 'error', 'Encryption failed');
+            updateStep('upload-ipfs', 'error', uploadError);
+            throw new Error(uploadError);
+          }
+
+          const uploadData = await uploadRes.json();
+          
+          // Verify response structure
+          if (!uploadData.success || !uploadData.fileId || !uploadData.ipfsHash) {
+            uploadError = uploadData.error || 'Invalid response from server';
+            console.error('[VAULT] Invalid upload response:', uploadData);
+            updateStep('encrypt-file', 'error', 'Encryption failed');
+            updateStep('upload-ipfs', 'error', uploadError);
+            throw new Error(uploadError);
+          }
+
+          console.log('[VAULT] File uploaded successfully', uploadData);
+          fileUploadSuccess = true;
+          updateStep('encrypt-file', 'completed');
+          updateStep('upload-ipfs', 'completed');
+        } catch (uploadErr) {
+          const errMsg = uploadErr instanceof Error ? uploadErr.message : 'File upload failed';
+          console.error('[VAULT] File upload error:', errMsg);
+          updateStep('encrypt-file', 'error', 'Encryption failed');
+          updateStep('upload-ipfs', 'error', uploadError || errMsg);
+          throw new Error(`File upload failed: ${uploadError || errMsg}`);
+        }
+      } else {
+        // No file provided - skip file steps
+        console.log('[VAULT] No file to upload, skipping file upload steps');
+        updateStep('process-file', 'completed');
+        updateStep('encrypt-file', 'completed');
+        updateStep('upload-ipfs', 'completed');
       }
-      formData.append('encryptionPassword', form.decryptionKey);
-      formData.append('vaultId', vaultId);
 
-      updateStep('process-file', 'completed');
-      updateStep('upload-ipfs', 'in-progress');
+      updateStep('finalize', 'in-progress', 'Finalizing vault creation...');
 
-      const uploadRes = await fetch('/api/vaults/upload', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-        body: formData,
-      });
-
-      if (!uploadRes.ok) {
-        const data = await uploadRes.json();
-        console.error('[VAULT] Upload error:', data);
-        updateStep('encrypt-file', 'error', data.error || 'Encryption failed');
-        updateStep('upload-ipfs', 'error', data.error || 'Upload failed');
-        throw new Error(data.error || 'Failed to upload file');
+      // Validate vault was created in database
+      if (!vaultId) {
+        updateStep('finalize', 'error', 'Vault ID missing');
+        throw new Error('Vault creation failed - no vault ID');
       }
 
-      console.log('[VAULT] File uploaded successfully');
+      // Verify vault exists in database by fetching it
+      try {
+        const verifyRes = await fetch(`/api/vaults/${vaultId}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+          },
+        });
 
-      updateStep('encrypt-file', 'completed');
-      updateStep('upload-ipfs', 'completed');
-      updateStep('finalize', 'in-progress');
+        if (!verifyRes.ok) {
+          updateStep('finalize', 'error', 'Vault verification failed');
+          throw new Error('Vault creation failed - could not verify vault exists');
+        }
+
+        const vaultDetails = await verifyRes.json();
+        if (!vaultDetails.data || !vaultDetails.data.id) {
+          updateStep('finalize', 'error', 'Vault verification failed');
+          throw new Error('Vault creation failed - invalid vault data');
+        }
+
+        console.log('[VAULT] Vault verified successfully:', vaultDetails.data);
+        updateStep('finalize', 'completed', 'Vault created and verified');
+      } catch (verifyErr) {
+        const errMsg = verifyErr instanceof Error ? verifyErr.message : 'Verification failed';
+        console.error('[VAULT] Vault verification error:', errMsg);
+        updateStep('finalize', 'error', errMsg);
+        throw verifyErr;
+      }
 
       // Reset form
       setForm({
@@ -595,16 +697,21 @@ export default function CreateVaultForm({ demoMode = false }: CreateVaultFormPro
 
       updateStep('finalize', 'completed');
 
-      toast(demoMode 
+      const successMsg = demoMode 
         ? 'Vault created successfully! It will auto-unlock in 2 minutes.' 
-        : 'Vault created and secured successfully!', 'success');
+        : fileUploadSuccess
+        ? 'Vault created and file secured successfully!'
+        : 'Vault created successfully! No files were uploaded.';
+      
+      toast(successMsg, 'success');
 
       if (fileInputRef.current) {
         fileInputRef.current.value = '';
       }
 
-      // Redirect to vault
+      // Redirect to vault after showing success
       setTimeout(() => {
+        console.log('[VAULT] Redirecting to vault:', vaultId);
         router.push(`/vault/${vaultId}`);
       }, 2000);
 
@@ -1146,96 +1253,172 @@ export default function CreateVaultForm({ demoMode = false }: CreateVaultFormPro
       </div>
     </form>
 
-    {/* Progress Modal */}
+    {/* Progress Modal - Brutalist Design */}
     {showProgressModal && (
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-        <div className="bg-white border-4 border-black rounded-none shadow-2xl max-w-md w-full p-8 space-y-6">
-          {/* Header */}
-          <div>
-            <h2 className="text-2xl font-black text-black mb-2">Processing Vault</h2>
-            <p className="text-sm text-gray-600">Securely creating and configuring your vault...</p>
+      <div className="fixed inset-0 bg-black flex items-center justify-center p-4 z-50">
+        <div className="bg-cream border-8 border-black shadow-brutal max-w-lg w-full p-0 max-h-[90vh] overflow-y-auto">
+          {/* Header - Bold Yellow Background */}
+          <div className="bg-heirlock-yellow border-b-8 border-black p-8 space-y-4">
+            <div className="space-y-2">
+              <h2 className="text-4xl font-black text-black uppercase tracking-tight">Processing Vault</h2>
+              <p className="text-sm font-black text-black opacity-70 uppercase tracking-wider">Securely creating and configuring your vault...</p>
+            </div>
+
+            {/* Main Progress Bar - Brutal Style */}
+            <div className="space-y-2">
+              <div className="h-4 bg-black border-2 border-black overflow-hidden" style={{ boxShadow: '4px 4px 0px rgba(0,0,0,0.3)' }}>
+                <div 
+                  className="h-full bg-black transition-all duration-300"
+                  style={{
+                    width: `${(processingSteps.filter(s => s.status === 'completed').length / processingSteps.length) * 100}%`
+                  }}
+                />
+              </div>
+              <div className="flex justify-between items-center">
+                <p className="text-xs font-black text-black uppercase">
+                  {processingSteps.filter(s => s.status === 'completed').length} of {processingSteps.length} steps completed
+                </p>
+                <p className="text-lg font-black text-black">
+                  {Math.round((processingSteps.filter(s => s.status === 'completed').length / processingSteps.length) * 100)}%
+                </p>
+              </div>
+            </div>
           </div>
 
           {/* Progress Steps */}
-          <div className="space-y-3">
-            {processingSteps.map((step, index) => (
-              <div key={step.id} className="flex items-start gap-3">
-                {/* Status Indicator */}
-                <div className="shrink-0 mt-0.5">
-                  {step.status === 'completed' && (
-                    <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
-                      <CheckCircle className="w-4 h-4 text-white" />
-                    </div>
-                  )}
-                  {step.status === 'in-progress' && (
-                    <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center">
-                      <Loader className="w-4 h-4 text-white animate-spin" />
-                    </div>
-                  )}
-                  {step.status === 'error' && (
-                    <div className="w-6 h-6 bg-red-500 rounded-full flex items-center justify-center">
-                      <AlertCircle className="w-4 h-4 text-white" />
-                    </div>
-                  )}
-                  {step.status === 'pending' && (
-                    <div className="w-6 h-6 bg-gray-300 rounded-full" />
-                  )}
-                </div>
-
-                {/* Step Content */}
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center justify-between gap-2">
-                    <div>
-                      <p className={`text-sm font-semibold ${
-                        step.status === 'completed' ? 'text-green-600' :
-                        step.status === 'in-progress' ? 'text-blue-600' :
-                        step.status === 'error' ? 'text-red-600' :
-                        'text-gray-400'
-                      }`}>
-                        {step.label}
-                      </p>
-                      
-                      {/* Show gas fee for blockchain step */}
-                      {step.id === 'blockchain' && step.gasFee && (
-                        <p className="text-xs text-orange-600 font-semibold mt-1">
-                          <Zap className="w-3 h-3 inline mr-1" />
-                          Gas Fee: {step.gasFee}
-                        </p>
-                      )}
-                    </div>
-                    {step.timestamp && (
-                      <span className="text-xs text-gray-500 shrink-0">
-                        {new Date(step.timestamp).toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' })}
-                      </span>
+          <div className="border-b-8 border-black">
+            {processingSteps.map((step, index) => {
+              const isBlockchainStep = step.id === 'blockchain';
+              const isError = step.status === 'error';
+              const isCompleted = step.status === 'completed';
+              const isInProgress = step.status === 'in-progress';
+              
+              return (
+                <div 
+                  key={step.id} 
+                  className={`border-b-4 border-black p-6 flex gap-4 transition-all duration-300 ${
+                    isError 
+                      ? 'bg-red-100' 
+                      : isCompleted 
+                      ? 'bg-heirlock-green' 
+                      : isInProgress 
+                      ? 'bg-heirlock-blue' 
+                      : 'bg-white'
+                  }`}
+                >
+                  {/* Status Indicator - Brutal Squares */}
+                  <div className="shrink-0 flex-none">
+                    {isCompleted && (
+                      <div className="w-10 h-10 bg-black border-3 border-black flex items-center justify-center" style={{ boxShadow: '3px 3px 0px rgba(0,0,0,0.2)' }}>
+                        <CheckCircle className="w-6 h-6 text-white" />
+                      </div>
+                    )}
+                    {isInProgress && (
+                      <div className="w-10 h-10 bg-black border-3 border-black flex items-center justify-center" style={{ boxShadow: '3px 3px 0px rgba(0,0,0,0.2)' }}>
+                        <Loader className="w-6 h-6 text-white animate-spin" />
+                      </div>
+                    )}
+                    {isError && (
+                      <div className="w-10 h-10 bg-red-600 border-3 border-black flex items-center justify-center" style={{ boxShadow: '3px 3px 0px rgba(0,0,0,0.2)' }}>
+                        <AlertCircle className="w-6 h-6 text-white" />
+                      </div>
+                    )}
+                    {step.status === 'pending' && (
+                      <div className="w-10 h-10 bg-gray-300 border-3 border-black" style={{ boxShadow: '3px 3px 0px rgba(0,0,0,0.2)' }} />
                     )}
                   </div>
-                  {step.message && (
-                    <p className={`text-xs mt-1 ${
-                      step.status === 'error' ? 'text-red-600' : 'text-gray-600'
-                    }`}>
-                      {step.message}
-                    </p>
-                  )}
+
+                  {/* Step Content */}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-start justify-between gap-3 mb-2">
+                      <p className="text-sm font-black text-black uppercase">
+                        {step.label}
+                      </p>
+                      {isBlockchainStep && isInProgress && (
+                        <span className="inline-flex items-center gap-1 bg-black text-heirlock-yellow px-3 py-1 font-black text-xs uppercase border-2 border-black" style={{ boxShadow: '2px 2px 0px rgba(0,0,0,0.3)' }}>
+                          <Zap className="w-3 h-3" />
+                          Awaiting Wallet
+                        </span>
+                      )}
+                    </div>
+                    
+                    {/* Gas Fee Display for Blockchain Step */}
+                    {isBlockchainStep && step.gasFee && (
+                      <p className="text-xs font-black text-black mb-2 bg-heirlock-yellow px-2 py-1 border-2 border-black inline-block uppercase">
+                        <Zap className="w-3 h-3 inline mr-1" />
+                        Estimated Gas: {step.gasFee}
+                      </p>
+                    )}
+
+                    {/* Message */}
+                    {step.message && (
+                      <p className={`text-xs font-medium leading-relaxed ${
+                        isError ? 'text-red-700 font-black' : 'text-gray-800'
+                      }`}>
+                        {step.message}
+                      </p>
+                    )}
+
+                    {/* Timestamp */}
+                    {step.timestamp && !isInProgress && (
+                      <p className="text-xs text-gray-700 mt-2 font-mono">
+                        {new Date(step.timestamp).toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+                      </p>
+                    )}
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
 
-          {/* Progress Bar */}
-          <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
-            <div 
-              className="h-full bg-black transition-all duration-300"
-              style={{
-                width: `${(processingSteps.filter(s => s.status === 'completed').length / processingSteps.length) * 100}%`
-              }}
-            />
-          </div>
-
-          {/* Status Summary */}
-          <div className="text-center">
-            <p className="text-xs text-gray-600 font-medium">
-              {processingSteps.filter(s => s.status === 'completed').length} of {processingSteps.length} steps completed
+          {/* Current Status Card - Brutal Design */}
+          <div className={`border-b-8 border-black p-6 text-center font-black uppercase ${
+            processingSteps.some(s => s.status === 'error')
+              ? 'bg-red-100 text-red-900'
+              : processingSteps.every(s => s.status === 'completed')
+              ? 'bg-heirlock-yellow text-black'
+              : 'bg-heirlock-blue text-black'
+          }`}>
+            <p className="text-lg tracking-wider">
+              {processingSteps.some(s => s.status === 'error')
+                ? '✗ Error - Please review and try again'
+                : processingSteps.every(s => s.status === 'completed')
+                ? '✓ Vault created and verified!'
+                : `⏳ Processing...`
+              }
             </p>
+          </div>
+
+          {/* Action Buttons - Brutal Style */}
+          <div className="flex">
+            {processingSteps.some(s => s.status === 'error') && (
+              <>
+                <button
+                  onClick={() => setShowProgressModal(false)}
+                  className="flex-1 px-6 py-4 border-r-4 border-black bg-white text-black font-black text-sm uppercase hover:bg-gray-100 transition-colors"
+                >
+                  Close
+                </button>
+                <button
+                  onClick={() => {
+                    setShowProgressModal(false);
+                    setErrors({});
+                  }}
+                  className="flex-1 px-6 py-4 bg-black text-heirlock-yellow font-black text-sm uppercase hover:bg-gray-900 transition-colors"
+                >
+                  Try Again
+                </button>
+              </>
+            )}
+            {!processingSteps.some(s => s.status === 'error') && 
+             processingSteps.every(s => s.status === 'completed') && (
+              <button
+                onClick={() => setShowProgressModal(false)}
+                className="w-full px-6 py-4 bg-black text-heirlock-yellow font-black text-sm uppercase hover:bg-gray-900 transition-colors"
+              >
+                Done - View Vault
+              </button>
+            )}
           </div>
         </div>
       </div>
