@@ -30,11 +30,26 @@ export default function ActivityLog({ limit = 10 }: ActivityLogProps) {
   const loadActivities = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch(`/api/activity?limit=${limit}`);
+      // Get auth token from localStorage
+      const token = localStorage.getItem('auth_token');
+      if (!token) {
+        console.warn('[ActivityLog] No auth token found');
+        setActivities([]);
+        setIsLoading(false);
+        return;
+      }
+
+      const response = await fetch(`/api/activity?pageSize=${limit}&page=1`, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
       if (!response.ok) throw new Error('Failed to fetch activities');
       
-      const data = await response.json();
-      setActivities(data.data || []);
+      const result = await response.json();
+      // Handle apiSuccess wrapper response
+      const activities = result.success ? result.data?.data || result.data || [] : result.data || [];
+      setActivities(Array.isArray(activities) ? activities : []);
     } catch (error) {
       console.error('Failed to load activities:', error);
       setActivities([]);
