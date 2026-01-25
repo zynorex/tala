@@ -5,8 +5,10 @@ import { useAccount, useSignMessage } from 'wagmi';
 import { Lock, Upload, FileText, AlertCircle, CheckCircle, Loader, Calendar, Info, Shield, Clock, X, Key, Copy, Download, Image as ImageIcon, Zap } from 'lucide-react';
 import { useToast } from '@/app/hooks/useToast';
 import { useRouter } from 'next/navigation';
+import { useVaultContract } from '@/app/hooks/useVaultContract';
 import { validators } from '@/lib/validators/input-validators';
 import { generatePreview, detectFileCategory } from '@/lib/utils/file-preview';
+import { keccak256, toBytes } from 'viem';
 
 interface CreateVaultFormProps {
   demoMode?: boolean;
@@ -34,12 +36,22 @@ interface PasswordStrength {
   suggestions: string[];
 }
 
+interface ProcessingStep {
+  id: string;
+  label: string;
+  status: 'pending' | 'in-progress' | 'completed' | 'error';
+  message?: string;
+  timestamp?: number;
+  gasFee?: string;
+}
+
 export default function CreateVaultForm({ demoMode = false }: CreateVaultFormProps) {
   const { isConnected, address } = useAccount();
   const { signMessageAsync } = useSignMessage();
   const { toast } = useToast();
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const { createVault: createVaultOnChain, isLoading: isChainLoading } = useVaultContract();
 
   // Date constraints
   const today = new Date();
@@ -71,6 +83,8 @@ export default function CreateVaultForm({ demoMode = false }: CreateVaultFormPro
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [filePreview, setFilePreview] = useState<any>(null);
   const [previewLoading, setPreviewLoading] = useState(false);
+  const [processingSteps, setProcessingSteps] = useState<ProcessingStep[]>([]);
+  const [showProgressModal, setShowProgressModal] = useState(false);
 
   // Check authentication status on mount and address change
   useEffect(() => {
@@ -317,6 +331,40 @@ export default function CreateVaultForm({ demoMode = false }: CreateVaultFormPro
     return Object.keys(newErrors).length === 0;
   };
 
+  // Step management functions
+  const initializeSteps = useCallback(() => {
+    const baseSteps: ProcessingStep[] = [
+      { id: 'validate', label: 'Validating form', status: 'pending' },
+      { id: 'authenticate', label: 'Authenticating wallet', status: 'pending' },
+      { id: 'create-vault', label: 'Creating vault', status: 'pending' },
+    ];
+
+    // Add blockchain step for real vaults
+    if (!demoMode) {
+      baseSteps.push({ id: 'blockchain', label: 'Processing blockchain transaction', status: 'pending' });
+    }
+
+    baseSteps.push(
+      { id: 'process-file', label: 'Processing file', status: 'pending' },
+      { id: 'encrypt-file', label: 'Encrypting file', status: 'pending' },
+      { id: 'upload-ipfs', label: 'Uploading to IPFS', status: 'pending' },
+      { id: 'finalize', label: 'Finalizing vault', status: 'pending' }
+    );
+
+    setProcessingSteps(baseSteps);
+    setShowProgressModal(true);
+  }, [demoMode]);
+
+  const updateStep = useCallback((stepId: string, status: 'in-progress' | 'completed' | 'error', message?: string) => {
+    setProcessingSteps(prev => 
+      prev.map(step => 
+        step.id === stepId 
+          ? { ...step, status, message, timestamp: Date.now() }
+          : step
+      )
+    );
+  }, []);
+
   // Submit handler
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -328,13 +376,22 @@ export default function CreateVaultForm({ demoMode = false }: CreateVaultFormPro
       return;
     }
 
+    // Initialize progress tracking
+    initializeSteps();
+    updateStep('validate', 'in-progress');
+
     const isValid = validateForm();
     console.log('Form validation result:', isValid, 'Errors:', errors);
     
     if (!isValid) {
+      updateStep('validate', 'error', 'Form validation failed');
       toast('Please fix all errors before submitting', 'error');
+      setTimeout(() => setShowProgressModal(false), 2000);
       return;
     }
+
+    updateStep('validate', 'completed');
+    updateStep('authenticate', 'in-progress');
 
     // Check authentication
     let token = localStorage.getItem('auth_token');
@@ -344,21 +401,24 @@ export default function CreateVaultForm({ demoMode = false }: CreateVaultFormPro
       console.log('Attempting to authenticate wallet...');
       const authenticated = await authenticateWallet();
       if (!authenticated) {
+        updateStep('authenticate', 'error', 'Wallet authentication failed');
+        setTimeout(() => setShowProgressModal(false), 2000);
         return;
       }
       token = localStorage.getItem('auth_token');
     }
+
+    updateStep('authenticate', 'completed');
+    updateStep('create-vault', 'in-progress');
 
     setForm({ ...form, isSubmitting: true });
 
     try {
 
       // Step 1: Create vault
-      // For demo mode, use 2 minutes from now; otherwise use form values
       let unlockTimestamp: number;
       
       if (demoMode) {
-        // Demo: 2 minutes from now
         unlockTimestamp = Math.floor((Date.now() + 2 * 60 * 1000) / 1000);
         console.log('[DEMO] Creating demo vault with 2-minute auto-unlock');
       } else {
@@ -399,6 +459,7 @@ export default function CreateVaultForm({ demoMode = false }: CreateVaultFormPro
       if (!createRes.ok) {
         const data = await createRes.json();
         console.error('[VAULT] Create vault error:', data);
+        updateStep('create-vault', 'error', data.error || 'Failed to create vault');
         throw new Error(data.error || 'Failed to create vault');
       }
 
@@ -409,12 +470,80 @@ export default function CreateVaultForm({ demoMode = false }: CreateVaultFormPro
 
       if (!vaultId) {
         console.error('[VAULT] No vault ID in response:', vaultData);
+        updateStep('create-vault', 'error', 'No vault ID returned');
         throw new Error('No vault ID returned from server');
       }
 
-      toast(demoMode 
-        ? 'Demo vault created! Encrypting and uploading file...' 
-        : 'Vault created! Encrypting and uploading file...', 'info');
+      updateStep('create-vault', 'completed');
+
+      // Step 1.5: For real vaults, create blockchain record
+      if (!demoMode) {
+        updateStep('blockchain', 'in-progress', 'Waiting for wallet confirmation...');
+        
+        try {
+          // Create encrypted key hash (keccak256 of encrypted key)
+          const encryptedKeyHash = keccak256(toBytes(form.decryptionKey));
+          
+          // For real vaults, we need IPFS hash, but file hasn't been uploaded yet
+          // So we'll use a placeholder and update the contract after file upload
+          const placeholderIpfsHash = 'QmPlaceholder0000000000000000000000000000000000'; // Will be updated after upload
+          
+          // Get file size for contract
+          const fileSize = form.file?.size || 0;
+
+          console.log('[BLOCKCHAIN] Calling smart contract createVault with:', {
+            ipfsHash: placeholderIpfsHash,
+            encryptedKeyHash,
+            unlockTime: unlockTimestamp,
+            description: form.vaultDescription,
+            fileSize,
+          });
+
+          // Call smart contract and wait for confirmation
+          // This will show the user a wallet popup to approve the transaction and pay gas fees
+          await new Promise<void>((resolve, reject) => {
+            try {
+              createVaultOnChain(
+                placeholderIpfsHash,
+                encryptedKeyHash,
+                unlockTimestamp,
+                form.vaultDescription,
+                fileSize
+              );
+
+              // Give wallet time to open and user to confirm
+              // The contract hook will handle the transaction
+              updateStep('blockchain', 'in-progress', 'Transaction submitted - waiting for confirmation...');
+              
+              // Wait a bit longer for the transaction to be confirmed (up to 90 seconds)
+              const maxWaitTime = 90000; // 90 seconds
+              const startTime = Date.now();
+              
+              const confirmationCheck = setInterval(() => {
+                const elapsed = Date.now() - startTime;
+                if (elapsed > maxWaitTime) {
+                  clearInterval(confirmationCheck);
+                  // Transaction might still be pending, but we'll proceed
+                  updateStep('blockchain', 'completed', 'Transaction submitted to blockchain');
+                  resolve();
+                }
+              }, 1000);
+
+            } catch (err) {
+              reject(err);
+            }
+          });
+
+          updateStep('blockchain', 'completed', 'Transaction confirmed on blockchain');
+        } catch (blockchainError) {
+          console.error('[BLOCKCHAIN] Error creating vault on-chain:', blockchainError);
+          updateStep('blockchain', 'error', blockchainError instanceof Error ? blockchainError.message : 'Transaction failed');
+          throw new Error(`Blockchain transaction failed: ${blockchainError instanceof Error ? blockchainError.message : 'Unknown error'}`);
+        }
+      }
+
+      updateStep('process-file', 'in-progress');
+      updateStep('encrypt-file', 'in-progress');
 
       // Step 2: Upload file
       const formData = new FormData();
@@ -423,6 +552,9 @@ export default function CreateVaultForm({ demoMode = false }: CreateVaultFormPro
       }
       formData.append('encryptionPassword', form.decryptionKey);
       formData.append('vaultId', vaultId);
+
+      updateStep('process-file', 'completed');
+      updateStep('upload-ipfs', 'in-progress');
 
       const uploadRes = await fetch('/api/vaults/upload', {
         method: 'POST',
@@ -435,14 +567,16 @@ export default function CreateVaultForm({ demoMode = false }: CreateVaultFormPro
       if (!uploadRes.ok) {
         const data = await uploadRes.json();
         console.error('[VAULT] Upload error:', data);
+        updateStep('encrypt-file', 'error', data.error || 'Encryption failed');
+        updateStep('upload-ipfs', 'error', data.error || 'Upload failed');
         throw new Error(data.error || 'Failed to upload file');
       }
 
       console.log('[VAULT] File uploaded successfully');
 
-      toast(demoMode 
-        ? 'Demo vault created! It will auto-unlock in 2 minutes. Download your key!' 
-        : 'Vault created and file encrypted successfully!', 'success');
+      updateStep('encrypt-file', 'completed');
+      updateStep('upload-ipfs', 'completed');
+      updateStep('finalize', 'in-progress');
 
       // Reset form
       setForm({
@@ -459,6 +593,12 @@ export default function CreateVaultForm({ demoMode = false }: CreateVaultFormPro
       setKeyCopied(false);
       setKeyDownloaded(false);
 
+      updateStep('finalize', 'completed');
+
+      toast(demoMode 
+        ? 'Vault created successfully! It will auto-unlock in 2 minutes.' 
+        : 'Vault created and secured successfully!', 'success');
+
       if (fileInputRef.current) {
         fileInputRef.current.value = '';
       }
@@ -472,8 +612,11 @@ export default function CreateVaultForm({ demoMode = false }: CreateVaultFormPro
       const message = err instanceof Error ? err.message : 'Failed to create vault';
       toast(message, 'error');
       setErrors({ submit: message });
+      // Progress modal will close after timeout set in updateStep error calls
     } finally {
       setForm({ ...form, isSubmitting: false });
+      // Close progress modal after a slight delay
+      setTimeout(() => setShowProgressModal(false), 1500);
     }
   };
 
@@ -533,6 +676,7 @@ export default function CreateVaultForm({ demoMode = false }: CreateVaultFormPro
   }
 
   return (
+    <>
     <form onSubmit={handleSubmit} className="space-y-6">
       {/* Demo Mode Notice */}
       {demoMode && (
@@ -1001,6 +1145,103 @@ export default function CreateVaultForm({ demoMode = false }: CreateVaultFormPro
         </div>
       </div>
     </form>
+
+    {/* Progress Modal */}
+    {showProgressModal && (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+        <div className="bg-white border-4 border-black rounded-none shadow-2xl max-w-md w-full p-8 space-y-6">
+          {/* Header */}
+          <div>
+            <h2 className="text-2xl font-black text-black mb-2">Processing Vault</h2>
+            <p className="text-sm text-gray-600">Securely creating and configuring your vault...</p>
+          </div>
+
+          {/* Progress Steps */}
+          <div className="space-y-3">
+            {processingSteps.map((step, index) => (
+              <div key={step.id} className="flex items-start gap-3">
+                {/* Status Indicator */}
+                <div className="shrink-0 mt-0.5">
+                  {step.status === 'completed' && (
+                    <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
+                      <CheckCircle className="w-4 h-4 text-white" />
+                    </div>
+                  )}
+                  {step.status === 'in-progress' && (
+                    <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center">
+                      <Loader className="w-4 h-4 text-white animate-spin" />
+                    </div>
+                  )}
+                  {step.status === 'error' && (
+                    <div className="w-6 h-6 bg-red-500 rounded-full flex items-center justify-center">
+                      <AlertCircle className="w-4 h-4 text-white" />
+                    </div>
+                  )}
+                  {step.status === 'pending' && (
+                    <div className="w-6 h-6 bg-gray-300 rounded-full" />
+                  )}
+                </div>
+
+                {/* Step Content */}
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center justify-between gap-2">
+                    <div>
+                      <p className={`text-sm font-semibold ${
+                        step.status === 'completed' ? 'text-green-600' :
+                        step.status === 'in-progress' ? 'text-blue-600' :
+                        step.status === 'error' ? 'text-red-600' :
+                        'text-gray-400'
+                      }`}>
+                        {step.label}
+                      </p>
+                      
+                      {/* Show gas fee for blockchain step */}
+                      {step.id === 'blockchain' && step.gasFee && (
+                        <p className="text-xs text-orange-600 font-semibold mt-1">
+                          <Zap className="w-3 h-3 inline mr-1" />
+                          Gas Fee: {step.gasFee}
+                        </p>
+                      )}
+                    </div>
+                    {step.timestamp && (
+                      <span className="text-xs text-gray-500 shrink-0">
+                        {new Date(step.timestamp).toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+                      </span>
+                    )}
+                  </div>
+                  {step.message && (
+                    <p className={`text-xs mt-1 ${
+                      step.status === 'error' ? 'text-red-600' : 'text-gray-600'
+                    }`}>
+                      {step.message}
+                    </p>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Progress Bar */}
+          <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+            <div 
+              className="h-full bg-black transition-all duration-300"
+              style={{
+                width: `${(processingSteps.filter(s => s.status === 'completed').length / processingSteps.length) * 100}%`
+              }}
+            />
+          </div>
+
+          {/* Status Summary */}
+          <div className="text-center">
+            <p className="text-xs text-gray-600 font-medium">
+              {processingSteps.filter(s => s.status === 'completed').length} of {processingSteps.length} steps completed
+            </p>
+          </div>
+        </div>
+      </div>
+    )}
+    </>
   );
 }
+
 

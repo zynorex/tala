@@ -400,7 +400,7 @@ export default function VaultDetailPage({ params }: { params: Promise<{ id: stri
         <div className="flex items-center justify-between mb-8">
           <Link 
             href="/dashboard" 
-            className="flex items-center gap-2 text-heirlock-blue font-black hover:underline transition-colors"
+            className="flex items-center gap-2 text-black font-black hover:underline transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
             Back to Dashboard
@@ -497,12 +497,12 @@ export default function VaultDetailPage({ params }: { params: Promise<{ id: stri
             </div>
 
             {/* Status Badge */}
-            <div className="border-4 border-heirlock-green bg-heirlock-green text-white p-4">
+            <div className="border-4 border-heirlock-green bg-heirlock-green text-black p-4">
               <div className="flex items-center gap-3">
                 <CheckCircle className="w-6 h-6 flex-shrink-0" />
                 <div>
                   <p className="text-xs font-black">ACTIVE VAULT</p>
-                  <p className="text-sm font-mono">{activeFiles.length} file{activeFiles.length !== 1 ? 's' : ''} stored</p>
+                  <p className="text-sm font-mono font-black">{activeFiles.length} file{activeFiles.length !== 1 ? 's' : ''} stored</p>
                 </div>
               </div>
             </div>
@@ -806,11 +806,11 @@ export default function VaultDetailPage({ params }: { params: Promise<{ id: stri
 
             {/* Owner Info */}
             <div className="border-4 border-heirlock-blue bg-blue-50 p-4">
-              <p className="text-xs font-black text-heirlock-blue mb-3 flex items-center gap-2">
+              <p className="text-xs font-black text-black mb-3 flex items-center gap-2">
                 <User className="w-4 h-4" />
                 OWNER
               </p>
-              <div className="font-mono text-xs break-all text-black">{vault.userId}</div>
+              <div className="font-mono text-xs break-all text-black font-black">{vault.userId}</div>
             </div>
 
             {/* Stats Card */}
