@@ -49,6 +49,7 @@ model User {
   vaults        Vault[]
   activityLogs  ActivityLog[]
   apiKeys       ApiKey[]
+  unlockEvents  UnlockEvent[] @relation("UnlockEventUser")
   
   @@index([email])
   @@index([walletAddress])

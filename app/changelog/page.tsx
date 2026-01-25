@@ -17,6 +17,26 @@ interface ChangelogEntry {
 export default function Changelog() {
   const changelog: ChangelogEntry[] = [
     {
+      version: '1.8.0',
+      date: 'January 26, 2026',
+      category: 'feature',
+      icon: CheckCircle,
+      title: 'Vault Unlock System - Phase 2',
+      description: 'Complete time-locked vault unlock system with expiration tracking, automation, and security enhancements.',
+      changes: [
+        '✓ Time-Locked Vault System: Smart contracts enforce unlock times with tamper-proof blockchain records',
+        '✓ Expiration Management: Automatic vault expiration after unlock period with cleanup procedures',
+        '✓ Dual Authentication: Multi-signature validation combining blockchain verification with server-side checks',
+        '✓ Activity Logging: Complete audit trail for all unlock attempts with timestamps and outcome tracking',
+        '✓ Batch Operations: Process multiple vault unlocks efficiently with transaction validation',
+        '✓ Security Hardening: Enhanced validation, replay attack prevention, and permission verification',
+        '✓ Database Optimization: New schema fields for unlock tracking and expiration status',
+        '✓ Error Handling: Comprehensive error codes and recovery mechanisms for failed unlock attempts',
+        '✓ Production Utilities: Batch unlock tools and maintenance functions for production operations',
+      ],
+      impact: 'major',
+    },
+    {
       version: '1.7.0',
       date: 'January 25, 2026',
       category: 'feature',
