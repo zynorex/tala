@@ -2,14 +2,38 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
+import { useState, useEffect } from 'react';
 import { Zap, Lock, Shield, Rocket, Calendar, Clock, Users, CheckCircle, ArrowRight, Sparkles } from 'lucide-react';
 
 export default function LaunchPage() {
-  const launchDate = new Date('2026-03-14');
-  const now = new Date();
-  const timeUntilLaunch = launchDate.getTime() - now.getTime();
-  const daysUntilLaunch = Math.ceil(timeUntilLaunch / (1000 * 60 * 60 * 24));
-  const hoursUntilLaunch = Math.ceil((timeUntilLaunch % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+  const [countdown, setCountdown] = useState({
+    days: 0,
+    hours: 0,
+    minutes: 0,
+    seconds: 0,
+  });
+
+  useEffect(() => {
+    const updateCountdown = () => {
+      const launchDate = new Date('2026-03-14T00:00:00').getTime();
+      const now = new Date().getTime();
+      const timeUntilLaunch = launchDate - now;
+
+      if (timeUntilLaunch > 0) {
+        const days = Math.floor(timeUntilLaunch / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((timeUntilLaunch % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((timeUntilLaunch % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((timeUntilLaunch % (1000 * 60)) / 1000);
+
+        setCountdown({ days, hours, minutes, seconds });
+      }
+    };
+
+    updateCountdown();
+    const timer = setInterval(updateCountdown, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-heirlock-yellow via-cream to-white">
@@ -36,19 +60,19 @@ export default function LaunchPage() {
             <p className="text-sm font-black text-black opacity-70 uppercase tracking-wider mb-4">Launch Countdown</p>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <div className="border-4 border-black bg-white p-6">
-                <p className="text-4xl md:text-5xl font-black text-black">{daysUntilLaunch}</p>
+                <p className="text-4xl md:text-5xl font-black text-black">{String(countdown.days).padStart(2, '0')}</p>
                 <p className="text-xs font-black text-gray-600 uppercase mt-2">Days</p>
               </div>
               <div className="border-4 border-black bg-white p-6">
-                <p className="text-4xl md:text-5xl font-black text-black">{hoursUntilLaunch}</p>
+                <p className="text-4xl md:text-5xl font-black text-black">{String(countdown.hours).padStart(2, '0')}</p>
                 <p className="text-xs font-black text-gray-600 uppercase mt-2">Hours</p>
               </div>
               <div className="border-4 border-black bg-white p-6">
-                <p className="text-4xl md:text-5xl font-black text-black">00</p>
+                <p className="text-4xl md:text-5xl font-black text-black">{String(countdown.minutes).padStart(2, '0')}</p>
                 <p className="text-xs font-black text-gray-600 uppercase mt-2">Minutes</p>
               </div>
               <div className="border-4 border-black bg-white p-6">
-                <p className="text-4xl md:text-5xl font-black text-black">00</p>
+                <p className="text-4xl md:text-5xl font-black text-black">{String(countdown.seconds).padStart(2, '0')}</p>
                 <p className="text-xs font-black text-gray-600 uppercase mt-2">Seconds</p>
               </div>
             </div>
