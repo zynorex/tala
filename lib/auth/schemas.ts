@@ -24,7 +24,7 @@ export const createVaultSchema = z.object({
   name: z.string().min(1).max(255, 'Vault name must be less than 255 characters'),
   description: z.string().max(1000).optional(),
   password: z.string().min(8, 'Password must be at least 8 characters'),
-  unlockTime: z.number().int().positive().optional(), // Unix timestamp for unlock time
+  unlockTime: z.string().datetime().optional(), // ISO 8601 datetime string for unlock time
   isDemo: z.boolean().optional().default(false), // Demo vault flag
   // Note: file is handled separately as FormData
 });

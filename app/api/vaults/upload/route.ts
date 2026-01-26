@@ -88,7 +88,12 @@ export async function POST(req: NextRequest): Promise<Response> {
     // 3. Verify vault belongs to user
     const vault = await db.vault.findUnique({
       where: { id: vaultId },
-      select: { userId: true, isActive: true, name: true },
+      select: { 
+        userId: true, 
+        isActive: true, 
+        name: true,
+        _count: { select: { files: true } },
+      },
     });
 
     if (!vault || vault.userId !== userId) {
@@ -107,20 +112,27 @@ export async function POST(req: NextRequest): Promise<Response> {
       );
     }
 
-    // 3.5 ⏰ VERIFY UNLOCK STATUS - MANDATORY BEFORE FILE ACCESS
-    const unlockCheck = await verifyUnlockBeforeFileAccess(
-      vaultId,
-      userId,
-      req.headers.get('x-forwarded-for') || 'unknown',
-      req.headers.get('user-agent') || 'unknown'
-    );
-
-    if (!unlockCheck.allowed) {
-      logger.warn("Upload failed: Vault is locked", { userId, vaultId, reason: unlockCheck.reason });
-      return Response.json<UploadResponse>(
-        { success: false, error: unlockCheck.reason || "Vault is locked and cannot be accessed" },
-        { status: 423 }
+    // 3.5 ⏰ VERIFY UNLOCK STATUS - Skip for INITIAL UPLOAD (empty vault)
+    // Allow first file upload during vault creation, enforce lock on subsequent access
+    const isInitialUpload = vault._count?.files === 0;
+    
+    if (!isInitialUpload) {
+      const unlockCheck = await verifyUnlockBeforeFileAccess(
+        vaultId,
+        userId,
+        req.headers.get('x-forwarded-for') || 'unknown',
+        req.headers.get('user-agent') || 'unknown'
       );
+
+      if (!unlockCheck.allowed) {
+        logger.warn("Upload failed: Vault is locked", { userId, vaultId, reason: unlockCheck.reason });
+        return Response.json<UploadResponse>(
+          { success: false, error: unlockCheck.reason || "Vault is locked and cannot be accessed" },
+          { status: 423 }
+        );
+      }
+    } else {
+      logger.info("Initial file upload - skipping unlock check", { vaultId, userId });
     }
 
     // 4. Convert File to Buffer for validation
