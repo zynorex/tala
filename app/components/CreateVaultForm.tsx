@@ -416,30 +416,32 @@ export default function CreateVaultForm({ demoMode = false }: CreateVaultFormPro
     try {
 
       // Step 1: Create vault
-      let unlockTimestamp: number;
+      let unlockDateTime: Date;
       
       if (demoMode) {
-        unlockTimestamp = Math.floor((Date.now() + 2 * 60 * 1000) / 1000);
-        console.log('[DEMO] Creating demo vault with 2-minute auto-unlock');
+        // Demo vaults auto-unlock after 5 minutes
+        unlockDateTime = new Date(Date.now() + 5 * 60 * 1000);
+        console.log('[DEMO] Creating demo vault with 5-minute auto-unlock');
       } else {
         // Regular: use form date/time
-        const unlockDateTime = new Date(`${form.unlockDate}T${form.unlockTime}`);
-        unlockTimestamp = Math.floor(unlockDateTime.getTime() / 1000);
+        unlockDateTime = new Date(`${form.unlockDate}T${form.unlockTime}`);
       }
+
+      const unlockTimestamp = Math.floor(unlockDateTime.getTime() / 1000);
 
       console.log('[VAULT] Creating vault with data:', {
         name: form.vaultName,
         description: form.vaultDescription,
         unlockTimestamp,
         isDemo: demoMode,
-        unlockDate: new Date(unlockTimestamp * 1000).toISOString(),
+        unlockDate: unlockDateTime.toISOString(),
       });
 
       const requestBody = {
         name: form.vaultName,
         description: form.vaultDescription,
         password: form.decryptionKey,
-        unlockTime: unlockTimestamp,
+        unlockTime: unlockDateTime.toISOString(), // Send ISO string, not Unix timestamp
         isDemo: demoMode,
       };
 
@@ -1226,12 +1228,12 @@ export default function CreateVaultForm({ demoMode = false }: CreateVaultFormPro
         {form.isSubmitting ? (
           <>
             <Loader className="w-6 h-6 animate-spin" />
-            <span>{form.encryptionProgress > 0 ? `Encrypting... ${form.encryptionProgress}%` : 'Creating Vault...'}</span>
+            <span>Creating Vault...</span>
           </>
         ) : demoMode ? (
           <>
             <Zap className="w-6 h-6" />
-            <span>Create Demo Vault (2 Min)</span>
+            <span>Create Demo Vault (5 Min)</span>
           </>
         ) : (
           <>

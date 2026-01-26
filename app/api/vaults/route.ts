@@ -177,7 +177,6 @@ export async function GET(req: NextRequest) {
         createdAt: true,
         updatedAt: true,
         files: {
-          where: { isActive: true },
           select: {
             id: true,
             fileName: true,
@@ -185,6 +184,8 @@ export async function GET(req: NextRequest) {
             fileSizeBytes: true,
             ipfsHash: true,
             uploadedAt: true,
+            isActive: true,
+            deletedAt: true,
           },
         },
         _count: {

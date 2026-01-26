@@ -48,7 +48,6 @@ export async function GET(
         createdAt: true,
         updatedAt: true,
         files: {
-          where: { isActive: true },
           select: {
             id: true,
             fileName: true,
@@ -56,6 +55,8 @@ export async function GET(
             fileSizeBytes: true,
             ipfsHash: true,
             uploadedAt: true,
+            isActive: true,
+            deletedAt: true,
           },
           orderBy: { uploadedAt: 'desc' },
         },
