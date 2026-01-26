@@ -10,8 +10,8 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth/next';
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { verifyRequest } from '@/lib/auth/jwt';
+import { httpErrors } from '@/lib/auth/api-response';
 import {
   checkVaultUnlockEligibility,
   getVaultUnlockStatus,
@@ -27,13 +27,10 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    // Verify authentication
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.email) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+    // Verify authentication using JWT (consistent with other vault endpoints)
+    const payload = verifyRequest(request);
+    if (!payload) {
+      return httpErrors.unauthorized();
     }
 
     const { id: vaultId } = await params;
@@ -48,14 +45,14 @@ export async function GET(
 
     logger.info('Vault unlock status check', {
       vaultId,
-      userId: session.user.email,
+      userId: payload.userId,
       ipAddress,
     });
 
     // Check unlock eligibility
     const unlockStatus = await getVaultUnlockStatus({
       vaultId,
-      userId: session.user.email,
+      userId: payload.userId,
     });
 
     // Handle vault not found or unauthorized
@@ -68,10 +65,10 @@ export async function GET(
 
     // Record the check
     if (unlockStatus.status === 'UNLOCKED') {
-      await recordUnlockAttempt(vaultId, session.user.email, 'SUCCESS');
+      await recordUnlockAttempt(vaultId, payload.userId, 'SUCCESS');
       await logUnlockActivity(
         vaultId,
-        session.user.email,
+        payload.userId,
         'VAULT_STATUS_CHECK',
         `Vault status check - Status: ${unlockStatus.status}`,
         ipAddress,
