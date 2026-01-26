@@ -17,6 +17,24 @@ interface ChangelogEntry {
 export default function Changelog() {
   const changelog: ChangelogEntry[] = [
     {
+      version: '1.8.1',
+      date: 'January 26, 2026',
+      category: 'fix',
+      icon: CheckCircle,
+      title: 'Vault Creation & File Display Fixes',
+      description: 'Critical bug fixes for vault unlock time display, file visibility, and demo vault improvements.',
+      changes: [
+        '✓ Fixed unlock date showing "Jan 21, 1970" - now correctly displays future unlock time',
+        '✓ Fixed files appearing in "Deleted Files" section immediately after upload',
+        '✓ Demo vault auto-unlock changed from 2 minutes to 5 minutes for better testing',
+        '✓ API now returns isActive and deletedAt fields for proper file filtering',
+        '✓ Initial file upload during vault creation now bypasses lock check (allows first upload)',
+        '✓ Schema validation updated to accept ISO datetime strings for unlock time',
+        '✓ TypeScript errors fixed in CreateVaultForm component',
+      ],
+      impact: 'minor',
+    },
+    {
       version: '1.8.0',
       date: 'January 26, 2026',
       category: 'feature',
