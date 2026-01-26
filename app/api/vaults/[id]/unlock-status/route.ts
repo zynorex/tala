@@ -58,6 +58,14 @@ export async function GET(
       userId: session.user.email,
     });
 
+    // Handle vault not found or unauthorized
+    if (unlockStatus.status === 'ERROR' || !unlockStatus.vault) {
+      return NextResponse.json(
+        { error: 'Vault not found or unauthorized' },
+        { status: 404 }
+      );
+    }
+
     // Record the check
     if (unlockStatus.status === 'UNLOCKED') {
       await recordUnlockAttempt(vaultId, session.user.email, 'SUCCESS');

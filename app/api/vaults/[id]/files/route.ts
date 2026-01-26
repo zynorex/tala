@@ -4,6 +4,7 @@ import { apiSuccess, apiError, handleDbError } from '@/lib/auth/api-response';
 import { uploadToIPFS } from '@/lib/ipfs/ipfs';
 import { encryptFile, calculateFileHash } from '@/lib/crypto/encryption';
 import { generateEncryptionKey } from '@/lib/crypto/encryption';
+import { verifyUnlockBeforeFileAccess } from '@/lib/services/vault-unlock';
 
 const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB (increased from 10MB for PDFs)
 const ALLOWED_MIME_TYPES = [
@@ -91,6 +92,21 @@ export async function POST(
       return NextResponse.json(
         apiError('Forbidden', 403, 'You do not have permission to access this vault'),
         { status: 403 }
+      );
+    }
+
+    // 3.5 ⏰ VERIFY UNLOCK STATUS - MANDATORY BEFORE FILE ACCESS
+    const unlockCheck = await verifyUnlockBeforeFileAccess(
+      vaultId,
+      payload.userId,
+      req.headers.get('x-forwarded-for') || 'unknown',
+      req.headers.get('user-agent') || 'unknown'
+    );
+
+    if (!unlockCheck.allowed) {
+      return NextResponse.json(
+        apiError('Locked', 423, unlockCheck.reason || 'Vault is locked and cannot be accessed'),
+        { status: 423 }
       );
     }
 

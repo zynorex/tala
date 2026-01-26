@@ -285,7 +285,7 @@ export default function Navbar() {
                       </Link>
                     </div>
                     <div className="bg-heirlock-pink rounded-3xl border-4 border-black h-40 flex items-center justify-center hover:shadow-brutal transition-all">
-                      <Image src="/404.png" alt="Hero Image" width={200} height={200} />
+                      <Image src="/monogram.png" alt="Hero Image" width={200} height={200} />
                     </div>
                   </div>
                 </div>

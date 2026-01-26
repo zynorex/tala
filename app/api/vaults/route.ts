@@ -69,7 +69,7 @@ export async function POST(req: NextRequest) {
     const vaultKey = deriveVaultKeyFromPassword(password);
 
     // Calculate demo expiry if demo mode
-    const demoExpiresAt = isDemo ? new Date(Date.now() + 2 * 60 * 1000) : null; // 2 minutes for demo
+    const demoExpiresAt = null; // Demo vaults no longer auto-expire
 
     console.log(`[VAULT] Creating ${isDemo ? 'DEMO' : 'regular'} vault for user: ${payload.userId}`);
     console.log(`[VAULT] Name: ${name}, UnlockTime: ${unlockTime}, IsDemo: ${isDemo}`);
@@ -116,7 +116,7 @@ export async function POST(req: NextRequest) {
         vaultId: vault.id,
         action: isDemo ? 'DEMO_VAULT_CREATED' : 'VAULT_CREATED',
         description: isDemo 
-          ? `Created demo vault: ${name} (auto-unlocks in 2 minutes)`
+          ? `Created demo vault: ${name}`
           : `Created vault: ${name}`,
       },
     });
@@ -128,7 +128,7 @@ export async function POST(req: NextRequest) {
       isDemo: isDemo || false,
       demoExpiresAt: demoExpiresAt,
       message: isDemo 
-        ? 'Demo vault created! It will auto-unlock in 2 minutes.'
+        ? 'Demo vault created successfully!'
         : 'Vault created successfully!',
     }, 201);
   } catch (error) {

@@ -13,6 +13,7 @@ import { getLogger } from "@/lib/utils/logger";
 import { NextRequest } from "next/server";
 import crypto from "crypto";
 import { verifyRequest } from "@/lib/auth/jwt";
+import { verifyUnlockBeforeFileAccess } from "@/lib/services/vault-unlock";
 
 const logger = getLogger('FileUpload');
 
@@ -106,6 +107,22 @@ export async function POST(req: NextRequest): Promise<Response> {
       );
     }
 
+    // 3.5 ⏰ VERIFY UNLOCK STATUS - MANDATORY BEFORE FILE ACCESS
+    const unlockCheck = await verifyUnlockBeforeFileAccess(
+      vaultId,
+      userId,
+      req.headers.get('x-forwarded-for') || 'unknown',
+      req.headers.get('user-agent') || 'unknown'
+    );
+
+    if (!unlockCheck.allowed) {
+      logger.warn("Upload failed: Vault is locked", { userId, vaultId, reason: unlockCheck.reason });
+      return Response.json<UploadResponse>(
+        { success: false, error: unlockCheck.reason || "Vault is locked and cannot be accessed" },
+        { status: 423 }
+      );
+    }
+
     // 4. Convert File to Buffer for validation
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
@@ -130,7 +147,7 @@ export async function POST(req: NextRequest): Promise<Response> {
       );
     }
 
-    // 5. Check storage quota (default to 'free' plan since plan system is not yet implemented)
+    // 6. Check storage quota (default to 'free' plan since plan system is not yet implemented)
     const userPlan = "free";
     logger.info("Checking storage quota", { userId, userPlan, fileSize: file.size });
 
