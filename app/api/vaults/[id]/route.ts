@@ -43,6 +43,8 @@ export async function GET(
         isActive: true,
         isDemo: true,
         demoExpiresAt: true,
+        unlockTime: true,
+        lockStatus: true,
         createdAt: true,
         updatedAt: true,
         files: {

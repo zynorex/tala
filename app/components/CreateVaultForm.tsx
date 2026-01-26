@@ -1267,21 +1267,27 @@ export default function CreateVaultForm({ demoMode = false }: CreateVaultFormPro
 
             {/* Main Progress Bar - Brutal Style */}
             <div className="space-y-2">
-              <div className="h-4 bg-black border-2 border-black overflow-hidden" style={{ boxShadow: '4px 4px 0px rgba(0,0,0,0.3)' }}>
+              <div className="h-4 bg-black border-2 border-black overflow-hidden relative" style={{ boxShadow: '4px 4px 0px rgba(0,0,0,0.3)' }}>
                 <div 
-                  className="h-full bg-black transition-all duration-300"
+                  className="h-full bg-heirlock-green transition-all duration-500 ease-out relative"
                   style={{
                     width: `${(processingSteps.filter(s => s.status === 'completed').length / processingSteps.length) * 100}%`
                   }}
-                />
+                >
+                  {/* Animated shimmer effect */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-30 animate-pulse" />
+                </div>
               </div>
               <div className="flex justify-between items-center">
                 <p className="text-xs font-black text-black uppercase">
                   {processingSteps.filter(s => s.status === 'completed').length} of {processingSteps.length} steps completed
                 </p>
-                <p className="text-lg font-black text-black">
-                  {Math.round((processingSteps.filter(s => s.status === 'completed').length / processingSteps.length) * 100)}%
-                </p>
+                <div className="flex items-baseline gap-2">
+                  <p className="text-lg font-black text-heirlock-green">
+                    {Math.round((processingSteps.filter(s => s.status === 'completed').length / processingSteps.length) * 100)}
+                  </p>
+                  <p className="text-xs font-black text-black">%</p>
+                </div>
               </div>
             </div>
           </div>

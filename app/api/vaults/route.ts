@@ -85,6 +85,7 @@ export async function POST(req: NextRequest) {
         fileHash: '',  // Will be set when file is uploaded
         fileName: '',  // Will be set when file is uploaded
         fileSize: 0,   // Will be set when file is uploaded
+        mimeType: null,
         isActive: true,
         isDemo: isDemo || false,
         demoExpiresAt: demoExpiresAt,
@@ -99,6 +100,8 @@ export async function POST(req: NextRequest) {
         isActive: true,
         isDemo: true,
         demoExpiresAt: true,
+        unlockTime: true,
+        lockStatus: true,
         createdAt: true,
         updatedAt: true,
         _count: {

@@ -25,7 +25,7 @@ export default function Changelog() {
       description: 'Complete time-locked vault unlock system with expiration tracking, automation, and security enhancements.',
       changes: [
         '✓ Time-Locked Vault System: Smart contracts enforce unlock times with tamper-proof blockchain records',
-        '✓ Expiration Management: Automatic vault expiration after unlock period with cleanup procedures',
+        '✓ Expiration Management: Vault expiration handling with cleanup procedures',
         '✓ Dual Authentication: Multi-signature validation combining blockchain verification with server-side checks',
         '✓ Activity Logging: Complete audit trail for all unlock attempts with timestamps and outcome tracking',
         '✓ Batch Operations: Process multiple vault unlocks efficiently with transaction validation',
@@ -45,7 +45,7 @@ export default function Changelog() {
       description: 'Interactive demo vault with auto-expiration and complete home page redesign with pricing synchronization.',
       changes: [
         '✓ Demo Vault Feature: Pre-created demo vaults with automatic expiration after 24 hours',
-        '✓ Auto-Unlock Mechanism: Demo vaults automatically unlock and clean up without user interaction',
+        '✓ Manual Unlock Trigger: Users control when vaults unlock via web interface',
         '✓ Demo Mode UI: Integrated demo mode into CreateVaultForm with clear messaging',
         '✓ Home Page Population: Complete landing page with 15 sections and conversion funnel',
         '✓ Use Cases Section: 4 detailed use case cards (Education, Governance, Legal, Security)',

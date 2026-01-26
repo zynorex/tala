@@ -42,13 +42,9 @@ export function VaultUnlockStatusComponent({ vaultId, onUnlockEligibilityChange 
   useEffect(() => {
     const fetchUnlockStatus = async () => {
       try {
-        const token = localStorage.getItem('auth_token');
-        if (!token) return;
-
         const response = await fetch(`/api/vaults/${vaultId}/unlock-status`, {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-          },
+          method: 'GET',
+          credentials: 'include',
         });
 
         if (!response.ok) throw new Error('Failed to fetch unlock status');
