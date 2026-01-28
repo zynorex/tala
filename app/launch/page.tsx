@@ -88,8 +88,8 @@ export default function LaunchPage() {
             </button>
             <Link href="/create-vault">
               <button className="px-8 py-4 border-4 border-black bg-heirlock-green text-black font-black text-lg shadow-brutal hover:-translate-y-1 hover:shadow-brutal-lg transition-all">
-                Try Demo Now
-              </button>
+                  Try Demo Now (5 Min)
+                </button>
             </Link>
           </div>
         </div>
@@ -194,9 +194,9 @@ export default function LaunchPage() {
                 a: "Yes! TALA Starter plan (free) includes up to 99 vaults, 500 MB storage per vault, and full AES-256 encryption. No credit card required."
               },
               {
-                q: "Can I test it before launch?",
-                a: "Absolutely! Try our demo vault right now. Create a test vault that auto-unlocks in 2 minutes. Full feature experience, no real time-locks."
-              },
+                  q: "Can I test it before launch?",
+                  a: "Absolutely! Try our demo vault right now. Create a test vault that auto-unlocks in 5 minutes. Full feature experience, no real time-locks."
+                },
               {
                 q: "Will my data be safe?",
                 a: "Yes. All encryption happens on your device before upload. TALA never sees your unencrypted data. Time-locks enforced by smart contracts on Polygon blockchain."
