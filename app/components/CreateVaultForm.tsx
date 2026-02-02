@@ -87,6 +87,7 @@ export default function CreateVaultForm({ demoMode = false }: CreateVaultFormPro
   const [showProgressModal, setShowProgressModal] = useState(false);
 
   // Check authentication status on mount and address change
+  // Check authentication status on mount and address change
   useEffect(() => {
     if (!isConnected || !address) {
       setIsAuthenticated(false);
@@ -101,8 +102,24 @@ export default function CreateVaultForm({ demoMode = false }: CreateVaultFormPro
         const user = JSON.parse(storedUser);
         // Check if token is for the current address
         if (user.walletAddress?.toLowerCase() === address.toLowerCase()) {
-          console.log('✅ User already authenticated:', user.walletAddress);
-          setIsAuthenticated(true);
+          // Validate token is still valid with API call
+          fetch('/api/users/auth', {
+            method: 'GET',
+            headers: { 'Authorization': `Bearer ${token}` },
+          }).then(res => {
+            if (res.ok) {
+              console.log('✅ Token validated, user authenticated:', user.walletAddress);
+              setIsAuthenticated(true);
+            } else {
+              console.log('❌ Token expired/invalid, clearing...');
+              localStorage.removeItem('auth_token');
+              localStorage.removeItem('user');
+              setIsAuthenticated(false);
+            }
+          }).catch(() => {
+            console.log('❌ Token validation failed');
+            setIsAuthenticated(false);
+          });
           return;
         }
       } catch (e) {
@@ -117,6 +134,19 @@ export default function CreateVaultForm({ demoMode = false }: CreateVaultFormPro
     setIsAuthenticated(false);
   }, [isConnected, address]);
 
+  // Validate existing token by making a test API call
+  const validateToken = useCallback(async (token: string): Promise<boolean> => {
+    try {
+      const response = await fetch('/api/users/auth', {
+        method: 'GET',
+        headers: { 'Authorization': `Bearer ${token}` },
+      });
+      return response.ok;
+    } catch {
+      return false;
+    }
+  }, []);
+
   // Manual authentication function
   const authenticateWallet = useCallback(async () => {
     if (!isConnected || !address) {
@@ -126,9 +156,17 @@ export default function CreateVaultForm({ demoMode = false }: CreateVaultFormPro
 
     const existingToken = localStorage.getItem('auth_token');
     if (existingToken) {
-      console.log('✅ Already authenticated, token exists');
-      setIsAuthenticated(true);
-      return true;
+      // Validate the token is still valid
+      console.log('🔍 Validating existing token...');
+      const isValid = await validateToken(existingToken);
+      if (isValid) {
+        console.log('✅ Token is valid');
+        setIsAuthenticated(true);
+        return true;
+      }
+      console.log('❌ Token expired or invalid, re-authenticating...');
+      localStorage.removeItem('auth_token');
+      localStorage.removeItem('user');
     }
 
     console.log('🔐 Starting wallet authentication...');
@@ -171,7 +209,7 @@ export default function CreateVaultForm({ demoMode = false }: CreateVaultFormPro
     } finally {
       setIsAuthenticating(false);
     }
-  }, [isConnected, address, signMessageAsync, toast]);
+  }, [isConnected, address, signMessageAsync, toast, validateToken]);
 
   // Generate secure decryption key
   const generateDecryptionKey = useCallback((): string => {
