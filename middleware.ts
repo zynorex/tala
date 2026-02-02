@@ -95,6 +95,55 @@ function detectSuspiciousPatterns(input: string): boolean {
 }
 
 /**
+ * Detect mobile devices, tablets, and emulators from User-Agent
+ * Returns blocking info if device should be blocked
+ */
+function detectRestrictedDevice(userAgent: string): { blocked: boolean; reason: string } | null {
+  const ua = userAgent.toLowerCase();
+
+  // Mobile device patterns
+  const mobilePatterns = [
+    'android', 'webos', 'iphone', 'ipod', 'blackberry', 'iemobile',
+    'opera mini', 'opera mobi', 'mobile safari', 'windows phone',
+    'fennec', 'mobile', 'symbian', 'palm', 'kindle', 'silk',
+    'midp', 'j2me', 'wap'
+  ];
+
+  // Tablet patterns (excluding iPads in desktop mode which we handle client-side)
+  const tabletPatterns = ['ipad', 'tablet', 'playbook'];
+
+  // Emulator/simulator patterns
+  const emulatorPatterns = [
+    'sdk', 'emulator', 'android sdk', 'google_sdk', 'droid4x',
+    'nox', 'bluestacks', 'genymotion', 'memu', 'ldplayer',
+    'simulator', 'virtual', 'vmware', 'vbox', 'qemu'
+  ];
+
+  // Check for emulators first (highest priority block)
+  for (const pattern of emulatorPatterns) {
+    if (ua.includes(pattern)) {
+      return { blocked: true, reason: 'Emulators and virtual machines are not allowed' };
+    }
+  }
+
+  // Check for tablets
+  for (const pattern of tabletPatterns) {
+    if (ua.includes(pattern)) {
+      return { blocked: true, reason: 'Tablets are not supported for security reasons' };
+    }
+  }
+
+  // Check for mobile devices
+  for (const pattern of mobilePatterns) {
+    if (ua.includes(pattern)) {
+      return { blocked: true, reason: 'Mobile devices are not supported for security reasons' };
+    }
+  }
+
+  return null;
+}
+
+/**
  * Sanitize input strings
  */
 function sanitizeInput(input: string): string {
@@ -125,6 +174,29 @@ export function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
   const method = request.method;
   const clientIP = getClientIP(request);
+  const userAgent = request.headers.get('user-agent') || '';
+
+  // 0. Device restriction check for API routes (security-critical)
+  if (pathname.startsWith('/api')) {
+    const deviceCheck = detectRestrictedDevice(userAgent);
+    if (deviceCheck?.blocked) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'ACCESS_DENIED',
+          message: deviceCheck.reason,
+          details: 'T.A.L.A. is only accessible from desktop computers for security reasons.'
+        },
+        { 
+          status: 403,
+          headers: {
+            'X-Device-Blocked': 'true',
+            'X-Block-Reason': deviceCheck.reason
+          }
+        }
+      );
+    }
+  }
 
   // Create response
   let response = NextResponse.next();

@@ -8,7 +8,7 @@ import { NextAuthSessionProvider } from "./providers/SessionProvider";
 import { ErrorBoundary } from "./components/ErrorBoundary";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
-import MobileWarning from "./components/MobileWarning";
+import DeviceBlocker from "./components/DeviceBlocker";
 import PageSkeleton from "./components/PageSkeleton";
 import DevelopmentNotification from "./components/DevelopmentNotification";
 import CookieConsent from "./components/CookieConsent";
@@ -88,9 +88,9 @@ export default function RootLayout({
               <ThemeProvider>
                 <Web3ClientWrapper>
                   <ToastProvider>
+                    <DeviceBlocker />
                     <LaunchAnnouncementModal />
                     <PageSkeleton />
-                    <MobileWarning />
                     <Navbar />
                     <DevelopmentNotification />
                     <CookieConsent />
