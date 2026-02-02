@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Monitor, Smartphone, Tablet, AlertTriangle, Shield, Lock } from 'lucide-react';
+import { Monitor, Smartphone, Tablet, Shield, Lock, Cpu, ArrowRight } from 'lucide-react';
 
 interface DeviceInfo {
   isMobile: boolean;
@@ -158,133 +158,196 @@ export default function DeviceBlocker() {
   const shouldBlock = deviceInfo.isMobile || deviceInfo.isTablet || deviceInfo.isEmulator;
   if (!shouldBlock) return null;
 
-  // Get appropriate icon and message based on device type
+  // Get appropriate content based on device type
   const getDeviceContent = () => {
     if (deviceInfo.isEmulator) {
       return {
-        icon: <Monitor className="w-16 h-16 text-red-500" />,
-        title: 'Emulator Detected',
-        subtitle: 'Virtual environments are not supported',
-        description: 'For security reasons, T.A.L.A. cannot be accessed from emulators, simulators, or virtual machines. This helps protect sensitive exam content from unauthorized access.',
-        devices: ['Android Emulators (BlueStacks, Nox, etc.)', 'iOS Simulators', 'Virtual Machines', 'Browser DevTools Device Mode']
+        icon: Cpu,
+        iconBg: 'bg-heirlock-pink',
+        title: 'Virtual Environment Detected',
+        subtitle: 'Emulators & VMs are not supported',
+        emoji: '🖥️',
+        color: 'heirlock-pink'
       };
     }
     if (deviceInfo.isTablet) {
       return {
-        icon: <Tablet className="w-16 h-16 text-amber-500" />,
+        icon: Tablet,
+        iconBg: 'bg-heirlock-blue',
         title: 'Tablet Detected',
         subtitle: 'Tablets are not supported',
-        description: 'T.A.L.A. requires a desktop or laptop computer for secure access. Tablets do not meet our security requirements for handling sensitive exam materials.',
-        devices: ['iPad', 'Android Tablets', 'Surface Tablets', 'Amazon Fire Tablets']
+        emoji: '📱',
+        color: 'heirlock-blue'
       };
     }
     return {
-      icon: <Smartphone className="w-16 h-16 text-amber-500" />,
+      icon: Smartphone,
+      iconBg: 'bg-heirlock-green',
       title: 'Mobile Device Detected',
       subtitle: 'Mobile phones are not supported',
-      description: 'T.A.L.A. is designed exclusively for desktop and laptop computers. Mobile devices cannot provide the security measures required for exam content protection.',
-      devices: ['iPhones', 'Android Phones', 'Windows Phones', 'Other Mobile Devices']
+      emoji: '📱',
+      color: 'heirlock-green'
     };
   };
 
   const content = getDeviceContent();
+  const DeviceIcon = content.icon;
 
   return (
-    <div className="fixed inset-0 z-[9999] bg-black flex items-center justify-center p-4 overflow-auto">
-      <div className="max-w-lg w-full">
-        {/* Main Card */}
-        <div className="bg-white border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
-          
-          {/* Header */}
-          <div className="bg-gradient-to-r from-red-500 to-red-600 p-6 border-b-4 border-black">
-            <div className="flex items-center justify-center gap-4">
-              <Shield className="w-10 h-10 text-white" />
-              <h1 className="text-2xl font-black text-white tracking-tight">
-                ACCESS BLOCKED
-              </h1>
-              <Lock className="w-10 h-10 text-white" />
-            </div>
-          </div>
+    <div className="fixed inset-0 z-[9999] bg-black overflow-auto">
+      {/* Animated Background Pattern */}
+      <div className="absolute inset-0 opacity-5">
+        <div className="absolute inset-0" style={{
+          backgroundImage: `repeating-linear-gradient(
+            0deg,
+            transparent,
+            transparent 50px,
+            rgba(255,255,255,0.03) 50px,
+            rgba(255,255,255,0.03) 51px
+          ),
+          repeating-linear-gradient(
+            90deg,
+            transparent,
+            transparent 50px,
+            rgba(255,255,255,0.03) 50px,
+            rgba(255,255,255,0.03) 51px
+          )`
+        }} />
+      </div>
 
-          {/* Content */}
-          <div className="p-8">
-            {/* Device Icon & Title */}
-            <div className="text-center mb-6">
-              <div className="flex justify-center mb-4">
-                <div className="p-4 bg-gray-100 rounded-full border-4 border-black">
-                  {content.icon}
-                </div>
-              </div>
-              <h2 className="text-2xl font-black text-black mb-2">
-                {content.title}
-              </h2>
-              <p className="text-gray-600 font-bold">
-                {content.subtitle}
-              </p>
+      {/* Main Content */}
+      <div className="relative min-h-screen flex flex-col items-center justify-center p-6">
+        
+        {/* Logo Section */}
+        <div className="mb-8 animate-pulse">
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 bg-heirlock-yellow border-4 border-white flex items-center justify-center shadow-[4px_4px_0px_0px_rgba(255,255,255,0.3)]">
+              <Lock className="w-6 h-6 text-black" />
             </div>
-
-            {/* Warning Box */}
-            <div className="bg-amber-50 border-4 border-amber-400 p-4 mb-6">
-              <div className="flex items-start gap-3">
-                <AlertTriangle className="w-6 h-6 text-amber-500 flex-shrink-0 mt-0.5" />
-                <p className="text-sm font-medium text-gray-800 leading-relaxed">
-                  {content.description}
-                </p>
-              </div>
-            </div>
-
-            {/* Blocked Devices List */}
-            <div className="mb-6">
-              <h3 className="font-black text-black mb-3 text-sm uppercase tracking-wide">
-                Blocked Devices Include:
-              </h3>
-              <ul className="space-y-2">
-                {content.devices.map((device, index) => (
-                  <li key={index} className="flex items-center gap-2 text-sm text-gray-700">
-                    <span className="w-2 h-2 bg-red-500 rounded-full flex-shrink-0" />
-                    {device}
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            {/* Solution Box */}
-            <div className="bg-gradient-to-r from-green-50 to-emerald-50 border-4 border-green-500 p-4 mb-6">
-              <div className="flex items-center gap-3 mb-2">
-                <Monitor className="w-6 h-6 text-green-600" />
-                <h3 className="font-black text-green-800">How to Access T.A.L.A.</h3>
-              </div>
-              <p className="text-sm text-green-700 font-medium">
-                Please use a <strong>desktop computer</strong> or <strong>laptop</strong> with a modern web browser (Chrome, Firefox, Safari, or Edge) to access this platform.
-              </p>
-            </div>
-
-            {/* Footer Info */}
-            <div className="text-center">
-              <div className="inline-flex items-center gap-2 bg-black text-white px-4 py-2 font-bold text-sm">
-                <Shield className="w-4 h-4" />
-                Security First • Trust is Code
-              </div>
-            </div>
-
-            {/* Debug Info (only in development) */}
-            {process.env.NODE_ENV === 'development' && deviceInfo.reason.length > 0 && (
-              <div className="mt-6 p-3 bg-gray-100 border-2 border-gray-300 text-xs">
-                <p className="font-bold text-gray-600 mb-2">Debug Info:</p>
-                <ul className="text-gray-500 space-y-1">
-                  {deviceInfo.reason.map((r, i) => (
-                    <li key={i}>• {r}</li>
-                  ))}
-                </ul>
-              </div>
-            )}
+            <span className="text-white font-black text-2xl tracking-tight">T.A.L.A.</span>
           </div>
         </div>
 
-        {/* Bottom Message */}
-        <p className="text-center text-gray-400 text-xs mt-4 font-medium">
-          This restriction helps us maintain the highest security standards for exam content protection.
-        </p>
+        {/* Main Card */}
+        <div className="w-full max-w-md">
+          {/* Card with brutal design */}
+          <div className={`bg-${content.color} border-4 border-white shadow-[8px_8px_0px_0px_rgba(255,255,255,0.2)] transform transition-all`}>
+            
+            {/* Header Strip */}
+            <div className="bg-black px-6 py-4 border-b-4 border-white">
+              <div className="flex items-center justify-center gap-3">
+                <Shield className="w-5 h-5 text-heirlock-yellow" />
+                <span className="text-white font-black text-sm tracking-widest uppercase">
+                  Access Restricted
+                </span>
+                <Shield className="w-5 h-5 text-heirlock-yellow" />
+              </div>
+            </div>
+
+            {/* Content Area */}
+            <div className="p-8 bg-white">
+              
+              {/* Device Icon */}
+              <div className="flex justify-center mb-6">
+                <div className={`relative`}>
+                  <div className={`w-24 h-24 ${content.iconBg} border-4 border-black flex items-center justify-center shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transform -rotate-3 hover:rotate-0 transition-transform`}>
+                    <DeviceIcon className="w-12 h-12 text-black" />
+                  </div>
+                  {/* Decorative X */}
+                  <div className="absolute -top-2 -right-2 w-8 h-8 bg-red-500 border-3 border-black rounded-full flex items-center justify-center shadow-brutal">
+                    <span className="text-white font-black text-lg">✕</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Title */}
+              <div className="text-center mb-6">
+                <h1 className="text-2xl font-black text-black mb-2 tracking-tight">
+                  {content.title}
+                </h1>
+                <p className="text-gray-600 font-bold">
+                  {content.subtitle}
+                </p>
+              </div>
+
+              {/* Message Box */}
+              <div className="bg-heirlock-yellow border-4 border-black p-4 mb-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                <p className="text-black font-bold text-sm leading-relaxed text-center">
+                  For <span className="underline decoration-4 decoration-black">security reasons</span>, T.A.L.A. can only be accessed from <span className="bg-black text-heirlock-yellow px-2 py-0.5">desktop computers</span> and <span className="bg-black text-heirlock-yellow px-2 py-0.5">laptops</span>.
+                </p>
+              </div>
+
+              {/* Blocked Devices */}
+              <div className="mb-6">
+                <p className="text-xs font-black text-gray-500 uppercase tracking-wider mb-3 text-center">
+                  Not Supported On
+                </p>
+                <div className="flex justify-center gap-4">
+                  <div className="flex flex-col items-center gap-1 opacity-50">
+                    <div className="w-10 h-10 bg-gray-100 border-2 border-gray-300 flex items-center justify-center">
+                      <Smartphone className="w-5 h-5 text-gray-400" />
+                    </div>
+                    <span className="text-[10px] text-gray-400 font-bold">Phones</span>
+                  </div>
+                  <div className="flex flex-col items-center gap-1 opacity-50">
+                    <div className="w-10 h-10 bg-gray-100 border-2 border-gray-300 flex items-center justify-center">
+                      <Tablet className="w-5 h-5 text-gray-400" />
+                    </div>
+                    <span className="text-[10px] text-gray-400 font-bold">Tablets</span>
+                  </div>
+                  <div className="flex flex-col items-center gap-1 opacity-50">
+                    <div className="w-10 h-10 bg-gray-100 border-2 border-gray-300 flex items-center justify-center">
+                      <Cpu className="w-5 h-5 text-gray-400" />
+                    </div>
+                    <span className="text-[10px] text-gray-400 font-bold">Emulators</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Solution */}
+              <div className="bg-heirlock-green border-4 border-black p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 bg-black flex items-center justify-center flex-shrink-0">
+                    <Monitor className="w-6 h-6 text-heirlock-green" />
+                  </div>
+                  <div>
+                    <p className="font-black text-black text-sm">Switch to Desktop</p>
+                    <p className="text-xs text-gray-700 font-medium">
+                      Use a computer with Chrome, Firefox, Safari, or Edge
+                    </p>
+                  </div>
+                  <ArrowRight className="w-5 h-5 text-black flex-shrink-0" />
+                </div>
+              </div>
+            </div>
+
+            {/* Footer Strip */}
+            <div className="bg-black px-6 py-3 border-t-4 border-white">
+              <p className="text-center text-xs font-bold text-gray-400">
+                <span className="text-heirlock-yellow">Security First</span> • Protecting Exam Integrity • <span className="text-heirlock-yellow">Trust is Code</span>
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Bottom Info */}
+        <div className="mt-8 text-center">
+          <p className="text-gray-500 text-xs font-medium max-w-sm">
+            This restriction ensures the highest level of security for sensitive examination content.
+          </p>
+        </div>
+
+        {/* Debug Info (Development Only) */}
+        {process.env.NODE_ENV === 'development' && deviceInfo.reason.length > 0 && (
+          <div className="mt-6 p-4 bg-gray-900 border-2 border-gray-700 text-xs max-w-md w-full">
+            <p className="font-bold text-gray-400 mb-2">🔧 Debug Info:</p>
+            <ul className="text-gray-500 space-y-1">
+              {deviceInfo.reason.map((r, i) => (
+                <li key={i}>• {r}</li>
+              ))}
+            </ul>
+          </div>
+        )}
       </div>
     </div>
   );
