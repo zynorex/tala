@@ -140,11 +140,21 @@ export function useFileDownload() {
         setProgress(30);
 
         const data = await response.json();
+        console.log('[Download] API response:', data);
         const fileMetadata = data.file;
 
         if (!fileMetadata || !fileMetadata.ipfsHash) {
+          console.error('[Download] Invalid file metadata:', fileMetadata);
           throw new Error('Invalid file metadata received');
         }
+
+        console.log('[Download] File metadata:', {
+          id: fileMetadata.id,
+          fileName: fileMetadata.fileName,
+          ipfsHash: fileMetadata.ipfsHash,
+          hasEncryption: !!fileMetadata.encryption,
+          encryption: fileMetadata.encryption,
+        });
 
         // Step 2: Fetch encrypted file from IPFS gateway
         setProgress(40);
@@ -182,6 +192,7 @@ export function useFileDownload() {
           throw new Error(lastError?.message || 'Failed to download file from IPFS');
         }
 
+        console.log('[Download] IPFS data received, size:', encryptedData.byteLength);
         setProgress(60);
 
         // Step 3: Decrypt file client-side if encrypted, otherwise download directly
@@ -195,6 +206,7 @@ export function useFileDownload() {
         let finalBlob: Blob;
 
         if (hasEncryption) {
+          console.log('[Download] Decrypting file with encryption metadata');
           const decrypted = await decryptFileData(
             encryptedData,
             password,
@@ -202,23 +214,28 @@ export function useFileDownload() {
             fileMetadata.encryption.salt,
             fileMetadata.encryption.authTag
           );
+          console.log('[Download] Decryption successful, size:', decrypted.length);
           finalBlob = new Blob([decrypted.buffer as ArrayBuffer], { type: fileMetadata.mimeType || 'application/octet-stream' });
         } else {
           // File was not encrypted with password, download directly
+          console.log('[Download] No encryption metadata, downloading directly');
           finalBlob = new Blob([encryptedData], { type: fileMetadata.mimeType || 'application/octet-stream' });
         }
 
         setProgress(90);
 
         // Step 4: Trigger download
+        console.log('[Download] Creating download link for:', fileName, 'Size:', finalBlob.size);
         const url = window.URL.createObjectURL(finalBlob);
         const link = document.createElement('a');
         link.href = url;
         link.download = fileName;
         document.body.appendChild(link);
+        console.log('[Download] Triggering download click');
         link.click();
         document.body.removeChild(link);
         window.URL.revokeObjectURL(url);
+        console.log('[Download] Download triggered successfully');
 
         setProgress(100);
 

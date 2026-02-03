@@ -37,6 +37,7 @@ interface VaultFile {
   fileSizeBytes: number;
   mimeType: string | null;
   ipfsHash: string;
+  fileHash?: string;
   uploadedAt: string;
   isActive?: boolean;
   deletedAt?: string | null;
@@ -303,6 +304,12 @@ export default function VaultDetailPage({ params }: { params: Promise<{ id: stri
   };
 
   const handlePasswordSubmit = async (password: string) => {
+    console.log('[VaultPage] handlePasswordSubmit called', {
+      hasSelectedFile: !!selectedFileForDownload,
+      fileId: selectedFileForDownload?.id,
+      fileName: selectedFileForDownload?.fileName,
+    });
+    
     if (!selectedFileForDownload) {
       toast('No file selected', 'error');
       return;
@@ -312,6 +319,7 @@ export default function VaultDetailPage({ params }: { params: Promise<{ id: stri
       setDownloadingFileId(selectedFileForDownload.id);
       setShowPasswordModal(false);
 
+      console.log('[VaultPage] Calling downloadAndDecryptFile...');
       await downloadAndDecryptFile({
         vaultId: vault.id,
         fileId: selectedFileForDownload.id,
@@ -319,9 +327,10 @@ export default function VaultDetailPage({ params }: { params: Promise<{ id: stri
         password,
       });
 
+      console.log('[VaultPage] Download completed successfully');
       toast(`File "${selectedFileForDownload.fileName}" downloaded successfully!`, 'success');
     } catch (error) {
-      console.error('Error downloading file:', error);
+      console.error('[VaultPage] Error downloading file:', error);
       const errorMessage = error instanceof Error ? error.message : 'Failed to download file';
       toast(errorMessage, 'error');
     } finally {

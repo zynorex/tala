@@ -2,9 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { verifyRequest } from '@/lib/auth/jwt';
 import { apiSuccess, apiError, handleDbError } from '@/lib/auth/api-response';
 import { uploadToIPFS } from '@/lib/ipfs/ipfs';
-import { encryptFile, calculateFileHash } from '@/lib/crypto/encryption';
-import { generateEncryptionKey } from '@/lib/crypto/encryption';
+import { encryptFileWithPassword, calculateFileHash } from '@/lib/crypto/encryption';
 import { verifyUnlockBeforeFileAccess } from '@/lib/services/vault-unlock';
+import crypto from 'crypto';
 
 const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB (increased from 10MB for PDFs)
 const ALLOWED_MIME_TYPES = [
@@ -152,27 +152,34 @@ export async function POST(
     // 6. Read file into buffer
     const fileBuffer = Buffer.from(await file.arrayBuffer());
 
-    // 7. Generate encryption key for this file
-    const encryptionKey = generateEncryptionKey();
+    // 7. Get password from form data (required for encryption)
+    const password = formData.get('password') as string;
+    if (!password || password.trim().length === 0) {
+      return NextResponse.json(
+        apiError('Bad Request', 400, 'Password is required for file encryption'),
+        { status: 400 }
+      );
+    }
 
-    // 8. Encrypt file
-    const encryptionResult = encryptFile(fileBuffer, encryptionKey);
+    // 8. Encrypt file using password-based encryption for client-side decryption
+    const encryptionResult = encryptFileWithPassword(fileBuffer, password);
     const encrypted = encryptionResult.encryptedData;
-    const encryptedBuffer = Buffer.from(
-      JSON.stringify({
-        iv: encrypted.iv,
-        ciphertext: encrypted.ciphertext,
-        authTag: encrypted.authTag,
-        algorithm: encrypted.algorithm,
-      })
-    );
+    
+    // Store only the encrypted ciphertext (raw binary) on IPFS
+    // The IV, salt, and authTag are stored in the database for client-side decryption
+    const encryptedBuffer = Buffer.from(encrypted.ciphertext, 'hex');
 
     // 9. Calculate hashes
     const fileHash = encryptionResult.fileHash;
-    const encryptionKeyHash = require('crypto')
+    const encryptionKeyHash = crypto
       .createHash('sha256')
-      .update(encryptionKey)
+      .update(password)
       .digest('hex');
+    
+    // Store encryption metadata for password-based decryption
+    const encryptionIV = encrypted.iv;
+    const encryptionSalt = encrypted.salt;
+    const encryptionAuthTag = encrypted.authTag;
 
     // 10. Upload encrypted file to IPFS
     let ipfsHash: string;
@@ -191,7 +198,7 @@ export async function POST(
       );
     }
 
-    // 11. Store file metadata in database
+    // 11. Store file metadata in database with encryption parameters
     const vaultFile = await db.vaultFile.create({
       data: {
         vaultId,
@@ -201,6 +208,9 @@ export async function POST(
         fileHash,
         ipfsHash,
         encryptionKeyHash,
+        encryptionIV,
+        encryptionSalt,
+        encryptionAuthTag,
         uploadedBy: payload.userId,
       },
     });

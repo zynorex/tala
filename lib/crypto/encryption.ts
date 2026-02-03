@@ -240,6 +240,61 @@ export function encryptFile(fileBuffer: Buffer, encryptionKey: Buffer): FileEncr
 }
 
 /**
+ * Encrypt file using password-based key derivation
+ * Uses PBKDF2 to derive key from password for client-side decryption
+ * 
+ * @param fileBuffer File content as buffer
+ * @param password User password for encryption
+ * @returns Encryption result with metadata needed for decryption
+ */
+export function encryptFileWithPassword(fileBuffer: Buffer, password: string): FileEncryptionResult {
+  if (!fileBuffer || fileBuffer.length === 0) {
+    throw new Error('File cannot be empty');
+  }
+  
+  if (!password || password.trim().length === 0) {
+    throw new Error('Password cannot be empty');
+  }
+
+  // Generate fresh salt for this encryption
+  const salt = crypto.randomBytes(SALT_LENGTH);
+  
+  // Derive key from password using PBKDF2
+  const encryptionKey = deriveKey(password, salt);
+
+  // Calculate file hash before encryption
+  const fileHash = calculateFileHash(fileBuffer);
+  const fileSize = fileBuffer.length;
+
+  // Generate IV for encryption
+  const iv = crypto.randomBytes(IV_LENGTH);
+
+  // Create cipher and encrypt
+  const cipher = crypto.createCipheriv(ALGORITHM, encryptionKey, iv);
+  const encrypted = Buffer.concat([cipher.update(fileBuffer), cipher.final()]);
+  const authTag = cipher.getAuthTag();
+
+  const encryptedData: EncryptedData = {
+    ciphertext: encrypted.toString('hex'),
+    iv: iv.toString('hex'),
+    authTag: authTag.toString('hex'),
+    salt: salt.toString('hex'),
+    version: '2.0',
+    timestamp: Date.now(),
+    algorithm: ALGORITHM,
+  };
+
+  const encryptedSize = encrypted.length;
+
+  return {
+    encryptedData,
+    fileHash,
+    fileSize,
+    encryptedSize,
+  };
+}
+
+/**
  * Decrypt a file and verify integrity
  * 
  * @param encryptedData Encrypted file data
