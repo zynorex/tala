@@ -135,10 +135,32 @@ export function useFileDownload() {
         if (!response.ok) {
           const error = await response.json();
           
-          // Handle vault locked (423) response with specific message
+          // Handle vault locked (423) response with specific toast message
           if (response.status === 423) {
-            const unlockTime = error.unlockTime ? new Date(error.unlockTime).toLocaleString() : 'Unknown';
-            throw new Error(`🔒 Vault is locked until ${unlockTime}. Please wait for the unlock time.`);
+            setIsDownloading(false);
+            setProgress(0);
+            
+            // Parse unlock time properly
+            let unlockTimeMessage = 'the specified time';
+            if (error.unlockTime) {
+              try {
+                const unlockDate = new Date(error.unlockTime);
+                unlockTimeMessage = unlockDate.toLocaleString('en-US', {
+                  weekday: 'short',
+                  year: 'numeric',
+                  month: 'short',
+                  day: 'numeric',
+                  hour: '2-digit',
+                  minute: '2-digit',
+                });
+              } catch (e) {
+                console.error('Failed to parse unlock time:', e);
+              }
+            }
+            
+            // Show user-friendly toast message
+            toast(`🔒 Vault Locked\n\nThis vault cannot be accessed until ${unlockTimeMessage}. Please wait for the unlock time to download files.`, 'error');
+            return; // Exit gracefully without throwing
           }
           
           throw new Error(error.error || 'Failed to download file');

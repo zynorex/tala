@@ -327,12 +327,20 @@ export default function VaultDetailPage({ params }: { params: Promise<{ id: stri
         password,
       });
 
-      console.log('[VaultPage] Download completed successfully');
-      toast(`File "${selectedFileForDownload.fileName}" downloaded successfully!`, 'success');
+      // Only show success toast if download actually completed
+      // (If vault is locked, downloadAndDecryptFile returns early with its own toast)
+      if (!isDownloading) {
+        console.log('[VaultPage] Download completed successfully');
+        toast(`File "${selectedFileForDownload.fileName}" downloaded successfully!`, 'success');
+      }
     } catch (error) {
       console.error('[VaultPage] Error downloading file:', error);
       const errorMessage = error instanceof Error ? error.message : 'Failed to download file';
-      toast(errorMessage, 'error');
+      
+      // Don't show error toast if it's a vault locked message (already shown by hook)
+      if (!errorMessage.includes('🔒')) {
+        toast(errorMessage, 'error');
+      }
     } finally {
       setDownloadingFileId(null);
       setSelectedFileForDownload(null);
