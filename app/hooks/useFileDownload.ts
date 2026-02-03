@@ -14,7 +14,7 @@ interface FileDownloadParams {
  * Decrypt file using AES-256-GCM (browser-side decryption)
  */
 async function decryptFileData(
-  encryptedHex: string,
+  encryptedData: ArrayBuffer,
   password: string,
   iv: string,
   salt: string,
@@ -27,7 +27,6 @@ async function decryptFileData(
   // Convert hex strings to ArrayBuffers
   const saltBuffer = hexToArrayBuffer(salt);
   const ivBuffer = hexToArrayBuffer(iv);
-  const encryptedBuffer = hexToArrayBuffer(encryptedHex);
   const authTagBuffer = hexToArrayBuffer(authTag);
 
   // Derive key using PBKDF2
@@ -62,8 +61,9 @@ async function decryptFileData(
   );
 
   // Combine encrypted data with auth tag for decryption
+  const encryptedArray = new Uint8Array(encryptedData);
   const fullEncrypted = new Uint8Array([
-    ...new Uint8Array(encryptedBuffer),
+    ...encryptedArray,
     ...new Uint8Array(authTagBuffer),
   ]);
 
@@ -146,40 +146,72 @@ export function useFileDownload() {
           throw new Error('Invalid file metadata received');
         }
 
-        // Step 2: Fetch encrypted file from IPFS (simulated)
-        // In production, this would be: https://gateway.pinata.cloud/ipfs/QmHash
-        // For now, we simulate by storing base64 in localStorage
-        const encryptedKey = `encrypted_file_${fileId}`;
-        const storedEncrypted = localStorage.getItem(encryptedKey);
+        // Step 2: Fetch encrypted file from IPFS gateway
+        setProgress(40);
+        
+        // Try Pinata gateway first, then fallback to public gateway
+        const gateways = [
+          `https://gateway.pinata.cloud/ipfs/${fileMetadata.ipfsHash}`,
+          `https://ipfs.io/ipfs/${fileMetadata.ipfsHash}`,
+          `https://cloudflare-ipfs.com/ipfs/${fileMetadata.ipfsHash}`,
+        ];
 
-        if (!storedEncrypted) {
-          throw new Error('Encrypted file data not found');
+        let encryptedData: ArrayBuffer | null = null;
+        let lastError: Error | null = null;
+
+        for (const gatewayUrl of gateways) {
+          try {
+            const ipfsResponse = await fetch(gatewayUrl, {
+              method: 'GET',
+              headers: {
+                'Accept': 'application/octet-stream',
+              },
+            });
+
+            if (ipfsResponse.ok) {
+              encryptedData = await ipfsResponse.arrayBuffer();
+              break;
+            }
+          } catch (err) {
+            lastError = err instanceof Error ? err : new Error('Gateway fetch failed');
+            console.warn(`Gateway ${gatewayUrl} failed:`, err);
+          }
+        }
+
+        if (!encryptedData) {
+          throw new Error(lastError?.message || 'Failed to download file from IPFS');
         }
 
         setProgress(60);
 
-        // Decode base64 to hex
-        const binaryString = atob(storedEncrypted);
-        let encryptedHex = '';
-        for (let i = 0; i < binaryString.length; i++) {
-          encryptedHex += ('0' + binaryString.charCodeAt(i).toString(16)).slice(-2);
-        }
-
-        // Step 3: Decrypt file client-side
+        // Step 3: Decrypt file client-side if encrypted, otherwise download directly
         setProgress(70);
-        const decrypted = await decryptFileData(
-          encryptedHex,
-          password,
-          fileMetadata.encryption.iv,
-          fileMetadata.encryption.salt,
-          fileMetadata.encryption.authTag
-        );
+        
+        // Check if encryption metadata exists
+        const hasEncryption = fileMetadata.encryption?.iv && 
+                              fileMetadata.encryption?.salt && 
+                              fileMetadata.encryption?.authTag;
+
+        let finalBlob: Blob;
+
+        if (hasEncryption) {
+          const decrypted = await decryptFileData(
+            encryptedData,
+            password,
+            fileMetadata.encryption.iv,
+            fileMetadata.encryption.salt,
+            fileMetadata.encryption.authTag
+          );
+          finalBlob = new Blob([decrypted.buffer as ArrayBuffer], { type: fileMetadata.mimeType || 'application/octet-stream' });
+        } else {
+          // File was not encrypted with password, download directly
+          finalBlob = new Blob([encryptedData], { type: fileMetadata.mimeType || 'application/octet-stream' });
+        }
 
         setProgress(90);
 
         // Step 4: Trigger download
-        const blob = new Blob([decrypted.buffer as ArrayBuffer], { type: fileMetadata.mimeType });
-        const url = window.URL.createObjectURL(blob);
+        const url = window.URL.createObjectURL(finalBlob);
         const link = document.createElement('a');
         link.href = url;
         link.download = fileName;

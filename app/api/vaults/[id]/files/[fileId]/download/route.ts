@@ -127,9 +127,9 @@ export async function POST(
           fileSize: file.fileSizeBytes,
           ipfsHash: file.ipfsHash,
           encryption: {
-            iv: file.encryptedIV,
-            salt: file.encryptedSalt,
-            authTag: file.encryptedAuthTag,
+            iv: file.encryptionIV,
+            salt: file.encryptionSalt,
+            authTag: file.encryptionAuthTag,
           },
         },
       },
