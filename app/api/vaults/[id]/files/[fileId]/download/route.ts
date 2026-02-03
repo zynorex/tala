@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { verifyRequest } from '@/lib/auth/jwt';
 import { downloadFromIPFS } from '@/lib/ipfs/ipfs';
+import { verifyUnlockBeforeFileAccess } from '@/lib/services/vault-unlock';
 import crypto from 'crypto';
 
 let prisma: any = null;
@@ -88,6 +89,25 @@ export async function POST(
 
     if (vault.userId !== payload.userId) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
+    }
+
+    // ⏰ CRITICAL: Verify vault is unlocked before allowing file download
+    const unlockCheck = await verifyUnlockBeforeFileAccess(
+      vaultId,
+      payload.userId,
+      request.headers.get('x-forwarded-for') || 'unknown',
+      request.headers.get('user-agent') || 'unknown'
+    );
+
+    if (!unlockCheck.allowed) {
+      return NextResponse.json(
+        { 
+          error: unlockCheck.reason || 'Vault is locked and cannot be accessed',
+          unlockTime: unlockCheck.unlockTime,
+          remainingTime: unlockCheck.remainingTime,
+        }, 
+        { status: 423 } // 423 Locked
+      );
     }
 
     // Get file

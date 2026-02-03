@@ -134,6 +134,13 @@ export function useFileDownload() {
 
         if (!response.ok) {
           const error = await response.json();
+          
+          // Handle vault locked (423) response with specific message
+          if (response.status === 423) {
+            const unlockTime = error.unlockTime ? new Date(error.unlockTime).toLocaleString() : 'Unknown';
+            throw new Error(`🔒 Vault is locked until ${unlockTime}. Please wait for the unlock time.`);
+          }
+          
           throw new Error(error.error || 'Failed to download file');
         }
 
