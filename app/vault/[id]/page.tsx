@@ -30,6 +30,7 @@ interface VaultData {
   createdAt: string;
   updatedAt: string;
   files: VaultFile[];
+  activityLogs?: ActivityLogEntry[];
 }
 
 interface VaultFile {
@@ -740,7 +741,7 @@ export default function VaultDetailPage({ params }: { params: Promise<{ id: stri
                               {file.fileHash}
                             </code>
                             <button
-                              onClick={() => copyToClipboard(file.fileHash, `Hash: ${file.fileName}`)}
+                              onClick={() => copyToClipboard(file.fileHash || '', `Hash: ${file.fileName}`)}
                               className={`px-2 py-1 font-black border-2 border-black text-xs transition-all flex-shrink-0 ${
                                 copied === `Hash: ${file.fileName}`
                                   ? 'bg-heirlock-green text-white border-heirlock-green'
@@ -781,25 +782,62 @@ export default function VaultDetailPage({ params }: { params: Promise<{ id: stri
             {/* Activity Tab */}
             {activeTab === 'activity' && (
               <div className="border-4 border-black p-6 bg-white">
-                {vault.activityLogs.length === 0 ? (
-                  <div className="text-center py-8">
-                    <Activity className="w-12 h-12 mx-auto mb-4 text-gray-300" />
-                    <p className="text-gray-600 font-black">No activity yet</p>
+                {/* Activity Header */}
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-2">
+                    <Activity className="w-5 h-5" />
+                    <h3 className="font-black text-lg">
+                      Activity Log ({(vault.activityLogs || []).length})
+                    </h3>
+                  </div>
+                  <button
+                    onClick={() => fetchVault(false)}
+                    className="p-2 hover:bg-gray-100 border-2 border-black transition-all"
+                    title="Refresh activity"
+                  >
+                    <RefreshCw className="w-4 h-4" />
+                  </button>
+                </div>
+
+                {(!vault.activityLogs || vault.activityLogs.length === 0) ? (
+                  <div className="border-4 border-dashed border-gray-300 p-8 text-center bg-gray-50">
+                    <Activity className="w-12 h-12 mx-auto mb-4 text-gray-400" />
+                    <p className="font-black text-gray-600">No activity recorded yet</p>
+                    <p className="text-sm text-gray-500 mt-2">Actions like file uploads, downloads, and vault changes will appear here</p>
                   </div>
                 ) : (
-                  <div className="space-y-3 max-h-96 overflow-y-auto">
-                    {vault.activityLogs.slice().reverse().map((log) => (
-                      <div key={log.id} className="border-l-4 border-heirlock-blue pl-3 py-2">
-                        <div className="flex items-center justify-between">
-                          <p className="text-xs font-black uppercase">{log.action}</p>
-                          <p className="text-xs text-gray-500 font-mono">{formatDate(log.createdAt)}</p>
+                  <div className="space-y-3 max-h-[500px] overflow-y-auto pr-2">
+                    {vault.activityLogs.slice().reverse().map((log: ActivityLogEntry) => (
+                      <div 
+                        key={log.id} 
+                        className="border-l-4 border-heirlock-blue pl-4 py-3 bg-gray-50 hover:bg-heirlock-blue/10 transition-colors"
+                      >
+                        <div className="flex items-start justify-between gap-4">
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2 mb-1">
+                              {/* Action Badge */}
+                              <span className={`px-2 py-0.5 text-xs font-black uppercase border-2 border-black ${
+                                log.action.includes('CREATE') ? 'bg-heirlock-green text-black' :
+                                log.action.includes('DELETE') ? 'bg-red-500 text-white' :
+                                log.action.includes('UPLOAD') ? 'bg-heirlock-blue text-black' :
+                                log.action.includes('DOWNLOAD') ? 'bg-heirlock-pink text-black' :
+                                log.action.includes('UPDATE') ? 'bg-heirlock-yellow text-black' :
+                                'bg-gray-200 text-black'
+                              }`}>
+                                {log.action.replace(/_/g, ' ')}
+                              </span>
+                            </div>
+                            {log.description && (
+                              <p className="text-sm text-gray-700 mt-1">{log.description}</p>
+                            )}
+                          </div>
+                          <div className="text-right flex-shrink-0">
+                            <p className="text-xs text-gray-500 font-mono">{formatDate(log.createdAt)}</p>
+                            {log.ipAddress && (
+                              <p className="text-xs text-gray-400 mt-1 font-mono">IP: {log.ipAddress}</p>
+                            )}
+                          </div>
                         </div>
-                        {log.description && (
-                          <p className="text-xs text-gray-700 mt-1">{log.description}</p>
-                        )}
-                        {log.ipAddress && (
-                          <p className="text-xs text-gray-500 mt-1">IP: {log.ipAddress}</p>
-                        )}
                       </div>
                     ))}
                   </div>
@@ -845,7 +883,7 @@ export default function VaultDetailPage({ params }: { params: Promise<{ id: stri
                   {vault.keyHash.substring(0, 16)}...
                 </code>
                 <button
-                  onClick={() => copyToClipboard(vault.keyHash, 'Key Hash')}
+                  onClick={() => copyToClipboard(vault.keyHash || '', 'Key Hash')}
                   className={`px-2 py-2 font-black border-2 border-black text-xs transition-all flex-shrink-0 ${
                     copied === 'Key Hash'
                       ? 'bg-heirlock-green text-white border-heirlock-green'
@@ -870,7 +908,7 @@ export default function VaultDetailPage({ params }: { params: Promise<{ id: stri
                   {vault.fileHash.substring(0, 16)}...
                 </code>
                 <button
-                  onClick={() => copyToClipboard(vault.fileHash, 'File Hash')}
+                  onClick={() => copyToClipboard(vault.fileHash || '', 'File Hash')}
                   className={`px-2 py-2 font-black border-2 border-black text-xs transition-all flex-shrink-0 ${
                     copied === 'File Hash'
                       ? 'bg-heirlock-green text-white border-heirlock-green'
