@@ -1,13 +1,25 @@
 'use client';
 
 import { useState, useCallback } from 'react';
-import { useToast } from './useToast';
 
 interface FileDownloadParams {
   vaultId: string;
   fileId: string;
   fileName: string;
   password: string;
+}
+
+// Custom error class for vault locked state
+export class VaultLockedError extends Error {
+  unlockTime: string | null;
+  remainingTime: string | null;
+  
+  constructor(message: string, unlockTime?: string, remainingTime?: string) {
+    super(message);
+    this.name = 'VaultLockedError';
+    this.unlockTime = unlockTime || null;
+    this.remainingTime = remainingTime || null;
+  }
 }
 
 /**
@@ -99,7 +111,6 @@ function hexToArrayBuffer(hex: string): ArrayBuffer {
  * Manages download state and progress tracking
  */
 export function useFileDownload() {
-  const { toast } = useToast();
   const [isDownloading, setIsDownloading] = useState(false);
   const [progress, setProgress] = useState(0);
 
@@ -135,32 +146,15 @@ export function useFileDownload() {
         if (!response.ok) {
           const error = await response.json();
           
-          // Handle vault locked (423) response with specific toast message
+          // Handle vault locked (423) response - throw custom error
           if (response.status === 423) {
             setIsDownloading(false);
             setProgress(0);
-            
-            // Parse unlock time properly
-            let unlockTimeMessage = 'the specified time';
-            if (error.unlockTime) {
-              try {
-                const unlockDate = new Date(error.unlockTime);
-                unlockTimeMessage = unlockDate.toLocaleString('en-US', {
-                  weekday: 'short',
-                  year: 'numeric',
-                  month: 'short',
-                  day: 'numeric',
-                  hour: '2-digit',
-                  minute: '2-digit',
-                });
-              } catch (e) {
-                console.error('Failed to parse unlock time:', e);
-              }
-            }
-            
-            // Show user-friendly toast message
-            toast(`🔒 Vault Locked\n\nThis vault cannot be accessed until ${unlockTimeMessage}. Please wait for the unlock time to download files.`, 'error');
-            return; // Exit gracefully without throwing
+            throw new VaultLockedError(
+              error.reason || 'Vault is locked',
+              error.unlockTime,
+              error.remainingTime
+            );
           }
           
           throw new Error(error.error || 'Failed to download file');

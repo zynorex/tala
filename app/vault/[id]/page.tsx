@@ -10,7 +10,7 @@ import {
   User, Key, Hash, BarChart3, Lock as LockIcon
 } from 'lucide-react';
 import { useToast } from '@/app/hooks/useToast';
-import { useFileDownload } from '@/app/hooks/useFileDownload';
+import { useFileDownload, VaultLockedError } from '@/app/hooks/useFileDownload';
 import { PasswordPromptModal } from '@/app/components/PasswordPromptModal';
 import { VaultUnlockStatusComponent } from '@/app/components/VaultUnlockStatus';
 
@@ -73,6 +73,8 @@ export default function VaultDetailPage({ params }: { params: Promise<{ id: stri
   const [activeTab, setActiveTab] = useState<'overview' | 'files' | 'activity'>('overview');
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [selectedFileForDownload, setSelectedFileForDownload] = useState<VaultFile | null>(null);
+  const [showLockedModal, setShowLockedModal] = useState(false);
+  const [lockedUntilTime, setLockedUntilTime] = useState<string | null>(null);
   const { downloadAndDecryptFile, isDownloading, progress } = useFileDownload();
 
   // Resolve params
@@ -327,20 +329,37 @@ export default function VaultDetailPage({ params }: { params: Promise<{ id: stri
         password,
       });
 
-      // Only show success toast if download actually completed
-      // (If vault is locked, downloadAndDecryptFile returns early with its own toast)
-      if (!isDownloading) {
-        console.log('[VaultPage] Download completed successfully');
-        toast(`File "${selectedFileForDownload.fileName}" downloaded successfully!`, 'success');
-      }
+      console.log('[VaultPage] Download completed successfully');
+      toast(`File "${selectedFileForDownload.fileName}" downloaded successfully!`, 'success');
     } catch (error) {
       console.error('[VaultPage] Error downloading file:', error);
-      const errorMessage = error instanceof Error ? error.message : 'Failed to download file';
       
-      // Don't show error toast if it's a vault locked message (already shown by hook)
-      if (!errorMessage.includes('🔒')) {
-        toast(errorMessage, 'error');
+      // Handle vault locked error with nice modal
+      if (error instanceof VaultLockedError) {
+        // Format the unlock time nicely
+        let formattedTime = 'the scheduled time';
+        if (error.unlockTime) {
+          try {
+            const unlockDate = new Date(error.unlockTime);
+            formattedTime = unlockDate.toLocaleString('en-US', {
+              weekday: 'long',
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric',
+              hour: '2-digit',
+              minute: '2-digit',
+            });
+          } catch (e) {
+            console.error('Failed to parse unlock time:', e);
+          }
+        }
+        setLockedUntilTime(formattedTime);
+        setShowLockedModal(true);
+        return;
       }
+      
+      const errorMessage = error instanceof Error ? error.message : 'Failed to download file';
+      toast(errorMessage, 'error');
     } finally {
       setDownloadingFileId(null);
       setSelectedFileForDownload(null);
@@ -936,6 +955,60 @@ export default function VaultDetailPage({ params }: { params: Promise<{ id: stri
           isLoading={isDownloading}
           progress={progress}
         />
+
+        {/* Vault Locked Modal */}
+        {showLockedModal && (
+          <div className="fixed inset-0 bg-black/60 flex items-center justify-center p-4 z-50 backdrop-blur-sm">
+            <div 
+              className="border-4 border-black bg-white p-8 max-w-md w-full shadow-brutal animate-in fade-in zoom-in-95 duration-200"
+              style={{ boxShadow: '8px 8px 0px 0px rgba(0,0,0,1)' }}
+            >
+              {/* Lock Icon */}
+              <div className="flex justify-center mb-6">
+                <div className="w-20 h-20 rounded-full bg-heirlock-yellow border-4 border-black flex items-center justify-center">
+                  <Lock className="w-10 h-10 text-black" />
+                </div>
+              </div>
+
+              {/* Title */}
+              <h2 className="text-2xl font-black text-center mb-2">
+                🔒 Vault is Locked
+              </h2>
+              
+              {/* Message */}
+              <p className="text-center text-gray-600 mb-6">
+                This vault is time-locked for security. Files cannot be downloaded until the unlock time.
+              </p>
+
+              {/* Unlock Time Card */}
+              <div className="border-4 border-black bg-heirlock-pink/30 p-4 mb-6">
+                <div className="flex items-center gap-3">
+                  <Clock className="w-6 h-6 text-black flex-shrink-0" />
+                  <div>
+                    <p className="text-xs font-black text-gray-600 uppercase">Unlocks On</p>
+                    <p className="font-black text-black">{lockedUntilTime}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Info */}
+              <div className="bg-gray-100 border-2 border-gray-300 p-3 mb-6 text-sm text-gray-600">
+                <p className="flex items-start gap-2">
+                  <Shield className="w-4 h-4 flex-shrink-0 mt-0.5 text-heirlock-green" />
+                  <span>Time-lock security ensures your files remain protected until the scheduled release date.</span>
+                </p>
+              </div>
+
+              {/* Close Button */}
+              <button
+                onClick={() => setShowLockedModal(false)}
+                className="w-full border-4 border-black bg-black text-white p-3 font-black text-sm hover:bg-gray-800 transition-all"
+              >
+                Got It
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
