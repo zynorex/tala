@@ -14,6 +14,8 @@ import { useFileDownload, VaultLockedError } from '@/app/hooks/useFileDownload';
 import { PasswordPromptModal } from '@/app/components/PasswordPromptModal';
 import { VaultUnlockStatusComponent } from '@/app/components/VaultUnlockStatus';
 import { AddFileModal } from '@/app/components/AddFileModal';
+import { FilePreviewModal } from '@/app/components/FilePreviewModal';
+import { isPreviewSupported } from '@/app/hooks/useFilePreview';
 
 interface VaultData {
   id: string;
@@ -78,6 +80,8 @@ export default function VaultDetailPage({ params }: { params: Promise<{ id: stri
   const [showLockedModal, setShowLockedModal] = useState(false);
   const [lockedUntilTime, setLockedUntilTime] = useState<string | null>(null);
   const [showAddFileModal, setShowAddFileModal] = useState(false);
+  const [showPreviewModal, setShowPreviewModal] = useState(false);
+  const [selectedFileForPreview, setSelectedFileForPreview] = useState<VaultFile | null>(null);
   const { downloadAndDecryptFile, isDownloading, progress } = useFileDownload();
 
   // Resolve params
@@ -714,6 +718,19 @@ export default function VaultDetailPage({ params }: { params: Promise<{ id: stri
                           </div>
                         </div>
                         <div className="flex gap-2 flex-shrink-0">
+                          {/* Preview Button - only show for supported types */}
+                          {isPreviewSupported(file.mimeType, file.fileName) && (
+                            <button
+                              onClick={() => {
+                                setSelectedFileForPreview(file);
+                                setShowPreviewModal(true);
+                              }}
+                              className="p-2 hover:bg-heirlock-blue hover:text-white border-2 border-black transition-all"
+                              title="Preview file"
+                            >
+                              <Eye className="w-4 h-4" />
+                            </button>
+                          )}
                           <button
                             onClick={() => handleDownloadFile(file)}
                             disabled={downloadingFileId === file.id}
@@ -1087,6 +1104,22 @@ export default function VaultDetailPage({ params }: { params: Promise<{ id: stri
           vaultName={vault?.name || ''}
           onClose={() => setShowAddFileModal(false)}
           onSuccess={handleFileUploadSuccess}
+        />
+
+        {/* File Preview Modal */}
+        <FilePreviewModal
+          isOpen={showPreviewModal}
+          vaultId={vault?.id || ''}
+          file={selectedFileForPreview}
+          files={activeFiles}
+          onClose={() => {
+            setShowPreviewModal(false);
+            setSelectedFileForPreview(null);
+          }}
+          onVaultLocked={(unlockTime) => {
+            setLockedUntilTime(unlockTime);
+            setShowLockedModal(true);
+          }}
         />
       </div>
     </div>
