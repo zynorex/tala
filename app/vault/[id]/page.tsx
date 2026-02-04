@@ -7,12 +7,13 @@ import {
   Lock, Download, Share2, Trash2, Edit2, Shield, Clock, FileText, 
   ArrowLeft, AlertCircle, CheckCircle, Eye, EyeOff, Copy, MoreVertical,
   Calendar, HardDrive, Activity, FileIcon, Zap, ExternalLink, RefreshCw,
-  User, Key, Hash, BarChart3, Lock as LockIcon
+  User, Key, Hash, BarChart3, Lock as LockIcon, Plus, Upload
 } from 'lucide-react';
 import { useToast } from '@/app/hooks/useToast';
 import { useFileDownload, VaultLockedError } from '@/app/hooks/useFileDownload';
 import { PasswordPromptModal } from '@/app/components/PasswordPromptModal';
 import { VaultUnlockStatusComponent } from '@/app/components/VaultUnlockStatus';
+import { AddFileModal } from '@/app/components/AddFileModal';
 
 interface VaultData {
   id: string;
@@ -75,6 +76,7 @@ export default function VaultDetailPage({ params }: { params: Promise<{ id: stri
   const [selectedFileForDownload, setSelectedFileForDownload] = useState<VaultFile | null>(null);
   const [showLockedModal, setShowLockedModal] = useState(false);
   const [lockedUntilTime, setLockedUntilTime] = useState<string | null>(null);
+  const [showAddFileModal, setShowAddFileModal] = useState(false);
   const { downloadAndDecryptFile, isDownloading, progress } = useFileDownload();
 
   // Resolve params
@@ -82,54 +84,63 @@ export default function VaultDetailPage({ params }: { params: Promise<{ id: stri
     params.then((p) => setId(p.id));
   }, [params]);
 
-  // Load vault data from API
-  useEffect(() => {
+  // Function to fetch/refresh vault data
+  const fetchVault = async (showLoading = true) => {
     if (!isConnected || !id || !address) return;
-
-    const fetchVault = async () => {
-      try {
-        setIsLoading(true);
-        
-        // Get auth token from localStorage
-        const token = localStorage.getItem('auth_token');
-        if (!token) {
-          toast('Please sign in to view vault details', 'error');
-          setIsLoading(false);
-          return;
-        }
-
-        const response = await fetch(`/api/vaults/${id}`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`,
-          },
-        });
-
-        if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.error || `Failed to load vault: ${response.status}`);
-        }
-
-        const data = await response.json();
-        // Handle API response structure
-        const vaultData = data.data || data;
-        setVault(vaultData);
-        setEditedName(vaultData.name);
-        setEditedDescription(vaultData.description || '');
-      } catch (error) {
-        console.error('Error loading vault:', error);
-        toast(
-          error instanceof Error ? error.message : 'Failed to load vault details',
-          'error'
-        );
-      } finally {
-        setIsLoading(false);
+    
+    try {
+      if (showLoading) setIsLoading(true);
+      
+      // Get auth token from localStorage
+      const token = localStorage.getItem('auth_token');
+      if (!token) {
+        toast('Please sign in to view vault details', 'error');
+        if (showLoading) setIsLoading(false);
+        return;
       }
-    };
 
-    fetchVault();
-  }, [isConnected, id, address, toast]);
+      const response = await fetch(`/api/vaults/${id}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || `Failed to load vault: ${response.status}`);
+      }
+
+      const data = await response.json();
+      // Handle API response structure
+      const vaultData = data.data || data;
+      setVault(vaultData);
+      setEditedName(vaultData.name);
+      setEditedDescription(vaultData.description || '');
+    } catch (error) {
+      console.error('Error loading vault:', error);
+      toast(
+        error instanceof Error ? error.message : 'Failed to load vault details',
+        'error'
+      );
+    } finally {
+      if (showLoading) setIsLoading(false);
+    }
+  };
+
+  // Load vault data on mount
+  useEffect(() => {
+    fetchVault(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isConnected, id, address]);
+
+  // Handle file upload success - refresh vault to show new files
+  const handleFileUploadSuccess = () => {
+    setShowAddFileModal(false);
+    toast('File added to vault successfully!', 'success');
+    fetchVault(false); // Refresh without showing loading spinner
+  };
 
   // Disconnect/permission check
   if (!isConnected) {
@@ -646,11 +657,32 @@ export default function VaultDetailPage({ params }: { params: Promise<{ id: stri
             {/* Files Tab */}
             {activeTab === 'files' && (
               <div className="space-y-4">
+                {/* Header with Add File Button */}
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-2">
+                    <FileText className="w-5 h-5" />
+                    <h3 className="font-black text-lg">
+                      Files ({activeFiles.length})
+                    </h3>
+                  </div>
+                  <button
+                    onClick={() => setShowAddFileModal(true)}
+                    className="flex items-center gap-2 px-4 py-2 bg-heirlock-green text-black font-black border-4 border-black hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200"
+                    style={{ boxShadow: '4px 4px 0px 0px rgba(0,0,0,1)' }}
+                  >
+                    <Plus className="w-4 h-4" />
+                    <span className="hidden sm:inline">Add File</span>
+                  </button>
+                </div>
+
                 {activeFiles.length === 0 ? (
-                  <div className="border-4 border-dashed border-gray-300 p-8 text-center bg-gray-50">
-                    <FileText className="w-12 h-12 mx-auto mb-4 text-gray-400" />
-                    <p className="font-black text-gray-600">No files in this vault</p>
-                    <p className="text-sm text-gray-500 mt-2">Upload files to get started</p>
+                  <div 
+                    onClick={() => setShowAddFileModal(true)}
+                    className="border-4 border-dashed border-gray-300 p-8 text-center bg-gray-50 cursor-pointer hover:border-heirlock-green hover:bg-heirlock-green/5 transition-all group"
+                  >
+                    <Upload className="w-12 h-12 mx-auto mb-4 text-gray-400 group-hover:text-heirlock-green transition-colors" />
+                    <p className="font-black text-gray-600 group-hover:text-black transition-colors">No files in this vault</p>
+                    <p className="text-sm text-gray-500 mt-2 group-hover:text-gray-700 transition-colors">Click here or the "Add File" button to upload</p>
                   </div>
                 ) : (
                   activeFiles.map((file) => (
@@ -1009,6 +1041,15 @@ export default function VaultDetailPage({ params }: { params: Promise<{ id: stri
             </div>
           </div>
         )}
+
+        {/* Add File Modal */}
+        <AddFileModal
+          isOpen={showAddFileModal}
+          vaultId={vault?.id || ''}
+          vaultName={vault?.name || ''}
+          onClose={() => setShowAddFileModal(false)}
+          onSuccess={handleFileUploadSuccess}
+        />
       </div>
     </div>
   );
