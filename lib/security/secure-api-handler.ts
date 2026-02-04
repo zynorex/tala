@@ -206,15 +206,39 @@ function getClientIP(request: NextRequest): string {
 }
 
 /**
- * Validate JWT token (basic implementation)
- * For production, use a proper JWT library like jsonwebtoken
+ * Validate JWT token using jsonwebtoken library
+ * Properly verifies signature, expiration, and structure
  */
 export function validateJWT(token: string, secret: string): boolean {
   try {
-    // This is a placeholder - implement with proper JWT validation
-    // using 'jsonwebtoken' library in production
-    return token.length > 0 && secret.length > 0;
-  } catch {
+    if (!token || !secret) {
+      return false;
+    }
+
+    // Dynamically import to avoid issues if jwt is not available
+    const jwt = require('jsonwebtoken');
+    
+    // Verify the token with the secret
+    // This checks: signature, expiration (exp), not before (nbf)
+    const decoded = jwt.verify(token, secret, {
+      algorithms: ['HS256', 'HS384', 'HS512'],
+      complete: true,
+    });
+
+    // Ensure the token has required claims
+    if (!decoded || !decoded.payload) {
+      return false;
+    }
+
+    // Check if token has userId (required for our app)
+    if (!decoded.payload.userId) {
+      return false;
+    }
+
+    return true;
+  } catch (error) {
+    // Token verification failed (expired, invalid signature, malformed, etc.)
+    console.error('JWT validation failed:', error instanceof Error ? error.message : 'Unknown error');
     return false;
   }
 }

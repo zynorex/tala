@@ -507,28 +507,125 @@ function AudioPreview({ url, fileName, mimeType }: { url: string; fileName: stri
 }
 
 /**
- * PDF Preview Component using native browser support
+ * PDF Preview Component using embed/object for blob URL compatibility
  */
 function PDFPreview({ url, fileName }: { url: string; fileName: string }) {
+  const [useEmbed, setUseEmbed] = useState(true);
+  const [loadError, setLoadError] = useState(false);
+
+  // Open in new tab handler
+  const handleOpenInNewTab = () => {
+    // Create a new window with the PDF
+    const newWindow = window.open();
+    if (newWindow) {
+      newWindow.document.write(`
+        <!DOCTYPE html>
+        <html>
+          <head>
+            <title>${fileName}</title>
+            <style>
+              body { margin: 0; padding: 0; }
+              embed { width: 100%; height: 100vh; }
+            </style>
+          </head>
+          <body>
+            <embed src="${url}" type="application/pdf" width="100%" height="100%" />
+          </body>
+        </html>
+      `);
+      newWindow.document.close();
+    }
+  };
+
+  // Download handler
+  const handleDownload = () => {
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = fileName;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   return (
     <div className="flex flex-col h-full">
+      {/* Toolbar */}
       <div className="flex items-center justify-between p-3 bg-gray-100 border-b-4 border-black">
-        <span className="font-black text-sm truncate">{fileName}</span>
-        <a
-          href={url}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex items-center gap-2 px-3 py-1.5 bg-white border-2 border-black hover:bg-gray-50 text-sm font-black transition-all"
-        >
-          <ExternalLink className="w-4 h-4" />
-          Open in New Tab
-        </a>
+        <span className="font-black text-sm truncate max-w-[200px]">{fileName}</span>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={handleDownload}
+            className="flex items-center gap-2 px-3 py-1.5 bg-heirlock-green border-2 border-black hover:opacity-90 text-sm font-black transition-all"
+          >
+            <Download className="w-4 h-4" />
+            Download
+          </button>
+          <button
+            onClick={handleOpenInNewTab}
+            className="flex items-center gap-2 px-3 py-1.5 bg-white border-2 border-black hover:bg-gray-50 text-sm font-black transition-all"
+          >
+            <ExternalLink className="w-4 h-4" />
+            New Tab
+          </button>
+        </div>
       </div>
-      <iframe
-        src={url}
-        className="flex-1 w-full border-none"
-        title={fileName}
-      />
+
+      {/* PDF Viewer */}
+      <div className="flex-1 bg-gray-200 relative">
+        {loadError ? (
+          // Fallback message if PDF fails to load
+          <div className="absolute inset-0 flex flex-col items-center justify-center p-8 text-center">
+            <FileText className="w-16 h-16 text-gray-400 mb-4" />
+            <h3 className="font-black text-lg mb-2">PDF Preview Unavailable</h3>
+            <p className="text-gray-600 mb-4 max-w-md">
+              Your browser cannot display this PDF inline. Please download the file or open it in a new tab.
+            </p>
+            <div className="flex gap-3">
+              <button
+                onClick={handleDownload}
+                className="flex items-center gap-2 px-4 py-2 bg-black text-white font-black border-4 border-black hover:bg-gray-800 transition-all"
+              >
+                <Download className="w-4 h-4" />
+                Download PDF
+              </button>
+              <button
+                onClick={handleOpenInNewTab}
+                className="flex items-center gap-2 px-4 py-2 bg-white font-black border-4 border-black hover:bg-gray-50 transition-all"
+              >
+                <ExternalLink className="w-4 h-4" />
+                Open in New Tab
+              </button>
+            </div>
+          </div>
+        ) : useEmbed ? (
+          // Try embed first (works better with blob URLs)
+          <embed
+            src={url}
+            type="application/pdf"
+            className="w-full h-full"
+            onError={() => setUseEmbed(false)}
+          />
+        ) : (
+          // Fallback to object tag
+          <object
+            data={url}
+            type="application/pdf"
+            className="w-full h-full"
+            onError={() => setLoadError(true)}
+          >
+            {/* Final fallback if object also fails */}
+            <div className="absolute inset-0 flex flex-col items-center justify-center p-8 text-center">
+              <FileText className="w-16 h-16 text-gray-400 mb-4" />
+              <p className="text-gray-600">Unable to display PDF</p>
+            </div>
+          </object>
+        )}
+      </div>
+
+      {/* Info bar */}
+      <div className="p-2 bg-gray-100 border-t-2 border-black text-xs text-gray-500 text-center">
+        If the PDF doesn't display correctly, try downloading or opening in a new tab
+      </div>
     </div>
   );
 }
