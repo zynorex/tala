@@ -1059,7 +1059,7 @@ export default function VaultDetailPage({ params }: { params: Promise<{ id: stri
 
               {/* Title */}
               <h2 className="text-2xl font-black text-center mb-2">
-                🔒 Vault is Locked
+                Vault is Locked
               </h2>
               
               {/* Message */}
