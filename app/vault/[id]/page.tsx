@@ -18,6 +18,7 @@ import { FilePreviewModal } from '@/app/components/FilePreviewModal';
 import { isPreviewSupported } from '@/app/hooks/useFilePreview';
 import ShareVaultModal from '@/app/components/ShareVaultModal';
 import ManageSharesPanel from '@/app/components/ManageSharesPanel';
+import ShareGuidanceModal from '@/app/components/ShareGuidanceModal';
 
 interface VaultData {
   id: string;
@@ -85,6 +86,7 @@ export default function VaultDetailPage({ params }: { params: Promise<{ id: stri
   const [showPreviewModal, setShowPreviewModal] = useState(false);
   const [selectedFileForPreview, setSelectedFileForPreview] = useState<VaultFile | null>(null);
   const [showShareModal, setShowShareModal] = useState(false);
+  const [showShareGuideModal, setShowShareGuideModal] = useState(false);
   const { downloadAndDecryptFile, isDownloading, progress } = useFileDownload();
 
   // Resolve params
@@ -876,7 +878,7 @@ export default function VaultDetailPage({ params }: { params: Promise<{ id: stri
                     <h3 className="font-black text-lg">Vault Sharing</h3>
                   </div>
                   <button
-                    onClick={() => setShowShareModal(true)}
+                    onClick={() => setShowShareGuideModal(true)}
                     className="flex items-center gap-2 px-4 py-2 bg-heirlock-green border-4 border-black font-black text-sm hover:brightness-95 transition-all"
                     style={{ boxShadow: '4px 4px 0px 0px rgba(0,0,0,1)' }}
                   >
@@ -1167,6 +1169,15 @@ export default function VaultDetailPage({ params }: { params: Promise<{ id: stri
           onVaultLocked={(unlockTime) => {
             setLockedUntilTime(unlockTime);
             setShowLockedModal(true);
+          }}
+        />
+
+        <ShareGuidanceModal
+          isOpen={showShareGuideModal}
+          onClose={() => setShowShareGuideModal(false)}
+          onContinue={() => {
+            setShowShareGuideModal(false);
+            setShowShareModal(true);
           }}
         />
 
