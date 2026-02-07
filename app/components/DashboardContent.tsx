@@ -40,6 +40,7 @@ export default function DashboardContent() {
   const [activities, setActivities] = useState<any[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [hasDemoVault, setHasDemoVault] = useState(false);
+  const [demoVault, setDemoVault] = useState<any | null>(null);
 
   useEffect(() => {
     // Load dashboard data when auth is ready
@@ -71,8 +72,9 @@ export default function DashboardContent() {
       setVaults(vaultList);
 
       // Check if there's a demo vault
-      const demoVault = vaultList.some((vault: any) => vault.isDemo);
-      setHasDemoVault(!!demoVault);
+      const demoVaultRecord = vaultList.find((vault: any) => vault.isDemo);
+      setHasDemoVault(!!demoVaultRecord);
+      setDemoVault(demoVaultRecord || null);
 
       // Calculate dashboard stats
       let totalStorage = 0;
@@ -201,6 +203,35 @@ export default function DashboardContent() {
               >
                 <Zap className="w-5 h-5" />
                 Create Demo Vault
+              </Link>
+            </div>
+          </div>
+        )}
+
+        {hasDemoVault && demoVault && (
+          <div className="border-4 border-black p-6 bg-heirlock-blue/20 shadow-brutal">
+            <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+              <div className="flex items-start gap-3">
+                <Clock className="w-8 h-8 text-black flex-shrink-0 mt-1" />
+                <div>
+                  <p className="text-sm font-black text-gray-700 uppercase tracking-wide">Demo vault ready</p>
+                  <h3 className="text-2xl font-black text-black mb-1">{demoVault.name || 'Demo Vault'}</h3>
+                  <p className="text-black font-medium">
+                    Jump back into your live demo vault and watch the unlock timer progress in real time.
+                  </p>
+                  {demoVault.unlockTime && (
+                    <p className="text-xs text-gray-700 font-mono mt-2">
+                      Unlocks at {new Date(demoVault.unlockTime).toLocaleString()}
+                    </p>
+                  )}
+                </div>
+              </div>
+              <Link
+                href={`/vault/${demoVault.id}`}
+                className="inline-flex items-center gap-2 px-6 py-3 bg-black text-white font-black border-4 border-black shadow-brutal hover:-translate-y-1 hover:shadow-brutal-lg transition-all whitespace-nowrap"
+              >
+                <Lock className="w-5 h-5" />
+                Show Demo Vault
               </Link>
             </div>
           </div>
