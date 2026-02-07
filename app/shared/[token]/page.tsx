@@ -588,8 +588,16 @@ function FileItem({
   );
 }
 
-// ============ PLACEHOLDER DECRYPT FUNCTION ============
-// This should be replaced with actual decryption logic from the existing crypto module
+// ============ DECRYPTION FUNCTION ============
+// Browser-side decryption using WebCrypto API
+
+function hexToArrayBuffer(hex: string): ArrayBuffer {
+  const bytes = new Uint8Array(hex.length / 2);
+  for (let i = 0; i < hex.length; i += 2) {
+    bytes[i / 2] = parseInt(hex.substr(i, 2), 16);
+  }
+  return bytes.buffer;
+}
 
 async function decryptFile(
   encryptedData: ArrayBuffer,
@@ -598,29 +606,61 @@ async function decryptFile(
   iv: string,
   authTag: string
 ): Promise<Blob> {
-  // Import the actual crypto utilities
-  const { decryptWithPassword } = await import('@/lib/crypto/encryption');
-  
-  // Convert ArrayBuffer to base64
-  const base64 = btoa(
-    Array.from(new Uint8Array(encryptedData))
-      .map(b => String.fromCharCode(b))
-      .join('')
+  const ALGORITHM = 'AES-GCM';
+  const KEY_LENGTH = 32;
+  const PBKDF2_ITERATIONS = 100000;
+
+  const saltBuffer = hexToArrayBuffer(salt);
+  const ivBuffer = hexToArrayBuffer(iv);
+  const authTagBuffer = hexToArrayBuffer(authTag);
+
+  const passwordEncoder = new TextEncoder();
+  const passwordBuffer = passwordEncoder.encode(password);
+
+  // Import password for PBKDF2
+  const baseKey = await window.crypto.subtle.importKey(
+    'raw',
+    passwordBuffer,
+    { name: 'PBKDF2' },
+    false,
+    ['deriveBits']
   );
-  
+
+  // Derive encryption key
+  const derivedBits = await window.crypto.subtle.deriveBits(
+    {
+      name: 'PBKDF2',
+      salt: saltBuffer,
+      hash: 'SHA-256',
+      iterations: PBKDF2_ITERATIONS,
+    },
+    baseKey,
+    KEY_LENGTH * 8
+  );
+
+  const key = await window.crypto.subtle.importKey(
+    'raw',
+    derivedBits,
+    { name: ALGORITHM },
+    false,
+    ['decrypt']
+  );
+
+  // Combine encrypted data with auth tag for AES-GCM
+  const encryptedArray = new Uint8Array(encryptedData);
+  const fullEncrypted = new Uint8Array([
+    ...encryptedArray,
+    ...new Uint8Array(authTagBuffer),
+  ]);
+
   try {
-    const decrypted = await decryptWithPassword(base64, password, {
-      iv,
-      salt,
-      authTag,
-    });
-    
-    // decrypted is already a Blob or ArrayBuffer
-    if (decrypted instanceof Blob) {
-      return decrypted;
-    }
+    const decrypted = await window.crypto.subtle.decrypt(
+      { name: ALGORITHM, iv: ivBuffer },
+      key,
+      fullEncrypted
+    );
     return new Blob([decrypted]);
-  } catch (err) {
+  } catch {
     throw new Error('Decryption failed. Check the vault password.');
   }
 }
