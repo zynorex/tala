@@ -7,7 +7,7 @@ import {
   Lock, Download, Share2, Trash2, Edit2, Shield, Clock, FileText, 
   ArrowLeft, AlertCircle, CheckCircle, Eye, EyeOff, Copy, MoreVertical,
   Calendar, HardDrive, Activity, FileIcon, Zap, ExternalLink, RefreshCw,
-  User, Key, Hash, BarChart3, Lock as LockIcon, Plus, Upload
+  User, Key, Hash, BarChart3, Lock as LockIcon, Plus, Upload, Users
 } from 'lucide-react';
 import { useToast } from '@/app/hooks/useToast';
 import { useFileDownload, VaultLockedError } from '@/app/hooks/useFileDownload';
@@ -16,6 +16,8 @@ import { VaultUnlockStatusComponent } from '@/app/components/VaultUnlockStatus';
 import { AddFileModal } from '@/app/components/AddFileModal';
 import { FilePreviewModal } from '@/app/components/FilePreviewModal';
 import { isPreviewSupported } from '@/app/hooks/useFilePreview';
+import ShareVaultModal from '@/app/components/ShareVaultModal';
+import ManageSharesPanel from '@/app/components/ManageSharesPanel';
 
 interface VaultData {
   id: string;
@@ -74,7 +76,7 @@ export default function VaultDetailPage({ params }: { params: Promise<{ id: stri
   const [copied, setCopied] = useState<string | null>(null);
   const [downloadingFileId, setDownloadingFileId] = useState<string | null>(null);
   const [deletingFileId, setDeletingFileId] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<'overview' | 'files' | 'activity'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'files' | 'activity' | 'sharing'>('overview');
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [selectedFileForDownload, setSelectedFileForDownload] = useState<VaultFile | null>(null);
   const [showLockedModal, setShowLockedModal] = useState(false);
@@ -82,6 +84,7 @@ export default function VaultDetailPage({ params }: { params: Promise<{ id: stri
   const [showAddFileModal, setShowAddFileModal] = useState(false);
   const [showPreviewModal, setShowPreviewModal] = useState(false);
   const [selectedFileForPreview, setSelectedFileForPreview] = useState<VaultFile | null>(null);
+  const [showShareModal, setShowShareModal] = useState(false);
   const { downloadAndDecryptFile, isDownloading, progress } = useFileDownload();
 
   // Resolve params
@@ -572,7 +575,7 @@ export default function VaultDetailPage({ params }: { params: Promise<{ id: stri
 
             {/* Tab Navigation */}
             <div className="border-4 border-black bg-white flex gap-0">
-              {(['overview', 'files', 'activity'] as const).map((tab) => (
+              {(['overview', 'files', 'activity', 'sharing'] as const).map((tab) => (
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab)}
@@ -585,6 +588,7 @@ export default function VaultDetailPage({ params }: { params: Promise<{ id: stri
                   {tab === 'overview' && '📊 Overview'}
                   {tab === 'files' && '📁 Files'}
                   {tab === 'activity' && '📝 Activity'}
+                  {tab === 'sharing' && '🔗 Sharing'}
                 </button>
               ))}
             </div>
@@ -861,6 +865,50 @@ export default function VaultDetailPage({ params }: { params: Promise<{ id: stri
                 )}
               </div>
             )}
+
+            {/* Sharing Tab */}
+            {activeTab === 'sharing' && (
+              <div className="space-y-4">
+                {/* Share Button */}
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Users className="w-5 h-5" />
+                    <h3 className="font-black text-lg">Vault Sharing</h3>
+                  </div>
+                  <button
+                    onClick={() => setShowShareModal(true)}
+                    className="flex items-center gap-2 px-4 py-2 bg-heirlock-green border-4 border-black font-black text-sm hover:brightness-95 transition-all"
+                    style={{ boxShadow: '4px 4px 0px 0px rgba(0,0,0,1)' }}
+                  >
+                    <Share2 className="w-4 h-4" />
+                    Create Share Link
+                  </button>
+                </div>
+
+                {/* Info Box */}
+                <div className="border-4 border-black p-4 bg-heirlock-blue/20">
+                  <div className="flex items-start gap-3">
+                    <Shield className="w-5 h-5 mt-0.5 flex-shrink-0" />
+                    <div className="text-sm">
+                      <p className="font-bold mb-1">How Vault Sharing Works</p>
+                      <ul className="text-xs text-gray-700 space-y-1 list-disc list-inside">
+                        <li>Create a share link with specific permissions (View, Download, or Full Access)</li>
+                        <li>Set expiration dates and access limits for added security</li>
+                        <li>Recipients still need the vault password to decrypt files</li>
+                        <li>Share the vault password separately through a secure channel</li>
+                        <li>Revoke access at any time by deleting the share link</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Shares Panel */}
+                <ManageSharesPanel 
+                  vaultId={vault.id} 
+                  vaultName={vault.name}
+                />
+              </div>
+            )}
           </div>
 
           {/* Right Column - Security & Stats */}
@@ -1119,6 +1167,17 @@ export default function VaultDetailPage({ params }: { params: Promise<{ id: stri
           onVaultLocked={(unlockTime) => {
             setLockedUntilTime(unlockTime);
             setShowLockedModal(true);
+          }}
+        />
+
+        {/* Share Vault Modal */}
+        <ShareVaultModal
+          isOpen={showShareModal}
+          vaultId={vault?.id || ''}
+          vaultName={vault?.name || ''}
+          onClose={() => setShowShareModal(false)}
+          onSuccess={() => {
+            // Refresh will happen via tab UI
           }}
         />
       </div>
