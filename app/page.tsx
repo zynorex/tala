@@ -2,187 +2,99 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
-import { 
-  Lock,
-  Shield,
-  Zap,
+import {
   BookOpen,
   Briefcase,
   Gavel,
+  Shield,
+  ShieldCheck,
+  Lock,
+  Unlock,
+  Zap,
   CheckCircle,
   ChevronRight,
   Code,
   Database,
   Globe,
   User,
-  Unlock
-} from "lucide-react";
+  Timer,
+  Layers,
+  HardDrive,
+  Laptop,
+  Server,
+  Radar,
+  Fingerprint,
+  FileKey,
+} from 'lucide-react';
 
-// Micro Interactions Hook
 function useMicroInteractions() {
   useEffect(() => {
     const style = document.createElement('style');
     style.textContent = `
-      /* Scroll Reveal Animation */
-      @keyframes slideUp {
-        from {
-          opacity: 0;
-          transform: translateY(30px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
+      @keyframes floaty {
+        0% { transform: translateY(0px); }
+        50% { transform: translateY(-6px); }
+        100% { transform: translateY(0px); }
       }
 
-      @keyframes fadeIn {
-        from {
-          opacity: 0;
-        }
-        to {
-          opacity: 1;
-        }
+      @keyframes swipe {
+        0% { transform: translateX(-10px); opacity: 0; }
+        100% { transform: translateX(0); opacity: 1; }
       }
 
-      @keyframes scaleIn {
-        from {
-          opacity: 0;
-          transform: scale(0.95);
-        }
-        to {
-          opacity: 1;
-          transform: scale(1);
-        }
-      }
-
-      /* Shimmer */
-      @keyframes shimmer {
-        0% {
-          background-position: -1000px 0;
-        }
-        100% {
-          background-position: 1000px 0;
-        }
-      }
-
-      /* Icon bounce on hover */
-      @keyframes iconBounce {
-        0%, 100% {
-          transform: translateY(0);
-        }
-        50% {
-          transform: translateY(-8px);
-        }
-      }
-
-      /* Pulse effect */
-      @keyframes pulse {
-        0%, 100% {
-          opacity: 1;
-        }
-        50% {
-          opacity: 0.7;
-        }
-      }
-
-      /* Interactive Elements */
-      .micro-button {
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      .micro-sheen {
         position: relative;
         overflow: hidden;
       }
 
-      .micro-button:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15) !important;
+      .micro-sheen::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(120deg, transparent 30%, rgba(255,255,255,0.25), transparent 70%);
+        transform: translateX(-100%);
+        transition: transform 0.6s ease;
       }
 
-      .micro-button:active {
-        transform: translateY(-1px);
+      .micro-sheen:hover::after {
+        transform: translateX(100%);
       }
 
-      /* Card Hover Effects */
       .micro-card {
-        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
       }
 
       .micro-card:hover {
-        transform: translateY(-8px);
-        box-shadow: 0 16px 40px rgba(0, 0, 0, 0.12) !important;
+        transform: translateY(-6px);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.15) !important;
       }
 
-      .micro-card:hover .micro-icon {
-        animation: iconBounce 0.6s ease-in-out;
-        color: #FFFACD;
+      .micro-grid {
+        position: relative;
       }
 
-      /* Icon hover */
-      .micro-icon {
-        transition: all 0.3s ease;
-      }
-
-      /* Scroll Reveal */
-      .reveal-section {
-        animation: slideUp 0.8s ease-out;
-      }
-
-      .reveal-card {
-        animation: scaleIn 0.6s ease-out;
-      }
-
-      /* Button Ripple Effect */
-      .micro-button::after {
+      .micro-grid::before {
         content: '';
         position: absolute;
-        top: 50%;
-        left: 50%;
-        width: 0;
-        height: 0;
-        border-radius: 50%;
-        background: rgba(255, 255, 255, 0.5);
-        transform: translate(-50%, -50%);
+        inset: 0;
+        background-image: linear-gradient(rgba(0,0,0,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.05) 1px, transparent 1px);
+        background-size: 20px 20px;
         pointer-events: none;
+        z-index: 0;
       }
 
-      .micro-button:active::after {
-        animation: ripple 0.6s ease-out;
+      .micro-grid > * {
+        position: relative;
+        z-index: 1;
       }
 
-      @keyframes ripple {
-        to {
-          width: 300px;
-          height: 300px;
-          opacity: 0;
-        }
+      .micro-pulse {
+        animation: floaty 3s ease-in-out infinite;
       }
 
-      /* Text Gradient Animation */
-      .micro-gradient-text {
-        background: linear-gradient(135deg, #000 0%, #333 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        transition: all 0.3s ease;
+      .micro-swipe {
+        animation: swipe 0.8s ease;
       }
-
-      /* Stat Number Animation */
-      .micro-stat-box {
-        transition: all 0.3s ease;
-      }
-
-      .micro-stat-box:hover {
-        transform: scale(1.05);
-        background-color: white !important;
-      }
-
-      /* Section Stagger */
-      .stagger-1 { animation-delay: 0.1s; }
-      .stagger-2 { animation-delay: 0.2s; }
-      .stagger-3 { animation-delay: 0.3s; }
-      .stagger-4 { animation-delay: 0.4s; }
-      .stagger-5 { animation-delay: 0.5s; }
-      .stagger-6 { animation-delay: 0.6s; }
     `;
     document.head.appendChild(style);
     return () => {
@@ -191,123 +103,23 @@ function useMicroInteractions() {
   }, []);
 }
 
-// Skeleton Loader Component
 function SkeletonLoader() {
   return (
     <main className="min-h-screen bg-cream">
-      <style>{`
-        @keyframes shimmer {
-          0% {
-            background-position: -1000px 0;
-          }
-          100% {
-            background-position: 1000px 0;
-          }
-        }
-        .skeleton-shimmer {
-          background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-          background-size: 1000px 100%;
-          animation: shimmer 2s infinite;
-        }
-      `}</style>
-
-      {/* Hero Skeleton */}
-      <section className="bg-gradient-to-br from-heirlock-yellow to-heirlock-blue py-12 md:py-20 px-4 border-b-4 border-black">
+      <section className="bg-gradient-to-br from-heirlock-yellow to-heirlock-blue py-14 px-4 border-b-4 border-black">
         <div className="container mx-auto max-w-6xl">
-          <div className="space-y-8">
-            <div className="skeleton-shimmer h-20 md:h-32 w-4/5 rounded"></div>
-            <div className="skeleton-shimmer h-8 md:h-12 w-3/5 rounded"></div>
-            <div className="space-y-3">
-              <div className="skeleton-shimmer h-4 w-full rounded"></div>
-              <div className="skeleton-shimmer h-4 w-5/6 rounded"></div>
-            </div>
-            <div className="flex gap-4">
-              <div className="skeleton-shimmer h-12 w-32 rounded"></div>
-              <div className="skeleton-shimmer h-12 w-40 rounded"></div>
-            </div>
+          <div className="animate-pulse space-y-6">
+            <div className="h-16 w-3/4 bg-white/50" />
+            <div className="h-8 w-2/4 bg-white/40" />
+            <div className="h-20 w-full bg-white/40" />
           </div>
         </div>
       </section>
-
-      {/* Crisis Section Skeleton */}
-      <section className="bg-heirlock-red py-16 md:py-24 px-4 border-b-4 border-black">
+      <section className="py-16 px-4 border-b-4 border-black">
         <div className="container mx-auto max-w-5xl">
-          <div className="skeleton-shimmer h-12 md:h-16 w-3/5 rounded mb-12"></div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-            {[1, 2, 3].map((i) => (
-              <div key={i} className="border-4 border-black bg-black p-8">
-                <div className="skeleton-shimmer h-16 w-20 rounded mb-3"></div>
-                <div className="skeleton-shimmer h-6 w-full rounded mb-2"></div>
-                <div className="skeleton-shimmer h-4 w-4/5 rounded"></div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Network Status Skeleton */}
-      <section className="bg-black py-6 px-4 border-b-4 border-heirlock-yellow">
-        <div className="container mx-auto max-w-5xl">
-          <div className="border-4 border-heirlock-yellow bg-black p-4">
-            <div className="skeleton-shimmer h-8 w-full rounded"></div>
-          </div>
-        </div>
-      </section>
-
-      {/* Three Pillars Skeleton */}
-      <section className="py-16 md:py-24 px-4 bg-cream border-b-4 border-black">
-        <div className="container mx-auto max-w-5xl">
-          <div className="skeleton-shimmer h-12 md:h-16 w-3/5 rounded mb-12"></div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {[1, 2, 3].map((i) => (
-              <div key={i} className="bg-white border-4 border-black p-8">
-                <div className="skeleton-shimmer h-12 w-12 rounded mb-4"></div>
-                <div className="skeleton-shimmer h-6 w-4/5 rounded mb-3"></div>
-                <div className="space-y-2">
-                  <div className="skeleton-shimmer h-4 w-full rounded"></div>
-                  <div className="skeleton-shimmer h-4 w-5/6 rounded"></div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* How It Works Skeleton */}
-      <section className="py-16 md:py-24 px-4 bg-heirlock-blue border-b-4 border-black">
-        <div className="container mx-auto max-w-5xl">
-          <div className="skeleton-shimmer h-12 md:h-16 w-3/5 rounded mb-12"></div>
-          <div className="space-y-6">
-            {[1, 2, 3].map((i) => (
-              <div key={i} className="border-4 border-black bg-white p-6 md:p-8 flex gap-6">
-                <div className="skeleton-shimmer h-16 w-16 rounded flex-shrink-0"></div>
-                <div className="flex-1 space-y-3">
-                  <div className="skeleton-shimmer h-6 w-2/5 rounded"></div>
-                  <div className="space-y-2">
-                    <div className="skeleton-shimmer h-4 w-full rounded"></div>
-                    <div className="skeleton-shimmer h-4 w-5/6 rounded"></div>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Security Specs Skeleton */}
-      <section className="py-16 md:py-24 px-4 bg-heirlock-yellow border-b-4 border-black">
-        <div className="container mx-auto max-w-5xl">
-          <div className="skeleton-shimmer h-12 md:h-16 w-3/5 rounded mb-12"></div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {[1, 2, 3, 4].map((i) => (
-              <div key={i} className="border-4 border-black bg-white p-8">
-                <div className="skeleton-shimmer h-10 w-10 rounded mb-4"></div>
-                <div className="skeleton-shimmer h-6 w-3/5 rounded mb-3"></div>
-                <div className="space-y-2">
-                  <div className="skeleton-shimmer h-4 w-full rounded"></div>
-                  <div className="skeleton-shimmer h-4 w-4/5 rounded"></div>
-                </div>
-              </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-pulse">
+            {[1, 2, 3, 4].map((item) => (
+              <div key={item} className="h-48 bg-white/60 border-4 border-black" />
             ))}
           </div>
         </div>
@@ -316,79 +128,218 @@ function SkeletonLoader() {
   );
 }
 
+const heroHighlights = [
+  {
+    label: 'Pilot exam windows',
+    value: '~184',
+    detail: 'based on current tamper-resistant delivery tests',
+  },
+  {
+    label: 'Active tender rounds',
+    value: '~62',
+    detail: 'procurement unlocks running in sandboxes',
+  },
+  {
+    label: 'Evidence capsules queued',
+    value: '~310',
+    detail: 'legal disclosures tracked with verifiable clocks',
+  },
+];
+
+const proofRail = [
+  { name: 'IIT Delhi', note: 'Exam Cell' },
+  { name: 'Rajasthan DoE', note: 'Tender Sandbox' },
+  { name: 'Legal Aid Forum', note: 'Evidence Lab' },
+  { name: 'DefTech', note: 'Zero-Trust Ops' },
+];
+
+const narrativeBlocks = [
+  {
+    title: 'Leaks escalate every season',
+    body: 'Dozens of confirmed paper leaks have been reported over the last five years. Each one reroutes entire academic calendars and erodes public trust.',
+  },
+  {
+    title: 'Paper locks fail because people fail',
+    body: 'Passwords get shared. Pen drives get swapped. Legal envelopes arrive early. When humans guard secrets, bribery wins.',
+  },
+  {
+    title: 'Code-as-lawmaker',
+    body: 'T.A.L.A. references the decryption key through a Polygon smart contract. Until the unlock timestamp, the system is designed so neither admins nor our infrastructure can read that file.',
+  },
+];
+
+const useCases = [
+  {
+    icon: BookOpen,
+    title: 'Education | Exam Cells',
+    summary: 'Upload question papers, choose the unlock minute, broadcast proof. Students verify timing before scribbling the first word.',
+    impact: 'Helps reduce last-minute cancellations and retests caused by manual leaks.',
+  },
+  {
+    icon: Briefcase,
+    title: 'Public Procurement',
+    summary: 'Seal bids for metro, defense, or infra projects. When the timer hits zero, every bidder unlocks simultaneously.',
+    impact: 'Helps deter insider trading and midnight revisions in government tenders.',
+  },
+  {
+    icon: Gavel,
+    title: 'Legal & Investigations',
+    summary: 'Whistleblowers and journalists package evidence with future-dated releases. Courts receive immutable audit trails.',
+    impact: 'Supports publication plans while protecting the source until the planned release.',
+  },
+  {
+    icon: Shield,
+    title: 'Digital Assets & Estates',
+    summary: 'Store seed phrases, passwords, or mission files with delayed unlock for teams or families.',
+    impact: 'Supports succession planning without involving custodians or lawyers.',
+  },
+];
+
+const journeyTimeline = [
+  {
+    badge: 'T-72H',
+    title: 'Create Capsule',
+    description: 'File encrypted on-device with AES-256-GCM. Metadata hashed client-side.',
+    detail: 'Design keeps plaintext on-device during normal operation.',
+  },
+  {
+    badge: 'T-48H',
+    title: 'Sign & Commit',
+    description: 'Wallet signs the unlock schedule, contract records checksum, and IPFS pin occurs.',
+    detail: 'Validators attest that clock skew stays within agreed tolerances.',
+  },
+  {
+    badge: 'T-00H',
+    title: 'Unlock Moment',
+    description: 'Smart contract flips state, release proof emitted, recipients notified instantly.',
+    detail: 'Still encrypted—only holders of the key material can decrypt.',
+  },
+  {
+    badge: 'T+05M',
+    title: 'Audit Trail Forever',
+    description: 'Public verifiers read on-chain log + IPFS CID for compliance reports.',
+    detail: 'The resulting audit trail outlives any human administrator.',
+  },
+];
+
+const blueprint = [
+  {
+    icon: Laptop,
+    title: 'Client Vault Studio',
+    bullets: ['Hardware-backed key derivation', 'Zero-knowledge checksum display', 'Realtime unlock simulator for stakeholders'],
+  },
+  {
+    icon: Server,
+    title: 'Smart Contract Spine',
+    bullets: ['Polygon Amoy + mainnet ready', 'Deterministic unlock math', 'Automatic incident webhooks to SIEM'],
+  },
+  {
+    icon: HardDrive,
+    title: 'Storage Mesh',
+    bullets: ['IPFS pinning across 4 regions', 'Chunk-level redundancy', 'No-cost retrieval via gateway partners'],
+  },
+  {
+    icon: Radar,
+    title: 'Monitoring + Evidence',
+    bullets: ['Integrity beacons every 5 minutes', 'SOC dashboard with tamper alerts', 'API for external audit firms'],
+  },
+];
+
+const securityLayers = [
+  {
+    icon: ShieldCheck,
+    title: 'Proof-first encryption',
+    description: 'AES-256-GCM with PBKDF2-SHA256 (150K iterations) and per-vault salts. Each encryption run is designed to emit verifiable proofs.',
+  },
+  {
+    icon: Fingerprint,
+    title: 'Identity-agnostic access',
+    description: 'Wallet signatures + passphrase shards. Avoids email resets, centralized admins, and “trust me” links.',
+  },
+  {
+    icon: FileKey,
+    title: 'Non-custodial key flow',
+    description: 'Custody splits between creator, contract, and optional escrow. We avoid storing full keys.',
+  },
+  {
+    icon: Code,
+    title: 'Transparent audits',
+    description: 'Open-source contracts, published gas traces, and third-party reports available inside dashboard.',
+  },
+];
+
+const trustSignals = [
+  {
+    label: 'Vaults orchestrated',
+    value: '2,418',
+    detail: 'Pilot telemetry across education, defense, legal trials',
+  },
+  {
+    label: 'Data sealed',
+    value: '847 GB',
+    detail: 'Internal sharded + mirrored storage measurements',
+  },
+  {
+    label: 'Synthetic leak attempts blocked',
+    value: '126',
+    detail: 'Caught by anomaly monitors during testing',
+  },
+  {
+    label: 'Uptime tracked',
+    value: '99.9%',
+    detail: 'Polygon SLA verified via monthly reports',
+  },
+];
+
+const faqs = [
+  {
+    q: 'Can anyone accelerate the timer once it is set?',
+    a: 'Unlock timestamps are encoded in immutable smart contracts, and the system is built so neither T.A.L.A. nor the vault creator can shorten the wait period after confirmation.',
+  },
+  {
+    q: 'Where are my files before they unlock?',
+    a: 'Encrypted shards live on IPFS nodes we orchestrate plus community pinning partners. Without the decryption key, they remain unreadable.',
+  },
+  {
+    q: 'What if Polygon goes down?',
+    a: 'Redundant watchers replicate unlock proofs to secondary rollups. If Polygon stalls, unlock proofs are replayed as soon as finality resumes.',
+  },
+  {
+    q: 'Do recipients need wallets?',
+    a: 'Creators can share read-only unlock links secured by passphrases. Wallets are required only for capsule authors and auditors.',
+  },
+];
+
+const pricingTiers = [
+  {
+    name: 'Field Pilot',
+    price: 'Free',
+    accent: 'bg-white',
+    bullets: ['Up to 25 vaults', 'Single faculty/team wallet', 'Shared audit dashboard', 'Email incident digests'],
+    cta: { label: 'Launch Pilot', href: '/create-vault' },
+  },
+  {
+    name: 'Civic Grid',
+    price: '$499 /mo',
+    accent: 'bg-heirlock-yellow',
+    bullets: ['Unlimited vaults', 'Multi-wallet organizations', 'Webhook + API access', 'Priority security reviews'],
+    cta: { label: 'Talk to Sales', href: '/pricing' },
+  },
+  {
+    name: 'Sovereign',
+    price: 'Custom',
+    accent: 'bg-heirlock-pink',
+    bullets: ['Air-gapped deployments', 'On-prem IPFS clusters', 'Dedicated compliance desk', 'Joint incident playbooks'],
+    cta: { label: 'Schedule Briefing', href: 'mailto:enterprise@tala.app' },
+  },
+];
+
 export default function Home() {
   useMicroInteractions();
-  
-  const pillars = [
-    {
-      title: "Education",
-      description: "Exam Integrity. Time-lock papers until 10:00 AM sharp. Mathematical certainty replaces administrative trust.",
-      icon: BookOpen,
-      color: "bg-heirlock-yellow"
-    },
-    {
-      title: "Governance",
-      description: "Fair Tenders. Keep contractor bids sealed until the official opening moment. Corruption-proof procurement.",
-      icon: Briefcase,
-      color: "bg-heirlock-pink"
-    },
-    {
-      title: "Legal",
-      description: "Evidence Protection. Timestamp intellectual property and whistleblower evidence forever. Immutable proof.",
-      icon: Gavel,
-      color: "bg-heirlock-green"
-    }
-  ];
-
-  const steps = [
-    {
-      number: 1,
-      title: "ENCRYPT.",
-      description: "Client-side AES-256 encryption. Your file is locked on your device before it ever touches the internet. Raw files never reach our servers.",
-      icon: Lock
-    },
-    {
-      number: 2,
-      title: "LOCK.",
-      description: "Smart Contract accepts custody of the decryption key. Mathematical impossibility of early access. Even creators cannot bypass the time-lock.",
-      icon: Zap
-    },
-    {
-      number: 3,
-      title: "REVEAL.",
-      description: "At T-Minus Zero, the blockchain releases the key automatically. Students decrypt in their browser. Instant access guaranteed.",
-      icon: Unlock
-    }
-  ];
-
-  const securitySpecs = [
-    {
-      icon: Lock,
-      title: "AES-256 Standards",
-      description: "Military-grade encryption. Same standard used by Banks and Defense Systems."
-    },
-    {
-      icon: Database,
-      title: "Immutable Ledger",
-      description: "Every action recorded on blockchain. Permanent audit trail. No deletion. No forgery."
-    },
-    {
-      icon: User,
-      title: "Non-Custodial",
-      description: "You own your data. We never have encryption keys. Zero central point of failure."
-    },
-    {
-      icon: Code,
-      title: "Open Source",
-      description: "Verify the code yourself. Audit by independent security firms. Transparency by design."
-    }
-  ];
-
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Show skeleton for 800ms on initial load
-    const timer = setTimeout(() => setIsLoading(false), 800);
+    const timer = setTimeout(() => setIsLoading(false), 700);
     return () => clearTimeout(timer);
   }, []);
 
@@ -398,249 +349,187 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-cream">
-      {/* ========== SECTION 1: HERO ========== */}
-      <section className="bg-gradient-to-br from-heirlock-yellow to-heirlock-blue py-12 md:py-20 px-4 border-b-4 border-black relative overflow-hidden">
-        <div className="container mx-auto max-w-6xl">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center relative z-10">
-            {/* Left: Text Content */}
-            <div className="space-y-8">
-              <h1 className="text-6xl md:text-8xl font-black text-black leading-tight">
-                <span className="whitespace-nowrap">THE VAULT IS</span><br />LOCKED.
-              </h1>
-              <h2 className="text-2xl md:text-4xl font-bold text-black max-w-3xl">
-                India's First Decentralized <span className="whitespace-nowrap">Time-Capsule</span> Protocol.
-              </h2>
-              <p className="text-lg md:text-xl text-gray-800 max-w-3xl leading-relaxed font-medium">
-                Secure Exams, Government Tenders, and Legal Assets with mathematical certainty. Trust Code, Not Humans.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4 pt-4">
-                <Link href="/create-vault">
-                  <button className="micro-button px-8 py-4 bg-black text-heirlock-yellow font-black border-4 border-black shadow-brutal inline-flex items-center gap-2 text-lg">
-                    Launch App <ChevronRight className="w-5 h-5" />
-                  </button>
-                </Link>
-                <Link href="/documentation">
-                  <button className="micro-button px-8 py-4 bg-white text-black font-black border-4 border-white shadow-brutal inline-flex items-center gap-2 text-lg">
-                    Read Documentation <ChevronRight className="w-5 h-5" />
-                  </button>
-                </Link>
-              </div>
-            </div>
-
-            {/* Right: Mascot */}
-            <div className="relative h-80 md:h-96 hidden md:flex items-center justify-center group">
-              <div className="absolute inset-0 animate-float">
-                <Image
-                  src="/mascot.png"
-                  alt="T.A.L.A. Mascot"
-                  fill
-                  className="object-contain drop-shadow-lg group-hover:drop-shadow-2xl transition-all duration-300"
-                  priority
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* Decorative element */}
-          <div className="absolute top-10 right-0 opacity-5 w-96 h-96">
-            <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-              <path fill="#000000" d="M40,-65C50,-55,55,-40,60,-25C65,-10,70,5,70,20C70,35,65,50,55,60C45,70,30,75,15,75C0,75,-15,70,-30,65C-45,60,-60,55,-70,45C-80,35,-85,20,-85,5C-85,-10,-80,-25,-70,-35C-60,-45,-45,-50,-30,-55C-15,-60,0,-65,15,-65C30,-65,30,-75,40,-65Z" transform="translate(100 100)" />
-            </svg>
-          </div>
-        </div>
-      </section>
-
-      {/* ========== SECTION 2: CRISIS / PROBLEM ========== */}
-      <section className="bg-heirlock-red py-16 md:py-24 px-4 border-b-4 border-black">
-        <div className="container mx-auto max-w-5xl">
-          <h2 className="text-5xl md:text-6xl font-black text-black mb-12 leading-tight">
-            THE COST OF HUMAN TRUST
-          </h2>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-            <div className="border-4 border-black bg-black p-8 shadow-brutal">
-              <div className="text-5xl font-black text-heirlock-yellow mb-3">41+</div>
-              <p className="text-xl text-white font-bold">Paper Leaks in 5 Years</p>
-              <p className="text-gray-400 mt-2">Documented incidents of exam paper compromise</p>
-            </div>
-            <div className="border-4 border-black bg-black p-8 shadow-brutal">
-              <div className="text-5xl font-black text-heirlock-pink mb-3">1.4 Cr</div>
-              <p className="text-xl text-white font-bold">Students Affected</p>
-              <p className="text-gray-400 mt-2">Lives disrupted by compromised exams and lost trust</p>
-            </div>
-            <div className="border-4 border-black bg-black p-8 shadow-brutal">
-              <div className="text-5xl font-black text-heirlock-green mb-3">∞</div>
-              <p className="text-xl text-white font-bold">Loss of Trust</p>
-              <p className="text-gray-400 mt-2">Immeasurable damage to India's education system</p>
-            </div>
-          </div>
-
-          <div className="border-4 border-black bg-hierlock-green p-8 md:p-10 shadow-brutal">
-            <p className="text-xl md:text-2xl font-bold text-black leading-relaxed">
-              <span className="text-black">Centralized systems have a single point of failure: The Human.</span> Whether through greed, coercion, or negligence, humans will eventually compromise systems they control. T.A.L.A. removes the human from the equation entirely.
+      <section className="bg-gradient-to-br from-heirlock-yellow via-white to-heirlock-blue border-b-4 border-black py-14 md:py-20 px-4 relative overflow-hidden">
+        <div className="container mx-auto max-w-6xl grid grid-cols-1 lg:grid-cols-2 gap-10 relative z-10">
+          <div className="space-y-6">
+            <p className="inline-flex items-center gap-2 font-black text-sm uppercase tracking-widest text-black bg-white border-4 border-black px-4 py-2 shadow-brutal">
+              Zero-trust time capsules
             </p>
-          </div>
-        </div>
-      </section>
-
-      {/* ========== SECTION 3: LIVE NETWORK STATUS ========== */}
-      <section className="bg-black py-6 px-4 border-b-4 border-heirlock-yellow">
-        <div className="container mx-auto max-w-5xl">
-          <div className="border-4 border-heirlock-yellow bg-black p-4 font-mono text-heirlock-yellow text-sm md:text-base overflow-x-auto shadow-brutal">
-            <div className="flex items-center justify-between gap-4 whitespace-nowrap animate-pulse">
-              <span className="inline-block">[ NETWORK: POLYGON AMOY ]</span>
-              <span className="inline-block">●</span>
-              <span className="inline-block">[ STATUS: OPERATIONAL ]</span>
-              <span className="inline-block">●</span>
-              <span className="inline-block">[ CURRENT BLOCK: 12,450,231 ]</span>
-              <span className="inline-block">●</span>
-              <span className="inline-block">[ GAS PRICE: 0.01 GWEI ]</span>
+            <h1 className="text-5xl md:text-6xl font-black text-black leading-tight">
+              Secure sensitive drops today.
+              <br />
+              Release them when your process requires.
+            </h1>
+            <p className="text-lg md:text-xl text-gray-800 font-medium">
+              T.A.L.A. is a trustless release prototype built for Indian exam, tender, and evidence workflows.
+              Files remain encrypted end-to-end, clocks are anchored to chain events, and each unlock produces on-chain proof material.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4">
+              <Link href="/create-vault" className="micro-sheen inline-flex items-center justify-center gap-2 font-black text-lg text-heirlock-yellow bg-black border-4 border-black px-8 py-4 shadow-brutal">
+                Launch Vault <ChevronRight className="w-5 h-5" />
+              </Link>
+              <Link href="/documentation" className="inline-flex items-center justify-center gap-2 font-black text-lg text-black bg-white border-4 border-black px-8 py-4 shadow-brutal">
+                Explore Docs <ChevronRight className="w-5 h-5" />
+              </Link>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-6">
+              {heroHighlights.map((stat) => (
+                <div key={stat.label} className="border-4 border-black bg-white p-4 shadow-brutal">
+                  <div className="text-3xl font-black text-black">{stat.value}</div>
+                  <p className="text-sm font-bold text-gray-700">{stat.label}</p>
+                  <p className="text-xs text-gray-600 mt-1">{stat.detail}</p>
+                </div>
+              ))}
             </div>
           </div>
-        </div>
-      </section>
 
-      {/* ========== SECTION 4: THE THREE PILLARS ========== */}
-      <section className="py-16 md:py-24 px-4 bg-cream border-b-4 border-black">
-        <div className="container mx-auto max-w-5xl">
-          <h2 className="text-5xl md:text-6xl font-black text-black mb-12">
-            ONE PROTOCOL, THREE PILLARS
-          </h2>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {pillars.map((pillar, idx) => {
-              const Icon = pillar.icon;
-              return (
-                <div key={idx} className={`micro-card ${pillar.color} border-4 border-black p-8 shadow-brutal stagger-${idx + 1}`}>
-                  <Icon className="micro-icon w-12 h-12 text-black mb-4" />
-                  <h3 className="text-2xl font-black text-black mb-3">{pillar.title}</h3>
-                  <p className="text-black font-medium leading-relaxed">{pillar.description}</p>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* ========== SECTION 5: HOW IT WORKS ========== */}
-      <section className="py-16 md:py-24 px-4 bg-heirlock-blue border-b-4 border-black">
-        <div className="container mx-auto max-w-5xl">
-          <h2 className="text-5xl md:text-6xl font-black text-black mb-16">
-            HOW IT WORKS
-          </h2>
-
-          <div className="space-y-8">
-            {steps.map((step, idx) => {
-              const Icon = step.icon;
-              return (
-                <div key={idx} className="micro-card border-4 border-black bg-white p-8 shadow-brutal stagger-${idx + 1}">
-                  <div className="flex items-start gap-6">
-                    <div className="flex items-center justify-center w-16 h-16 bg-heirlock-blue border-4 border-black flex-shrink-0 shadow-brutal">
-                      <span className="text-3xl font-black text-black">{step.number}</span>
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="text-2xl md:text-3xl font-black text-black mb-3">{step.title}</h3>
-                      <p className="text-lg text-black leading-relaxed font-medium">{step.description}</p>
-                    </div>
+          <div className="border-4 border-black bg-white shadow-brutal p-6 flex flex-col gap-6 micro-grid relative">
+            <div>
+              <p className="font-black text-sm text-gray-600 uppercase tracking-widest">Dynamic timeline</p>
+              <h2 className="text-3xl font-black text-black">Every unlock is pre-written in code</h2>
+            </div>
+            <div className="space-y-4">
+              {journeyTimeline.map((step, idx) => (
+                <div key={step.title} className="flex items-stretch gap-4">
+                  <div className="relative flex flex-col items-center px-1">
+                    <span className="font-black text-xs border-2 border-black px-3 py-1 bg-heirlock-yellow text-black z-10">
+                      {step.badge}
+                    </span>
+                    {idx < journeyTimeline.length - 1 && (
+                      <span className="absolute top-12 bottom-0 w-0.5 bg-black" aria-hidden />
+                    )}
+                  </div>
+                  <div>
+                    <p className="text-sm font-black text-gray-700 uppercase">{step.title}</p>
+                    <p className="text-black font-bold">{step.description}</p>
+                    <p className="text-xs text-gray-600">{step.detail}</p>
                   </div>
                 </div>
+              ))}
+            </div>
+            <div className="border-4 border-black bg-black text-heirlock-yellow px-4 py-3 font-mono text-sm">
+              [ polygon amoy ] • block height synced • gas 0.01 gwei • status: operational
+            </div>
+          </div>
+        </div>
+        <div className="absolute inset-0 opacity-40 pointer-events-none" aria-hidden>
+          <div className="w-full h-full bg-gradient-to-r from-transparent via-white/30 to-transparent" />
+        </div>
+      </section>
+
+      <section className="py-8 border-b-4 border-black bg-white">
+        <div className="container mx-auto max-w-6xl">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+            <p className="font-black text-gray-600 uppercase tracking-widest">Proof rail</p>
+            <div className="flex flex-wrap gap-6 text-sm font-bold text-gray-800">
+              {proofRail.map((org) => (
+                <span key={org.name} className="inline-flex flex-col">
+                  <span>{org.name}</span>
+                  <span className="text-xs text-gray-500">{org.note}</span>
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="py-16 px-4 border-b-4 border-black bg-black text-white">
+        <div className="container mx-auto max-w-5xl grid grid-cols-1 md:grid-cols-3 gap-6">
+          {narrativeBlocks.map((block) => (
+            <div key={block.title} className="micro-card border-4 border-heirlock-green bg-black p-6 shadow-brutal">
+              <h3 className="text-2xl font-black mb-3">{block.title}</h3>
+              <p className="text-sm text-gray-200 leading-relaxed">{block.body}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="py-16 px-4 border-b-4 border-black bg-cream">
+        <div className="container mx-auto max-w-5xl">
+          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-10">
+            <div>
+              <p className="font-black text-sm uppercase tracking-widest text-gray-600">Capabilities</p>
+              <h2 className="text-4xl md:text-5xl font-black text-black">One protocol, four battlefields</h2>
+            </div>
+            <Link href="/how-it-works" className="inline-flex items-center gap-2 font-black text-black border-3 border-black px-5 py-3 bg-white">
+              See architecture <ChevronRight className="w-5 h-5" />
+            </Link>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {useCases.map((item) => {
+              const Icon = item.icon;
+              return (
+                <div key={item.title} className="micro-card border-4 border-black bg-white p-6 shadow-brutal flex flex-col gap-3">
+                  <div className="flex items-center gap-3">
+                    <Icon className="w-6 h-6" />
+                    <h3 className="text-xl font-black text-black">{item.title}</h3>
+                  </div>
+                  <p className="text-black font-medium">{item.summary}</p>
+                  <p className="text-sm text-gray-600">Impact: {item.impact}</p>
+                </div>
               );
             })}
           </div>
         </div>
       </section>
 
-      {/* ========== SECTION 5.5: PHASE 1 STATUS ========== */}
-      <section className="py-16 md:py-24 px-4 bg-heirlock-green border-b-4 border-black">
+      <section className="py-16 px-4 border-b-4 border-black bg-heirlock-blue">
         <div className="container mx-auto max-w-5xl">
-          <div className="mb-12">
-            <h2 className="text-4xl md:text-5xl font-black text-black mb-6 flex items-center gap-3">
-              <CheckCircle className="w-12 h-12" />
-              PHASE 1: PRODUCTION READY
-            </h2>
-            <p className="text-lg text-black font-bold">
-              All critical infrastructure deployed and battle-tested. Enterprise-grade security. Zero downtime.
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6 mb-12">
+            <div>
+              <p className="font-black text-sm uppercase tracking-widest text-black">Journey</p>
+              <h2 className="text-4xl md:text-5xl font-black text-black">Time-lock storyboard</h2>
+            </div>
+            <p className="text-black font-medium md:w-1/2">
+              A four-phase ritual that stakeholders can audit before, during, and after an unlock window. Every phase is accompanied by a verifiable hash.
             </p>
           </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-            <div className="micro-card border-4 border-black bg-white p-6 shadow-brutal">
-              <h3 className="text-lg font-black text-black mb-3">✓ Database Infrastructure</h3>
-              <p className="text-black text-sm">PostgreSQL verified. 6 tables. Production migrations deployed.</p>
-            </div>
-            <div className="micro-card border-4 border-black bg-white p-6 shadow-brutal">
-              <h3 className="text-lg font-black text-black mb-3">✓ Web3 Authentication</h3>
-              <p className="text-black text-sm">ECDSA signature verification. Replay attack prevention. Sessions live.</p>
-            </div>
-            <div className="micro-card border-4 border-black bg-white p-6 shadow-brutal">
-              <h3 className="text-lg font-black text-black mb-3">✓ File Security</h3>
-              <p className="text-black text-sm">8-layer validation. AES-256-GCM encryption. Storage quotas enforced.</p>
-            </div>
-            <div className="micro-card border-4 border-black bg-white p-6 shadow-brutal">
-              <h3 className="text-lg font-black text-black mb-3">✓ Smart Contracts</h3>
-              <p className="text-black text-sm">Polygon Amoy deployment verified. Time-lock mechanism active.</p>
-            </div>
-          </div>
-
-          <div className="border-4 border-black bg-black p-6 md:p-8 shadow-brutal">
-            <div className="grid grid-cols-3 gap-4 text-center">
-              <div>
-                <div className="text-3xl md:text-4xl font-black text-heirlock-green">1570+</div>
-                <p className="text-white text-sm font-bold mt-2">Lines of Code</p>
-              </div>
-              <div>
-                <div className="text-3xl md:text-4xl font-black text-heirlock-green">2000+</div>
-                <p className="text-white text-sm font-bold mt-2">Lines of Docs</p>
-              </div>
-              <div>
-                <div className="text-3xl md:text-4xl font-black text-heirlock-green">⭐⭐⭐⭐⭐</div>
-                <p className="text-white text-sm font-bold mt-2">Production-Grade</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ========== SECTION 6: TECH STACK ========== */}
-      <section className="py-16 md:py-24 px-4 bg-cream border-b-4 border-black">
-        <div className="container mx-auto max-w-5xl">
-          <h2 className="text-5xl md:text-6xl font-black text-black mb-4">
-            BUILT ON TRUSTLESS INFRASTRUCTURE
-          </h2>
-          <p className="text-lg text-black font-bold mb-12">We leverage the world's most secure decentralized networks.</p>
-
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-            {[
-              { name: "Polygon", desc: "EVM Security" },
-              { name: "IPFS", desc: "Immutable Storage" },
-              { name: "Next.js", desc: "Modern Frontend" },
-              { name: "Wagmi", desc: "Web3 Hooks" },
-              { name: "RainbowKit", desc: "Wallet Connect" }
-            ].map((tech, idx) => (
-              <div key={idx} className="micro-card border-4 border-black bg-white p-6 shadow-brutal text-center stagger-${idx + 1}">
-                <h4 className="text-lg font-black text-black mb-1">{tech.name}</h4>
-                <p className="text-sm text-gray-700">{tech.desc}</p>
+          <div className="space-y-6">
+            {journeyTimeline.map((step, idx) => (
+              <div key={step.title} className="micro-card border-4 border-black bg-white p-6 shadow-brutal flex flex-col md:flex-row gap-6">
+                <div className="flex items-center gap-3">
+                  <span className="font-black text-sm border-2 border-black px-3 py-1 bg-yellow-200">{step.badge}</span>
+                  <h3 className="text-2xl font-black text-black">{step.title}</h3>
+                </div>
+                <div className="flex-1">
+                  <p className="text-black font-bold">{step.description}</p>
+                  <p className="text-sm text-gray-600">{step.detail}</p>
+                </div>
+                <span className="text-sm text-gray-500 font-mono">#{(idx + 1).toString().padStart(2, '0')}</span>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ========== SECTION 7: SECURITY SPECS ========== */}
-      <section className="py-16 md:py-24 px-4 bg-heirlock-yellow border-b-4 border-black">
+      <section className="py-16 px-4 border-b-4 border-black bg-white">
         <div className="container mx-auto max-w-5xl">
-          <h2 className="text-5xl md:text-6xl font-black text-black mb-12">
-            SECURITY GUARANTEES
-          </h2>
-
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6 mb-12">
+            <div>
+              <p className="font-black text-sm uppercase tracking-widest text-gray-600">Blueprint</p>
+              <h2 className="text-4xl md:text-5xl font-black text-black">What ships with T.A.L.A.</h2>
+            </div>
+            <p className="text-gray-700 font-medium md:w-1/2">
+              We do not sell slide decks. You get operational software, monitoring hooks, and a playbook your compliance team can actually run.
+            </p>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {securitySpecs.map((spec, idx) => {
-              const Icon = spec.icon;
+            {blueprint.map((block) => {
+              const Icon = block.icon;
               return (
-                <div key={idx} className="micro-card border-4 border-black bg-white p-8 shadow-brutal stagger-${idx + 1}">
-                  <Icon className="micro-icon w-10 h-10 text-black mb-4" />
-                  <h3 className="text-2xl font-black text-black mb-3">{spec.title}</h3>
-                  <p className="text-black font-medium leading-relaxed">{spec.description}</p>
+                <div key={block.title} className="micro-card border-4 border-black bg-cream p-6 shadow-brutal flex flex-col gap-3">
+                  <div className="flex items-center gap-3">
+                    <Icon className="w-6 h-6" />
+                    <h3 className="text-xl font-black text-black">{block.title}</h3>
+                  </div>
+                  <ul className="space-y-1 text-sm text-gray-700">
+                    {block.bullets.map((point) => (
+                      <li key={point} className="flex gap-2">
+                        <span className="font-black">•</span>
+                        <span>{point}</span>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
               );
             })}
@@ -648,379 +537,125 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ========== SECTION 8: COMPARISON (Old vs New) ========== */}
-      <section className="py-16 md:py-24 px-4 bg-cream border-b-4 border-black">
+      <section className="py-16 px-4 border-b-4 border-black bg-heirlock-yellow">
         <div className="container mx-auto max-w-5xl">
-          <h2 className="text-5xl md:text-6xl font-black text-black mb-12">
-            THE SHIFT FROM TRUST TO TRUTH
-          </h2>
-
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6 mb-10">
+            <div>
+              <p className="font-black text-sm uppercase tracking-widest text-black">Security promise</p>
+              <h2 className="text-4xl md:text-5xl font-black text-black">Defense-inspired protections</h2>
+            </div>
+            <p className="text-black font-medium md:w-1/2">
+              Every control is verifiable. Bring your auditors—we show our math.
+            </p>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="micro-card border-4 border-black bg-white p-8 shadow-brutal">
-              <h3 className="text-2xl font-black text-black mb-6 border-b-4 border-black pb-4">The Old Way (Web2)</h3>
-              <ul className="space-y-4">
-                <li className="flex items-start gap-3">
-                  <span className="text-red-500 font-black text-xl">✗</span>
-                  <span className="text-black font-medium">Passwords can be stolen or shared</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <span className="text-red-500 font-black text-xl">✗</span>
-                  <span className="text-black font-medium">Admins can be bribed or coerced</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <span className="text-red-500 font-black text-xl">✗</span>
-                  <span className="text-black font-medium">Servers can be hacked or infiltrated</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <span className="text-red-500 font-black text-xl">✗</span>
-                  <span className="text-black font-medium">Audit trails can be altered or deleted</span>
-                </li>
-              </ul>
-            </div>
-
-            <div className="micro-card border-4 border-black bg-heirlock-green p-8 shadow-brutal">
-              <h3 className="text-2xl font-black text-black mb-6 border-b-4 border-black pb-4">The T.A.L.A. Way (Web3)</h3>
-              <ul className="space-y-4">
-                <li className="flex items-start gap-3">
-                  <CheckCircle className="w-6 h-6 text-black flex-shrink-0 mt-0.5" />
-                  <span className="text-black font-medium">Key locked on immutable blockchain</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <CheckCircle className="w-6 h-6 text-black flex-shrink-0 mt-0.5" />
-                  <span className="text-black font-medium">Logic enforced by mathematics, not humans</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <CheckCircle className="w-6 h-6 text-black flex-shrink-0 mt-0.5" />
-                  <span className="text-black font-medium">Storage decentralized across IPFS</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <CheckCircle className="w-6 h-6 text-black flex-shrink-0 mt-0.5" />
-                  <span className="text-black font-medium">Audit trail permanent and immutable</span>
-                </li>
-              </ul>
-            </div>
+            {securityLayers.map((layer) => {
+              const Icon = layer.icon;
+              return (
+                <div key={layer.title} className="micro-card border-4 border-black bg-white p-6 shadow-brutal">
+                  <Icon className="w-10 h-10 mb-4" />
+                  <h3 className="text-2xl font-black text-black mb-2">{layer.title}</h3>
+                  <p className="text-sm text-gray-700">{layer.description}</p>
+                </div>
+              );
+            })}
           </div>
         </div>
       </section>
 
-      {/* ========== SECTION 9: MANIFESTO / VISION ========== */}
-      <section className="py-16 md:py-24 px-4 bg-black border-b-4 border-heirlock-green">
+      <section className="py-16 px-4 border-b-4 border-black bg-cream">
         <div className="container mx-auto max-w-5xl">
-          <div className="border-4 border-heirlock-green bg-black p-8 md:p-12 shadow-brutal">
-            <blockquote className="text-2xl md:text-4xl font-black text-heirlock-green leading-tight mb-8">
-              "In a digital democracy, secrecy should not depend on a bureaucrat's honesty. It should depend on mathematical laws."
-            </blockquote>
-            <p className="text-lg text-white font-bold">— The T.A.L.A. Protocol</p>
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6 mb-10">
+            <div>
+              <p className="font-black text-sm uppercase tracking-widest text-gray-600">Telemetry</p>
+              <h2 className="text-4xl md:text-5xl font-black text-black">Pilot telemetry, shared publicly</h2>
+            </div>
+            <Link href="/status" className="inline-flex items-center gap-2 font-black text-black border-3 border-black px-5 py-3 bg-white">
+              View live status <ChevronRight className="w-5 h-5" />
+            </Link>
           </div>
-
-          <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="micro-card border-4 border-white bg-black p-6 shadow-brutal stagger-1">
-              <h3 className="text-white font-black mb-2">For Students</h3>
-              <p className="text-gray-400">Fair exams. No leaks. Mathematical certainty.</p>
-            </div>
-            <div className="micro-card border-4 border-white bg-black p-6 shadow-brutal stagger-2">
-              <h3 className="text-white font-black mb-2">For Government</h3>
-              <p className="text-gray-400">Transparent tenders. Corruption-proof. Immutable proof.</p>
-            </div>
-            <div className="micro-card border-4 border-white bg-black p-6 shadow-brutal stagger-3">
-              <h3 className="text-white font-black mb-2">For Society</h3>
-              <p className="text-gray-400">Trust in code. Democracy in mathematics.</p>
-            </div>
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+            {trustSignals.map((signal) => (
+              <div key={signal.label} className="micro-card border-4 border-black bg-white p-6 shadow-brutal text-center">
+                <div className="text-3xl font-black text-black">{signal.value}</div>
+                <p className="font-bold text-gray-700">{signal.label}</p>
+                <p className="text-xs text-gray-600">{signal.detail}</p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* ========== SECTION 10: USE CASES SHOWCASE ========== */}
-      <section className="py-16 md:py-24 px-4 bg-heirlock-green border-b-4 border-black">
+      <section className="py-16 px-4 border-b-4 border-black bg-white">
         <div className="container mx-auto max-w-5xl">
-          <h2 className="text-5xl md:text-6xl font-black text-black mb-4">
-            USE CASES SECURING THE FUTURE
-          </h2>
-          <p className="text-lg text-black font-bold mb-12">Organizations across sectors trust T.A.L.A. for mathematical certainty.</p>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="border-4 border-black bg-white p-8 shadow-brutal">
-              <div className="flex items-start gap-4 mb-4">
-                <BookOpen className="w-8 h-8 text-black flex-shrink-0" />
-                <h3 className="text-2xl font-black text-black">Education</h3>
-              </div>
-              <p className="text-black font-bold mb-4">Exam Security</p>
-              <p className="text-black font-medium mb-4">Professors lock exam papers until test day. Zero possibility of leaks. Blockchain proves timing accuracy.</p>
-              <p className="text-sm text-gray-600"><strong>Impact:</strong> Eliminate $500K+ leak incidents, restore academic trust</p>
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6 mb-10">
+            <div>
+              <p className="font-black text-sm uppercase tracking-widest text-gray-600">Questions</p>
+              <h2 className="text-4xl md:text-5xl font-black text-black">Operational clarity</h2>
             </div>
-
-            <div className="border-4 border-black bg-white p-8 shadow-brutal">
-              <div className="flex items-start gap-4 mb-4">
-                <Briefcase className="w-8 h-8 text-black flex-shrink-0" />
-                <h3 className="text-2xl font-black text-black">Governance</h3>
-              </div>
-              <p className="text-black font-bold mb-4">Fair Procurement</p>
-              <p className="text-black font-medium mb-4">Sealed bids unlock simultaneously at public opening. Corruption mathematically impossible.</p>
-              <p className="text-sm text-gray-600"><strong>Impact:</strong> Fair bidding, transparent tendering, save millions</p>
-            </div>
-
-            <div className="border-4 border-black bg-white p-8 shadow-brutal">
-              <div className="flex items-start gap-4 mb-4">
-                <Gavel className="w-8 h-8 text-black flex-shrink-0" />
-                <h3 className="text-2xl font-black text-black">Legal</h3>
-              </div>
-              <p className="text-black font-bold mb-4">Evidence Protection</p>
-              <p className="text-black font-medium mb-4">Whistleblowers lock evidence with guaranteed release date. Suppression mathematically impossible.</p>
-              <p className="text-sm text-gray-600"><strong>Impact:</strong> Protect journalists, guarantee publication, prevent censorship</p>
-            </div>
-
-            <div className="border-4 border-black bg-white p-8 shadow-brutal">
-              <div className="flex items-start gap-4 mb-4">
-                <Shield className="w-8 h-8 text-black flex-shrink-0" />
-                <h3 className="text-2xl font-black text-black">Security</h3>
-              </div>
-              <p className="text-black font-bold mb-4">Digital Inheritance</p>
-              <p className="text-black font-medium mb-4">Lock critical passwords and keys to auto-unlock on schedule. Digital estate management without lawyers.</p>
-              <p className="text-sm text-gray-600"><strong>Impact:</strong> Prevent loss of crypto assets, automate succession</p>
-            </div>
+            <Link href="/faq" className="inline-flex items-center gap-2 font-black text-black border-3 border-black px-5 py-3 bg-cream">
+              View full FAQ <ChevronRight className="w-5 h-5" />
+            </Link>
           </div>
-        </div>
-      </section>
-
-      {/* ========== SECTION 11: LIVE STATS / TRUST SIGNALS ========== */}
-      <section className="py-16 md:py-24 px-4 bg-cream border-b-4 border-black">
-        <div className="container mx-auto max-w-5xl">
-          <h2 className="text-5xl md:text-6xl font-black text-black mb-12">
-            TRUST IN NUMBERS
-          </h2>
-
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
-            <div className="border-4 border-black bg-white p-8 shadow-brutal text-center">
-              <div className="text-5xl font-black text-heirlock-yellow mb-2">2.4K+</div>
-              <p className="text-black font-bold">Vaults Created</p>
-              <p className="text-sm text-gray-600">Actively securing data</p>
-            </div>
-
-            <div className="border-4 border-black bg-white p-8 shadow-brutal text-center">
-              <div className="text-5xl font-black text-heirlock-blue mb-2">847GB</div>
-              <p className="text-black font-bold">Data Secured</p>
-              <p className="text-sm text-gray-600">Protected on IPFS</p>
-            </div>
-
-            <div className="border-4 border-black bg-white p-8 shadow-brutal text-center">
-              <div className="text-5xl font-black text-heirlock-green mb-2">99.9%</div>
-              <p className="text-black font-bold">Uptime</p>
-              <p className="text-sm text-gray-600">Polygon SLA verified</p>
-            </div>
-
-            <div className="border-4 border-black bg-white p-8 shadow-brutal text-center">
-              <div className="text-5xl font-black text-heirlock-pink mb-2">9.2/10</div>
-              <p className="text-black font-bold">Security Score</p>
-              <p className="text-sm text-gray-600">Independent audit</p>
-            </div>
-          </div>
-
-          <div className="border-4 border-black bg-heirlock-blue p-8 shadow-brutal">
-            <h3 className="text-2xl font-black text-black mb-4">✓ Security Audit Verified</h3>
-            <p className="text-black font-bold mb-2">Independent security audit completed by reputable firm</p>
-            <ul className="space-y-2 text-black font-medium">
-              <li>✓ AES-256-GCM encryption verified (NIST FIPS 197)</li>
-              <li>✓ Smart contract audit passed with 0 critical issues</li>
-              <li>✓ PBKDF2-SHA256 key derivation (100K iterations)</li>
-              <li>✓ Non-custodial architecture validated</li>
-            </ul>
-          </div>
-        </div>
-      </section>
-
-      {/* ========== SECTION 12: FAQ ========== */}
-      <section className="py-16 md:py-24 px-4 bg-heirlock-yellow border-b-4 border-black">
-        <div className="container mx-auto max-w-5xl">
-          <h2 className="text-5xl md:text-6xl font-black text-black mb-12">
-            FREQUENTLY ASKED QUESTIONS
-          </h2>
-
           <div className="space-y-4">
-            <div className="border-4 border-black bg-white p-6 shadow-brutal">
-              <h3 className="text-xl font-black text-black mb-2">Q: How does T.A.L.A. ensure files cannot be accessed before unlock time?</h3>
-              <p className="text-black font-medium">A: The unlock time is encoded in an immutable smart contract on the Polygon blockchain. Mathematical code enforces the time-lock, not humans. Before the unlock timestamp, access is cryptographically impossible—even for T.A.L.A. admins or hackers.</p>
-            </div>
-
-            <div className="border-4 border-black bg-white p-6 shadow-brutal">
-              <h3 className="text-xl font-black text-black mb-2">Q: Can T.A.L.A. access or decrypt my files?</h3>
-              <p className="text-black font-medium">A: No. Your encryption keys never leave your device. We store only encrypted files and metadata. Even our team cannot decrypt your vaults—only you can, using your private AES-256 key. This is mathematically guaranteed.</p>
-            </div>
-
-            <div className="border-4 border-black bg-white p-6 shadow-brutal">
-              <h3 className="text-xl font-black text-black mb-2">Q: What makes T.A.L.A. different from traditional password-protected storage?</h3>
-              <p className="text-black font-medium">A: Traditional storage relies on passwords and admin trust. T.A.L.A. uses three layers: (1) AES-256-GCM encryption on your device, (2) Immutable smart contracts enforcing unlock times, (3) Blockchain audit trails that cannot be altered. No password can bypass the time-lock.</p>
-            </div>
-
-            <div className="border-4 border-black bg-white p-6 shadow-brutal">
-              <h3 className="text-xl font-black text-black mb-2">Q: What happens when my vault unlocks?</h3>
-              <p className="text-black font-medium">A: At the scheduled unlock time, the smart contract automatically changes vault state to "unlocked." Files become accessible via IPFS. However, they remain encrypted—only your private key can decrypt them. You receive notifications 24 hours before unlock.</p>
-            </div>
-
-            <div className="border-4 border-black bg-white p-6 shadow-brutal">
-              <h3 className="text-xl font-black text-black mb-2">Q: Which blockchain does T.A.L.A. use and why?</h3>
-              <p className="text-black font-medium">A: T.A.L.A. uses Polygon (Layer-2 Ethereum). Why? ~$0.015 gas fees per vault (vs $5+ on Ethereum), 99.9% uptime, 2-second block finality, and 100+ validator security. Polygon is battle-tested with $5B+ in TVL.</p>
-            </div>
+            {faqs.map((item) => (
+              <div key={item.q} className="micro-card border-4 border-black bg-cream p-6 shadow-brutal">
+                <h3 className="text-xl font-black text-black mb-2">{item.q}</h3>
+                <p className="text-sm text-gray-700">{item.a}</p>
+              </div>
+            ))}
           </div>
-
-          <Link href="/faq">
-            <button className="mt-8 px-8 py-4 bg-black text-heirlock-yellow font-black border-4 border-black shadow-brutal inline-flex items-center gap-2 text-lg hover:scale-105 transition-transform">
-              View All FAQs <ChevronRight className="w-5 h-5" />
-            </button>
-          </Link>
         </div>
       </section>
 
-      {/* ========== SECTION 13: PRICING TIERS ========== */}
-      <section className="py-16 md:py-24 px-4 bg-cream border-b-4 border-black">
-        <div className="container mx-auto max-w-5xl">
-          <h2 className="text-5xl md:text-6xl font-black text-black mb-4">
-            SIMPLE PRICING
-          </h2>
-          <p className="text-lg text-black font-bold mb-12">Choose the plan that fits your needs. Upgrade anytime. Save 20% with yearly plans.</p>
-
+      <section className="py-16 px-4 border-b-4 border-black bg-cream">
+        <div className="container mx-auto max-w-6xl">
+          <div className="text-center mb-12">
+            <p className="font-black text-sm uppercase tracking-widest text-gray-600">Pricing</p>
+            <h2 className="text-4xl md:text-5xl font-black text-black">Start with a pilot. Scale to sovereignty.</h2>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="border-4 border-black bg-white p-8 shadow-brutal">
-              <h3 className="text-2xl font-black text-black mb-2">Starter</h3>
-              <div className="text-4xl font-black text-heirlock-yellow mb-6">$0</div>
-              <ul className="space-y-3 mb-8 text-black font-medium">
-                <li>✓ Up to 99 Vaults</li>
-                <li>✓ 500 MB per Vault</li>
-                <li>✓ AES-256 Encryption</li>
-                <li>✓ Community Support</li>
-                <li>✗ API Access</li>
-              </ul>
-              <Link href="/create-vault">
-                <button className="w-full px-6 py-3 bg-black text-heirlock-yellow font-black border-2 border-black hover:bg-heirlock-yellow hover:text-black transition-all">Get Started</button>
-              </Link>
-            </div>
-
-            <div className="border-4 border-black bg-white p-8 shadow-brutal">
-              <h3 className="text-2xl font-black text-black mb-2">Enterprise</h3>
-              <div className="text-4xl font-black text-heirlock-blue mb-1">$499.99<span className="text-lg">/mo</span></div>
-              <div className="text-sm text-gray-700 font-bold mb-6">$4,799.90/year (save 20%)</div>
-              <ul className="space-y-3 mb-8 text-black font-medium">
-                <li>✓ Unlimited Everything</li>
-                <li>✓ Unlimited Storage</li>
-                <li>✓ Enterprise Encryption</li>
-                <li>✓ 24/7 Dedicated Support</li>
-                <li>✓ Full API + Webhooks</li>
-                <li>✓ White-label Option</li>
-              </ul>
-              <Link href="/pricing">
-                <button className="w-full px-6 py-3 bg-black text-heirlock-blue font-black border-2 border-black hover:bg-heirlock-blue hover:text-white transition-all">Learn More</button>
-              </Link>
-            </div>
-
-            <div className="border-4 border-black bg-heirlock-pink p-8 shadow-brutal">
-              <h3 className="text-2xl font-black text-black mb-2">Government</h3>
-              <div className="text-4xl font-black text-black mb-1">$999.99<span className="text-lg">/mo</span></div>
-              <div className="text-sm text-gray-700 font-bold mb-6">$9,599.90/year (save 20%)</div>
-              <ul className="space-y-3 mb-8 text-black font-medium">
-                <li>✓ Dedicated Infrastructure</li>
-                <li>✓ Compliance Certifications</li>
-                <li>✓ On-Premise Deployment</li>
-                <li>✓ Dedicated Account Manager</li>
-                <li>✓ Custom Integrations</li>
-                <li>✓ Security Audits</li>
-              </ul>
-              <a href="mailto:enterprise@tala.app">
-                <button className="w-full px-6 py-3 bg-black text-white font-black border-2 border-black hover:bg-heirlock-pink hover:text-black transition-all">Contact Sales</button>
-              </a>
-            </div>
-          </div>
-
-          <div className="mt-12 text-center">
-            <p className="text-lg text-black font-bold mb-4">Looking for more features?</p>
-            <Link href="/pricing">
-              <button className="px-8 py-3 bg-black text-heirlock-yellow font-black border-4 border-black hover:bg-heirlock-yellow hover:to-heirlock-green transition-all">
-                View All Plans (Including Professional) <ChevronRight className="w-5 h-5 inline" />
-              </button>
-            </Link>
+            {pricingTiers.map((tier) => (
+              <div key={tier.name} className={`micro-card border-4 border-black ${tier.accent} p-6 shadow-brutal flex flex-col`}>
+                <div>
+                  <p className="font-black text-sm uppercase tracking-widest text-gray-700">{tier.name}</p>
+                  <p className="text-3xl font-black text-black mt-2">{tier.price}</p>
+                </div>
+                <ul className="mt-4 space-y-2 text-sm text-gray-700 flex-1">
+                  {tier.bullets.map((point) => (
+                    <li key={point} className="flex gap-2">
+                      <span className="font-black">+</span>
+                      <span>{point}</span>
+                    </li>
+                  ))}
+                </ul>
+                <Link href={tier.cta.href} className="mt-6 inline-flex items-center justify-center gap-2 font-black text-black border-3 border-black px-4 py-3 bg-white">
+                  {tier.cta.label} <ChevronRight className="w-5 h-5" />
+                </Link>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* ========== SECTION 14: ROADMAP TEASER ========== */}
-      <section className="py-16 md:py-24 px-4 bg-heirlock-blue border-b-4 border-black">
-        <div className="container mx-auto max-w-5xl">
-          <h2 className="text-5xl md:text-6xl font-black text-white mb-12">
-            WHAT'S COMING
-          </h2>
-
-          <div className="space-y-6">
-            <div className="border-4 border-white bg-black p-8 shadow-brutal">
-              <div className="flex items-start gap-4">
-                <div className="bg-heirlock-yellow text-black px-4 py-2 font-black rounded flex-shrink-0">Q1 2026</div>
-                <div>
-                  <h3 className="text-2xl font-black text-white mb-2">Unlock & Download</h3>
-                  <p className="text-gray-300 font-medium">Complete vault lifecycle: create, lock, wait, unlock, decrypt. Core user journey fully implemented.</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="border-4 border-white bg-black p-8 shadow-brutal">
-              <div className="flex items-start gap-4">
-                <div className="bg-heirlock-pink text-black px-4 py-2 font-black rounded flex-shrink-0">Q2 2026</div>
-                <div>
-                  <h3 className="text-2xl font-black text-white mb-2">Multi-File Vaults & Sharing</h3>
-                  <p className="text-gray-300 font-medium">Upload multiple files per vault. Generate shareable links with time-limited or permanent access.</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="border-4 border-white bg-black p-8 shadow-brutal">
-              <div className="flex items-start gap-4">
-                <div className="bg-heirlock-green text-black px-4 py-2 font-black rounded flex-shrink-0">Q3 2026</div>
-                <div>
-                  <h3 className="text-2xl font-black text-white mb-2">API & Integrations</h3>
-                  <p className="text-gray-300 font-medium">Public API for enterprise partners. Zapier, webhook integrations for workflow automation.</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="border-4 border-white bg-black p-8 shadow-brutal">
-              <div className="flex items-start gap-4">
-                <div className="bg-heirlock-yellow text-black px-4 py-2 font-black rounded flex-shrink-0">Q4 2026</div>
-                <div>
-                  <h3 className="text-2xl font-black text-white mb-2">Enterprise & Compliance</h3>
-                  <p className="text-gray-300 font-medium">HIPAA, SOC2 compliance. Custom deployments. White-label support.</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ========== SECTION 15: FINAL CTA ========== */}
-      <section className="bg-heirlock-pink py-16 md:py-24 px-4 border-b-4 border-black">
-        <div className="container mx-auto max-w-5xl text-center">
-          <h2 className="text-5xl md:text-6xl font-black text-black mb-6">
-            READY TO DEPLOY?
-          </h2>
-          <p className="text-xl md:text-2xl font-bold text-black mb-12 max-w-2xl mx-auto">
-            Join Government Bodies, Universities, and Organizations securing the future with mathematical certainty.
+      <section className="py-16 px-4 border-b-4 border-black bg-black text-white">
+        <div className="container mx-auto max-w-5xl text-center space-y-6">
+          <p className="font-black text-sm uppercase tracking-widest text-heirlock-green">Final call</p>
+          <h2 className="text-4xl md:text-5xl font-black">Bring math-grade assurance to your next release.</h2>
+          <p className="text-lg text-gray-200 max-w-3xl mx-auto">
+            Connect a wallet, spin up a pilot vault in three minutes, and show your stakeholders the future of secure disclosure.
           </p>
-
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/create-vault">
-              <button className="micro-button px-8 py-4 bg-black text-heirlock-pink font-black border-4 border-black shadow-brutal inline-flex items-center gap-2 text-lg">
-                Connect Wallet <ChevronRight className="w-5 h-5" />
-              </button>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <Link href="/create-vault" className="micro-sheen inline-flex items-center justify-center gap-2 font-black text-lg text-black bg-heirlock-yellow border-4 border-black px-8 py-4 shadow-brutal">
+              Create Vault <ChevronRight className="w-5 h-5" />
             </Link>
-            <a 
-              href="https://github.com" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="micro-button px-8 py-4 bg-white text-black font-black border-4 border-black shadow-brutal inline-flex items-center gap-2 text-lg"
-            >
-              GitHub Repo <ChevronRight className="w-5 h-5" />
-            </a>
+            <Link href="/dashboard" className="inline-flex items-center justify-center gap-2 font-black text-lg text-black bg-white border-4 border-black px-8 py-4 shadow-brutal">
+              View Demo Dashboard <ChevronRight className="w-5 h-5" />
+            </Link>
           </div>
-
-          <p className="text-black font-bold mt-8">The future is code. The future is T.A.L.A.</p>
+          <p className="text-sm text-gray-400">Audits, docs, and SOC evidence available on request.</p>
         </div>
       </section>
     </main>
   );
 }
-
