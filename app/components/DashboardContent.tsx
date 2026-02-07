@@ -153,7 +153,7 @@ export default function DashboardContent() {
     <div className="min-h-screen bg-gradient-to-br from-cream via-white to-cream pt-20 pb-16">
       <div className="container mx-auto max-w-7xl px-4 space-y-8">
         {/* Header */}
-        <div className="flex justify-between items-start mb-8">
+        <div className="flex flex-col lg:flex-row justify-between items-start gap-4 mb-8">
           <div>
             <h1 className="font-black text-4xl text-black mb-2">Dashboard</h1>
             <p className="text-gray-700 font-medium">
@@ -162,23 +162,35 @@ export default function DashboardContent() {
               </span>
             </p>
           </div>
-          <button
-            onClick={() => setShowSensitiveData(!showSensitiveData)}
-            className="px-4 py-2 border-3 border-black font-black text-black bg-white hover:bg-gray-50 flex items-center gap-2 transition-all"
-            title="Toggle sensitive data visibility"
-          >
-            {showSensitiveData ? (
-              <>
-                <EyeOff className="w-4 h-4" />
-                Hide
-              </>
-            ) : (
-              <>
-                <Eye className="w-4 h-4" />
-                Show
-              </>
+          <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+            {vaults.length > 0 && (
+              <Link
+                href={`/vault/${vaults[0].id}`}
+                className="inline-flex items-center justify-center gap-2 px-4 py-2 border-3 border-black font-black text-white bg-black hover:-translate-y-0.5 hover:shadow-brutal transition-all"
+                aria-label="Go to latest vault"
+              >
+                <Database className="w-4 h-4" />
+                Jump to Latest Vault
+              </Link>
             )}
-          </button>
+            <button
+              onClick={() => setShowSensitiveData(!showSensitiveData)}
+              className="px-4 py-2 border-3 border-black font-black text-black bg-white hover:bg-gray-50 flex items-center gap-2 transition-all"
+              title="Toggle sensitive data visibility"
+            >
+              {showSensitiveData ? (
+                <>
+                  <EyeOff className="w-4 h-4" />
+                  Hide
+                </>
+              ) : (
+                <>
+                  <Eye className="w-4 h-4" />
+                  Show
+                </>
+              )}
+            </button>
+          </div>
         </div>
 
         {/* Quick Actions */}
