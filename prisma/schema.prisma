@@ -50,6 +50,7 @@ model User {
   activityLogs  ActivityLog[]
   apiKeys       ApiKey[]
   unlockEvents  UnlockEvent[] @relation("UnlockEventUser")
+  sharedVaults  VaultShare[]  @relation("SharedVaults")
   
   @@index([email])
   @@index([walletAddress])
@@ -97,6 +98,60 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
+// Share Permission Levels
+enum SharePermission {
+  VIEW_ONLY     // Can view file list and metadata only
+  DOWNLOAD      // Can view and download files (requires vault password)
+  FULL_ACCESS   // Full access including adding/removing files
+}
+
+// VaultShare Model - Sharing vaults with others
+model VaultShare {
+  id              String          @id @default(cuid())
+  vaultId         String
+  vault           Vault           @relation(fields: [vaultId], references: [id], onDelete: Cascade)
+  
+  // Share recipient (optional - null means public link)
+  sharedWithUserId String?
+  sharedWithUser   User?          @relation("SharedVaults", fields: [sharedWithUserId], references: [id], onDelete: SetNull)
+  
+  // Share token for link-based sharing
+  shareToken      String          @unique @default(cuid())
+  
+  // Permissions
+  permission      SharePermission @default(VIEW_ONLY)
+  
+  // Security
+  requiresPassword Boolean        @default(true) // Always require vault password for decrypt
+  sharePassword    String?        // Optional additional share-specific password (hashed)
+  
+  // Expiration
+  expiresAt       DateTime?       // Null means never expires
+  maxAccessCount  Int?            // Null means unlimited
+  accessCount     Int             @default(0)
+  
+  // Invitation details
+  inviteEmail     String?         // Email to send invitation to
+  inviteSent      Boolean         @default(false)
+  
+  // Status
+  isActive        Boolean         @default(true)
+  revokedAt       DateTime?
+  revokedBy       String?
+  
+  // Audit
+  createdBy       String
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  lastAccessedAt  DateTime?
+  
+  @@index([vaultId])
+  @@index([shareToken])
+  @@index([sharedWithUserId])
+  @@index([isActive])
+  @@index([expiresAt])
+}
+
 // Vault Model - Stores encrypted vault metadata
 model Vault {
   id            String     @id @default(cuid())
@@ -140,6 +195,7 @@ model Vault {
   files         VaultFile[]
   activityLogs  ActivityLog[]
   unlockEvents  UnlockEvent[]
+  shares        VaultShare[]
   
   @@index([userId])
   @@index([createdAt])
