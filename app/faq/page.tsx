@@ -243,7 +243,7 @@ export default function FAQ() {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <a
-                href="mailto:support@TALA.xyz"
+                href="mailto:support@usetala.in"
                 className="px-6 py-3 bg-heirlock-green text-black font-bold border-4 border-black shadow-brutal hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all inline-block"
               >
                 Email Support

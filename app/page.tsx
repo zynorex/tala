@@ -330,7 +330,7 @@ const pricingTiers = [
     price: 'Custom',
     accent: 'bg-heirlock-pink',
     bullets: ['Air-gapped deployments', 'On-prem IPFS clusters', 'Dedicated compliance desk', 'Joint incident playbooks'],
-    cta: { label: 'Schedule Briefing', href: 'mailto:enterprise@tala.app' },
+    cta: { label: 'Schedule Briefing', href: 'mailto:support@usetala.in' },
   },
 ];
 

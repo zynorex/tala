@@ -647,7 +647,7 @@ export default function SecurityPage() {
               </p>
               <div className="space-y-3">
                 <p className="font-bold text-black">📧 Email us at:</p>
-                <p className="font-mono text-sm text-black">security@TALA.io</p>
+                <p className="font-mono text-sm text-black">support@usetala.in</p>
                 <p className="text-sm text-gray-700 mt-4">
                   <strong>Do not:</strong> Publicly disclose the vulnerability until we've had time to fix it
                 </p>

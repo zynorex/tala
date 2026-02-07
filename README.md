@@ -364,7 +364,7 @@ NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID= # WalletConnect ID
 
 ### Security Issues
 **DO NOT** open public issues for security vulnerabilities
-- Email: security@tala.example
+- Email: support@usetala.in
 - Include: Description, impact, and reproduction steps
 
 ### Bug Reports
@@ -406,7 +406,7 @@ We welcome contributions! Please:
 - **Documentation:** See above guides
 - **Community:** [Discord](https://discord.gg/tala)
 - **GitHub Issues:** For bugs and features
-- **Email:** support@tala.example
+- **Email:** support@usetala.in
 
 ---
 

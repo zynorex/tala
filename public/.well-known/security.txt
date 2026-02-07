@@ -1,14 +1,14 @@
-Contact: security@tala.ai
+Contact: support@usetala.in
 Expires: 2026-12-31T23:59:59.000Z
 Preferred-Languages: en
-Canonical: https://tala.ai/.well-known/security.txt
+Canonical: https://usetala.in/.well-known/security.txt
 
 # Security Policy
-# Report security vulnerabilities to: security@tala.ai
+# Report security vulnerabilities to: support@usetala.in
 # Do not publicly disclose security issues
 
 # Supported vulnerability disclosure practices
-# - Email: security@tala.ai
+# - Email: support@usetala.in
 # - Response time: 24-48 hours
 # - Acknowledgment: Yes
 # - Safe harbor: Encouraged
@@ -20,10 +20,10 @@ Canonical: https://tala.ai/.well-known/security.txt
 # - Content-Security-Policy: strict
 
 # PGP Key fingerprint (if applicable)
-# Key-Contact: security@tala.ai
+# Key-Contact: support@usetala.in
 
 # Bug bounty program
-# Bounty-Program: https://tala.ai/security#bounty
+# Bounty-Program: https://usetala.in/security#bounty
 
 # Latest security audit
 # Audit-Date: 2026-01-01

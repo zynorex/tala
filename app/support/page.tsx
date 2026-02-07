@@ -46,8 +46,8 @@ export default function Support() {
     {
       icon: Mail,
       title: 'Email Support',
-      description: 'Email our team directly at support@tala.protocol for detailed assistance.',
-      link: 'mailto:support@tala.protocol',
+      description: 'Email our team directly at support@usetala.in for detailed assistance.',
+      link: 'mailto:support@usetala.in',
       color: 'bg-heirlock-pink',
     },
     {

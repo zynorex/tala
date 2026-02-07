@@ -2785,7 +2785,7 @@ DATABASE_URL="postgresql://user:pass@host:5432/tala"
 
 # Authentication
 JWT_SECRET="your-256-bit-secret"
-NEXTAUTH_URL="https://tala.app"
+NEXTAUTH_URL="https://usetala.in"
 NEXTAUTH_SECRET="another-256-bit-secret"
 
 # Google OAuth
@@ -3060,7 +3060,7 @@ Based on pricing tiers (Starter: Free, Professional: $99.99/mo, Enterprise: $499
 
 ### For Users
 
-1. **Visit** [https://tala.app](https://tala.app)
+1. **Visit** [https://usetala.in](https://usetala.in)
 2. **Connect** your wallet (MetaMask, WalletConnect, etc.)
 3. **Create** a vault - select file, set unlock time
 4. **Enter** encryption password (save it!)
@@ -3089,7 +3089,7 @@ npm run dev
 
 ### For Enterprises
 
-Contact: **enterprise@tala.app**  
+Contact: **support@usetala.in**  
 Schedule demo: **[calendly.com/tala-demo](https://calendly.com/tala-demo)**
 
 ---
@@ -3115,14 +3115,14 @@ Schedule demo: **[calendly.com/tala-demo](https://calendly.com/tala-demo)**
 
 | Channel | Link |
 |---------|------|
-| **Website** | [tala.app](https://tala.app) |
-| **Email** | support@tala.app |
+| **Website** | [usetala.in](https://usetala.in) |
+| **Email** | support@usetala.in |
 | **Twitter** | [@TALAVault](https://twitter.com/TALAVault) |
 | **Discord** | [discord.gg/tala](https://discord.gg/tala) |
 | **GitHub** | [github.com/tala-vault](https://github.com/tala-vault) |
-| **Documentation** | [docs.tala.app](https://docs.tala.app) |
-| **API Docs** | [api.tala.app](https://api.tala.app) |
-| **Status** | [status.tala.app](https://status.tala.app) |
+| **Documentation** | [docs.usetala.in](https://docs.usetala.in) |
+| **API Docs** | [api.usetala.in](https://api.usetala.in) |
+| **Status** | [status.usetala.in](https://status.usetala.in) |
 
 ---
 
@@ -3485,16 +3485,16 @@ NEXT_PUBLIC_DEBUG_MODE=true npm run dev
 ## Additional Resources
 
 ### Documentation
-- [API Reference](https://api.tala.app) - Complete API documentation
-- [Smart Contract ABI](https://docs.tala.app/abi) - Contract interfaces
-- [Encryption Specs](https://docs.tala.app/encryption) - Cryptographic details
-- [Architecture Diagram](https://docs.tala.app/architecture) - System design
+- [API Reference](https://api.usetala.in) - Complete API documentation
+- [Smart Contract ABI](https://docs.usetala.in/abi) - Contract interfaces
+- [Encryption Specs](https://docs.usetala.in/encryption) - Cryptographic details
+- [Architecture Diagram](https://docs.usetala.in/architecture) - System design
 
 ### Community
 - **Discord**: https://discord.gg/tala (technical discussions)
 - **GitHub Issues**: Report bugs and feature requests
 - **Twitter**: @TALAVault for updates and announcements
-- **Email**: support@tala.app for assistance
+- **Email**: support@usetala.in for assistance
 
 ### External Resources
 - [Polygon Documentation](https://polygon.technology/docs)
@@ -3529,7 +3529,7 @@ A: By design, this is impossible. The smart contract will reject any early unloc
 A: Yes. Users own their data, control encryption keys, can export/delete data at any time. We conduct annual privacy audits. Full compliance report available upon request.
 
 **Q: Is TALA HIPAA compliant?**  
-A: HIPAA compliance is in progress. We use HIPAA-compliant encryption standards. For healthcare use cases, contact enterprise@tala.app.
+A: HIPAA compliance is in progress. We use HIPAA-compliant encryption standards. For healthcare use cases, contact support@usetala.in.
 
 **Q: Can governments force TALA to unlock vaults?**  
 A: No. TALA has no keys to provide. Even with a subpoena, we cannot decrypt vaults. Governments would need your encryption password (which only you have).
@@ -3596,7 +3596,7 @@ A: No. TALA has no keys to provide. Even with a subpoena, we cannot decrypt vaul
 
 ---
 
-📧 **support@tala.app** | 🌐 **tala.app** | 💻 **github.com/tala-vault**
+📧 **support@usetala.in** | 🌐 **usetala.in** | 💻 **github.com/tala-vault**
 
 *Built with ❤️ for secure, transparent, decentralized access control.*
 

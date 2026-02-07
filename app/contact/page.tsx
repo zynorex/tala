@@ -12,15 +12,15 @@ export default function Contact() {
     {
       icon: Mail,
       label: 'Email',
-      value: 'support@tala.protocol',
-      link: 'mailto:support@tala.protocol',
+      value: 'support@usetala.in',
+      link: 'mailto:support@usetala.in',
       color: 'bg-heirlock-yellow',
     },
     {
       icon: Mail,
       label: 'Security Issues',
-      value: 'security@tala.protocol',
-      link: 'mailto:security@tala.protocol',
+      value: 'support@usetala.in',
+      link: 'mailto:support@usetala.in',
       color: 'bg-heirlock-pink',
     },
     {
