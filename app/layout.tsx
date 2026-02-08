@@ -9,7 +9,6 @@ import { ErrorBoundary } from "./components/ErrorBoundary";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import DeviceBlocker from "./components/DeviceBlocker";
-import PageSkeleton from "./components/PageSkeleton";
 import DevelopmentNotification from "./components/DevelopmentNotification";
 import CookieConsent from "./components/CookieConsent";
 import Web3ClientWrapper from "./components/Web3ClientWrapper";
@@ -90,7 +89,6 @@ export default function RootLayout({
                   <ToastProvider>
                     <DeviceBlocker />
                     <LaunchAnnouncementModal />
-                    <PageSkeleton />
                     <Navbar />
                     <DevelopmentNotification />
                     <CookieConsent />

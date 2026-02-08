@@ -26,6 +26,7 @@ import {
   Fingerprint,
   FileKey,
 } from 'lucide-react';
+import PageSkeleton from './components/PageSkeleton';
 
 function useMicroInteractions() {
   useEffect(() => {
@@ -104,28 +105,7 @@ function useMicroInteractions() {
 }
 
 function SkeletonLoader() {
-  return (
-    <main className="min-h-screen bg-cream">
-      <section className="bg-gradient-to-br from-heirlock-yellow to-heirlock-blue py-14 px-4 border-b-4 border-black">
-        <div className="container mx-auto max-w-6xl">
-          <div className="animate-pulse space-y-6">
-            <div className="h-16 w-3/4 bg-white/50" />
-            <div className="h-8 w-2/4 bg-white/40" />
-            <div className="h-20 w-full bg-white/40" />
-          </div>
-        </div>
-      </section>
-      <section className="py-16 px-4 border-b-4 border-black">
-        <div className="container mx-auto max-w-5xl">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-pulse">
-            {[1, 2, 3, 4].map((item) => (
-              <div key={item} className="h-48 bg-white/60 border-4 border-black" />
-            ))}
-          </div>
-        </div>
-      </section>
-    </main>
-  );
+  return <PageSkeleton />;
 }
 
 const heroHighlights = [
