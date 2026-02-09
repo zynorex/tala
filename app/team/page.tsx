@@ -1,7 +1,7 @@
 'use client';
 
 import Image from "next/image";
-import { Mail, Linkedin, Twitter, Github } from "lucide-react";
+import { Mail, Linkedin, Twitter, Github, Globe } from "lucide-react";
 import Link from "next/link";
 
 type Member = {
@@ -9,6 +9,7 @@ type Member = {
   role: string;
   bio: string;
   expertise: string[];
+  website?: string;
   github?: string;
   linkedin?: string;
   twitter?: string;
@@ -24,49 +25,30 @@ type Advisor = {
 
 const teamMembers: Member[] = [
   {
-    name: "Your Name",
-    role: "Founder",
-    bio: "Add a short professional summary highlighting your focus areas and impact.",
-    expertise: ["Blockchain", "Security", "Product"],
-    github: "",
-    linkedin: "",
-    twitter: "",
-    email: "support@usetala.in",
-  },
-  {
-    name: "Team Member",
-    role: "Engineering",
-    bio: "Add a concise bio covering domain expertise and prior work.",
-    expertise: ["Solidity", "Systems", "DevOps"],
-    github: "",
-    linkedin: "",
-    twitter: "",
-    email: "support@usetala.in",
-  },
-  {
-    name: "Team Member",
-    role: "Product",
-    bio: "Describe product focus, user segments served, and results delivered.",
-    expertise: ["Product", "Education", "GovTech"],
-    github: "",
-    linkedin: "",
-    twitter: "",
-    email: "support@usetala.in",
+    name: "Ayush",
+    role: "Founder & Lead Developer",
+    bio: "Add a short professional summary highlighting core focus, recent impact, and preferred domains.",
+    expertise: ["Blockchain", "Security", "Full-stack"],
+    website: "https://iayush.in",
+    github: "ayushedith",
+    linkedin: "https://www.linkedin.com/in/ayushxlinks",
+    twitter: "https://x.com/ayushedith",
+    email: "hi@ayushx.me",
   },
 ];
 
 const advisors: Advisor[] = [
   {
-    name: "Advisor Name",
+    name: "Amir",
     role: "Security and Compliance",
     expertise: "Audits, incident response, and governance.",
-    github: "",
+    github: "calvintakasi",
   },
   {
-    name: "Advisor Name",
+    name: "Aryan",
     role: "Policy and Education",
     expertise: "Curriculum security and exam integrity.",
-    github: "",
+    github: "AryaN-a005",
   },
 ];
 
@@ -116,8 +98,11 @@ export default function TeamPage() {
                   />
                 </div>
 
-                <h3 className="text-2xl font-bold text-black mb-1">{member.name}</h3>
-                <p className="text-sm font-black text-heirlock-green uppercase mb-4">{member.role}</p>
+                <div className="flex items-center gap-2 mb-2">
+                  <h3 className="text-2xl font-bold text-black">{member.name}</h3>
+                  <span className="text-xs font-black uppercase px-2 py-1 border-2 border-black bg-heirlock-yellow text-black rounded-sm">{member.role}</span>
+                </div>
+                <p className="text-sm font-black text-heirlock-green uppercase mb-4">Core Team</p>
 
                 <p className="text-gray-700 text-sm mb-4 flex-1">
                   {member.bio}
@@ -135,6 +120,11 @@ export default function TeamPage() {
                 </div>
 
                 <div className="flex gap-3 border-t-2 border-gray-300 pt-4">
+                  {member.website && (
+                    <a href={member.website} className="p-2 bg-black text-white rounded hover:opacity-90 transition-opacity" title="Website">
+                      <Globe className="w-4 h-4" />
+                    </a>
+                  )}
                   {member.email && (
                     <a href={`mailto:${member.email}`} className="p-2 bg-black text-white rounded hover:opacity-90 transition-opacity" title="Email">
                       <Mail className="w-4 h-4" />

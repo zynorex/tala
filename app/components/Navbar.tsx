@@ -73,6 +73,7 @@ export default function Navbar() {
     if (isActive("/")) return "bg-heirlock-yellow";
     if (isActive("/about")) return "bg-heirlock-green";
     if (isActive("/how-it-works")) return "bg-heirlock-blue";
+    if (isActive("/team")) return "bg-heirlock-blue";
     if (isActive("/admin")) return "bg-heirlock-pink";
     if (isActive("/access-portal")) return "bg-heirlock-green";
     if (isActive("/create-vault")) return "bg-gradient-to-r from-heirlock-blue to-heirlock-green";
@@ -88,6 +89,7 @@ export default function Navbar() {
     if (isActive("/")) return "bg-heirlock-yellow text-black border-4 border-heirlock-yellow group-hover:text-black";
     if (isActive("/about")) return "bg-heirlock-green text-black border-4 border-heirlock-green group-hover:text-black";
     if (isActive("/how-it-works")) return "bg-heirlock-blue text-black border-4 border-heirlock-blue group-hover:text-black";
+    if (isActive("/team")) return "bg-heirlock-blue text-black border-4 border-heirlock-blue group-hover:text-black";
     if (isActive("/admin")) return "bg-heirlock-pink text-black border-4 border-heirlock-pink group-hover:text-black";
     if (isActive("/access-portal")) return "bg-heirlock-green text-black border-4 border-heirlock-green group-hover:text-black";
     if (isActive("/create-vault")) return "bg-heirlock-blue text-black border-4 border-heirlock-blue group-hover:text-black";
