@@ -49,6 +49,33 @@ interface StatusData {
   };
 }
 
+const incidentHistory = [
+  {
+    id: 'INC-2217',
+    title: 'Webhook queue delay',
+    date: '2025-11-08',
+    duration: '22m',
+    impact: 'Delayed webhook delivery for unlock events',
+    remediation: 'Increased worker pool and added dead-letter retry policy.',
+  },
+  {
+    id: 'INC-2192',
+    title: 'Status cache drift',
+    date: '2025-09-14',
+    duration: '14m',
+    impact: 'Stale uptime metrics displayed on status page',
+    remediation: 'Cache invalidation tightened and added freshness guardrails.',
+  },
+  {
+    id: 'INC-2179',
+    title: 'Amoy RPC throttling',
+    date: '2025-07-22',
+    duration: '31m',
+    impact: 'Unlock proof relay slowed for Amoy test network',
+    remediation: 'Failover to secondary RPC and adaptive rate limiting.',
+  },
+];
+
 export default function StatusPage() {
   const [currentTime, setCurrentTime] = useState<Date>(new Date());
   const [selectedPeriod, setSelectedPeriod] = useState<'7d' | '30d' | '90d'>('30d');
@@ -461,6 +488,35 @@ export default function StatusPage() {
                   ))}
                 </div>
               )}
+            </div>
+          </section>
+
+          {/* Incident History */}
+          <section className="py-12 md:py-16 bg-white border-y-4 border-black">
+            <div className="max-w-6xl mx-auto px-4 md:px-6">
+              <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
+                <div>
+                  <p className="text-sm font-black text-gray-600 uppercase tracking-widest">Postmortems</p>
+                  <h2 className="text-3xl font-black text-black">Incident history</h2>
+                </div>
+                <Link href="mailto:support@usetala.in?subject=Postmortem%20request" className="inline-flex items-center gap-2 font-black text-black border-3 border-black px-4 py-2 bg-cream">
+                  Request full report
+                </Link>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {incidentHistory.map((item) => (
+                  <div key={item.id} className="border-4 border-black bg-cream p-4 shadow-brutal flex flex-col gap-2">
+                    <div className="flex items-center justify-between">
+                      <span className="font-mono text-xs font-bold text-gray-700 bg-white px-2 py-1 border-2 border-black">{item.id}</span>
+                      <span className="text-xs font-black text-gray-700">{item.date}</span>
+                    </div>
+                    <h3 className="text-lg font-black text-black">{item.title}</h3>
+                    <p className="text-sm text-gray-700">Duration: {item.duration}</p>
+                    <p className="text-sm text-gray-700">Impact: {item.impact}</p>
+                    <p className="text-sm text-gray-700">Remediation: {item.remediation}</p>
+                  </div>
+                ))}
+              </div>
             </div>
           </section>
 

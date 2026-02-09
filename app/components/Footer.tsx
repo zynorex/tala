@@ -40,6 +40,7 @@ export default function Footer() {
       { label: "API Quickstart", href: "/docs/quickstart" },
       { label: "API Documentation", href: "/docs/api" },
       { label: "Integrations", href: "/integrations" },
+      { label: "Procurement", href: "/procurement" },
       { label: "FAQ", href: "/faq" },
       { label: "Blog", href: "/blog" },
       { label: "Changelog", href: "/changelog" },

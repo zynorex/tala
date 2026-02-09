@@ -193,6 +193,12 @@ export default function Navbar() {
                           <span>Pricing</span>
                         </div>
                       </Link>
+                      <Link href="/procurement" onClick={closeMenu}>
+                        <div className="flex items-center gap-3 px-3 py-2 rounded hover:bg-heirlock-yellow hover:text-black transition-all font-bold cursor-pointer">
+                          <BookOpen className="w-5 h-5" />
+                          <span>Procurement Pack</span>
+                        </div>
+                      </Link>
                       <Link href="/security" onClick={closeMenu}>
                         <div className="flex items-center gap-3 px-3 py-2 rounded hover:bg-heirlock-green hover:text-black transition-all font-bold cursor-pointer">
                           <Shield className="w-5 h-5" />
@@ -467,6 +473,9 @@ export default function Navbar() {
                   </Link>
                   <Link href="/smart-contracts" onClick={closeMenu}>
                     <button className="w-full text-left px-3 py-2 text-xs font-bold bg-black text-white hover:bg-heirlock-blue hover:text-black transition-all border-l-2 border-heirlock-blue">Smart Contracts</button>
+                  </Link>
+                  <Link href="/procurement" onClick={closeMenu}>
+                    <button className="w-full text-left px-3 py-2 text-xs font-bold bg-black text-white hover:bg-heirlock-yellow hover:text-black transition-all border-l-2 border-heirlock-yellow">Procurement Pack</button>
                   </Link>
                   <Link href="/docs/quickstart" onClick={closeMenu}>
                     <button className="w-full text-left px-3 py-2 text-xs font-bold bg-black text-white hover:bg-heirlock-yellow hover:text-black transition-all border-l-2 border-heirlock-yellow">API Quickstart</button>

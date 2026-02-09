@@ -29,18 +29,18 @@ const spaceGrotesk = Space_Grotesk({
 
 export const metadata: Metadata = {
   title: "T.A.L.A. | Trust is Code",
-  description: "Tamper-proof Automated Locking Algorithm - Eliminating exam paper leaks through mathematical time-locking",
-  keywords: ["Web3", "Blockchain", "Exam Security", "Time-Lock", "IPFS", "Polygon"],
+  description: "Tamper-proof Automated Locking Algorithm for time-locked vaults and verifiable unlock proofs.",
+  keywords: ["Web3", "Blockchain", "Exam Security", "Time-Lock", "IPFS", "Polygon", "Unlock proofs", "usetala"],
   authors: [{ name: "T.A.L.A. Team" }],
   openGraph: {
     title: "T.A.L.A. | Trust is Code",
-    description: "Decentralized time-locked vault for exam papers",
+    description: "Decentralized time-locked vaults with auditable unlock events.",
     type: "website",
-    url: "https://TALA.ai",
+    url: "https://usetala.in",
     siteName: "T.A.L.A.",
     images: [
       {
-        url: "https://TALA.ai/og-image.png",
+        url: "https://usetala.in/og-image.png",
         width: 1200,
         height: 630,
         alt: "T.A.L.A. - Trust is Code",
@@ -50,9 +50,9 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "T.A.L.A. | Trust is Code",
-    description: "Decentralized time-locked vault for exam papers",
-    images: ["https://TALA.ai/twitter-image.png"],
-    creator: "@TALA_official",
+    description: "Decentralized time-locked vaults with auditable unlock events.",
+    images: ["https://usetala.in/twitter-image.png"],
+    creator: "@usetala",
   },
   robots: {
     index: true,
@@ -66,9 +66,9 @@ export const metadata: Metadata = {
     },
   },
   alternates: {
-    canonical: "https://TALA.ai",
+    canonical: "https://usetala.in",
     languages: {
-      "en-US": "https://TALA.ai",
+      "en-US": "https://usetala.in",
     },
   },
 };
