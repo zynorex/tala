@@ -27,6 +27,7 @@ import {
   FileKey,
 } from 'lucide-react';
 import PageSkeleton from './components/PageSkeleton';
+import ScrollFadeIn from './components/ScrollFadeIn';
 
 function useMicroInteractions() {
   useEffect(() => {
@@ -353,12 +354,14 @@ export default function Home() {
               </Link>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-6">
-              {heroHighlights.map((stat) => (
-                <div key={stat.label} className="border-4 border-black bg-white p-4 shadow-brutal">
-                  <div className="text-3xl font-black text-black">{stat.value}</div>
-                  <p className="text-sm font-bold text-gray-700">{stat.label}</p>
-                  <p className="text-xs text-gray-600 mt-1">{stat.detail}</p>
-                </div>
+              {heroHighlights.map((stat, idx) => (
+                <ScrollFadeIn key={stat.label} delay={idx * 0.2}>
+                  <div className="border-4 border-black bg-white p-4 shadow-brutal">
+                    <div className="text-3xl font-black text-black">{stat.value}</div>
+                    <p className="text-sm font-bold text-gray-700">{stat.label}</p>
+                    <p className="text-xs text-gray-600 mt-1">{stat.detail}</p>
+                  </div>
+                </ScrollFadeIn>
               ))}
             </div>
           </div>
@@ -370,21 +373,23 @@ export default function Home() {
             </div>
             <div className="space-y-4">
               {journeyTimeline.map((step, idx) => (
-                <div key={step.title} className="flex items-stretch gap-4">
-                  <div className="relative flex flex-col items-center px-1">
-                    <span className="font-black text-xs border-2 border-black px-3 py-1 bg-heirlock-yellow text-black z-10">
-                      {step.badge}
-                    </span>
-                    {idx < journeyTimeline.length - 1 && (
-                      <span className="absolute top-12 bottom-0 w-0.5 bg-black" aria-hidden />
-                    )}
+                <ScrollFadeIn key={step.title} delay={idx * 0.15}>
+                  <div className="flex items-stretch gap-4">
+                    <div className="relative flex flex-col items-center px-1">
+                      <span className="font-black text-xs border-2 border-black px-3 py-1 bg-heirlock-yellow text-black z-10">
+                        {step.badge}
+                      </span>
+                      {idx < journeyTimeline.length - 1 && (
+                        <span className="absolute top-12 bottom-0 w-0.5 bg-black" aria-hidden />
+                      )}
+                    </div>
+                    <div>
+                      <p className="text-sm font-black text-gray-700 uppercase">{step.title}</p>
+                      <p className="text-black font-bold">{step.description}</p>
+                      <p className="text-xs text-gray-600">{step.detail}</p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="text-sm font-black text-gray-700 uppercase">{step.title}</p>
-                    <p className="text-black font-bold">{step.description}</p>
-                    <p className="text-xs text-gray-600">{step.detail}</p>
-                  </div>
-                </div>
+                </ScrollFadeIn>
               ))}
             </div>
             <div className="border-4 border-black bg-black text-heirlock-yellow px-4 py-3 font-mono text-sm">
@@ -402,11 +407,13 @@ export default function Home() {
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
             <p className="font-black text-gray-600 uppercase tracking-widest">Proof rail</p>
             <div className="flex flex-wrap gap-6 text-sm font-bold text-gray-800">
-              {proofRail.map((org) => (
-                <span key={org.name} className="inline-flex flex-col">
-                  <span>{org.name}</span>
-                  <span className="text-xs text-gray-500">{org.note}</span>
-                </span>
+              {proofRail.map((org, idx) => (
+                <ScrollFadeIn key={org.name} delay={idx * 0.1}>
+                  <span className="inline-flex flex-col">
+                    <span>{org.name}</span>
+                    <span className="text-xs text-gray-500">{org.note}</span>
+                  </span>
+                </ScrollFadeIn>
               ))}
             </div>
           </div>
@@ -415,11 +422,13 @@ export default function Home() {
 
       <section className="py-16 px-4 border-b-4 border-black bg-black text-white">
         <div className="container mx-auto max-w-5xl grid grid-cols-1 md:grid-cols-3 gap-6">
-          {narrativeBlocks.map((block) => (
-            <div key={block.title} className="micro-card border-4 border-heirlock-green bg-black p-6 shadow-brutal">
-              <h3 className="text-2xl font-black mb-3">{block.title}</h3>
-              <p className="text-sm text-gray-200 leading-relaxed">{block.body}</p>
-            </div>
+          {narrativeBlocks.map((block, idx) => (
+            <ScrollFadeIn key={block.title} delay={idx * 0.15}>
+              <div className="micro-card border-4 border-heirlock-green bg-black p-6 shadow-brutal">
+                <h3 className="text-2xl font-black mb-3">{block.title}</h3>
+                <p className="text-sm text-gray-200 leading-relaxed">{block.body}</p>
+              </div>
+            </ScrollFadeIn>
           ))}
         </div>
       </section>
@@ -436,17 +445,19 @@ export default function Home() {
             </Link>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {useCases.map((item) => {
+            {useCases.map((item, idx) => {
               const Icon = item.icon;
               return (
-                <div key={item.title} className="micro-card border-4 border-black bg-white p-6 shadow-brutal flex flex-col gap-3">
-                  <div className="flex items-center gap-3">
-                    <Icon className="w-6 h-6" />
-                    <h3 className="text-xl font-black text-black">{item.title}</h3>
+                <ScrollFadeIn key={item.title} delay={idx * 0.1}>
+                  <div className="micro-card border-4 border-black bg-white p-6 shadow-brutal flex flex-col gap-3">
+                    <div className="flex items-center gap-3">
+                      <Icon className="w-6 h-6" />
+                      <h3 className="text-xl font-black text-black">{item.title}</h3>
+                    </div>
+                    <p className="text-black font-medium">{item.summary}</p>
+                    <p className="text-sm text-gray-600">Impact: {item.impact}</p>
                   </div>
-                  <p className="text-black font-medium">{item.summary}</p>
-                  <p className="text-sm text-gray-600">Impact: {item.impact}</p>
-                </div>
+                </ScrollFadeIn>
               );
             })}
           </div>
@@ -466,17 +477,19 @@ export default function Home() {
           </div>
           <div className="space-y-6">
             {journeyTimeline.map((step, idx) => (
-              <div key={step.title} className="micro-card border-4 border-black bg-white p-6 shadow-brutal flex flex-col md:flex-row gap-6">
-                <div className="flex items-center gap-3">
-                  <span className="font-black text-sm border-2 border-black px-3 py-1 bg-yellow-200">{step.badge}</span>
-                  <h3 className="text-2xl font-black text-black">{step.title}</h3>
+              <ScrollFadeIn key={step.title} delay={idx * 0.15}>
+                <div className="micro-card border-4 border-black bg-white p-6 shadow-brutal flex flex-col md:flex-row gap-6">
+                  <div className="flex items-center gap-3">
+                    <span className="font-black text-sm border-2 border-black px-3 py-1 bg-yellow-200">{step.badge}</span>
+                    <h3 className="text-2xl font-black text-black">{step.title}</h3>
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-black font-bold">{step.description}</p>
+                    <p className="text-sm text-gray-600">{step.detail}</p>
+                  </div>
+                  <span className="text-sm text-gray-500 font-mono">#{(idx + 1).toString().padStart(2, '0')}</span>
                 </div>
-                <div className="flex-1">
-                  <p className="text-black font-bold">{step.description}</p>
-                  <p className="text-sm text-gray-600">{step.detail}</p>
-                </div>
-                <span className="text-sm text-gray-500 font-mono">#{(idx + 1).toString().padStart(2, '0')}</span>
-              </div>
+              </ScrollFadeIn>
             ))}
           </div>
         </div>
@@ -494,23 +507,25 @@ export default function Home() {
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {blueprint.map((block) => {
+            {blueprint.map((block, idx) => {
               const Icon = block.icon;
               return (
-                <div key={block.title} className="micro-card border-4 border-black bg-cream p-6 shadow-brutal flex flex-col gap-3">
-                  <div className="flex items-center gap-3">
-                    <Icon className="w-6 h-6" />
-                    <h3 className="text-xl font-black text-black">{block.title}</h3>
+                <ScrollFadeIn key={block.title} delay={idx * 0.1}>
+                  <div className="micro-card border-4 border-black bg-cream p-6 shadow-brutal flex flex-col gap-3">
+                    <div className="flex items-center gap-3">
+                      <Icon className="w-6 h-6" />
+                      <h3 className="text-xl font-black text-black">{block.title}</h3>
+                    </div>
+                    <ul className="space-y-1 text-sm text-gray-700">
+                      {block.bullets.map((point) => (
+                        <li key={point} className="flex gap-2">
+                          <span className="font-black">•</span>
+                          <span>{point}</span>
+                        </li>
+                      ))}
+                    </ul>
                   </div>
-                  <ul className="space-y-1 text-sm text-gray-700">
-                    {block.bullets.map((point) => (
-                      <li key={point} className="flex gap-2">
-                        <span className="font-black">•</span>
-                        <span>{point}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+                </ScrollFadeIn>
               );
             })}
           </div>
@@ -529,14 +544,16 @@ export default function Home() {
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {securityLayers.map((layer) => {
+            {securityLayers.map((layer, idx) => {
               const Icon = layer.icon;
               return (
-                <div key={layer.title} className="micro-card border-4 border-black bg-white p-6 shadow-brutal">
-                  <Icon className="w-10 h-10 mb-4" />
-                  <h3 className="text-2xl font-black text-black mb-2">{layer.title}</h3>
-                  <p className="text-sm text-gray-700">{layer.description}</p>
-                </div>
+                <ScrollFadeIn key={layer.title} delay={idx * 0.12}>
+                  <div className="micro-card border-4 border-black bg-white p-6 shadow-brutal">
+                    <Icon className="w-10 h-10 mb-4" />
+                    <h3 className="text-2xl font-black text-black mb-2">{layer.title}</h3>
+                    <p className="text-sm text-gray-700">{layer.description}</p>
+                  </div>
+                </ScrollFadeIn>
               );
             })}
           </div>
@@ -555,12 +572,14 @@ export default function Home() {
             </Link>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-            {trustSignals.map((signal) => (
-              <div key={signal.label} className="micro-card border-4 border-black bg-white p-6 shadow-brutal text-center">
-                <div className="text-3xl font-black text-black">{signal.value}</div>
-                <p className="font-bold text-gray-700">{signal.label}</p>
-                <p className="text-xs text-gray-600">{signal.detail}</p>
-              </div>
+            {trustSignals.map((signal, idx) => (
+              <ScrollFadeIn key={signal.label} delay={idx * 0.1}>
+                <div className="micro-card border-4 border-black bg-white p-6 shadow-brutal text-center">
+                  <div className="text-3xl font-black text-black">{signal.value}</div>
+                  <p className="font-bold text-gray-700">{signal.label}</p>
+                  <p className="text-xs text-gray-600">{signal.detail}</p>
+                </div>
+              </ScrollFadeIn>
             ))}
           </div>
         </div>
@@ -578,11 +597,13 @@ export default function Home() {
             </Link>
           </div>
           <div className="space-y-4">
-            {faqs.map((item) => (
-              <div key={item.q} className="micro-card border-4 border-black bg-cream p-6 shadow-brutal">
-                <h3 className="text-xl font-black text-black mb-2">{item.q}</h3>
-                <p className="text-sm text-gray-700">{item.a}</p>
-              </div>
+            {faqs.map((item, idx) => (
+              <ScrollFadeIn key={item.q} delay={idx * 0.12}>
+                <div className="micro-card border-4 border-black bg-cream p-6 shadow-brutal">
+                  <h3 className="text-xl font-black text-black mb-2">{item.q}</h3>
+                  <p className="text-sm text-gray-700">{item.a}</p>
+                </div>
+              </ScrollFadeIn>
             ))}
           </div>
         </div>
@@ -595,24 +616,26 @@ export default function Home() {
             <h2 className="text-4xl md:text-5xl font-black text-black">Start with a pilot. Scale to sovereignty.</h2>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {pricingTiers.map((tier) => (
-              <div key={tier.name} className={`micro-card border-4 border-black ${tier.accent} p-6 shadow-brutal flex flex-col`}>
-                <div>
-                  <p className="font-black text-sm uppercase tracking-widest text-gray-700">{tier.name}</p>
-                  <p className="text-3xl font-black text-black mt-2">{tier.price}</p>
+            {pricingTiers.map((tier, idx) => (
+              <ScrollFadeIn key={tier.name} delay={idx * 0.12}>
+                <div className={`micro-card border-4 border-black ${tier.accent} p-6 shadow-brutal flex flex-col`}>
+                  <div>
+                    <p className="font-black text-sm uppercase tracking-widest text-gray-700">{tier.name}</p>
+                    <p className="text-3xl font-black text-black mt-2">{tier.price}</p>
+                  </div>
+                  <ul className="mt-4 space-y-2 text-sm text-gray-700 flex-1">
+                    {tier.bullets.map((point) => (
+                      <li key={point} className="flex gap-2">
+                        <span className="font-black">+</span>
+                        <span>{point}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  <Link href={tier.cta.href} className="mt-6 inline-flex items-center justify-center gap-2 font-black text-black border-3 border-black px-4 py-3 bg-white">
+                    {tier.cta.label} <ChevronRight className="w-5 h-5" />
+                  </Link>
                 </div>
-                <ul className="mt-4 space-y-2 text-sm text-gray-700 flex-1">
-                  {tier.bullets.map((point) => (
-                    <li key={point} className="flex gap-2">
-                      <span className="font-black">+</span>
-                      <span>{point}</span>
-                    </li>
-                  ))}
-                </ul>
-                <Link href={tier.cta.href} className="mt-6 inline-flex items-center justify-center gap-2 font-black text-black border-3 border-black px-4 py-3 bg-white">
-                  {tier.cta.label} <ChevronRight className="w-5 h-5" />
-                </Link>
-              </div>
+              </ScrollFadeIn>
             ))}
           </div>
         </div>
