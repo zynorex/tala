@@ -14,6 +14,7 @@ function LoginContent() {
   const searchParams = useSearchParams();
   const { address, isConnected } = useAccount();
   const { signMessageAsync } = useSignMessage();
+  const loginEnabled = process.env.NEXT_PUBLIC_LOGIN_ENABLED !== 'false';
   
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -126,6 +127,36 @@ function LoginContent() {
       setWalletLoading(false);
     }
   };
+
+  if (!loginEnabled) {
+    return (
+      <div className="min-h-screen bg-black flex items-center justify-center p-4 pt-20">
+        <div className="w-full max-w-2xl border-4 border-black bg-heirlock-yellow p-8 md:p-10 shadow-brutal text-black rounded-lg">
+          <div className="flex items-center gap-4 mb-6">
+            <div className="w-16 h-16 flex items-center justify-center border-4 border-black bg-white">
+              <Lock className="w-8 h-8 text-black" />
+            </div>
+            <div>
+              <h1 className="text-3xl md:text-4xl font-black text-black">Login opens soon</h1>
+              <p className="text-sm md:text-base text-black">We are finalizing access for the next release. Your credentials stay safe with us.</p>
+            </div>
+          </div>
+          <div className="bg-white border-4 border-black p-6 rounded-lg mb-4">
+            <p className="text-sm md:text-base text-black font-bold mb-2">What to expect</p>
+            <ul className="text-sm md:text-base text-black space-y-2 list-disc list-inside">
+              <li>Existing accounts stay intact; no action needed.</li>
+              <li>We will notify you before opening sign in.</li>
+              <li>Support is available for onboarding questions.</li>
+            </ul>
+          </div>
+          <div className="flex flex-col sm:flex-row gap-3">
+            <Link href="/" className="flex-1 inline-flex items-center justify-center px-4 py-3 bg-black text-white font-bold border-4 border-black rounded-lg hover:opacity-90 transition-opacity">Return home</Link>
+            <a href="mailto:support@usetala.in" className="flex-1 inline-flex items-center justify-center px-4 py-3 bg-heirlock-blue text-black font-bold border-4 border-black rounded-lg hover:opacity-90 transition-opacity">Contact support</a>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-black flex items-center justify-center p-4 pt-20">
