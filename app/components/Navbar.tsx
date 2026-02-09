@@ -199,6 +199,12 @@ export default function Navbar() {
                           <span>Security</span>
                         </div>
                       </Link>
+                      <Link href="/trust-center" onClick={closeMenu}>
+                        <div className="flex items-center gap-3 px-3 py-2 rounded hover:bg-heirlock-blue hover:text-black transition-all font-bold cursor-pointer">
+                          <Shield className="w-5 h-5" />
+                          <span>Trust Center</span>
+                        </div>
+                      </Link>
                       <Link href="/roadmap" onClick={closeMenu}>
                         <div className="flex items-center gap-3 px-3 py-2 rounded hover:bg-heirlock-yellow hover:text-black transition-all font-bold cursor-pointer">
                           <Zap className="w-5 h-5" />
@@ -222,6 +228,18 @@ export default function Navbar() {
                         <div className="flex items-center gap-3 px-3 py-2 rounded hover:bg-heirlock-blue hover:text-black transition-all font-bold cursor-pointer">
                           <Code className="w-5 h-5" />
                           <span>API Documentation</span>
+                        </div>
+                      </Link>
+                      <Link href="/docs/quickstart" onClick={closeMenu}>
+                        <div className="flex items-center gap-3 px-3 py-2 rounded hover:bg-heirlock-yellow hover:text-black transition-all font-bold cursor-pointer">
+                          <Code className="w-5 h-5" />
+                          <span>API Quickstart</span>
+                        </div>
+                      </Link>
+                      <Link href="/integrations" onClick={closeMenu}>
+                        <div className="flex items-center gap-3 px-3 py-2 rounded hover:bg-heirlock-green hover:text-black transition-all font-bold cursor-pointer">
+                          <Code className="w-5 h-5" />
+                          <span>Integrations</span>
                         </div>
                       </Link>
                       <Link href="/smart-contracts" onClick={closeMenu}>
@@ -400,7 +418,7 @@ export default function Navbar() {
               <Link href="/create-vault" onClick={closeMenu}>
                 <button className={`w-full px-3 py-3 text-sm font-bold border-4 shadow-brutal transition-all ${
                   isActive("/create-vault") ? (isScrolled ? "bg-heirlock-yellow text-black border-black" : "bg-black text-white border-black") : (isScrolled ? "bg-heirlock-yellow text-black border-black hover:translate-x-1 hover:translate-y-1 hover:shadow-none" : "bg-heirlock-yellow text-black border-black hover:translate-x-1 hover:translate-y-1 hover:shadow-none")
-                }`}>🔒 CREATE VAULT</button>
+                }`}>Create Vault</button>
               </Link>
 
               <Link href="/dashboard" onClick={closeMenu}>
@@ -408,7 +426,7 @@ export default function Navbar() {
                   isActive("/dashboard") 
                     ? (isScrolled ? "bg-heirlock-blue text-white border-black" : "bg-black text-heirlock-blue border-black") 
                     : (isScrolled ? "bg-heirlock-blue text-white border-black hover:translate-x-1 hover:translate-y-1 hover:shadow-none" : "bg-black text-white border-black hover:translate-x-1 hover:translate-y-1 hover:shadow-none")
-                }`}>📊 DASHBOARD</button>
+                }`}>Dashboard</button>
               </Link>
 
               <div className="border-2 border-current opacity-30 my-1"></div>
@@ -419,7 +437,7 @@ export default function Navbar() {
                   isActive("/how-it-works")
                     ? isScrolled ? "text-white bg-black bg-opacity-20 border-l-heirlock-yellow" : "text-black bg-black bg-opacity-10 border-l-black"
                     : isScrolled ? "text-white hover:bg-heirlock-yellow hover:text-black hover:border-l-heirlock-yellow" : "text-black hover:bg-heirlock-yellow hover:text-black hover:border-l-black"
-                }`}>⚡ How It Works</button>
+                }`}>How It Works</button>
               </Link>
 
               <Link href="/about" onClick={closeMenu}>
@@ -427,7 +445,7 @@ export default function Navbar() {
                   isActive("/about")
                     ? isScrolled ? "text-white bg-black bg-opacity-20 border-l-heirlock-green" : "text-black bg-black bg-opacity-10 border-l-black"
                     : isScrolled ? "text-white hover:bg-heirlock-green hover:text-black hover:border-l-heirlock-green" : "text-black hover:bg-heirlock-green hover:text-black hover:border-l-black"
-                }`}>ℹ️ About</button>
+                }`}>About</button>
               </Link>
 
               <button
@@ -438,35 +456,44 @@ export default function Navbar() {
                     : isScrolled ? "text-white hover:bg-heirlock-pink hover:text-black hover:border-l-heirlock-pink" : "text-black hover:bg-heirlock-pink hover:text-black hover:border-l-black"
                 }`}
               >
-                📚 Resources
+                Resources
                 <ChevronDown className={`w-3 h-3 transition-transform ${isResourcesOpen ? "rotate-180" : ""}`} />
               </button>
 
               {isResourcesOpen && (
                 <div className="space-y-1 pl-3">
                   <Link href="/documentation" onClick={closeMenu}>
-                    <button className="w-full text-left px-3 py-2 text-xs font-bold bg-black text-white hover:bg-heirlock-yellow hover:text-black transition-all border-l-2 border-heirlock-yellow">📖 Docs</button>
+                    <button className="w-full text-left px-3 py-2 text-xs font-bold bg-black text-white hover:bg-heirlock-yellow hover:text-black transition-all border-l-2 border-heirlock-yellow">Docs</button>
                   </Link>
                   <Link href="/smart-contracts" onClick={closeMenu}>
-                    <button className="w-full text-left px-3 py-2 text-xs font-bold bg-black text-white hover:bg-heirlock-blue hover:text-black transition-all border-l-2 border-heirlock-blue">⚙️ Smart Contracts</button>
+                    <button className="w-full text-left px-3 py-2 text-xs font-bold bg-black text-white hover:bg-heirlock-blue hover:text-black transition-all border-l-2 border-heirlock-blue">Smart Contracts</button>
+                  </Link>
+                  <Link href="/docs/quickstart" onClick={closeMenu}>
+                    <button className="w-full text-left px-3 py-2 text-xs font-bold bg-black text-white hover:bg-heirlock-yellow hover:text-black transition-all border-l-2 border-heirlock-yellow">API Quickstart</button>
+                  </Link>
+                  <Link href="/integrations" onClick={closeMenu}>
+                    <button className="w-full text-left px-3 py-2 text-xs font-bold bg-black text-white hover:bg-heirlock-green hover:text-black transition-all border-l-2 border-heirlock-green">Integrations</button>
+                  </Link>
+                  <Link href="/trust-center" onClick={closeMenu}>
+                    <button className="w-full text-left px-3 py-2 text-xs font-bold bg-black text-white hover:bg-heirlock-blue hover:text-black transition-all border-l-2 border-heirlock-blue">Trust Center</button>
                   </Link>
                   <Link href="/faq" onClick={closeMenu}>
-                    <button className="w-full text-left px-3 py-2 text-xs font-bold bg-black text-white hover:bg-heirlock-green hover:text-black transition-all border-l-2 border-heirlock-green">❓ FAQ</button>
+                    <button className="w-full text-left px-3 py-2 text-xs font-bold bg-black text-white hover:bg-heirlock-green hover:text-black transition-all border-l-2 border-heirlock-green">FAQ</button>
                   </Link>
                   <Link href="/admin" onClick={closeMenu}>
-                    <button className="w-full text-left px-3 py-2 text-xs font-bold bg-black text-white hover:bg-heirlock-pink hover:text-black transition-all border-l-2 border-heirlock-pink">🔐 Admin Upload</button>
+                    <button className="w-full text-left px-3 py-2 text-xs font-bold bg-black text-white hover:bg-heirlock-pink hover:text-black transition-all border-l-2 border-heirlock-pink">Admin Upload</button>
                   </Link>
                   <Link href="/access-portal" onClick={closeMenu}>
-                    <button className="w-full text-left px-3 py-2 text-xs font-bold bg-black text-white hover:bg-heirlock-green hover:text-black transition-all border-l-2 border-heirlock-green">🔓 Access Portal</button>
+                    <button className="w-full text-left px-3 py-2 text-xs font-bold bg-black text-white hover:bg-heirlock-green hover:text-black transition-all border-l-2 border-heirlock-green">Access Portal</button>
                   </Link>
                   <Link href="/blog" onClick={closeMenu}>
-                    <button className="w-full text-left px-3 py-2 text-xs font-bold bg-black text-white hover:bg-heirlock-pink hover:text-black transition-all border-l-2 border-heirlock-pink">📰 Blog</button>
+                    <button className="w-full text-left px-3 py-2 text-xs font-bold bg-black text-white hover:bg-heirlock-pink hover:text-black transition-all border-l-2 border-heirlock-pink">Blog</button>
                   </Link>
                   <Link href="/changelog" onClick={closeMenu}>
-                    <button className="w-full text-left px-3 py-2 text-xs font-bold bg-black text-white hover:bg-heirlock-yellow hover:text-black transition-all border-l-2 border-heirlock-yellow">📝 Changelog</button>
+                    <button className="w-full text-left px-3 py-2 text-xs font-bold bg-black text-white hover:bg-heirlock-yellow hover:text-black transition-all border-l-2 border-heirlock-yellow">Changelog</button>
                   </Link>
                   <Link href="/pricing" onClick={closeMenu}>
-                    <button className="w-full text-left px-3 py-2 text-xs font-bold bg-black text-white hover:bg-heirlock-pink hover:text-black transition-all border-l-2 border-heirlock-pink">💰 Pricing</button>
+                    <button className="w-full text-left px-3 py-2 text-xs font-bold bg-black text-white hover:bg-heirlock-pink hover:text-black transition-all border-l-2 border-heirlock-pink">Pricing</button>
                   </Link>
                 </div>
               )}
@@ -479,7 +506,7 @@ export default function Navbar() {
                   isActive("/contact")
                     ? isScrolled ? "text-white bg-black bg-opacity-20 border-l-heirlock-yellow" : "text-black bg-black bg-opacity-10 border-l-black"
                     : isScrolled ? "text-white hover:bg-heirlock-yellow hover:text-black hover:border-l-heirlock-yellow" : "text-black hover:bg-heirlock-yellow hover:text-black hover:border-l-black"
-                }`}>✉️ Contact</button>
+                }`}>Contact</button>
               </Link>
 
               <Link href="/terms" onClick={closeMenu}>
@@ -487,7 +514,7 @@ export default function Navbar() {
                   isActive("/terms")
                     ? isScrolled ? "text-white bg-black bg-opacity-20 border-l-gray-500" : "text-black bg-black bg-opacity-10 border-l-black"
                     : isScrolled ? "text-white hover:bg-gray-700 hover:text-white hover:border-l-gray-500" : "text-black hover:bg-gray-200 hover:text-black hover:border-l-black"
-                }`}>📋 Terms</button>
+                }`}>Terms</button>
               </Link>
 
               <Link href="/privacy" onClick={closeMenu}>
@@ -495,7 +522,7 @@ export default function Navbar() {
                   isActive("/privacy")
                     ? isScrolled ? "text-white bg-black bg-opacity-20 border-l-gray-500" : "text-black bg-black bg-opacity-10 border-l-black"
                     : isScrolled ? "text-white hover:bg-gray-700 hover:text-white hover:border-l-gray-500" : "text-black hover:bg-gray-200 hover:text-black hover:border-l-black"
-                }`}>🔐 Privacy</button>
+                }`}>Privacy</button>
               </Link>
             </div>
           </div>

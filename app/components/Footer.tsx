@@ -37,11 +37,14 @@ export default function Footer() {
     resources: [
       { label: "Documentation", href: "/documentation" },
       { label: "Developer Docs", href: "/docs" },
+      { label: "API Quickstart", href: "/docs/quickstart" },
       { label: "API Documentation", href: "/docs/api" },
+      { label: "Integrations", href: "/integrations" },
       { label: "FAQ", href: "/faq" },
       { label: "Blog", href: "/blog" },
       { label: "Changelog", href: "/changelog" },
       { label: "Status", href: "/status" },
+      { label: "Trust Center", href: "/trust-center" },
     ],
     legal: [
       { label: "Terms of Service", href: "/terms" },
