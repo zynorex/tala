@@ -27,7 +27,7 @@ const teamMembers: Member[] = [
   {
     name: "Ayush",
     role: "Founder & Lead Developer",
-    bio: "Add a short professional summary highlighting core focus, recent impact, and preferred domains.",
+    bio: "Founder and lead developer driving TALA's secure education stack-smart contracts, vault security, and full-stack delivery with a privacy-first posture.",
     expertise: ["Blockchain", "Security", "Full-stack"],
     website: "https://iayush.in",
     github: "ayushedith",
