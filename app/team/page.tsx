@@ -1,116 +1,81 @@
 'use client';
 
+import Image from "next/image";
 import { Mail, Linkedin, Twitter, Github } from "lucide-react";
 import Link from "next/link";
 
-export default function TeamPage() {
-  const teamMembers = [
-    {
-      name: "Dr. Rajesh Kumar",
-      role: "Founder & Chief Architect",
-      bio: "Cryptographer and blockchain engineer with 15+ years in security infrastructure. PhD in Computer Science from IIT Delhi. Previously built security systems at Google and Microsoft.",
-      expertise: ["Smart Contracts", "Cryptography", "System Design"],
-      image: "👨‍💼",
-      social: {
-        email: "support@usetala.in",
-        linkedin: "https://linkedin.com",
-        twitter: "https://twitter.com",
-        github: "https://github.com"
-      }
-    },
-    {
-      name: "Priya Sharma",
-      role: "VP Engineering & Protocol Lead",
-      bio: "Full-stack blockchain engineer with expertise in Solidity and Web3. Led engineering at two successful Web3 startups. Expert in gas optimization and Layer 2 solutions.",
-      expertise: ["Solidity", "Web3", "DevOps"],
-      image: "👩‍💻",
-      social: {
-        email: "support@usetala.in",
-        linkedin: "https://linkedin.com",
-        twitter: "https://twitter.com",
-        github: "https://github.com"
-      }
-    },
-    {
-      name: "Rohan Patel",
-      role: "Head of Product",
-      bio: "Product strategist with background in edtech and government technology. Worked with 50+ educational institutions across India. Deep understanding of exam security requirements.",
-      expertise: ["Product Strategy", "Education", "Government Relations"],
-      image: "👨‍🔬",
-      social: {
-        email: "support@usetala.in",
-        linkedin: "https://linkedin.com",
-        twitter: "https://twitter.com",
-        github: "https://github.com"
-      }
-    },
-    {
-      name: "Aisha Chen",
-      role: "Head of Security",
-      bio: "Security researcher with 12 years in penetration testing and compliance. CISSP certified. Managed security for Fortune 500 companies in financial and healthcare sectors.",
-      expertise: ["Security Audit", "Compliance", "Penetration Testing"],
-      image: "👩‍🏫",
-      social: {
-        email: "support@usetala.in",
-        linkedin: "https://linkedin.com",
-        twitter: "https://twitter.com",
-        github: "https://github.com"
-      }
-    },
-    {
-      name: "Marcus Webb",
-      role: "Frontend Lead",
-      bio: "UI/UX engineer with 8 years building consumer-facing applications. Expert in React, Next.js, and design systems. Created design systems for multiple startups.",
-      expertise: ["React", "UX Design", "Design Systems"],
-      image: "👨‍🎨",
-      social: {
-        email: "support@usetala.in",
-        linkedin: "https://linkedin.com",
-        twitter: "https://twitter.com",
-        github: "https://github.com"
-      }
-    },
-    {
-      name: "Elena Rodriguez",
-      role: "Growth & Partnerships",
-      bio: "Growth strategist with experience scaling B2B SaaS products. Built partnerships with 100+ schools and government agencies. Expert in enterprise sales and go-to-market strategy.",
-      expertise: ["Growth Strategy", "Enterprise Sales", "Partnerships"],
-      image: "👩‍💼",
-      social: {
-        email: "support@usetala.in",
-        linkedin: "https://linkedin.com",
-        twitter: "https://twitter.com",
-        github: "https://github.com"
-      }
-    }
-  ];
+type Member = {
+  name: string;
+  role: string;
+  bio: string;
+  expertise: string[];
+  github?: string;
+  linkedin?: string;
+  twitter?: string;
+  email?: string;
+};
 
-  const advisors = [
-    {
-      name: "Dr. Vitalik Buterin",
-      role: "Ethereum Co-founder",
-      expertise: "Blockchain & Consensus Mechanisms",
-      image: "👤"
-    },
-    {
-      name: "Prof. Raghunath Mashelkar",
-      role: "Former Director CSIR",
-      expertise: "Government Policy & Innovation",
-      image: "👤"
-    },
-    {
-      name: "Kiran Bedi",
-      role: "Former Police Commissioner",
-      expertise: "Law Enforcement & Governance",
-      image: "👤"
-    },
-    {
-      name: "Dr. Shashi Tharoor",
-      role: "Member of Parliament",
-      expertise: "Policy & Public Administration",
-      image: "👤"
-    }
-  ];
+type Advisor = {
+  name: string;
+  role: string;
+  expertise: string;
+  github?: string;
+};
+
+const teamMembers: Member[] = [
+  {
+    name: "Your Name",
+    role: "Founder",
+    bio: "Add a short professional summary highlighting your focus areas and impact.",
+    expertise: ["Blockchain", "Security", "Product"],
+    github: "",
+    linkedin: "",
+    twitter: "",
+    email: "support@usetala.in",
+  },
+  {
+    name: "Team Member",
+    role: "Engineering",
+    bio: "Add a concise bio covering domain expertise and prior work.",
+    expertise: ["Solidity", "Systems", "DevOps"],
+    github: "",
+    linkedin: "",
+    twitter: "",
+    email: "support@usetala.in",
+  },
+  {
+    name: "Team Member",
+    role: "Product",
+    bio: "Describe product focus, user segments served, and results delivered.",
+    expertise: ["Product", "Education", "GovTech"],
+    github: "",
+    linkedin: "",
+    twitter: "",
+    email: "support@usetala.in",
+  },
+];
+
+const advisors: Advisor[] = [
+  {
+    name: "Advisor Name",
+    role: "Security and Compliance",
+    expertise: "Audits, incident response, and governance.",
+    github: "",
+  },
+  {
+    name: "Advisor Name",
+    role: "Policy and Education",
+    expertise: "Curriculum security and exam integrity.",
+    github: "",
+  },
+];
+
+function githubAvatar(username?: string) {
+  if (!username) return "https://avatars.githubusercontent.com/u/0?v=4";
+  return `https://github.com/${username}.png?size=200`;
+}
+
+export default function TeamPage() {
 
   return (
     <main className="min-h-screen bg-white">
@@ -139,46 +104,57 @@ export default function TeamPage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {teamMembers.map((member, idx) => (
-              <div key={idx} className="border-4 border-black bg-white shadow-brutal p-8 rounded-lg flex flex-col h-full">
-                {/* Avatar */}
-                <div className="text-5xl mb-4">{member.image}</div>
+            {teamMembers.map((member) => (
+              <div key={member.name} className="border-4 border-black bg-white shadow-brutal p-8 rounded-lg flex flex-col h-full">
+                <div className="w-20 h-20 mb-4 border-4 border-black rounded-full overflow-hidden bg-gray-100">
+                  <Image
+                    src={githubAvatar(member.github)}
+                    alt={`${member.name} avatar`}
+                    width={160}
+                    height={160}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
 
-                {/* Name & Role */}
                 <h3 className="text-2xl font-bold text-black mb-1">{member.name}</h3>
                 <p className="text-sm font-black text-heirlock-green uppercase mb-4">{member.role}</p>
 
-                {/* Bio */}
                 <p className="text-gray-700 text-sm mb-4 flex-1">
                   {member.bio}
                 </p>
 
-                {/* Expertise */}
                 <div className="mb-6 border-t-2 border-gray-300 pt-4">
                   <p className="text-xs font-bold text-black uppercase mb-2">Expertise</p>
                   <div className="flex flex-wrap gap-2">
-                    {member.expertise.map((skill, i) => (
-                      <span key={i} className="px-2 py-1 bg-heirlock-yellow text-black text-xs font-bold rounded">
+                    {member.expertise.map((skill) => (
+                      <span key={skill} className="px-2 py-1 bg-heirlock-yellow text-black text-xs font-bold rounded">
                         {skill}
                       </span>
                     ))}
                   </div>
                 </div>
 
-                {/* Social Links */}
                 <div className="flex gap-3 border-t-2 border-gray-300 pt-4">
-                  <a href={`mailto:${member.social.email}`} className="p-2 bg-black text-white rounded hover:opacity-90 transition-opacity" title="Email">
-                    <Mail className="w-4 h-4" />
-                  </a>
-                  <a href={member.social.linkedin} className="p-2 bg-black text-white rounded hover:opacity-90 transition-opacity" title="LinkedIn">
-                    <Linkedin className="w-4 h-4" />
-                  </a>
-                  <a href={member.social.twitter} className="p-2 bg-black text-white rounded hover:opacity-90 transition-opacity" title="Twitter">
-                    <Twitter className="w-4 h-4" />
-                  </a>
-                  <a href={member.social.github} className="p-2 bg-black text-white rounded hover:opacity-90 transition-opacity" title="GitHub">
-                    <Github className="w-4 h-4" />
-                  </a>
+                  {member.email && (
+                    <a href={`mailto:${member.email}`} className="p-2 bg-black text-white rounded hover:opacity-90 transition-opacity" title="Email">
+                      <Mail className="w-4 h-4" />
+                    </a>
+                  )}
+                  {member.linkedin && (
+                    <a href={member.linkedin} className="p-2 bg-black text-white rounded hover:opacity-90 transition-opacity" title="LinkedIn">
+                      <Linkedin className="w-4 h-4" />
+                    </a>
+                  )}
+                  {member.twitter && (
+                    <a href={member.twitter} className="p-2 bg-black text-white rounded hover:opacity-90 transition-opacity" title="Twitter">
+                      <Twitter className="w-4 h-4" />
+                    </a>
+                  )}
+                  {member.github && (
+                    <a href={`https://github.com/${member.github}`} className="p-2 bg-black text-white rounded hover:opacity-90 transition-opacity" title="GitHub">
+                      <Github className="w-4 h-4" />
+                    </a>
+                  )}
                 </div>
               </div>
             ))}
@@ -197,11 +173,19 @@ export default function TeamPage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {advisors.map((advisor, idx) => (
-              <div key={idx} className="border-4 border-black bg-white p-6 rounded-lg">
-                <div className="text-4xl mb-4">{advisor.image}</div>
+            {advisors.map((advisor) => (
+              <div key={advisor.name} className="border-4 border-black bg-white p-6 rounded-lg flex flex-col gap-2">
+                <div className="w-16 h-16 border-4 border-black rounded-full overflow-hidden bg-gray-100">
+                  <Image
+                    src={githubAvatar(advisor.github)}
+                    alt={`${advisor.name} avatar`}
+                    width={120}
+                    height={120}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
                 <h3 className="text-xl font-bold text-black mb-1">{advisor.name}</h3>
-                <p className="text-sm font-black text-heirlock-green uppercase mb-3">{advisor.role}</p>
+                <p className="text-sm font-black text-heirlock-green uppercase mb-1">{advisor.role}</p>
                 <p className="text-gray-700 text-sm">{advisor.expertise}</p>
               </div>
             ))}
