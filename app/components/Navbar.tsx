@@ -201,6 +201,12 @@ export default function Navbar() {
                           <span>Team</span>
                         </div>
                       </Link>
+                      <Link href="/api-status" onClick={closeMenu}>
+                        <div className="flex items-center gap-3 px-3 py-2 rounded hover:bg-heirlock-blue hover:text-black transition-all font-bold cursor-pointer">
+                          <Shield className="w-5 h-5" />
+                          <span>API Status and Limits</span>
+                        </div>
+                      </Link>
                       <Link href="/procurement" onClick={closeMenu}>
                         <div className="flex items-center gap-3 px-3 py-2 rounded hover:bg-heirlock-yellow hover:text-black transition-all font-bold cursor-pointer">
                           <BookOpen className="w-5 h-5" />
