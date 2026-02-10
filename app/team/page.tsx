@@ -35,6 +35,29 @@ const teamMembers: Member[] = [
     twitter: "https://x.com/ayushedith",
     email: "hi@ayushx.me",
   },
+  // {
+  //   name: "Amir",
+  //   role: "Data Privacy Engineer",
+  //   bio: "Data privacy engineer specializing in secure data handling, encryption, and compliance to ensure user information is protected and never misused.",
+  //   expertise: ["Data Privacy", "Encryption", "Compliance"],
+  //   website: "https://amirvishwas.site",
+  //   github: "calvintakasi",
+  //   linkedin: "https://www.linkedin.com/in/amirvishwas",
+  //   twitter: "https://twitter.com/calvintakasi",
+  //   email: "amirvishwas25@gmail.com",
+  // },
+  // {
+  //   name: "Aryan",
+  //   role: "Security and Compliance Lead",
+  //   bio: "Security and compliance lead ensuring TALA's security and compliance standards are met, including audits, incident response, and governance.",
+  //   expertise: ["Security", "Compliance", "Audits"],
+  //   website: "https://aryansingh.me",
+  //   github: "AryaN-a005", 
+  //   linkedin: "https://www.linkedin.com/in/aryan-singh-675b24328",
+  //   twitter: "https://x.com/AryaN_a005",
+  //   email: "aryan20051234@gmail.com",
+
+  // },
 ];
 
 const advisors: Advisor[] = [

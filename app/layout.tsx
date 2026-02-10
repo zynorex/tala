@@ -32,6 +32,7 @@ export const metadata: Metadata = {
   description: "Tamper-proof Automated Locking Algorithm for time-locked vaults and verifiable unlock proofs.",
   keywords: ["Web3", "Blockchain", "Exam Security", "Time-Lock", "IPFS", "Polygon", "Unlock proofs", "usetala"],
   authors: [{ name: "T.A.L.A. Team" }],
+  metadataBase: new URL("https://usetala.in"),
   openGraph: {
     title: "T.A.L.A. | Trust is Code",
     description: "Decentralized time-locked vaults with auditable unlock events.",
@@ -40,7 +41,7 @@ export const metadata: Metadata = {
     siteName: "T.A.L.A.",
     images: [
       {
-        url: "https://usetala.in/og-image.png",
+        url: "/opengraph-image",
         width: 1200,
         height: 630,
         alt: "T.A.L.A. - Trust is Code",
@@ -51,7 +52,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "T.A.L.A. | Trust is Code",
     description: "Decentralized time-locked vaults with auditable unlock events.",
-    images: ["https://usetala.in/twitter-image.png"],
+    images: ["/twitter-image"],
     creator: "@usetala",
   },
   robots: {
