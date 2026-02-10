@@ -71,6 +71,9 @@ export const metadata: Metadata = {
     languages: {
       "en-US": "https://usetala.in",
     },
+    types: {
+      "application/rss+xml": "https://usetala.in/rss.xml",
+    },
   },
 };
 
