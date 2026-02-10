@@ -52,7 +52,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "T.A.L.A. | Trust is Code",
     description: "Decentralized time-locked vaults with auditable unlock events.",
-    images: ["/twitter-image"],
+    images: ["/opengraph-image"],
     creator: "@usetala",
   },
   robots: {

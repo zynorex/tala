@@ -24,7 +24,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "T.A.L.A. | Trust Center",
     description: "Security posture, disclosure process, and verification artifacts for T.A.L.A. time-locked vaults.",
-    images: ["/twitter-image"],
+    images: ["/opengraph-image"],
     creator: "@usetala",
   },
 };

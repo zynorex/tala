@@ -24,7 +24,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "T.A.L.A. | Procurement Pack",
     description: "Request T.A.L.A. vendor documentation: security questionnaires, DPAs, architecture briefs, and deployment guidance.",
-    images: ["/twitter-image"],
+    images: ["/opengraph-image"],
     creator: "@usetala",
   },
 };

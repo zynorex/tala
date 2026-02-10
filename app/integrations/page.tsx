@@ -24,7 +24,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "T.A.L.A. | Integrations",
     description: "Supported chains, wallets, monitoring hooks, and storage gateways for verifiable unlocks.",
-    images: ["/twitter-image"],
+    images: ["/opengraph-image"],
     creator: "@usetala",
   },
 };

@@ -1,5 +1,6 @@
+
 import type { Metadata } from 'next';
-import StatusClient from './page.client';
+import StatusClient from './StatusClient';
 
 export const metadata: Metadata = {
   title: 'T.A.L.A. | Status',
@@ -23,7 +24,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'T.A.L.A. | Status',
     description: 'Live uptime, incidents, and maintenance for T.A.L.A. services with historical summaries and refresh cadence.',
-    images: ['/twitter-image'],
+    images: ['/opengraph-image'],
     creator: '@usetala',
   },
 };

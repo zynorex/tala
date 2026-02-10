@@ -23,7 +23,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "T.A.L.A. | API Status and Limits",
     description: "Understand T.A.L.A. API limits, error semantics, required headers, and operational practices across sandbox and production.",
-    images: ["/twitter-image"],
+    images: ["/opengraph-image"],
     creator: "@usetala",
   },
 };

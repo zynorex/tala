@@ -24,7 +24,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "T.A.L.A. | API Quickstart",
     description: "Step-by-step guide to build against T.A.L.A. APIs with staging keys, webhooks, and rate limit notes.",
-    images: ["/twitter-image"],
+    images: ["/opengraph-image"],
     creator: "@usetala",
   },
 };

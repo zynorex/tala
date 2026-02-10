@@ -18,8 +18,9 @@ function titleFromPath(pathname: string) {
     .join(' / ');
 }
 
-export default function OpenGraphImage({ request }: { request: Request }) {
-  const { pathname } = new URL(request.url);
+export default function OpenGraphImage({ request }: { request?: Request }) {
+  const fallbackUrl = new URL('https://usetala.in/opengraph-image');
+  const { pathname } = new URL(request?.url || fallbackUrl.href);
   const pageTitle = titleFromPath(pathname);
 
   return new ImageResponse(

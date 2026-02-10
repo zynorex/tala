@@ -23,7 +23,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'T.A.L.A. | Trust is Code',
     description: 'Time-locked vaults for exams, tenders, and evidence with auditable unlock events.',
-    images: ['/twitter-image'],
+    images: ['/opengraph-image'],
     creator: '@usetala',
   },
 };
