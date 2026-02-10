@@ -1,5 +1,33 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { Network, Wallet, Webhook, Server, ShieldCheck, Cable, FileJson } from "lucide-react";
+
+export const metadata: Metadata = {
+  title: "T.A.L.A. | Integrations",
+  description: "Connect T.A.L.A. to your stack—chains, wallets, webhooks, SIEM feeds, and storage partners with staging guidance.",
+  alternates: { canonical: "https://usetala.in/integrations" },
+  openGraph: {
+    title: "T.A.L.A. | Integrations",
+    description: "Supported chains, wallets, monitoring hooks, and storage gateways for verifiable unlocks.",
+    url: "https://usetala.in/integrations",
+    siteName: "T.A.L.A.",
+    images: [
+      {
+        url: "/opengraph-image",
+        width: 1200,
+        height: 630,
+        alt: "T.A.L.A. Integrations",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "T.A.L.A. | Integrations",
+    description: "Supported chains, wallets, monitoring hooks, and storage gateways for verifiable unlocks.",
+    images: ["/twitter-image"],
+    creator: "@usetala",
+  },
+};
 
 const categories = [
   {

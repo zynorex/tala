@@ -1,8 +1,33 @@
-'use client';
-
+import type { Metadata } from "next";
 import Image from "next/image";
 import { Mail, Linkedin, Twitter, Github, Globe } from "lucide-react";
-import Link from "next/link";
+
+export const metadata: Metadata = {
+  title: "T.A.L.A. | Team",
+  description: "Meet the builders behind T.A.L.A.—security, cryptography, and product leads advancing time-locked vaults for exams, tenders, and evidence.",
+  alternates: { canonical: "https://usetala.in/team" },
+  openGraph: {
+    title: "T.A.L.A. | Team",
+    description: "Security and cryptography leadership delivering verifiable unlocks and privacy-first vaults.",
+    url: "https://usetala.in/team",
+    siteName: "T.A.L.A.",
+    images: [
+      {
+        url: "/opengraph-image",
+        width: 1200,
+        height: 630,
+        alt: "T.A.L.A. Team",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "T.A.L.A. | Team",
+    description: "Security and cryptography leadership delivering verifiable unlocks and privacy-first vaults.",
+    images: ["/twitter-image"],
+    creator: "@usetala",
+  },
+};
 
 type Member = {
   name: string;

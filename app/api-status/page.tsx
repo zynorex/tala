@@ -1,4 +1,32 @@
+import type { Metadata } from "next";
 import Link from "next/link";
+
+export const metadata: Metadata = {
+  title: "T.A.L.A. | API Status and Limits",
+  description: "Rate limits, environments, headers, error codes, and retry guidance for T.A.L.A. APIs—enterprise ready and observable.",
+  alternates: { canonical: "https://usetala.in/api-status" },
+  openGraph: {
+    title: "T.A.L.A. | API Status and Limits",
+    description: "Understand T.A.L.A. API limits, error semantics, required headers, and operational practices across sandbox and production.",
+    url: "https://usetala.in/api-status",
+    siteName: "T.A.L.A.",
+    images: [
+      {
+        url: "/opengraph-image",
+        width: 1200,
+        height: 630,
+        alt: "T.A.L.A. API Status and Limits",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "T.A.L.A. | API Status and Limits",
+    description: "Understand T.A.L.A. API limits, error semantics, required headers, and operational practices across sandbox and production.",
+    images: ["/twitter-image"],
+    creator: "@usetala",
+  },
+};
 
 const rateLimitTiers = [
   {

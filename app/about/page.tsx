@@ -1,7 +1,33 @@
-'use client';
-
+import type { Metadata } from "next";
 import { Lock, Shield, Code, Zap, Globe, Briefcase, FileText, AlertCircle, CheckCircle, BookOpen, Gavel, Eye, ChevronRight } from "lucide-react";
 import Link from "next/link";
+
+export const metadata: Metadata = {
+  title: "T.A.L.A. | About",
+  description: "Tamper-proof Automated Locking Algorithm for exams, tenders, and evidence—built on smart contracts, client-side encryption, and auditable unlocks.",
+  alternates: { canonical: "https://usetala.in/about" },
+  openGraph: {
+    title: "T.A.L.A. | About",
+    description: "Trust is Code: cryptographic time-locks replacing human trust for education, governance, and legal workflows.",
+    url: "https://usetala.in/about",
+    siteName: "T.A.L.A.",
+    images: [
+      {
+        url: "/opengraph-image",
+        width: 1200,
+        height: 630,
+        alt: "About T.A.L.A.",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "T.A.L.A. | About",
+    description: "Trust is Code: cryptographic time-locks replacing human trust for education, governance, and legal workflows.",
+    images: ["/twitter-image"],
+    creator: "@usetala",
+  },
+};
 
 export default function About() {
   const coreProblems = [

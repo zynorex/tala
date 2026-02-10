@@ -1,5 +1,33 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { ClipboardList, PlayCircle, Cloud, ShieldCheck, ArrowRight, Code2 } from "lucide-react";
+
+export const metadata: Metadata = {
+  title: "T.A.L.A. | API Quickstart",
+  description: "Get started with T.A.L.A. APIs: create vaults, commit unlocks, subscribe to webhooks, and validate staging safely.",
+  alternates: { canonical: "https://usetala.in/docs/quickstart" },
+  openGraph: {
+    title: "T.A.L.A. | API Quickstart",
+    description: "Step-by-step guide to build against T.A.L.A. APIs with staging keys, webhooks, and rate limit notes.",
+    url: "https://usetala.in/docs/quickstart",
+    siteName: "T.A.L.A.",
+    images: [
+      {
+        url: "/opengraph-image",
+        width: 1200,
+        height: 630,
+        alt: "T.A.L.A. API Quickstart",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "T.A.L.A. | API Quickstart",
+    description: "Step-by-step guide to build against T.A.L.A. APIs with staging keys, webhooks, and rate limit notes.",
+    images: ["/twitter-image"],
+    creator: "@usetala",
+  },
+};
 
 const steps = [
   {

@@ -79,8 +79,26 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const orgJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    name: 'T.A.L.A.',
+    url: 'https://usetala.in',
+    logo: 'https://usetala.in/logo.png',
+    sameAs: [
+      'https://x.com/usetala',
+      'https://www.linkedin.com/company/usetala',
+    ],
+  };
+
   return (
     <html lang="en" className={`${inter.variable} ${spaceGrotesk.variable}`}>
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }}
+        />
+      </head>
       <body className={inter.className}>
         <ErrorBoundary>
           <NextAuthSessionProvider>

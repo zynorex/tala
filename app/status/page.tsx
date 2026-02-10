@@ -1,8 +1,36 @@
 'use client';
 
+import type { Metadata } from 'next';
 import { useState, useEffect } from 'react';
 import { CheckCircle, AlertCircle, XCircle, Clock, TrendingUp, Activity, AlertTriangle, Loader } from 'lucide-react';
 import Link from 'next/link';
+
+export const metadata: Metadata = {
+  title: 'T.A.L.A. | Status',
+  description: 'Live uptime, incidents, and maintenance for T.A.L.A. services with historical summaries and refresh cadence.',
+  alternates: { canonical: 'https://usetala.in/status' },
+  openGraph: {
+    title: 'T.A.L.A. | Status',
+    description: 'Live uptime, incidents, and maintenance for T.A.L.A. services with historical summaries and refresh cadence.',
+    url: 'https://usetala.in/status',
+    siteName: 'T.A.L.A.',
+    images: [
+      {
+        url: '/opengraph-image',
+        width: 1200,
+        height: 630,
+        alt: 'T.A.L.A. Status',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'T.A.L.A. | Status',
+    description: 'Live uptime, incidents, and maintenance for T.A.L.A. services with historical summaries and refresh cadence.',
+    images: ['/twitter-image'],
+    creator: '@usetala',
+  },
+};
 
 interface Service {
   name: string;

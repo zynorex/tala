@@ -1,5 +1,33 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { ShieldCheck, FileBadge2, Globe2, Lock, AlertTriangle, Mail, BookCheck } from "lucide-react";
+
+export const metadata: Metadata = {
+  title: "T.A.L.A. | Trust Center",
+  description: "Security, transparency, and operational readiness for T.A.L.A.—disclosures, controls, and contact for responsible security.",
+  alternates: { canonical: "https://usetala.in/trust-center" },
+  openGraph: {
+    title: "T.A.L.A. | Trust Center",
+    description: "Security posture, disclosure process, and verification artifacts for T.A.L.A. time-locked vaults.",
+    url: "https://usetala.in/trust-center",
+    siteName: "T.A.L.A.",
+    images: [
+      {
+        url: "/opengraph-image",
+        width: 1200,
+        height: 630,
+        alt: "T.A.L.A. Trust Center",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "T.A.L.A. | Trust Center",
+    description: "Security posture, disclosure process, and verification artifacts for T.A.L.A. time-locked vaults.",
+    images: ["/twitter-image"],
+    creator: "@usetala",
+  },
+};
 
 export default function TrustCenterPage() {
   const controls = [

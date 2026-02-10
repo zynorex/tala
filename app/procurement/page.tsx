@@ -1,5 +1,33 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { FileText, ShieldCheck, ClipboardList, Download, CheckCircle2, BookOpen, Mail, Building2 } from "lucide-react";
+
+export const metadata: Metadata = {
+  title: "T.A.L.A. | Procurement Pack",
+  description: "Security, legal, and procurement materials for reviewing T.A.L.A.—DPA, SLA, infosec responses, and deployment options.",
+  alternates: { canonical: "https://usetala.in/procurement" },
+  openGraph: {
+    title: "T.A.L.A. | Procurement Pack",
+    description: "Request T.A.L.A. vendor documentation: security questionnaires, DPAs, architecture briefs, and deployment guidance.",
+    url: "https://usetala.in/procurement",
+    siteName: "T.A.L.A.",
+    images: [
+      {
+        url: "/opengraph-image",
+        width: 1200,
+        height: 630,
+        alt: "T.A.L.A. Procurement Pack",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "T.A.L.A. | Procurement Pack",
+    description: "Request T.A.L.A. vendor documentation: security questionnaires, DPAs, architecture briefs, and deployment guidance.",
+    images: ["/twitter-image"],
+    creator: "@usetala",
+  },
+};
 
 const assets = [
   { title: "Infosec questionnaire", body: "Standard responses covering IAM, encryption, logging, backups, and incident handling." },
