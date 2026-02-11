@@ -1,168 +1,174 @@
-'use client';
+"use client";
 
-import { Lock, Upload, Zap, Shield, AlertCircle, ChevronRight, Check, Globe, FileText } from 'lucide-react';
-import Link from 'next/link';
+import { AlertCircle, Check, ChevronRight, FileText, Globe, Lock, Shield, Upload, Zap } from "lucide-react";
+import Link from "next/link";
+
+const createFlow = [
+  {
+    step: "01",
+    title: "Encrypt on your device",
+    icon: Lock,
+    summary:
+      "The admin chooses a file, and the browser makes a fresh AES 256 key. Encryption runs locally so no plain document ever leaves the device.",
+    bullets: [
+      "Random 256 bit key generated in browser",
+      "Ciphertext only, plaintext stays local",
+      "Memory clears the key after upload",
+      "No server side storage of secrets",
+    ],
+  },
+  {
+    step: "02",
+    title: "Anchor to IPFS",
+    icon: Upload,
+    summary:
+      "The encrypted file goes to IPFS through Pinata. The content ID is the fingerprint that proves immutability and global availability.",
+    bullets: [
+      "CID is the integrity proof",
+      "Distributed across global nodes",
+      "Permanent address for retrieval",
+      "Nothing to delete or alter later",
+    ],
+  },
+  {
+    step: "03",
+    title: "Lock the key on chain",
+    icon: Zap,
+    summary:
+      "CID, AES key, and unlock time are written to the Polygon contract. The contract accepts custody and enforces the schedule.",
+    bullets: [
+      "Transaction carries CID, key, and unlock time",
+      "Key sealed inside immutable logic",
+      "Unlock moment cannot be edited",
+      "Vault ID returned for reference",
+    ],
+  },
+];
+
+const openFlow = [
+  {
+    step: "01",
+    title: "Verify what you have",
+    icon: Shield,
+    summary:
+      "Students or bidders can download the encrypted file early and compare the CID with the announced value to prove it was not touched.",
+    bullets: [
+      "Encrypted PDF available right away",
+      "CID comparison exposes tampering",
+      "Community can audit the asset",
+      "Prep downloads minutes in advance",
+    ],
+  },
+  {
+    step: "02",
+    title: "Check the block time",
+    icon: Zap,
+    summary:
+      "On unlock, the app asks the contract if current block time meets the policy. Reads cost zero gas and are visible to everyone.",
+    bullets: [
+      "Contract state queried in browser",
+      "Block timestamp compared to unlock",
+      "Read path only, no gas burn",
+      "Answer is public and auditable",
+    ],
+  },
+  {
+    step: "03",
+    title: "Decrypt in the browser",
+    icon: Lock,
+    summary:
+      "If the time has arrived, the contract returns the key. The browser decrypts instantly and renders the PDF without servers.",
+    bullets: [
+      "If early, contract reverts with lock status",
+      "If ready, AES 256 key is returned",
+      "Decryption happens in milliseconds",
+      "No middle layer can intercept",
+    ],
+  },
+];
+
+const assurances = [
+  {
+    title: "AES 256 at the edge",
+    icon: Lock,
+    copy: "Same cipher trusted by banks and defense. Brute force would outlive current hardware by centuries.",
+  },
+  {
+    title: "Time sourced from validators",
+    icon: Globe,
+    copy: "Polygon timestamps are agreed by thousands of independent validators. No single server clock can be gamed.",
+  },
+  {
+    title: "Audit trail on chain",
+    icon: FileText,
+    copy: "Uploads and unlocks live as permanent public events. Every action is traceable as legal grade evidence.",
+  },
+];
 
 export default function HowItWorksPage() {
-  const lockdownSteps = [
-    {
-      number: 1,
-      title: 'Local Encryption',
-      icon: Lock,
-      description:
-        'The Admin (or Official) selects a file. The browser generates a unique AES-256 Key. The file is encrypted locally inside the browser. The raw document never leaves the device.',
-      details: [
-        'Random 256-bit key generated in-browser',
-        'File encrypted using AES-256 standard',
-        'Original plaintext never transmitted',
-        'Key stored temporarily in memory'
-      ]
-    },
-    {
-      number: 2,
-      title: 'IPFS Storage',
-      icon: Upload,
-      description:
-        'The encrypted "garbage" file is uploaded to IPFS. This generates a permanent Content ID (CID).',
-      details: [
-        'Encrypted ciphertext sent to IPFS via Pinata',
-        'Content hash (CID) ensures immutability',
-        'File becomes permanently accessible & undeletable',
-        'Distributed across thousands of nodes'
-      ]
-    },
-    {
-      number: 3,
-      title: 'The Smart Lock',
-      icon: Zap,
-      description:
-        'The Uploader sends the [CID], [Key], and [Unlock Time] to the Polygon Blockchain. The Smart Contract accepts custody of the Key.',
-      details: [
-        'Transaction includes: CID, AES Key, Unix Timestamp',
-        'Key locked inside immutable smart contract',
-        'Unlock time stored on blockchain (cannot be changed)',
-        'Admin receives vault ID for future reference'
-      ]
-    },
-  ];
-
-  const retrievalSteps = [
-    {
-      number: 1,
-      title: 'Verification',
-      icon: Shield,
-      description:
-        'Users (Students/Contractors) can download the Encrypted File immediately. They verify the Hash to prove no tampering has occurred.',
-      details: [
-        'Encrypted PDF available on IPFS immediately',
-        'Students verify IPFS hash matches official announcement',
-        'Hash mismatch proves tampering = reject file',
-        'Download happens in minutes (prepare in advance)'
-      ]
-    },
-    {
-      number: 2,
-      title: 'The Time-Check',
-      icon: Zap,
-      description:
-        'When a user clicks "Unlock," the Contract checks: Is Current Block Time >= Unlock Time?',
-      details: [
-        'Browser queries smart contract state',
-        'Contract reads current blockchain timestamp (UTC)',
-        'Compares: block.timestamp vs. unlockTime',
-        'Zero gas cost (read-only operation)'
-      ]
-    },
-    {
-      number: 3,
-      title: 'Decryption',
-      icon: Lock,
-      description:
-        'If YES: The Key is released. The browser auto-decrypts the PDF. If NO: The Key remains mathematically inaccessible.',
-      details: [
-        'If time not reached: Contract reverts with "VAULT_LOCKED"',
-        'If time reached: Contract returns AES-256 key',
-        'Browser decrypts file instantly (10ms)',
-        'PDF ready to view. No server involvement.'
-      ]
-    },
-  ];
-
-  const securityGuarantees = [
-    {
-      title: 'AES-256 Encryption',
-      icon: Lock,
-      description: 'Military-grade encryption standard. Same as banks and defense systems. Brute-forcing would take billions of years with current technology.'
-    },
-    {
-      title: 'Decentralized Time',
-      icon: Globe,
-      description: 'Uses Polygon Blockchain timestamp, validated by 1000+ global validators. No single server clock can be hacked to fake the unlock time.'
-    },
-    {
-      title: 'Audit Trail',
-      icon: FileText,
-      description: 'Every upload and unlock recorded on-chain as permanent, non-repudiable legal proof. Impossible to forge or delete transaction history.'
-    },
-  ];
-
   return (
-    <main className="min-h-screen bg-cream">
-      {/* Hero Section */}
-      <section className="bg-heirlock-blue py-12 md:py-20 px-4 border-b-4 border-black">
-        <div className="container mx-auto max-w-5xl">
-          <h1 className="text-6xl md:text-7xl font-black text-black mb-4 leading-tight">
-            OPERATIONAL<br />LOGIC
-          </h1>
-          <h2 className="text-2xl md:text-3xl font-bold text-black mb-6">
-            Zero-Knowledge Delivery Protocol.
-          </h2>
-          <p className="text-lg md:text-xl text-black leading-relaxed max-w-3xl">
-            How TALA uses a hybrid architecture of Client-Side Encryption, IPFS Storage, and Smart Contracts to guarantee absolute secrecy until the exact moment intended.
+    <main className="min-h-screen bg-cream text-black">
+      <section className="relative overflow-hidden px-6 py-16 md:py-20 border-b-4 border-black bg-white">
+        <div className="absolute inset-0 pattern-dots opacity-20" />
+        <div className="relative mx-auto max-w-6xl space-y-6">
+          <p className="text-xs font-black uppercase tracking-[0.18em] text-black/60">How it works</p>
+          <h1 className="text-4xl md:text-6xl font-black leading-tight">Operational logic you can verify</h1>
+          <p className="max-w-3xl text-lg md:text-xl font-semibold">
+            TALA runs a client first, chain enforced flow so no person can move the unlock earlier. Everything below is auditable and observable.
           </p>
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+            <Link
+              href="/documentation"
+              className="inline-flex w-full sm:w-auto justify-center rounded-xl border-3 border-black bg-black px-6 py-3 text-white font-black shadow-brutal transition-transform hover:-translate-y-0.5"
+            >
+              Read the protocol
+              <ChevronRight className="ml-2 h-4 w-4" />
+            </Link>
+            <Link
+              href="/create-vault"
+              className="inline-flex w-full sm:w-auto justify-center rounded-xl border-3 border-black bg-white px-6 py-3 font-black shadow-brutal transition-transform hover:-translate-y-0.5"
+            >
+              Spin up a vault
+              <ChevronRight className="ml-2 h-4 w-4" />
+            </Link>
+          </div>
         </div>
       </section>
 
-      {/* Phase A: The Lockdown */}
-      <section className="py-12 md:py-20 px-4 bg-cream border-b-4 border-black">
-        <div className="container mx-auto max-w-5xl">
-          <div className="mb-12">
-            <h2 className="text-5xl md:text-6xl font-black text-black mb-2">Phase A</h2>
-            <h3 className="text-3xl md:text-4xl font-bold text-black border-b-4 border-black pb-4">
-              The Lockdown (The Uploader)
-            </h3>
+      <section className="border-b-4 border-black bg-cream px-6 py-14">
+        <div className="mx-auto max-w-6xl space-y-6">
+          <div className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
+            <div>
+              <p className="text-xs font-black uppercase tracking-[0.18em] text-black/60">Phase A</p>
+              <h2 className="text-3xl md:text-4xl font-black">Create and seal</h2>
+              <p className="text-sm md:text-base text-gray-900">Admin experience without trust gaps.</p>
+            </div>
+            <div className="rounded-full border-2 border-black bg-white px-4 py-2 text-xs font-black uppercase tracking-[0.14em] shadow-brutal">
+              Client first, chain enforced
+            </div>
           </div>
 
-          <div className="space-y-6">
-            {lockdownSteps.map((step, index) => {
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+            {createFlow.map((step) => {
               const Icon = step.icon;
               return (
-                <div key={index} className="border-4 border-black bg-white shadow-brutal hover:shadow-brutal-lg transition-all">
-                  <div className="p-8">
-                    <div className="flex items-start gap-6 mb-6">
-                      <div className="flex-shrink-0">
-                        <div className="flex items-center justify-center w-12 h-12 bg-heirlock-yellow border-4 border-black shadow-brutal">
-                          <Icon className="w-6 h-6 text-black" />
-                        </div>
-                      </div>
-                      <div className="flex-1">
-                        <h4 className="text-2xl md:text-3xl font-bold text-black mb-2">
-                          Step {step.number}: {step.title}
-                        </h4>
-                        <p className="text-base md:text-lg text-black leading-relaxed mb-4">
-                          {step.description}
-                        </p>
-                      </div>
+                <div key={step.step} className="relative flex h-full flex-col gap-4 rounded-2xl border-3 border-black bg-white p-6 shadow-brutal">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2 text-xs font-black uppercase tracking-[0.14em] text-black/70">
+                      <Icon className="h-4 w-4" />
+                      Step {step.step}
                     </div>
-                    
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3 ml-8">
-                      {step.details.map((detail, idx) => (
-                        <div key={idx} className="flex items-start gap-2">
-                          <Check className="w-5 h-5 text-black flex-shrink-0 mt-0.5" />
-                          <span className="text-sm md:text-base text-black">{detail}</span>
-                        </div>
-                      ))}
-                    </div>
+                    <span className="text-lg font-black text-black/40">{step.step}</span>
+                  </div>
+                  <h3 className="text-xl font-black">{step.title}</h3>
+                  <p className="text-sm leading-relaxed text-gray-900">{step.summary}</p>
+                  <div className="space-y-2">
+                    {step.bullets.map((item) => (
+                      <div key={item} className="flex items-start gap-2">
+                        <Check className="mt-0.5 h-4 w-4 text-black" />
+                        <span className="text-sm text-gray-900">{item}</span>
+                      </div>
+                    ))}
                   </div>
                 </div>
               );
@@ -171,46 +177,40 @@ export default function HowItWorksPage() {
         </div>
       </section>
 
-      {/* Phase B: The Retrieval */}
-      <section className="py-12 md:py-20 px-4 bg-heirlock-pink border-b-4 border-black">
-        <div className="container mx-auto max-w-5xl">
-          <div className="mb-12">
-            <h2 className="text-5xl md:text-6xl font-black text-black mb-2">Phase B</h2>
-            <h3 className="text-3xl md:text-4xl font-bold text-black border-b-4 border-black pb-4">
-              The Retrieval (The Public)
-            </h3>
+      <section className="border-b-4 border-black bg-heirlock-pink px-6 py-14">
+        <div className="mx-auto max-w-6xl space-y-6">
+          <div className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
+            <div>
+              <p className="text-xs font-black uppercase tracking-[0.18em] text-black/70">Phase B</p>
+              <h2 className="text-3xl md:text-4xl font-black">Open with proofs</h2>
+              <p className="text-sm md:text-base text-gray-900">Public verification and unlock without admins.</p>
+            </div>
+            <div className="rounded-full border-2 border-black bg-white px-4 py-2 text-xs font-black uppercase tracking-[0.14em] shadow-brutal">
+              Observable by anyone
+            </div>
           </div>
 
-          <div className="space-y-6">
-            {retrievalSteps.map((step, index) => {
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+            {openFlow.map((step) => {
               const Icon = step.icon;
               return (
-                <div key={index} className="border-4 border-black bg-white shadow-brutal hover:shadow-brutal-lg transition-all">
-                  <div className="p-8">
-                    <div className="flex items-start gap-6 mb-6">
-                      <div className="flex-shrink-0">
-                        <div className="flex items-center justify-center w-12 h-12 bg-heirlock-green border-4 border-black shadow-brutal">
-                          <Icon className="w-6 h-6 text-black" />
-                        </div>
-                      </div>
-                      <div className="flex-1">
-                        <h4 className="text-2xl md:text-3xl font-bold text-black mb-2">
-                          Step {step.number}: {step.title}
-                        </h4>
-                        <p className="text-base md:text-lg text-black leading-relaxed mb-4">
-                          {step.description}
-                        </p>
-                      </div>
+                <div key={step.step} className="relative flex h-full flex-col gap-4 rounded-2xl border-3 border-black bg-white p-6 shadow-brutal">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2 text-xs font-black uppercase tracking-[0.14em] text-black/70">
+                      <Icon className="h-4 w-4" />
+                      Step {step.step}
                     </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3 ml-8">
-                      {step.details.map((detail, idx) => (
-                        <div key={idx} className="flex items-start gap-2">
-                          <Check className="w-5 h-5 text-black flex-shrink-0 mt-0.5" />
-                          <span className="text-sm md:text-base text-black">{detail}</span>
-                        </div>
-                      ))}
-                    </div>
+                    <span className="text-lg font-black text-black/40">{step.step}</span>
+                  </div>
+                  <h3 className="text-xl font-black">{step.title}</h3>
+                  <p className="text-sm leading-relaxed text-gray-900">{step.summary}</p>
+                  <div className="space-y-2">
+                    {step.bullets.map((item) => (
+                      <div key={item} className="flex items-start gap-2">
+                        <Check className="mt-0.5 h-4 w-4 text-black" />
+                        <span className="text-sm text-gray-900">{item}</span>
+                      </div>
+                    ))}
                   </div>
                 </div>
               );
@@ -219,187 +219,168 @@ export default function HowItWorksPage() {
         </div>
       </section>
 
-      {/* The Smart Contract Logic */}
-      <section className="py-12 md:py-20 px-4 bg-cream border-b-4 border-black">
-        <div className="container mx-auto max-w-5xl">
-          <div className="mb-12">
-            <h2 className="text-5xl md:text-6xl font-black text-black mb-4 border-b-4 border-black pb-4">
-              The Smart Contract Logic
-            </h2>
-            <p className="text-lg text-black font-bold">The core function that makes everything work:</p>
+      <section className="border-b-4 border-black bg-white px-6 py-14">
+        <div className="mx-auto max-w-6xl space-y-8">
+          <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+            <div>
+              <p className="text-xs font-black uppercase tracking-[0.18em] text-black/60">Smart contract spine</p>
+              <h2 className="text-3xl md:text-4xl font-black">The unlock condition</h2>
+            </div>
+            <div className="rounded-full border-2 border-black bg-heirlock-yellow px-4 py-2 text-xs font-black uppercase tracking-[0.14em] shadow-brutal">
+              Nothing runs off chain
+            </div>
           </div>
 
-          <div className="border-4 border-black bg-black p-8 shadow-brutal">
-            <code className="text-heirlock-yellow font-mono text-base leading-relaxed block">
+          <div className="rounded-2xl border-4 border-black bg-black p-6 shadow-brutal">
+            <code className="block font-mono text-sm text-heirlock-yellow leading-relaxed whitespace-pre">
 {`function unlockVault() public view returns (bytes32) {
-    require(
-        block.timestamp >= unlockTime,
-        "VAULT_LOCKED: Cannot access before unlock time"
-    );
+    require(block.timestamp >= unlockTime,
+        "VAULT_LOCKED: wait for unlock time");
     return aesKey;
 }`}
             </code>
           </div>
 
-          <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="border-4 border-black bg-white p-6 shadow-brutal">
-              <h4 className="text-xl font-bold text-black mb-3">What This Means</h4>
-              <p className="text-black leading-relaxed">
-                The blockchain checks the current time. If it hasn't reached the unlock time yet, the function reverts (fails) and refuses to return the key. If the time has passed, it returns the encryption key.
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <div className="rounded-2xl border-3 border-black bg-cream p-5 shadow-brutal">
+              <h3 className="text-lg font-black mb-2">What it enforces</h3>
+              <p className="text-sm leading-relaxed text-gray-900">
+                The contract rejects any request before the unlock time and simply returns the key once the block clock crosses the policy. The rule is small on purpose so it is easy to audit.
               </p>
             </div>
-            <div className="border-4 border-black bg-heirlock-yellow p-6 shadow-brutal">
-              <h4 className="text-xl font-bold text-black mb-3">Why It's Unbreakable</h4>
-              <p className="text-black leading-relaxed">
-                No amount of hacking or bribery can change `block.timestamp`. It's validated by 1000+ independent nodes worldwide. No single entity controls the time.
+            <div className="rounded-2xl border-3 border-black bg-heirlock-green p-5 shadow-brutal">
+              <h3 className="text-lg font-black mb-2">Why it holds up</h3>
+              <p className="text-sm leading-relaxed text-gray-900">
+                Block timestamps are agreed by independent validators. There is no secret admin clock and no override function. If the chain does not say ready, the vault stays closed.
               </p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Security Guarantees */}
-      <section className="py-12 md:py-20 px-4 bg-heirlock-yellow border-b-4 border-black">
-        <div className="container mx-auto max-w-5xl">
-          <h2 className="text-5xl md:text-6xl font-black text-black mb-4 border-b-4 border-black pb-4">
-            Security Guarantees
-          </h2>
-          <p className="text-lg text-black font-bold mb-12">The cryptographic assurances that make TALA unbreakable:</p>
+      <section className="border-b-4 border-black bg-heirlock-yellow px-6 py-14">
+        <div className="mx-auto max-w-6xl space-y-6">
+          <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+            <div>
+              <p className="text-xs font-black uppercase tracking-[0.18em] text-black/70">Security posture</p>
+              <h2 className="text-3xl md:text-4xl font-black">Assurances you can check</h2>
+            </div>
+            <div className="rounded-full border-2 border-black bg-white px-4 py-2 text-xs font-black uppercase tracking-[0.14em] shadow-brutal">
+              Proof over promises
+            </div>
+          </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {securityGuarantees.map((guarantee, idx) => {
-              const Icon = guarantee.icon;
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+            {assurances.map((item) => {
+              const Icon = item.icon;
               return (
-                <div key={idx} className="border-4 border-black bg-white p-8 shadow-brutal hover:shadow-brutal-lg transition-all">
-                  <Icon className="w-10 h-10 text-black mb-4" />
-                  <h3 className="text-xl font-bold text-black mb-3">{guarantee.title}</h3>
-                  <p className="text-black leading-relaxed">{guarantee.description}</p>
+                <div key={item.title} className="flex h-full flex-col gap-3 rounded-2xl border-3 border-black bg-white p-6 shadow-brutal">
+                  <Icon className="h-8 w-8" />
+                  <h3 className="text-lg font-black">{item.title}</h3>
+                  <p className="text-sm leading-relaxed text-gray-900">{item.copy}</p>
                 </div>
               );
             })}
           </div>
 
-          <div className="mt-8 border-4 border-black bg-black p-8 shadow-brutal">
-            <h3 className="text-2xl font-bold text-heirlock-yellow mb-4">The Bottom Line</h3>
-            <p className="text-white text-lg leading-relaxed">
-              Once a file is locked in TALA, there is <span className="text-heirlock-yellow font-bold">no mechanism</span> on Earth to unlock it before the scheduled time. Not hacking. Not bribery. Not executive orders. Only mathematics.
+          <div className="rounded-2xl border-4 border-black bg-black p-6 shadow-brutal">
+            <h3 className="text-xl font-black text-heirlock-yellow mb-3">The bottom line</h3>
+            <p className="text-sm md:text-base leading-relaxed text-white">
+              Once sealed inside TALA, a vault will not open early. There is no admin door to knock on, no secret support script to run. Time and math decide the moment.
             </p>
           </div>
         </div>
       </section>
 
-      {/* Audit Trail */}
-      <section className="py-12 md:py-20 px-4 bg-heirlock-green border-b-4 border-black">
-        <div className="container mx-auto max-w-5xl">
-          <h2 className="text-5xl md:text-6xl font-black text-black mb-4 border-b-4 border-black pb-4">
-            Immutable Audit Trail
-          </h2>
-          <div className="border-4 border-black bg-white p-8 shadow-brutal">
-            <p className="text-lg text-black leading-relaxed mb-6">
-              Every interaction—Upload, Lock, Unlock, Emergency Void—is recorded as a permanent transaction on the Polygon network. This creates an immutable, public audit trail that proves exactly who did what and when.
+      <section className="border-b-4 border-black bg-heirlock-green px-6 py-14">
+        <div className="mx-auto max-w-6xl space-y-6">
+          <h2 className="text-3xl md:text-4xl font-black">Immutable audit log</h2>
+          <div className="rounded-2xl border-4 border-black bg-white p-6 shadow-brutal space-y-4">
+            <p className="text-base leading-relaxed text-gray-900">
+              Every action lives on Polygon as a public record. Anyone can replay who uploaded, who queried, and when a vault opened. That history cannot be erased.
             </p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="border-2 border-black p-4">
-                <h4 className="font-bold text-black mb-2">Event: Vault Created</h4>
-                <p className="text-sm text-gray-700">Admin uploads file → Transaction Hash proves upload time and CID</p>
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+              <div className="rounded-xl border-2 border-black p-4">
+                <h4 className="font-black text-black mb-1">Vault created</h4>
+                <p className="text-sm text-gray-800">Upload event proves time and content ID.</p>
               </div>
-              <div className="border-2 border-black p-4">
-                <h4 className="font-bold text-black mb-2">Event: Key Locked</h4>
-                <p className="text-sm text-gray-700">Smart Contract locks AES key → Unlock time is set in stone on-chain</p>
+              <div className="rounded-xl border-2 border-black p-4">
+                <h4 className="font-black text-black mb-1">Key sealed</h4>
+                <p className="text-sm text-gray-800">Contract event stores the unlock policy.</p>
               </div>
-              <div className="border-2 border-black p-4">
-                <h4 className="font-bold text-black mb-2">Event: Unlock Query</h4>
-                <p className="text-sm text-gray-700">Student clicks "Unlock" → Every unlock is timestamped on-chain</p>
+              <div className="rounded-xl border-2 border-black p-4">
+                <h4 className="font-black text-black mb-1">Unlock query</h4>
+                <p className="text-sm text-gray-800">Read events show when users checked readiness.</p>
               </div>
-              <div className="border-2 border-black p-4">
-                <h4 className="font-bold text-black mb-2">Event: Emergency Void</h4>
-                <p className="text-sm text-gray-700">Admin triggers cancellation → Key destroyed on blockchain (permanent record)</p>
+              <div className="rounded-xl border-2 border-black p-4">
+                <h4 className="font-black text-black mb-1">Void event</h4>
+                <p className="text-sm text-gray-800">Emergency void proves a key was destroyed.</p>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Common Questions */}
-      <section className="py-12 md:py-20 px-4 bg-cream border-b-4 border-black">
-        <div className="container mx-auto max-w-5xl">
-          <h2 className="text-5xl md:text-6xl font-black text-black mb-12 border-b-4 border-black pb-4">
-            Common Questions
-          </h2>
-
-          <div className="space-y-6">
-            <div className="border-4 border-black bg-white p-6 shadow-brutal">
-              <div className="flex items-start gap-4 mb-4">
-                <AlertCircle className="w-6 h-6 text-black flex-shrink-0 mt-1" />
-                <h3 className="text-xl font-bold text-black">Can an admin leak the key before the unlock time?</h3>
+      <section className="border-b-4 border-black bg-white px-6 py-14">
+        <div className="mx-auto max-w-6xl space-y-8">
+          <h2 className="text-3xl md:text-4xl font-black">Common questions</h2>
+          <div className="space-y-4">
+            {[
+              {
+                q: "Can an admin leak the key early?",
+                a: "No. The interface does not keep the key. After encryption, it lives only inside the contract until the unlock moment.",
+              },
+              {
+                q: "What if the chain is attacked?",
+                a: "Polygon time is agreed by many validators. To fake time an attacker would have to capture the majority at once.",
+              },
+              {
+                q: "What if internet is weak on exam day?",
+                a: "Students pre download the encrypted file. On the day they only fetch a tiny key, even slow networks handle it.",
+              },
+              {
+                q: "Can someone swap the encrypted file?",
+                a: "If a single bit changes, the CID changes. Anyone can compare the published CID to catch tampering.",
+              },
+              {
+                q: "What if we need to cancel?",
+                a: "Trigger a void. The key is destroyed on chain and the file becomes impossible to open. The void itself is a recorded event.",
+              },
+            ].map((item) => (
+              <div key={item.q} className="rounded-2xl border-3 border-black bg-cream p-5 shadow-brutal">
+                <div className="flex items-start gap-3">
+                  <AlertCircle className="mt-1 h-5 w-5" />
+                  <div className="space-y-2">
+                    <h3 className="text-lg font-black">{item.q}</h3>
+                    <p className="text-sm leading-relaxed text-gray-900">{item.a}</p>
+                  </div>
+                </div>
               </div>
-              <p className="text-black ml-10 leading-relaxed">
-                No. The admin interface deliberately does NOT store the key locally. After encryption, the key exists in two places only: (1) locked in the smart contract, (2) nowhere else. Even the admin cannot retrieve it early.
-              </p>
-            </div>
-
-            <div className="border-4 border-black bg-white p-6 shadow-brutal">
-              <div className="flex items-start gap-4 mb-4">
-                <AlertCircle className="w-6 h-6 text-black flex-shrink-0 mt-1" />
-                <h3 className="text-xl font-bold text-black">What if the blockchain gets hacked?</h3>
-              </div>
-              <p className="text-black ml-10 leading-relaxed">
-                The blockchain (Polygon) has 1000+ validators running independently worldwide. Hacking it would require simultaneously compromising the majority of these independent servers—impossible. No single entity controls the time.
-              </p>
-            </div>
-
-            <div className="border-4 border-black bg-white p-6 shadow-brutal">
-              <div className="flex items-start gap-4 mb-4">
-                <AlertCircle className="w-6 h-6 text-black flex-shrink-0 mt-1" />
-                <h3 className="text-xl font-bold text-black">What if internet goes down on exam day?</h3>
-              </div>
-              <p className="text-black ml-10 leading-relaxed">
-                Students pre-download the encrypted file (hours in advance). On exam day, they only need 1 second of internet to fetch the 1kb AES key. Even 2G internet suffices. Decryption happens offline in their browser.
-              </p>
-            </div>
-
-            <div className="border-4 border-black bg-white p-6 shadow-brutal">
-              <div className="flex items-start gap-4 mb-4">
-                <AlertCircle className="w-6 h-6 text-black flex-shrink-0 mt-1" />
-                <h3 className="text-xl font-bold text-black">Can someone tamper with the encrypted file on IPFS?</h3>
-              </div>
-              <p className="text-black ml-10 leading-relaxed">
-                No. The file's IPFS hash is immutable. If anyone modifies even 1 bit, the hash changes completely. Students can verify the file matches the official hash announced beforehand. Tampering = immediately detectable.
-              </p>
-            </div>
-
-            <div className="border-4 border-black bg-white p-6 shadow-brutal">
-              <div className="flex items-start gap-4 mb-4">
-                <AlertCircle className="w-6 h-6 text-black flex-shrink-0 mt-1" />
-                <h3 className="text-xl font-bold text-black">What if the exam needs to be cancelled?</h3>
-              </div>
-              <p className="text-black ml-10 leading-relaxed">
-                The admin can trigger the "Emergency Void" function, which permanently destroys the encryption key on the blockchain. The file becomes absolutely unopenable by anyone, forever. This action is recorded on-chain as permanent proof.
-              </p>
-            </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-12 md:py-20 px-4 bg-heirlock-blue border-t-4 border-black">
-        <div className="container mx-auto max-w-5xl text-center">
-          <h2 className="text-4xl md:text-5xl font-black text-black mb-6">
-            Ready to Implement?
-          </h2>
-          <p className="text-lg text-black mb-8 font-bold max-w-2xl mx-auto">
-            Now that you understand the operational logic, explore the technical documentation or deploy TALA for your institution.
+      <section className="bg-heirlock-blue px-6 py-16 border-t-4 border-black">
+        <div className="mx-auto max-w-6xl text-center space-y-6">
+          <h2 className="text-3xl md:text-4xl font-black">Ready to implement</h2>
+          <p className="text-sm md:text-base font-semibold text-black/80 max-w-3xl mx-auto">
+            You now have the full flow. Move to the docs for contract details or start a vault to see it live.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/documentation">
-              <button className="px-8 py-4 bg-black text-white font-bold border-4 border-black shadow-brutal hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all inline-flex items-center gap-2">
-                View Docs <ChevronRight className="w-5 h-5" />
-              </button>
+          <div className="flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
+            <Link
+              href="/documentation"
+              className="inline-flex items-center justify-center gap-2 rounded-xl border-3 border-black bg-black px-6 py-3 font-black text-white shadow-brutal transition-transform hover:-translate-y-0.5"
+            >
+              View docs
+              <ChevronRight className="h-4 w-4" />
             </Link>
-            <Link href="/create-vault">
-              <button className="px-8 py-4 bg-white text-black font-bold border-4 border-black shadow-brutal hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all inline-flex items-center gap-2">
-                Create Vault <ChevronRight className="w-5 h-5" />
-              </button>
+            <Link
+              href="/create-vault"
+              className="inline-flex items-center justify-center gap-2 rounded-xl border-3 border-black bg-white px-6 py-3 font-black text-black shadow-brutal transition-transform hover:-translate-y-0.5"
+            >
+              Deploy TALA
+              <ChevronRight className="h-4 w-4" />
             </Link>
           </div>
         </div>
@@ -407,4 +388,3 @@ export default function HowItWorksPage() {
     </main>
   );
 }
-
