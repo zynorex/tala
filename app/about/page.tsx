@@ -1,5 +1,23 @@
 import type { Metadata } from "next";
-import { Lock, Shield, Code, Zap, Globe, Briefcase, FileText, AlertCircle, CheckCircle, BookOpen, Gavel, Eye, ChevronRight } from "lucide-react";
+import {
+  ShieldCheck,
+  Lock,
+  KeyRound,
+  Clock3,
+  SignalHigh,
+  Eye,
+  Sparkles,
+  Globe2,
+  LineChart,
+  Target,
+  BookOpen,
+  Briefcase,
+  Gavel,
+  ChevronRight,
+  ArrowRight,
+  ShieldHalf,
+  Layers3,
+} from "lucide-react";
 import Link from "next/link";
 
 export const metadata: Metadata = {
@@ -30,343 +48,355 @@ export const metadata: Metadata = {
 };
 
 export default function About() {
-  const coreProblems = [
+  const highlights = [
     {
-      icon: AlertCircle,
-      title: "Centralized Human Access",
-      description: "Every exam paper, government tender, and sealed evidence sits on a server protected by passwords and policies. All of these depend on human integrity."
+      title: "Mathematics replaces discretion",
+      description: "Smart contracts gate every unlock. No override buttons. No admin backdoors.",
+      icon: ShieldCheck,
     },
     {
-      icon: AlertCircle,
-      title: "If a Human CAN, They WILL",
-      description: "Whether through greed, coercion, or negligence, humans will eventually compromise systems they have access to. There is no policy that can prevent this."
-    },
-    {
-      icon: AlertCircle,
-      title: "No Cryptographic Guarantee",
-      description: "Until now, there has been no practical mechanism to mathematically guarantee that a file remains secret until a specific moment in time."
-    }
-  ];
-
-  const hybridArchitecture = [
-    {
-      title: "The Vault (IPFS)",
+      title: "Client-side secrecy",
+      description: "AES-256 encryption runs on your device. Plaintext never touches our servers.",
       icon: Lock,
-      description: "Decentralized, immutable storage for the encrypted payload (Exam papers, Sealed Bids, Legal Wills). Files live on a distributed network, not on our servers. We cannot access them, and neither can hackers."
     },
     {
-      title: "The Key (AES-256)",
-      icon: Code,
-      description: "Client-side encryption using military-grade standards. The raw data never touches any server. It is encrypted on your device before upload. Only the ciphertext touches the internet."
+      title: "Time is the root of trust",
+      description: "Blockchain time-locks enforce the exact moment a vault opens—auditable forever.",
+      icon: Clock3,
+    },
+  ];
+
+  const proofPoints = [
+    { label: "Admin overrides", value: "0", caption: "Design forbids early access" },
+    { label: "Latency to unlock", value: "<12s", caption: "Bounded by block finality" },
+    { label: "Surface area", value: "Minimal", caption: "Keys never sit on servers" },
+    { label: "Audit trail", value: "On-chain", caption: "Every unlock is provable" },
+  ];
+
+  const trustStack = [
+    {
+      title: "Edge Encryption",
+      description: "Keys generated per vault, derived and used locally, shredded after encrypting.",
+      icon: KeyRound,
+      tone: "from-heirlock-green/80 via-white to-heirlock-blue/70",
     },
     {
-      title: "The Lock (Smart Contract)",
-      icon: Shield,
-      description: "A Polygon Smart Contract enforces a strict mathematical time-lock. If Block Time < Unlock Time, the decryption key is cryptographically impossible to retrieve. Math, not trust."
-    }
+      title: "Immutable Storage",
+      description: "Ciphertext stored on IPFS through enterprise gateways; hashes guarantee integrity.",
+      icon: Globe2,
+      tone: "from-heirlock-blue/70 via-white to-heirlock-yellow/80",
+    },
+    {
+      title: "Time-Lock Contract",
+      description: "Polygon smart contracts release keys only when block.timestamp meets policy.",
+      icon: ShieldHalf,
+      tone: "from-heirlock-yellow/80 via-white to-heirlock-pink/70",
+    },
   ];
 
-  const techStack = [
-    { 
-      name: "Next.js 14", 
-      description: "App Router & Server Actions for modern fullstack development",
-      icon: Code
-    },
-    { 
-      name: "Polygon Amoy", 
-      description: "EVM Security & Transparency. Cost-efficient, production-grade blockchain",
-      icon: Shield
-    },
-    { 
-      name: "RainbowKit + Wagmi", 
-      description: "Wallet-Based Identity. No passwords. Just your blockchain address.",
-      icon: Lock
-    },
-    { 
-      name: "Crypto-JS", 
-      description: "AES-256 Standards. Same encryption used by Military and Banks.",
-      icon: Zap
-    },
-    { 
-      name: "Pinata", 
-      description: "Enterprise IPFS gateway. Immutable, distributed storage.",
-      icon: Globe
-    }
-  ];
-
-  const threePillars = [
+  const pillars = [
     {
       title: "Education",
-      subtitle: "Stopping Leaks in NEET/UGC Exams",
-      description: "Exam papers are the heartbeat of fair assessment. TALA ensures that papers reach students at the exact moment intended. No premature access. No leaks. Just trust in mathematics.",
+      subtitle: "Leak-proof exam delivery",
+      description: "Universities and boards release papers at the same second for millions of students, without trusting intermediaries.",
       icon: BookOpen,
-      color: "bg-heirlock-yellow"
+      accent: "bg-heirlock-green",
     },
     {
       title: "Governance",
-      subtitle: "Preventing Corruption in Tenders",
-      description: "Government bids for roads, bridges, schools—all of these are sealed in traditional processes that depend on human honesty. TALA seals tenders cryptographically until the official opening ceremony.",
+      subtitle: "Sealed tenders that stay sealed",
+      description: "Bids stay cryptographically locked until the opening ceremony—no preferential peeks.",
       icon: Briefcase,
-      color: "bg-heirlock-pink"
+      accent: "bg-heirlock-yellow",
     },
     {
       title: "Justice",
-      subtitle: "Securing Whistleblower Evidence & Digital Wills",
-      description: "Sensitive legal documents, whistleblower evidence, and testamentary records need absolute confidentiality until the right moment. TALA guarantees cryptographic permanence.",
+      subtitle: "Evidence that cannot be coerced",
+      description: "Whistleblower dossiers and wills stay inaccessible until the lawful moment, immune to pressure or compromise.",
       icon: Gavel,
-      color: "bg-heirlock-green"
-    }
+      accent: "bg-heirlock-pink",
+    },
+  ];
+
+  const differentiators = [
+    {
+      title: "Zero-knowledge handling",
+      description: "We never see plaintext or keys. The protocol is architected to keep us blind by default.",
+      icon: Eye,
+    },
+    {
+      title: "Observable security",
+      description: "Unlock proofs are on-chain and queryable. Trust is inspectable, not implied.",
+      icon: Target,
+    },
+    {
+      title: "Operational resilience",
+      description: "IPFS redundancy, wallet-based auth, and multi-region relays keep unlocks available when you need them.",
+      icon: SignalHigh,
+    },
+    {
+      title: "Enterprise governance",
+      description: "Role-based flows, audit-grade logs, and compliance-ready reports for regulators and boards.",
+      icon: LineChart,
+    },
+  ];
+
+  const process = [
+    {
+      title: "Model the risk",
+      body: "Map who could access the asset today and when they should not. TALA locks those windows mathematically.",
+      icon: Target,
+    },
+    {
+      title: "Encrypt at source",
+      body: "Files are encrypted locally. Only ciphertext is uploaded to the vault and pinned across IPFS.",
+      icon: Layers3,
+    },
+    {
+      title: "Set the unlock moment",
+      body: "Smart contracts enforce the exact block-time the key can be claimed. No manual approvals exist.",
+      icon: Clock3,
+    },
+    {
+      title: "Deliver with proofs",
+      body: "Recipients verify the contract state and download. Every action leaves an auditable trail.",
+      icon: ShieldCheck,
+    },
   ];
 
   return (
-    <main className="min-h-screen bg-cream">
-      {/* Hero / Identity Section */}
-      <section className="bg-heirlock-green py-12 md:py-20 px-4 border-b-4 border-black">
-        <div className="container mx-auto max-w-5xl">
-          <div className="space-y-6 md:space-y-8">
-            <div>
-              <h1 className="text-6xl md:text-8xl font-black text-black mb-4">TALA</h1>
-              <div className="h-2 w-24 bg-black"></div>
+    <main className="min-h-screen bg-cream text-black">
+      <section className="relative overflow-hidden px-6 py-16 md:py-24">
+        <div className="absolute inset-0 bg-gradient-to-br from-heirlock-green via-white to-heirlock-blue opacity-80" />
+        <div className="absolute -right-24 -top-24 h-64 w-64 rounded-full bg-black/5 blur-3xl" />
+        <div className="absolute -left-16 bottom-10 h-52 w-52 rounded-full bg-heirlock-pink/30 blur-2xl" />
+
+        <div className="relative mx-auto flex max-w-6xl flex-col gap-10 md:flex-row md:items-center">
+          <div className="space-y-6 md:w-3/5">
+            <div className="inline-flex items-center gap-2 rounded-full border-2 border-black bg-white px-4 py-2 shadow-brutal">
+              <Sparkles className="h-4 w-4" />
+              <span className="text-xs font-black uppercase tracking-[0.2em]">About TALA</span>
             </div>
-            <h2 className="text-3xl md:text-5xl font-bold text-black leading-tight">
-              Tamper-proof Automated Locking Algorithm.
-            </h2>
-            <div className="border-4 border-black bg-black p-6 inline-block shadow-brutal">
-              <p className="text-2xl md:text-3xl font-black text-heirlock-green">
-                "Trust is Code."
-              </p>
-            </div>
-            <p className="text-lg md:text-2xl font-bold text-black leading-relaxed max-w-3xl">
-              To replace fallible human trust with cryptographic truth across India's Education, Governance, and Legal sectors.
+            <h1 className="text-4xl leading-tight font-black md:text-6xl">
+              Trust Automation Layer for India’s high-stakes secrets.
+            </h1>
+            <p className="max-w-2xl text-lg font-semibold md:text-xl">
+              TALA is a cryptographic time-lock protocol that removes human discretion from the moment a file can be opened. Exams, tenders, evidence—released exactly when the blockchain says so.
             </p>
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+              <Link href="/create-vault" className="inline-flex w-full sm:w-auto justify-center rounded-xl border-3 border-black bg-black px-6 py-3 text-white font-black shadow-brutal transition-transform hover:-translate-y-0.5">
+                Create a vault
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
+              <Link href="/documentation" className="inline-flex w-full sm:w-auto justify-center rounded-xl border-3 border-black bg-white px-6 py-3 font-black shadow-brutal transition-transform hover:-translate-y-0.5">
+                View architecture
+                <ChevronRight className="ml-2 h-4 w-4" />
+              </Link>
+            </div>
+            <div className="grid grid-cols-2 gap-4 md:max-w-lg">
+              {proofPoints.map((item) => (
+                <div key={item.label} className="rounded-xl border-3 border-black bg-white/80 p-4 shadow-brutal">
+                  <div className="text-2xl font-black">{item.value}</div>
+                  <div className="text-sm font-semibold text-gray-800">{item.label}</div>
+                  <p className="mt-2 text-xs text-gray-700">{item.caption}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="md:w-2/5">
+            <div className="grid gap-4">
+              {highlights.map((item, idx) => {
+                const Icon = item.icon;
+                return (
+                  <div
+                    key={item.title}
+                    className="relative overflow-hidden rounded-2xl border-3 border-black bg-white p-6 shadow-brutal"
+                  >
+                    <div className="absolute right-4 top-4 text-black/10 text-6xl font-black leading-none">0{idx + 1}</div>
+                    <div className="mb-4 inline-flex items-center rounded-full bg-black text-white px-3 py-1 text-xs font-black">
+                      <Icon className="mr-2 h-4 w-4" />
+                      Signal
+                    </div>
+                    <h3 className="text-xl font-black mb-2">{item.title}</h3>
+                    <p className="text-sm text-gray-800 leading-relaxed">{item.description}</p>
+                  </div>
+                );
+              })}
+            </div>
           </div>
         </div>
       </section>
 
-      {/* The Core Problem Section */}
-      <section className="py-12 md:py-20 px-4 bg-cream">
-        <div className="container mx-auto max-w-5xl">
-          <div className="mb-12">
-            <h2 className="text-5xl md:text-6xl font-black text-black mb-4">
-              The Human Factor
-            </h2>
-            <p className="text-lg text-black font-bold leading-relaxed">
-              Paper leaks, tender rigging, and evidence tampering. What do they have in common?
+      <section className="border-y-4 border-black bg-white px-6 py-14">
+        <div className="mx-auto flex max-w-6xl flex-col gap-10 md:flex-row md:items-center">
+          <div className="md:w-1/2 space-y-4">
+            <h2 className="text-3xl md:text-4xl font-black">Why we exist</h2>
+            <p className="text-lg font-semibold text-gray-900">
+              In every high-stakes workflow there is a moment where someone could open the file too early. TALA removes that possibility with math, not policy.
             </p>
+            <div className="flex flex-wrap gap-3">
+              <span className="rounded-full border-2 border-black bg-heirlock-yellow px-4 py-2 text-xs font-black uppercase tracking-[0.15em]">No backdoors</span>
+              <span className="rounded-full border-2 border-black bg-heirlock-green px-4 py-2 text-xs font-black uppercase tracking-[0.15em]">Audit-first</span>
+              <span className="rounded-full border-2 border-black bg-heirlock-pink px-4 py-2 text-xs font-black uppercase tracking-[0.15em]">Time-bound</span>
+            </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-            {coreProblems.map((problem, idx) => {
-              const Icon = problem.icon;
+          <div className="md:w-1/2 grid grid-cols-1 gap-4 sm:grid-cols-2">
+            {differentiators.map((item) => {
+              const Icon = item.icon;
               return (
-                <div
-                  key={idx}
-                  className="border-4 border-black bg-white p-6 shadow-brutal hover:shadow-brutal-lg transition-all"
-                >
-                  <Icon className="w-10 h-10 text-black mb-4" />
-                  <h3 className="text-xl font-bold text-black mb-3">{problem.title}</h3>
-                  <p className="text-black leading-relaxed text-base">{problem.description}</p>
+                <div key={item.title} className="rounded-xl border-3 border-black bg-cream p-4 shadow-brutal">
+                  <Icon className="h-6 w-6" />
+                  <h3 className="mt-3 text-lg font-black">{item.title}</h3>
+                  <p className="mt-2 text-sm text-gray-800 leading-relaxed">{item.description}</p>
                 </div>
               );
             })}
           </div>
-
-          <div className="border-4 border-black bg-black p-8 md:p-10 shadow-brutal">
-            <p className="text-white text-lg md:text-xl font-bold leading-relaxed">
-              <span className="text-heirlock-yellow">"If a human CAN open the file early, they eventually WILL."</span> Whether through greed, coercion, or negligence. TALA removes the human option entirely. No admin, no official, no hacker can access the data before the blockchain timestamp permits it.
-            </p>
-          </div>
         </div>
       </section>
 
-      {/* The Solution Section */}
-      <section className="py-12 md:py-20 px-4 bg-heirlock-blue border-y-4 border-black">
-        <div className="container mx-auto max-w-5xl">
-          <div className="mb-12">
-            <h2 className="text-5xl md:text-6xl font-black text-black mb-4">
-              The Solution: Hybrid Architecture
-            </h2>
-            <p className="text-lg text-black font-bold">Three layers. One unbreakable chain.</p>
+      <section className="bg-cream px-6 py-16">
+        <div className="mx-auto max-w-6xl">
+          <div className="mb-10 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+            <div>
+              <h2 className="text-3xl md:text-4xl font-black">The trust stack</h2>
+              <p className="text-sm font-semibold text-gray-800">Three layers lock every vault: edge encryption, immutable storage, on-chain time-lock.</p>
+            </div>
+            <Link href="/documentation" className="inline-flex items-center gap-2 rounded-full border-2 border-black bg-black px-4 py-2 text-xs font-black uppercase tracking-[0.15em] text-white shadow-brutal">
+              Deep dive
+              <ArrowRight className="h-4 w-4" />
+            </Link>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-            {hybridArchitecture.map((layer, idx) => {
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+            {trustStack.map((layer) => {
               const Icon = layer.icon;
               return (
                 <div
-                  key={idx}
-                  className="border-4 border-black bg-white p-8 shadow-brutal hover:shadow-brutal-lg transition-all"
+                  key={layer.title}
+                  className="relative overflow-hidden rounded-2xl border-3 border-black bg-white p-6 shadow-brutal"
                 >
-                  <div className="bg-heirlock-blue border-4 border-black w-14 h-14 flex items-center justify-center mb-4 shadow-brutal">
-                    <Icon className="w-8 h-8 text-black" />
+                  <div className={`absolute inset-0 bg-gradient-to-br ${layer.tone} opacity-70`} />
+                  <div className="relative space-y-3">
+                    <div className="flex items-center gap-2">
+                      <div className="rounded-full bg-black p-2 text-white">
+                        <Icon className="h-5 w-5" />
+                      </div>
+                      <span className="text-xs font-black uppercase tracking-[0.12em] text-black/70">Layer</span>
+                    </div>
+                    <h3 className="text-2xl font-black">{layer.title}</h3>
+                    <p className="text-sm leading-relaxed text-gray-900">{layer.description}</p>
                   </div>
-                  <h3 className="text-2xl font-bold text-black mb-3">{layer.title}</h3>
-                  <p className="text-black leading-relaxed">{layer.description}</p>
                 </div>
               );
             })}
           </div>
+        </div>
+      </section>
 
-          <div className="border-4 border-black bg-white p-8 md:p-10 shadow-brutal">
-            <h3 className="text-3xl font-black text-black mb-8">How It Works (The Math)</h3>
-            <div className="space-y-6">
-              <div className="flex gap-4 items-start">
-                <div className="bg-heirlock-blue border-4 border-black w-10 h-10 flex items-center justify-center flex-shrink-0 font-bold text-black shadow-brutal">
-                  1
-                </div>
-                <div>
-                  <h4 className="text-lg font-bold text-black mb-1">Encrypt on Client</h4>
-                  <p className="text-black">User encrypts file with AES-256 on their device. The raw plaintext never leaves the client.</p>
-                </div>
-              </div>
-
-              <div className="flex gap-4 items-start">
-                <div className="bg-heirlock-blue border-4 border-black w-10 h-10 flex items-center justify-center flex-shrink-0 font-bold text-black shadow-brutal">
-                  2
-                </div>
-                <div>
-                  <h4 className="text-lg font-bold text-black mb-1">Store on IPFS</h4>
-                  <p className="text-black">Encrypted file (ciphertext) is uploaded to IPFS. Immutable, distributed, permanent. Content hash ensures the file cannot be altered.</p>
-                </div>
-              </div>
-
-              <div className="flex gap-4 items-start">
-                <div className="bg-heirlock-blue border-4 border-black w-10 h-10 flex items-center justify-center flex-shrink-0 font-bold text-black shadow-brutal">
-                  3
-                </div>
-                <div>
-                  <h4 className="text-lg font-bold text-black mb-1">Lock in Smart Contract</h4>
-                  <p className="text-black">AES decryption key is locked in a Polygon Smart Contract. The contract enforces strict logic:</p>
-                  <div className="bg-black border-2 border-black p-4 mt-3 rounded">
-                    <code className="text-heirlock-yellow font-mono text-sm">
-                      IF block.timestamp {"<"} unlockTime {"\n"}
-                      THEN revert("Not yet") {"\n"}
-                      ELSE return(decryptionKey)
-                    </code>
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex gap-4 items-start">
-                <div className="bg-heirlock-blue border-4 border-black w-10 h-10 flex items-center justify-center flex-shrink-0 font-bold text-black shadow-brutal">
-                  4
-                </div>
-                <div>
-                  <h4 className="text-lg font-bold text-black mb-1">Auto-Unlock</h4>
-                  <p className="text-black">At exam time, the key automatically unlocks on the blockchain. Students can now decrypt and download their papers. No human approval needed.</p>
-                </div>
-              </div>
+      <section className="border-t-4 border-black bg-black px-6 py-16 text-white">
+        <div className="mx-auto max-w-6xl">
+          <div className="mb-10 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+            <div>
+              <p className="text-xs font-black uppercase tracking-[0.2em] text-heirlock-green">Sectors we secure</p>
+              <h2 className="text-3xl md:text-4xl font-black">One protocol, three missions</h2>
+            </div>
+            <div className="rounded-full border-2 border-white/30 bg-white/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.15em] text-white">
+              Designed for scale
             </div>
           </div>
-        </div>
-      </section>
 
-      {/* Tech Stack Section */}
-      <section className="py-12 md:py-20 px-4 bg-cream">
-        <div className="container mx-auto max-w-5xl">
-          <div className="mb-12">
-            <h2 className="text-5xl md:text-6xl font-black text-black mb-4">
-              Industrial-Grade Technology
-            </h2>
-            <p className="text-lg text-black font-bold">Every component chosen for production security and reliability.</p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
-            {techStack.map((tech, idx) => {
-              const Icon = tech.icon;
-              return (
-                <div key={idx} className="border-4 border-black bg-white p-6 shadow-brutal hover:shadow-brutal-lg transition-all">
-                  <div className="flex items-start gap-4">
-                    <Icon className="w-8 h-8 text-black flex-shrink-0 mt-1" />
-                    <div>
-                      <h3 className="text-xl font-bold text-black mb-2">{tech.name}</h3>
-                      <p className="text-black text-sm md:text-base">{tech.description}</p>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-
-          <div className="border-4 border-black bg-heirlock-yellow p-8 shadow-brutal">
-            <p className="text-black text-lg font-bold leading-relaxed">
-              No shortcuts. No experimental protocols. The stack that powers TALA is trusted by enterprises, audited by security firms, and battle-tested in production.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* The Vision: Three Pillars */}
-      <section className="py-12 md:py-20 px-4 bg-cream border-t-4 border-black">
-        <div className="container mx-auto max-w-5xl">
-          <div className="mb-12">
-            <h2 className="text-5xl md:text-6xl font-black text-black mb-4">
-              One Protocol, Three Pillars
-            </h2>
-            <p className="text-lg text-black font-bold">TALA is not just for exams. It's a universal solution for any moment that demands cryptographic truth.</p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {threePillars.map((pillar, idx) => {
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+            {pillars.map((pillar) => {
               const Icon = pillar.icon;
               return (
-                <div key={idx} className={`${pillar.color} border-4 border-black p-8 shadow-brutal hover:shadow-brutal-lg transition-all`}>
-                  <Icon className="w-12 h-12 text-black mb-4" />
-                  <h3 className="text-3xl font-black text-black mb-1">{pillar.title}</h3>
-                  <h4 className="text-sm font-bold text-gray-700 mb-4">{pillar.subtitle}</h4>
-                  <p className="text-black leading-relaxed text-base">{pillar.description}</p>
+                <div key={pillar.title} className="relative overflow-hidden rounded-2xl border-3 border-white bg-white/5 p-6 shadow-brutal">
+                  <div className="absolute inset-0 opacity-15" />
+                  <div className={`mb-4 inline-flex items-center gap-2 rounded-full ${pillar.accent} px-3 py-1 text-xs font-black uppercase tracking-[0.15em] border-2 border-black`}> 
+                    <Icon className="h-4 w-4" />
+                    {pillar.title}
+                  </div>
+                  <h3 className="text-2xl font-black text-white">{pillar.subtitle}</h3>
+                  <p className="mt-3 text-sm leading-relaxed text-white/90">{pillar.description}</p>
                 </div>
               );
             })}
           </div>
-
-          <div className="mt-12 border-4 border-black bg-black p-8 md:p-10 shadow-brutal">
-            <p className="text-white text-lg md:text-xl font-bold leading-relaxed">
-              <span className="text-heirlock-green">TALA is infrastructure for a world where secrets are mathematically enforced, not socially promised.</span> Where the question "Can I trust this person?" becomes "Can I verify this cryptographic proof?"
-            </p>
-          </div>
         </div>
       </section>
 
-      {/* Mission & Commitment */}
-      <section className="py-12 md:py-20 px-4 bg-heirlock-pink border-y-4 border-black">
-        <div className="container mx-auto max-w-5xl">
-          <div className="border-4 border-black bg-white p-8 md:p-12 shadow-brutal">
-            <h2 className="text-4xl md:text-5xl font-black text-black mb-6">Our Mission</h2>
-            <div className="space-y-6">
-              <p className="text-lg md:text-xl text-black leading-relaxed font-bold">
-                To replace fallible human trust with cryptographic truth across India's Education, Governance, and Legal sectors.
-              </p>
-              <p className="text-base md:text-lg text-black leading-relaxed">
-                We are building infrastructure where exam integrity is mathematically guaranteed. Where no administrator, no state official, no hacker can compromise the sanctity of the process. Where every student has equal access to fair assessment. Where every tender is sealed until the official moment. Where every piece of sensitive evidence is cryptographically protected.
-              </p>
-              <p className="text-base md:text-lg text-black leading-relaxed">
-                This is not just technology. This is a revolution in how India approaches trust, secrecy, and accountability.
-              </p>
+      <section className="bg-white px-6 py-16">
+        <div className="mx-auto max-w-6xl">
+          <div className="mb-10 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+            <div>
+              <h2 className="text-3xl md:text-4xl font-black">Proof over promises</h2>
+              <p className="text-sm font-semibold text-gray-800">Every unlock is observable. Every guarantee is measurable.</p>
+            </div>
+            <div className="rounded-xl border-3 border-black bg-heirlock-yellow px-4 py-3 text-sm font-black shadow-brutal">
+              On-chain transparency → zero discretionary access
             </div>
           </div>
+
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-4">
+            {proofPoints.map((point) => (
+              <div key={point.label} className="rounded-xl border-3 border-black bg-cream p-4 shadow-brutal">
+                <div className="text-3xl font-black leading-none">{point.value}</div>
+                <div className="text-sm font-semibold text-gray-900">{point.label}</div>
+                <p className="mt-2 text-xs text-gray-700 leading-relaxed">{point.caption}</p>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-12 md:py-20 px-4 bg-heirlock-green border-t-4 border-black">
-        <div className="container mx-auto max-w-5xl text-center">
-          <h2 className="text-4xl md:text-5xl font-black text-black mb-6">
-            Ready to Secure Your Institution?
-          </h2>
-          <p className="text-lg text-black mb-8 font-bold max-w-2xl mx-auto">
-            Join institutions that trust mathematics over humans. Deploy TALA today.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/create-vault">
-              <button className="px-8 py-4 bg-black text-white font-black border-4 border-black shadow-brutal hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all inline-flex items-center gap-2">
-                Create Free Vault <ChevronRight className="w-5 h-5" />
-              </button>
+      <section className="border-t-4 border-black bg-heirlock-blue px-6 py-16">
+        <div className="mx-auto max-w-6xl">
+          <div className="mb-10 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+            <div>
+              <p className="text-xs font-black uppercase tracking-[0.2em] text-black/70">Deployment pattern</p>
+              <h2 className="text-3xl md:text-4xl font-black text-black">How institutions ship with TALA</h2>
+            </div>
+            <Link href="/contact" className="inline-flex items-center gap-2 rounded-full border-2 border-black bg-black px-4 py-2 text-xs font-black uppercase tracking-[0.15em] text-white shadow-brutal">
+              Talk to us
+              <ArrowRight className="h-4 w-4" />
             </Link>
-            <Link href="/documentation">
-              <button className="px-8 py-4 bg-white text-black font-black border-4 border-black shadow-brutal hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all inline-flex items-center gap-2">
-                Read Documentation <ChevronRight className="w-5 h-5" />
-              </button>
+          </div>
+
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
+            {process.map((step, idx) => {
+              const Icon = step.icon;
+              return (
+                <div key={step.title} className="relative overflow-hidden rounded-2xl border-3 border-black bg-white p-5 shadow-brutal">
+                  <div className="absolute right-3 top-3 text-black/10 text-4xl font-black">0{idx + 1}</div>
+                  <div className="inline-flex items-center gap-2 rounded-full bg-black px-3 py-1 text-xs font-black uppercase tracking-[0.15em] text-white">
+                    <Icon className="h-4 w-4" />
+                    Step
+                  </div>
+                  <h3 className="mt-4 text-xl font-black text-black">{step.title}</h3>
+                  <p className="mt-2 text-sm leading-relaxed text-gray-900">{step.body}</p>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      <section className="border-t-4 border-black bg-black px-6 py-16 text-white">
+        <div className="mx-auto max-w-6xl text-center space-y-6">
+          <h2 className="text-3xl md:text-4xl font-black">Ready to anchor trust in code?</h2>
+          <p className="text-sm md:text-base font-semibold text-white/80 max-w-3xl mx-auto">
+            Deploy TALA across your institution and turn policy into cryptography. We will co-design your rollout, model your risk, and stand up verifiable unlocks without backdoors.
+          </p>
+          <div className="flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
+            <Link href="/create-vault" className="inline-flex items-center justify-center gap-2 rounded-xl border-3 border-white bg-white px-6 py-3 font-black text-black shadow-brutal transition-transform hover:-translate-y-0.5">
+              Launch a vault
+              <ChevronRight className="h-4 w-4" />
+            </Link>
+            <Link href="/contact" className="inline-flex items-center justify-center gap-2 rounded-xl border-3 border-white bg-transparent px-6 py-3 font-black text-white shadow-brutal transition-transform hover:-translate-y-0.5">
+              Speak with the team
+              <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
         </div>
