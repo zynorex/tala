@@ -6,7 +6,6 @@ import {
   Clock3,
   SignalHigh,
   Eye,
-  Sparkles,
   Globe2,
   LineChart,
   Target,
@@ -64,7 +63,7 @@ export default function About() {
     },
     {
       title: "Time is the root of trust",
-      description: "Blockchain time-locks enforce the exact moment a vault opens—auditable forever.",
+      description: "Blockchain time-locks enforce the exact moment a vault opens-auditable forever.",
       icon: Clock3,
     },
   ];
@@ -179,15 +178,14 @@ export default function About() {
 
         <div className="relative mx-auto flex max-w-6xl flex-col gap-10 md:flex-row md:items-center">
           <div className="space-y-6 md:w-3/5">
-            <div className="inline-flex items-center gap-2 rounded-full border-2 border-black bg-white px-4 py-2 shadow-brutal">
-              <Sparkles className="h-4 w-4" />
-              <span className="text-xs font-black uppercase tracking-[0.2em]">About TALA</span>
-            </div>
+            <p className="text-xs font-black uppercase tracking-[0.18em] text-black/60">
+              T.A.L.A. · Tamper-proof Automated Locking Algorithm
+            </p>
             <h1 className="text-4xl leading-tight font-black md:text-6xl">
               Trust Automation Layer for India’s high-stakes secrets.
             </h1>
             <p className="max-w-2xl text-lg font-semibold md:text-xl">
-              TALA is a cryptographic time-lock protocol that removes human discretion from the moment a file can be opened. Exams, tenders, evidence—released exactly when the blockchain says so.
+              TALA is a cryptographic time-lock protocol that removes human discretion from the moment a file can be opened. Exams, tenders, evidence-released exactly when the blockchain says so.
             </p>
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
               <Link
