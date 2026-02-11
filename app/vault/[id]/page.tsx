@@ -13,6 +13,8 @@ import { useToast } from '@/app/hooks/useToast';
 import { useFileDownload, VaultLockedError } from '@/app/hooks/useFileDownload';
 import { PasswordPromptModal } from '@/app/components/PasswordPromptModal';
 import { VaultUnlockStatusComponent } from '@/app/components/VaultUnlockStatus';
+import { VaultLockedModal } from '@/app/components/VaultLockedModal';
+import { DownloadProcessingModal } from '@/app/components/DownloadProcessingModal';
 import { AddFileModal } from '@/app/components/AddFileModal';
 import { FilePreviewModal } from '@/app/components/FilePreviewModal';
 import { isPreviewSupported } from '@/app/hooks/useFilePreview';
@@ -87,6 +89,9 @@ export default function VaultDetailPage({ params }: { params: Promise<{ id: stri
   const [selectedFileForPreview, setSelectedFileForPreview] = useState<VaultFile | null>(null);
   const [showShareModal, setShowShareModal] = useState(false);
   const [showShareGuideModal, setShowShareGuideModal] = useState(false);
+  const [showProcessingModal, setShowProcessingModal] = useState(false);
+  const [isVaultLocked, setIsVaultLocked] = useState(true);
+  const [vaultUnlockTime, setVaultUnlockTime] = useState<string | null>(null);
   const { downloadAndDecryptFile, isDownloading, progress } = useFileDownload();
 
   // Resolve params
@@ -322,6 +327,22 @@ export default function VaultDetailPage({ params }: { params: Promise<{ id: stri
   };
 
   const handleDownloadFile = async (file: VaultFile) => {
+    // Pre-check: if vault is locked, show locked modal immediately
+    if (isVaultLocked && vaultUnlockTime) {
+      setLockedUntilTime(
+        new Date(vaultUnlockTime).toLocaleString('en-US', {
+          weekday: 'long',
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+        })
+      );
+      setShowLockedModal(true);
+      return;
+    }
+    // Vault is unlocked — proceed to password entry
     setSelectedFileForDownload(file);
     setShowPasswordModal(true);
   };
@@ -341,6 +362,7 @@ export default function VaultDetailPage({ params }: { params: Promise<{ id: stri
     try {
       setDownloadingFileId(selectedFileForDownload.id);
       setShowPasswordModal(false);
+      setShowProcessingModal(true);
 
       console.log('[VaultPage] Calling downloadAndDecryptFile...');
       await downloadAndDecryptFile({
@@ -351,6 +373,8 @@ export default function VaultDetailPage({ params }: { params: Promise<{ id: stri
       });
 
       console.log('[VaultPage] Download completed successfully');
+      // Keep processing modal visible briefly to show completion
+      setTimeout(() => setShowProcessingModal(false), 2000);
       toast(`File "${selectedFileForDownload.fileName}" downloaded successfully!`, 'success');
     } catch (error) {
       console.error('[VaultPage] Error downloading file:', error);
@@ -376,9 +400,11 @@ export default function VaultDetailPage({ params }: { params: Promise<{ id: stri
         }
         setLockedUntilTime(formattedTime);
         setShowLockedModal(true);
+        setShowProcessingModal(false);
         return;
       }
       
+      setShowProcessingModal(false);
       const errorMessage = error instanceof Error ? error.message : 'Failed to download file';
       toast(errorMessage, 'error');
     } finally {
@@ -571,7 +597,11 @@ export default function VaultDetailPage({ params }: { params: Promise<{ id: stri
             <VaultUnlockStatusComponent 
               vaultId={vault.id}
               onUnlockEligibilityChange={(canUnlock, status) => {
-                // You can use this callback to enable/disable file downloads
+                setIsVaultLocked(!canUnlock);
+                // Store raw unlock time from vault data for the modal
+                if (vault?.unlockTime) {
+                  setVaultUnlockTime(vault.unlockTime);
+                }
               }}
             />
 
@@ -1094,58 +1124,20 @@ export default function VaultDetailPage({ params }: { params: Promise<{ id: stri
         />
 
         {/* Vault Locked Modal */}
-        {showLockedModal && (
-          <div className="fixed inset-0 bg-black/60 flex items-center justify-center p-4 z-50 backdrop-blur-sm">
-            <div 
-              className="border-4 border-black bg-white p-8 max-w-md w-full shadow-brutal animate-in fade-in zoom-in-95 duration-200"
-              style={{ boxShadow: '8px 8px 0px 0px rgba(0,0,0,1)' }}
-            >
-              {/* Lock Icon */}
-              <div className="flex justify-center mb-6">
-                <div className="w-20 h-20 rounded-full bg-heirlock-yellow border-4 border-black flex items-center justify-center">
-                  <Lock className="w-10 h-10 text-black" />
-                </div>
-              </div>
+        <VaultLockedModal
+          isOpen={showLockedModal}
+          unlockTime={vaultUnlockTime}
+          vaultName={vault?.name}
+          onClose={() => setShowLockedModal(false)}
+        />
 
-              {/* Title */}
-              <h2 className="text-2xl font-black text-center mb-2">
-                Vault is Locked
-              </h2>
-              
-              {/* Message */}
-              <p className="text-center text-gray-600 mb-6">
-                This vault is time-locked for security. Files cannot be downloaded until the unlock time.
-              </p>
-
-              {/* Unlock Time Card */}
-              <div className="border-4 border-black bg-heirlock-pink/30 p-4 mb-6">
-                <div className="flex items-center gap-3">
-                  <Clock className="w-6 h-6 text-black flex-shrink-0" />
-                  <div>
-                    <p className="text-xs font-black text-gray-600 uppercase">Unlocks On</p>
-                    <p className="font-black text-black">{lockedUntilTime}</p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Info */}
-              <div className="bg-gray-100 border-2 border-gray-300 p-3 mb-6 text-sm text-gray-600">
-                <p className="flex items-start gap-2">
-                  <Shield className="w-4 h-4 flex-shrink-0 mt-0.5 text-heirlock-green" />
-                  <span>Time-lock security ensures your files remain protected until the scheduled release date.</span>
-                </p>
-              </div>
-
-              {/* Close Button */}
-              <button
-                onClick={() => setShowLockedModal(false)}
-                className="w-full border-4 border-black bg-black text-white p-3 font-black text-sm hover:bg-gray-800 transition-all"
-              >
-                Got It
-              </button>
-            </div>
-          </div>
-        )}
+        {/* Download Processing Modal */}
+        <DownloadProcessingModal
+          isOpen={showProcessingModal}
+          fileName={selectedFileForDownload?.fileName || ''}
+          progress={progress}
+          isDownloading={isDownloading}
+        />
 
         {/* Add File Modal */}
         <AddFileModal

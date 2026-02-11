@@ -76,6 +76,10 @@ const config: Config = {
         spin: {
           'to': { transform: 'rotate(360deg)' },
         },
+        shimmer: {
+          '0%': { transform: 'translateX(-100%)' },
+          '100%': { transform: 'translateX(100%)' },
+        },
       },
       animation: {
         fadeIn: 'fadeIn 0.6s ease-out',
@@ -86,6 +90,7 @@ const config: Config = {
         bounceGentle: 'bounce 2s infinite',
         pulseSlow: 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
         spin: 'spin 1s linear infinite',
+        shimmer: 'shimmer 1.5s ease-in-out infinite',
       },
     },
   },
