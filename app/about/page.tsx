@@ -314,12 +314,12 @@ export default function About() {
               return (
                 <div key={pillar.title} className="relative overflow-hidden rounded-2xl border-3 border-white bg-white/5 p-6 shadow-brutal">
                   <div className="absolute inset-0 opacity-15" />
-                  <div className={`mb-4 inline-flex items-center gap-2 rounded-full ${pillar.accent} px-3 py-1 text-xs font-black uppercase tracking-[0.15em] border-2 border-black`}> 
+                  <div className={`mb-4 inline-flex items-center gap-2 rounded-full ${pillar.accent} px-3 py-1 text-xs font-black uppercase tracking-[0.15em] border-2 border-black text-black`}>
                     <Icon className="h-4 w-4" />
                     {pillar.title}
                   </div>
                   <h3 className="text-2xl font-black text-white">{pillar.subtitle}</h3>
-                  <p className="mt-3 text-sm leading-relaxed text-white/90">{pillar.description}</p>
+                  <p className="mt-3 text-sm leading-relaxed text-white">{pillar.description}</p>
                 </div>
               );
             })}
