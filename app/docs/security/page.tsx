@@ -1,139 +1,132 @@
-import { Shield, AlertTriangle, Lock, CheckCircle } from 'lucide-react';
+import { AlertTriangle, CheckCircle, Lock, Shield, ShieldCheck } from "lucide-react";
 
 export const metadata = {
-  title: 'Security Model - T.A.L.A. Docs',
-  description: 'Threat model and encryption standards for T.A.L.A.',
+  title: "Security model | T.A.L.A. Docs",
+  description: "Threat posture, encryption choices, and assurance controls for T.A.L.A.",
 };
 
-export default function SecurityPage() {
-  const threats = [
-    {
-      title: 'Server Seizure',
-      threat:
-        'What if law enforcement or hackers take down our servers?',
-      mitigation:
-        'We do not store encryption keys. Our servers contain only IPFS hashes and blockchain pointers. Even if servers are seized, the encrypted data remains locked on the distributed blockchain and IPFS. Keys are stored on-chain, protected by cryptography—not server security.',
-    },
-    {
-      title: 'Clock Manipulation',
-      threat:
-        'What if someone modifies the system clock?',
-      mitigation:
-        'We rely on Polygon Blockchain Timestamp, not local device time. Blockchain consensus cannot be manipulated by a single actor. Over 1,000 validators verify every block. The unlock time is immutable once recorded on-chain.',
-    },
-    {
-      title: 'Key Compromise',
-      threat:
-        'What if the AES-256 key is stolen?',
-      mitigation:
-        'Keys are ephemeral—generated client-side and never transmitted in plaintext. Keys are encrypted again before storage on-chain. Even if an encrypted key is stolen, breaking AES-256 would require 2^256 possible attempts. Not feasible with current technology.',
-    },
-    {
-      title: 'IPFS File Deletion',
-      threat:
-        'What if the IPFS file is deleted?',
-      mitigation:
-        'We use Pinata—a persistent IPFS pinning service with SLA guarantees. Files are replicated across multiple IPFS nodes globally. Deletion would require consensus across all nodes, which is economically irrational.',
-    },
-  ];
+const threats = [
+  {
+    title: "Server seizure",
+    risk: "Infrastructure is taken down or seized.",
+    response: "Servers never keep keys. They hold only CIDs and contract pointers. Encrypted payloads stay on IPFS, while keys remain on chain.",
+  },
+  {
+    title: "Clock manipulation",
+    risk: "Someone tries to move the unlock time forward.",
+    response: "Unlock checks read validator time from Polygon. No single host clock can change the schedule once it is committed.",
+  },
+  {
+    title: "Key theft",
+    risk: "An attacker obtains the encrypted key blob.",
+    response: "Keys are created in the browser, sent encrypted, and stored on chain. Brute forcing AES 256 is infeasible with current computing power.",
+  },
+  {
+    title: "IPFS loss",
+    risk: "The encrypted file disappears from storage.",
+    response: "Pinata pins across regions. The CID exposes any attempt to swap or tamper with the payload.",
+  },
+];
 
+const principles = [
+  {
+    title: "Confidentiality",
+    copy: "AES 256 keeps content private. Network observers see only ciphertext until the correct key arrives at unlock time.",
+  },
+  {
+    title: "Integrity",
+    copy: "GCM authentication tags make tampering obvious. Any change to the encrypted blob fails validation in the browser.",
+  },
+  {
+    title: "Authenticity",
+    copy: "Smart contracts are immutable. Unlock events and void events are on chain proofs tied to specific vault identifiers.",
+  },
+  {
+    title: "Accountability",
+    copy: "On chain logs show who created, voided, and unlocked. That record supports audits and dispute resolution.",
+  },
+];
+
+const checklist = [
+  "Client encrypts before upload; no plaintext leaves the device.",
+  "CID and checksum recorded for every submission.",
+  "Polygon enforces unlock time; no admin override exists.",
+  "Keys never stored on servers; AES 256 used throughout.",
+  "Webhooks signed for authenticity and retried with backoff.",
+  "Regular reviews and external audits of contract changes.",
+  "Bug bounty with responsible disclosure at support@usetala.in.",
+];
+
+export default function SecurityPage() {
   return (
-    <div className="space-y-12">
-      {/* Header */}
-      <section className="border-b-4 border-black pb-8">
-        <h1 className="text-6xl font-black text-black mb-4 font-mono">
-          THREAT MODEL & ENCRYPTION
-        </h1>
-        <div className="bg-white border-3 border-black p-6 shadow-brutal">
-          <p className="text-lg font-bold text-black">
-            T.A.L.A. is designed with security-first principles. This page covers threat analysis, encryption standards, and how we mitigate attacks.
+    <main className="space-y-12">
+      <section className="space-y-4 border-b-4 border-black pb-8">
+        <h1 className="text-5xl md:text-6xl font-black text-black">Security posture</h1>
+        <div className="rounded-2xl border-3 border-black bg-white p-6 shadow-brutal">
+          <p className="text-lg font-semibold text-black/85">
+            This page explains the guarantees behind T.A.L.A., the risks we model, and the controls that keep exam and procurement material locked until release.
           </p>
         </div>
       </section>
 
-      {/* Encryption Standard */}
       <section className="space-y-6">
-        <h2 className="text-4xl font-black text-black font-mono border-b-4 border-black pb-4">
-          ENCRYPTION STANDARD
-        </h2>
-
-        <div className="bg-white border-4 border-black p-8 shadow-brutal">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="bg-orange-500 p-3 rounded-lg">
-              <Lock className="w-6 h-6 text-white" />
+        <div className="flex items-center gap-3">
+          <Lock className="h-6 w-6" />
+          <h2 className="text-3xl font-black">Encryption standard</h2>
+        </div>
+        <div className="rounded-2xl border-4 border-black bg-white p-8 shadow-brutal">
+          <div className="mb-4 flex items-center gap-3">
+            <div className="rounded-lg bg-orange-500 p-3">
+              <Shield className="h-6 w-6 text-white" />
             </div>
             <div>
-              <h3 className="text-3xl font-black text-black font-mono">AES-256-GCM</h3>
-              <p className="text-gray-700 font-medium">Authenticated Encryption with Associated Data</p>
+              <h3 className="text-3xl font-black">AES 256 GCM</h3>
+              <p className="text-sm font-semibold text-black/70">Authenticated encryption with associated data</p>
             </div>
           </div>
-
-          <div className="space-y-4">
-            <div>
-              <h4 className="font-black text-black mb-2">ALGORITHM</h4>
-              <p className="text-gray-700 font-medium">
-                Advanced Encryption Standard (AES) with 256-bit keys and Galois/Counter Mode (GCM).
-              </p>
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <div className="rounded-xl border-3 border-black bg-cream p-4 shadow-brutal">
+              <h4 className="text-lg font-black">Algorithm</h4>
+              <p className="text-sm text-black/80">Advanced Encryption Standard with 256 bit keys in counter mode with authentication.</p>
             </div>
-
-            <div>
-              <h4 className="font-black text-black mb-2">KEY LENGTH</h4>
-              <p className="text-gray-700 font-medium">
-                256 bits (2^256 = 1.15 × 10^77 possible keys). Unbreakable with current computational power.
-              </p>
+            <div className="rounded-xl border-3 border-black bg-cream p-4 shadow-brutal">
+              <h4 className="text-lg font-black">Why it is chosen</h4>
+              <p className="text-sm text-black/80">Fast, parallel friendly, and widely audited. The same mode used by modern TLS.</p>
             </div>
-
-            <div>
-              <h4 className="font-black text-black mb-2">WHY GCM?</h4>
-              <ul className="text-gray-700 font-medium space-y-2 ml-4">
-                <li>✓ <strong>Authenticated:</strong> Prevents tampering during transit and storage.</li>
-                <li>✓ <strong>Fast:</strong> Parallel processing on modern CPUs.</li>
-                <li>✓ <strong>Standard:</strong> NIST-approved. Used by TLS 1.2, TLS 1.3.</li>
-              </ul>
+            <div className="rounded-xl border-3 border-black bg-cream p-4 shadow-brutal">
+              <h4 className="text-lg font-black">Key handling</h4>
+              <p className="text-sm text-black/80">Keys originate in the browser, never appear in plaintext on servers, and are sealed on chain until unlock.</p>
             </div>
-
-            <div className="bg-orange-100 border-2 border-orange-600 p-4 rounded">
-              <p className="text-sm font-bold text-orange-900">
-                🔐 <strong>Bank-Grade Security:</strong> Same encryption standard used by major financial institutions, healthcare systems, and government agencies.
-              </p>
+            <div className="rounded-xl border-3 border-black bg-cream p-4 shadow-brutal">
+              <h4 className="text-lg font-black">Data validation</h4>
+              <p className="text-sm text-black/80">Authentication tags catch any alteration to ciphertext before decryption runs.</p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Attack Vectors */}
       <section className="space-y-6">
-        <h2 className="text-4xl font-black text-black font-mono border-b-4 border-black pb-4">
-          ATTACK VECTORS
-        </h2>
-
-        <div className="space-y-6">
-          {threats.map((item, idx) => (
-            <div
-              key={idx}
-              className="border-4 border-black bg-white shadow-brutal overflow-hidden"
-            >
-              {/* Threat Header */}
-              <div className="bg-orange-500 p-6 text-white">
-                <div className="flex items-center gap-3">
-                  <AlertTriangle className="w-6 h-6 flex-shrink-0" />
-                  <h3 className="text-2xl font-black font-mono">{item.title}</h3>
-                </div>
+        <div className="flex items-center gap-3">
+          <AlertTriangle className="h-6 w-6" />
+          <h2 className="text-3xl font-black">Threat scenarios</h2>
+        </div>
+        <div className="space-y-4">
+          {threats.map((item) => (
+            <div key={item.title} className="overflow-hidden rounded-2xl border-4 border-black bg-white shadow-brutal">
+              <div className="bg-orange-500 px-6 py-4 text-white">
+                <h3 className="text-2xl font-black">{item.title}</h3>
               </div>
-
-              {/* Threat & Mitigation */}
-              <div className="p-6 space-y-4">
+              <div className="space-y-3 px-6 py-4">
                 <div>
-                  <h4 className="font-black text-black mb-2 text-lg">THREAT</h4>
-                  <p className="text-gray-700 font-medium italic">{item.threat}</p>
+                  <p className="text-xs font-black uppercase tracking-[0.16em] text-black/60">Risk</p>
+                  <p className="text-sm text-black/80">{item.risk}</p>
                 </div>
-
-                <div className="border-t-2 border-black pt-4">
-                  <h4 className="font-black text-black mb-2 text-lg flex items-center gap-2">
-                    <CheckCircle className="w-5 h-5 text-green-600" />
-                    MITIGATION
-                  </h4>
-                  <p className="text-gray-700 font-medium">{item.mitigation}</p>
+                <div className="border-t-2 border-black pt-3">
+                  <p className="flex items-center gap-2 text-sm font-black text-black">
+                    <CheckCircle className="h-4 w-4 text-green-600" />
+                    Response
+                  </p>
+                  <p className="text-sm text-black/80">{item.response}</p>
                 </div>
               </div>
             </div>
@@ -141,110 +134,38 @@ export default function SecurityPage() {
         </div>
       </section>
 
-      {/* Security Properties */}
       <section className="space-y-6">
-        <h2 className="text-4xl font-black text-black font-mono border-b-4 border-black pb-4">
-          SECURITY PROPERTIES
-        </h2>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-white border-4 border-black p-8 shadow-brutal">
-            <h3 className="text-2xl font-black text-black mb-3 font-mono">CONFIDENTIALITY</h3>
-            <p className="text-gray-700 font-medium">
-              AES-256 ensures only holders of the correct key can decrypt data. Eavesdropping on the network reveals only encrypted blobs.
-            </p>
-          </div>
-
-          <div className="bg-white border-4 border-black p-8 shadow-brutal">
-            <h3 className="text-2xl font-black text-black mb-3 font-mono">INTEGRITY</h3>
-            <p className="text-gray-700 font-medium">
-              GCM provides authentication tags. Any modification to encrypted data is detected. Tampering fails silently.
-            </p>
-          </div>
-
-          <div className="bg-white border-4 border-black p-8 shadow-brutal">
-            <h3 className="text-2xl font-black text-black mb-3 font-mono">AUTHENTICITY</h3>
-            <p className="text-gray-700 font-medium">
-              Smart contracts are immutable and audited. No one can forge unlock events or claim unauthorized access.
-            </p>
-          </div>
-
-          <div className="bg-white border-4 border-black p-8 shadow-brutal">
-            <h3 className="text-2xl font-black text-black mb-3 font-mono">NON-REPUDIATION</h3>
-            <p className="text-gray-700 font-medium">
-              Blockchain records prove who created, locked, and attempted to unlock vaults. Immutable evidence.
-            </p>
-          </div>
+        <div className="flex items-center gap-3">
+          <ShieldCheck className="h-6 w-6" />
+          <h2 className="text-3xl font-black">Security principles</h2>
+        </div>
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+          {principles.map((item) => (
+            <div key={item.title} className="rounded-2xl border-3 border-black bg-white p-6 shadow-brutal">
+              <h3 className="text-xl font-black">{item.title}</h3>
+              <p className="text-sm text-black/80 leading-relaxed">{item.copy}</p>
+            </div>
+          ))}
         </div>
       </section>
 
-      {/* Audit & Compliance */}
-      <section className="space-y-6">
-        <h2 className="text-4xl font-black text-black font-mono border-b-4 border-black pb-4">
-          AUDITS & COMPLIANCE
-        </h2>
-
-        <div className="bg-black border-4 border-black text-white p-8 shadow-brutal">
-          <div className="space-y-4">
-            <div className="border-b-2 border-white pb-4">
-              <h3 className="text-xl font-black mb-2 font-mono">🔍 SMART CONTRACT AUDIT</h3>
-              <p className="font-medium">
-                TimeLockedVault.sol has been audited by independent security firms. Reports available on request.
-              </p>
-            </div>
-
-            <div className="border-b-2 border-white pb-4">
-              <h3 className="text-xl font-black mb-2 font-mono">📋 OPEN SOURCE</h3>
-              <p className="font-medium">
-                All code is published on GitHub for community review and independent verification.
-              </p>
-            </div>
-
-            <div>
-              <h3 className="text-xl font-black mb-2 font-mono">🐛 BUG BOUNTY</h3>
-              <p className="font-medium">
-                Report security vulnerabilities to: <span className="font-mono font-black">support@usetala.in</span>
-              </p>
-              <p className="text-sm text-gray-300 mt-2">
-                Responsible disclosure encouraged. We reward severity and impact.
-              </p>
-            </div>
-          </div>
+      <section className="space-y-6 pb-12">
+        <div className="flex items-center gap-3">
+          <Shield className="h-6 w-6" />
+          <h2 className="text-3xl font-black">Operational checklist</h2>
         </div>
-      </section>
-
-      {/* Security Checklist */}
-      <section className="space-y-6">
-        <h2 className="text-4xl font-black text-black font-mono border-b-4 border-black pb-4">
-          SECURITY CHECKLIST
-        </h2>
-
         <div className="space-y-3">
-          {[
-            'Client-side encryption before upload',
-            'IPFS for decentralized, immutable storage',
-            'Polygon for trustless smart contracts',
-            'No server-side key storage',
-            'AES-256-GCM for authenticated encryption',
-            'Immutable audit trail on blockchain',
-            'Multi-signature capabilities for admin functions',
-            'Rate limiting to prevent brute-force attacks',
-            'Regular security audits and penetration testing',
-            'Bug bounty program for vulnerability disclosure',
-          ].map((item, idx) => (
-            <div
-              key={idx}
-              className="flex items-center gap-3 bg-white border-2 border-black p-4 shadow-md"
-            >
-              <div className="w-6 h-6 bg-green-500 rounded flex items-center justify-center flex-shrink-0">
-                <CheckCircle className="w-4 h-4 text-white" />
+          {checklist.map((item) => (
+            <div key={item} className="flex items-center gap-3 rounded-2xl border-2 border-black bg-white p-4 shadow-md">
+              <div className="flex h-6 w-6 items-center justify-center rounded bg-green-500">
+                <CheckCircle className="h-4 w-4 text-white" />
               </div>
-              <span className="font-bold text-black">{item}</span>
+              <p className="text-sm font-semibold text-black/85">{item}</p>
             </div>
           ))}
         </div>
       </section>
-    </div>
+    </main>
   );
 }
 

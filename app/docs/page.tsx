@@ -1,127 +1,215 @@
-import { Code2, Database, Shield, Zap } from 'lucide-react';
-import Link from 'next/link';
-import { DevDocSection } from '@/app/docs/dev-doc-section';
+import { ArrowRight, BookOpen, CircuitBoard, Code2, FileCode, Globe, Lock, ScrollText, Shield, Zap } from "lucide-react";
+import Link from "next/link";
+import { DevDocSection } from "@/app/docs/dev-doc-section";
 
 export const metadata = {
-  title: 'Documentation - T.A.L.A.',
-  description: 'Developer documentation for T.A.L.A. - Decentralized Time-Capsule Protocol',
+  title: "Documentation | T.A.L.A.",
+  description: "Authoritative references for building, auditing, and operating T.A.L.A.",
 };
 
-const techStack = [
-  { icon: Code2, label: 'Next.js', description: 'React Framework' },
-  { icon: Database, label: 'Polygon', description: 'Blockchain' },
-  { icon: Zap, label: 'IPFS', description: 'Decentralized Storage' },
-  { icon: Shield, label: 'Wagmi', description: 'Web3 Integration' },
+const primaryLinks = [
+  {
+    title: "Quick start",
+    description: "Spin up your environment, deploy a vault, and validate the unlock path.",
+    icon: BookOpen,
+    href: "/docs/quickstart",
+  },
+  {
+    title: "Architecture",
+    description: "Trace how client encryption, IPFS, and contract logic work together.",
+    icon: CircuitBoard,
+    href: "/docs/architecture",
+  },
+  {
+    title: "Smart contract",
+    description: "Inspect TimeLockedVault structures, functions, and events.",
+    icon: FileCode,
+    href: "/docs/smart-contract",
+  },
+  {
+    title: "API reference",
+    description: "HTTP endpoints, auth patterns, rate policy, and SDK entry points.",
+    icon: Globe,
+    href: "/docs/api",
+  },
+  {
+    title: "Security model",
+    description: "Threat analysis, encryption choices, and operational controls.",
+    icon: Shield,
+    href: "/docs/security",
+  },
+];
+
+const buildStages = [
+  {
+    title: "Plan",
+    detail: "Select the right path for your team: classroom releases, procurement, or partner unlocks.",
+  },
+  {
+    title: "Build",
+    detail: "Use the quick start, API reference, and contract docs to assemble your flow without guesswork.",
+  },
+  {
+    title: "Prove",
+    detail: "Share CID, contract state, and audit events so stakeholders can verify each step in advance.",
+  },
+];
+
+const referenceSpotlight = [
+  {
+    title: "Client encryption",
+    body: "AES 256 in the browser with keys cleared after upload. No secret stays on our servers.",
+    icon: Lock,
+  },
+  {
+    title: "Chain enforcement",
+    body: "Unlock checks run on Polygon time. No override exists outside the contract.",
+    icon: Code2,
+  },
+  {
+    title: "Transparent trail",
+    body: "Uploads, voids, and unlocks emit events you can reference in audits and legal reviews.",
+    icon: ScrollText,
+  },
 ];
 
 export default function DocsHub() {
   return (
-    <div className="space-y-12">
-      {/* Header */}
-      <section className="border-b-4 border-black pb-8">
-        <h1 className="text-6xl md:text-7xl font-black text-black mb-6 font-mono">
-          DEVELOPER DOCS
-        </h1>
-        <div className="bg-white border-3 border-black p-6 shadow-brutal">
-          <p className="text-lg font-bold text-black leading-relaxed">
-            T.A.L.A. is a decentralized protocol for time-locking sensitive data. This documentation covers the architecture, smart contracts, security models, and development setup. Everything you need to understand and work with the vault.
-          </p>
+    <main className="min-h-screen bg-cream text-black">
+      <section className="border-b-4 border-black bg-white px-6 py-14 md:py-20">
+        <div className="mx-auto max-w-6xl space-y-6">
+          <div className="space-y-3">
+            <p className="text-xs font-black uppercase tracking-[0.18em] text-black/60">Documentation</p>
+            <h1 className="text-4xl md:text-6xl font-black leading-tight">Build with confidence</h1>
+            <p className="max-w-3xl text-lg md:text-xl font-semibold text-black/85">
+              Every page here is written for engineers, security reviewers, and program owners who need a dependable release path. Follow the tracks, copy the examples, and ship with evidence.
+            </p>
+          </div>
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+            <Link
+              href="/docs/quickstart"
+              className="inline-flex items-center justify-center gap-2 rounded-xl border-3 border-black bg-black px-5 py-3 font-black text-white shadow-brutal transition-transform hover:-translate-y-0.5"
+            >
+              Start in minutes
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+            <Link
+              href="/docs/smart-contract"
+              className="inline-flex items-center justify-center gap-2 rounded-xl border-3 border-black bg-white px-5 py-3 font-black shadow-brutal transition-transform hover:-translate-y-0.5"
+            >
+              Inspect the contract
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+          </div>
         </div>
       </section>
 
-      {/* Tech Stack Grid */}
-      <section className="space-y-4">
-        <h2 className="text-4xl font-black text-black font-mono border-b-4 border-black pb-4">
-          TECH STACK
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {techStack.map((tech, idx) => {
-            const Icon = tech.icon;
-            return (
-              <div
-                key={idx}
-                className="bg-white border-3 border-black p-6 shadow-brutal hover:translate-y-[-4px] transition-all duration-200"
-              >
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="bg-orange-500 p-2 rounded">
-                    <Icon className="w-5 h-5 text-white" />
+      <section className="border-b-4 border-black bg-cream px-6 py-12">
+        <div className="mx-auto max-w-6xl space-y-6">
+          <div className="flex flex-col gap-2">
+            <p className="text-xs font-black uppercase tracking-[0.18em] text-black/60">Navigation</p>
+            <h2 className="text-3xl md:text-4xl font-black">Choose your track</h2>
+            <p className="text-sm text-black/80">Direct links to the sections teams use most often.</p>
+          </div>
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {primaryLinks.map((item) => {
+              const Icon = item.icon;
+              return (
+                <Link
+                  key={item.title}
+                  href={item.href}
+                  className="group flex h-full flex-col gap-3 rounded-2xl border-3 border-black bg-white p-6 shadow-brutal transition-transform hover:-translate-y-0.5"
+                >
+                  <div className="flex items-center gap-2 text-xs font-black uppercase tracking-[0.14em] text-black/70">
+                    <Icon className="h-4 w-4" />
+                    {item.title}
                   </div>
-                  <h3 className="font-black text-black text-lg font-mono">{tech.label}</h3>
-                </div>
-                <p className="text-sm text-gray-700 font-medium">{tech.description}</p>
+                  <p className="text-sm leading-relaxed text-black/80 flex-1">{item.description}</p>
+                  <div className="flex items-center gap-2 text-sm font-black">
+                    Read now
+                    <ArrowRight className="h-4 w-4" />
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      <section className="border-b-4 border-black bg-white px-6 py-12">
+        <div className="mx-auto max-w-6xl space-y-8">
+          <div className="flex flex-col gap-2">
+            <p className="text-xs font-black uppercase tracking-[0.18em] text-black/60">Execution path</p>
+            <h2 className="text-3xl md:text-4xl font-black">From planning to proof</h2>
+          </div>
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+            {buildStages.map((stage) => (
+              <div key={stage.title} className="flex h-full flex-col gap-3 rounded-2xl border-3 border-black bg-cream p-6 shadow-brutal">
+                <h3 className="text-xl font-black">{stage.title}</h3>
+                <p className="text-sm leading-relaxed text-black/80">{stage.detail}</p>
               </div>
-            );
-          })}
+            ))}
+          </div>
         </div>
       </section>
 
-      {/* Developer Documentation Sections */}
-      <section className="space-y-4">
-        <h2 className="text-4xl font-black text-black font-mono border-b-4 border-black pb-4">
-          DEV DOCS REFERENCE
-        </h2>
-        <p className="text-gray-700 font-bold mb-6">
-          Click any section below to expand code examples, API patterns, and setup guides.
-        </p>
-        <DevDocSection />
-      </section>
-
-      {/* Additional Documentation */}
-      <section className="space-y-4">
-        <h2 className="text-4xl font-black text-black font-mono border-b-4 border-black pb-4">
-          DEEP DIVE DOCS
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <Link href="/docs/architecture">
-            <div className="bg-white border-4 border-black p-8 shadow-brutal cursor-pointer hover:translate-y-[-6px] transition-all duration-200 group">
-              <h3 className="text-2xl font-black text-black mb-3 group-hover:text-orange-600 transition-colors">
-                Architecture
-              </h3>
-              <p className="text-gray-700 font-medium mb-4">
-                Learn about the hybrid model and how T.A.L.A. combines Client, IPFS, and Blockchain.
-              </p>
-              <div className="text-orange-600 font-black">→ READ</div>
-            </div>
-          </Link>
-
-          <Link href="/docs/smart-contract">
-            <div className="bg-white border-4 border-black p-8 shadow-brutal cursor-pointer hover:translate-y-[-6px] transition-all duration-200 group">
-              <h3 className="text-2xl font-black text-black mb-3 group-hover:text-orange-600 transition-colors">
-                Smart Contract API
-              </h3>
-              <p className="text-gray-700 font-medium mb-4">
-                Solidity reference for TimeLockedVault.sol with function signatures and error codes.
-              </p>
-              <div className="text-orange-600 font-black">→ READ</div>
-            </div>
-          </Link>
-
-          <Link href="/docs/security">
-            <div className="bg-white border-4 border-black p-8 shadow-brutal cursor-pointer hover:translate-y-[-6px] transition-all duration-200 group">
-              <h3 className="text-2xl font-black text-black mb-3 group-hover:text-orange-600 transition-colors">
-                Security Model
-              </h3>
-              <p className="text-gray-700 font-medium mb-4">
-                Threat analysis, encryption standards, and attack vectors. AES-256-GCM security model.
-              </p>
-              <div className="text-orange-600 font-black">→ READ</div>
-            </div>
-          </Link>
-
-          <Link href="/">
-            <div className="bg-white border-4 border-black p-8 shadow-brutal cursor-pointer hover:translate-y-[-6px] transition-all duration-200 group">
-              <h3 className="text-2xl font-black text-black mb-3 group-hover:text-orange-600 transition-colors">
-                Back to Home
-              </h3>
-              <p className="text-gray-700 font-medium mb-4">
-                Return to the main landing page and explore the platform.
-              </p>
-              <div className="text-orange-600 font-black">→ GO</div>
-            </div>
-          </Link>
+      <section className="border-b-4 border-black bg-heirlock-yellow px-6 py-12">
+        <div className="mx-auto max-w-6xl space-y-6">
+          <div className="flex flex-col gap-2">
+            <p className="text-xs font-black uppercase tracking-[0.18em] text-black/70">Reference spotlight</p>
+            <h2 className="text-3xl md:text-4xl font-black">Core pillars to review</h2>
+          </div>
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+            {referenceSpotlight.map((item) => {
+              const Icon = item.icon;
+              return (
+                <div key={item.title} className="flex h-full flex-col gap-3 rounded-2xl border-3 border-black bg-white p-6 shadow-brutal">
+                  <Icon className="h-6 w-6" />
+                  <h3 className="text-lg font-black">{item.title}</h3>
+                  <p className="text-sm leading-relaxed text-black/80">{item.body}</p>
+                </div>
+              );
+            })}
+          </div>
         </div>
       </section>
-    </div>
+
+      <section className="border-b-4 border-black bg-white px-6 py-12">
+        <div className="mx-auto max-w-6xl space-y-6">
+          <div className="flex flex-col gap-2">
+            <p className="text-xs font-black uppercase tracking-[0.18em] text-black/60">Hands on</p>
+            <h2 className="text-3xl md:text-4xl font-black">Deep dives with examples</h2>
+            <p className="text-sm text-black/80">Expand any module to see copy ready commands and patterns.</p>
+          </div>
+          <DevDocSection />
+        </div>
+      </section>
+
+      <section className="bg-black px-6 py-14">
+        <div className="mx-auto max-w-6xl space-y-4 text-center">
+          <h2 className="text-3xl md:text-4xl font-black text-heirlock-green">Need direct guidance?</h2>
+          <p className="mx-auto max-w-3xl text-sm md:text-base text-gray-200">
+            Reach the team for threat reviews, exam release planning, or procurement support. We respond with references you can forward to stakeholders.
+          </p>
+          <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
+            <Link
+              href="/faq"
+              className="inline-flex items-center justify-center gap-2 rounded-xl border-3 border-heirlock-green bg-heirlock-green px-6 py-3 font-black text-black shadow-brutal transition-transform hover:-translate-y-0.5"
+            >
+              Visit FAQ
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+            <a
+              href="mailto:support@usetala.in"
+              className="inline-flex items-center justify-center gap-2 rounded-xl border-3 border-heirlock-green bg-black px-6 py-3 font-black text-white shadow-brutal transition-transform hover:-translate-y-0.5"
+            >
+              Contact support
+              <ArrowRight className="h-4 w-4" />
+            </a>
+          </div>
+        </div>
+      </section>
+    </main>
   );
 }
 
