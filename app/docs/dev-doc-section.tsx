@@ -1,5 +1,3 @@
-git clone <repo-url>
-type CreateUserData = z.infer<typeof createUserSchema>;
 'use client';
 
 import { useState } from 'react';
@@ -36,7 +34,7 @@ const sections: Section[] = [
       {
         label: 'Install and prepare',
         lang: 'bash',
-        code: `git clone <repo-url>
+        code: `git clone https://github.com/your-org/tala
 cd TALA
 npm install
 cp .env.example .env.local
@@ -198,85 +196,77 @@ export function DevDocSection() {
 
   const toggle = (id: string) => {
     const next = new Set(expanded);
-    next.has(id) ? next.delete(id) : next.add(id);
+    if (next.has(id)) next.delete(id);
+    else next.add(id);
     setExpanded(next);
   };
 
-  const copy = (code: string, id: string) => {
+  const copy = (code: string) => {
     navigator.clipboard.writeText(code);
-    setCopiedCode(id);
-    setTimeout(() => setCopiedCode(null), 1800);
+    setCopiedCode(code);
+    setTimeout(() => setCopiedCode(null), 1500);
   };
 
   return (
-    <div className="space-y-4">
-      {sections.map((section) => (
-        <div
-          key={section.id}
-          className="overflow-hidden rounded-sm border-4 border-black bg-white shadow-brutal hover:shadow-brutal-lg transition-shadow"
-        >
-          <button
-            onClick={() => toggle(section.id)}
-            className="flex w-full items-center justify-between bg-white px-6 py-4 transition-colors hover:bg-gray-100"
-          >
-            <div className="flex items-center gap-3 text-left">
-              <span className="text-2xl">{section.icon}</span>
-              <div>
-                <h3 className="text-xl font-black">{section.title}</h3>
-                <p className="text-sm text-black/70">{section.summary}</p>
+    <section className="space-y-4">
+      {sections.map((section) => {
+        const open = expanded.has(section.id);
+        return (
+          <div key={section.id} className="rounded-2xl border-4 border-black bg-white shadow-brutal">
+            <button
+              className="flex w-full items-center justify-between px-5 py-4 text-left"
+              onClick={() => toggle(section.id)}
+            >
+              <div className="flex items-center gap-3">
+                <span className="text-xl" aria-hidden>
+                  {section.icon}
+                </span>
+                <div>
+                  <p className="text-lg font-black text-black">{section.title}</p>
+                  <p className="text-sm text-black/70">{section.summary}</p>
+                </div>
               </div>
-            </div>
-            <ChevronDown
-              size={24}
-              className={`text-black transition-transform ${expanded.has(section.id) ? 'rotate-180' : ''}`}
-            />
-          </button>
+              <ChevronDown className={`h-5 w-5 transition-transform ${open ? 'rotate-180' : ''}`} />
+            </button>
 
-          {expanded.has(section.id) && (
-            <div className="space-y-4 border-t-4 border-black bg-gray-50 px-6 py-5">
-              {section.steps && (
-                <ul className="space-y-2 text-sm text-black/80">
-                  {section.steps.map((step) => (
-                    <li key={step} className="flex gap-2">
-                      <span className="mt-1 h-2 w-2 rounded-full bg-black" />
-                      <span>{step}</span>
-                    </li>
-                  ))}
-                </ul>
-              )}
+            {open && (
+              <div className="border-t-4 border-black px-5 py-4 space-y-4">
+                {section.steps && (
+                  <ol className="list-inside list-decimal space-y-2 text-sm text-black/80">
+                    {section.steps.map((step) => (
+                      <li key={step}>{step}</li>
+                    ))}
+                  </ol>
+                )}
 
-              {section.snippets && section.snippets.map((snippet, idx) => {
-                const codeId = `${section.id}-${idx}`;
-                return (
-                  <div key={codeId} className="overflow-hidden rounded-sm border-3 border-black bg-black shadow-brutal">
-                    <div className="flex items-center justify-between border-b-3 border-black bg-black px-4 py-2">
-                      <span className="text-sm font-mono font-bold text-white">{snippet.label}</span>
-                      <button
-                        onClick={() => copy(snippet.code, codeId)}
-                        className="flex items-center gap-2 rounded-sm bg-orange-500 px-3 py-1 text-sm font-bold text-white transition-colors hover:bg-orange-600"
-                      >
-                        {copiedCode === codeId ? (
-                          <>
-                            <Check size={16} />
-                            <span>Copied</span>
-                          </>
-                        ) : (
-                          <>
-                            <Copy size={16} />
-                            <span>Copy</span>
-                          </>
-                        )}
-                      </button>
-                    </div>
-                    <pre className="overflow-x-auto bg-black px-4 py-3 text-sm text-white"><code>{snippet.code}</code></pre>
+                {section.snippets && (
+                  <div className="space-y-3">
+                    {section.snippets.map((snippet) => (
+                      <div key={snippet.label} className="rounded-xl border-3 border-black bg-cream p-3">
+                        <div className="mb-2 flex items-center justify-between text-xs font-black uppercase tracking-[0.12em] text-black/70">
+                          <span>{snippet.label}</span>
+                          <span>{snippet.lang}</span>
+                        </div>
+                        <div className="relative">
+                          <pre className="overflow-x-auto whitespace-pre-wrap bg-white p-3 text-xs text-black/90 border-2 border-black rounded-lg"><code>{snippet.code}</code></pre>
+                          <button
+                            onClick={() => copy(snippet.code)}
+                            className="absolute right-2 top-2 inline-flex items-center gap-1 rounded border-2 border-black bg-white px-2 py-1 text-[11px] font-black text-black"
+                          >
+                            {copiedCode === snippet.code ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
+                            {copiedCode === snippet.code ? 'Copied' : 'Copy'}
+                          </button>
+                        </div>
+                      </div>
+                    ))}
                   </div>
-                );
-              })}
-            </div>
-          )}
-        </div>
-      ))}
-    </div>
+                )}
+              </div>
+            )}
+          </div>
+        );
+      })}
+    </section>
   );
 }
 
