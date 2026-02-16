@@ -11,6 +11,10 @@ import {
   Globe,
   Layers,
   ListFilter,
+  Link2,
+  Twitter,
+  Linkedin,
+  Mail,
   Search,
   Shield,
   Shuffle,
@@ -421,6 +425,7 @@ export default function Changelog() {
   const [impactFilter, setImpactFilter] = useState<'all' | ChangelogEntry['impact']>('all');
   const [search, setSearch] = useState('');
   const [sortOrder, setSortOrder] = useState<'desc' | 'asc'>('desc');
+  const [copied, setCopied] = useState(false);
 
   const derivedStats = useMemo(() => {
     const totalReleases = changelog.length;
@@ -452,6 +457,40 @@ export default function Changelog() {
     }
     return entries;
   }, [categoryFilter, impactFilter, search, sortOrder, changelog]);
+
+  const pageUrl = typeof window !== 'undefined' ? window.location.href : 'https://usetala.in/changelog';
+  const shareTitle = 'T.A.L.A. Changelog';
+  const shareText = 'Latest releases, fixes, and security updates from T.A.L.A.';
+
+  const handleShare = (platform: 'twitter' | 'linkedin' | 'email') => {
+    const url = pageUrl;
+    switch (platform) {
+      case 'twitter':
+        window.open(`https://x.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(shareText)}`, '_blank', 'noopener,noreferrer');
+        return;
+      case 'linkedin':
+        window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`, '_blank', 'noopener,noreferrer');
+        return;
+      case 'email': {
+        const subject = encodeURIComponent(shareTitle);
+        const body = encodeURIComponent(`${shareText}\n${url}`);
+        window.open(`mailto:?subject=${subject}&body=${body}`);
+        return;
+      }
+      default:
+        return;
+    }
+  };
+
+  const handleCopyLink = async () => {
+    try {
+      await navigator.clipboard.writeText(pageUrl);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1600);
+    } catch {
+      // ignore
+    }
+  };
 
   const categoryColors = {
     feature: 'border-l-heirlock-blue bg-white',
@@ -501,6 +540,32 @@ export default function Changelog() {
                     <span>Impact-aware</span>
                   </div>
                 </div>
+                <div className="flex flex-wrap gap-2 pt-2">
+                  <button
+                    onClick={() => handleShare('twitter')}
+                    className="inline-flex items-center gap-2 px-3 py-2 border-2 border-black rounded-lg bg-white text-sm font-semibold hover:-translate-y-0.5 transition-transform"
+                  >
+                    <Twitter className="w-4 h-4" /> Share on X
+                  </button>
+                  <button
+                    onClick={() => handleShare('linkedin')}
+                    className="inline-flex items-center gap-2 px-3 py-2 border-2 border-black rounded-lg bg-white text-sm font-semibold hover:-translate-y-0.5 transition-transform"
+                  >
+                    <Linkedin className="w-4 h-4" /> Share on LinkedIn
+                  </button>
+                  <button
+                    onClick={() => handleShare('email')}
+                    className="inline-flex items-center gap-2 px-3 py-2 border-2 border-black rounded-lg bg-white text-sm font-semibold hover:-translate-y-0.5 transition-transform"
+                  >
+                    <Mail className="w-4 h-4" /> Email update
+                  </button>
+                  <button
+                    onClick={handleCopyLink}
+                    className="inline-flex items-center gap-2 px-3 py-2 border-2 border-black rounded-lg bg-black text-white text-sm font-semibold hover:-translate-y-0.5 transition-transform"
+                  >
+                    <Link2 className="w-4 h-4" /> {copied ? 'Link copied' : 'Copy link'}
+                  </button>
+                </div>
               </div>
             </div>
             <div className="w-full lg:max-w-sm border-[3px] border-black rounded-xl bg-heirlock-yellow p-4 shadow-[10px_10px_0_0_#000]">
@@ -546,7 +611,7 @@ export default function Changelog() {
               <div className="flex flex-wrap gap-2">
                 <button
                   onClick={() => setSortOrder(sortOrder === 'desc' ? 'asc' : 'desc')}
-                  className="inline-flex items-center gap-2 px-3 py-2 border-2 border-black rounded-lg bg-black text-white text-sm font-semibold hover:translate-y-[-1px] transition-transform"
+                  className="inline-flex items-center gap-2 px-3 py-2 border-2 border-black rounded-lg bg-black text-white text-sm font-semibold hover:-translate-y-px transition-transform"
                 >
                   <Shuffle className="w-4 h-4" />
                   {sortOrder === 'desc' ? 'Newest first' : 'Oldest first'}
@@ -617,7 +682,7 @@ export default function Changelog() {
                     </div>
                     <div className="p-6 md:p-7">
                       <div className="flex flex-wrap items-start gap-3 justify-between">
-                        <div className="flex items-start gap-3 flex-1 min-w-[260px]">
+                        <div className="flex items-start gap-3 flex-1 min-w-65">
                           <div className="w-10 h-10 rounded-lg border-2 border-black bg-white flex items-center justify-center">
                             <Icon className="w-5 h-5" />
                           </div>
