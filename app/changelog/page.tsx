@@ -42,6 +42,25 @@ interface ChangelogEntry {
 export default function Changelog() {
   const changelog: ChangelogEntry[] = [
     {
+      version: '1.9.0',
+      date: 'February 16, 2026',
+      category: 'feature',
+      icon: Sparkles,
+      title: 'Blog Sharing Feature & Social Media Integration',
+      description: 'Complete social sharing system for blog posts with branded snapshot generation and watermarked share cards.',
+      changes: [
+        '✓ Branded Snapshot Generation: html2canvas integration captures blog posts with custom TALA branding',
+        '✓ Dark Card Design: Peerlist-style share cards with dark background, profile header, and dashed border content cards',
+        '✓ Dynamic OG Images: Next.js 15 opengraph-image route generates social preview images for Twitter/LinkedIn',
+        '✓ Watermark & Logo: TALA monogram badge (top-right), logo watermark (bottom), and "Shared from TALA" footer',
+        '✓ Share Button Integration: Twitter/X, LinkedIn, and Email sharing with auto-download of branded PNG',
+        '✓ Native Share API: Mobile-optimized sharing with Web Share API support for direct image attachment',
+        '✓ Metadata Wiring: generateMetadata in blog layout for per-post OpenGraph titles and descriptions',
+        '✓ Changelog Sharing: Added share buttons (X, LinkedIn, Email, Copy link) to changelog page hero section',
+      ],
+      impact: 'major',
+    },
+    {
       version: '1.8.1',
       date: 'January 26, 2026',
       category: 'fix',
