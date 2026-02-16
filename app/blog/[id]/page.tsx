@@ -890,81 +890,145 @@ export default function BlogPost() {
     if (!el) return null;
     setCapturing(true);
     try {
-      const canvas = await html2canvas(el, {
-        backgroundColor: "#ffffff",
+      const shot = await html2canvas(el, {
+        backgroundColor: "#0b0c0f",
         scale: 2,
         useCORS: true,
         logging: false,
       });
 
-      // Build a new canvas with branding
-      const pad = 48;
-      const brandH = 80;
-      const w = canvas.width + pad * 2;
-      const h = canvas.height + pad * 2 + brandH;
+      const loadImage = (src: string) =>
+        new Promise<HTMLImageElement>((resolve, reject) => {
+          const img = new Image();
+          img.crossOrigin = "anonymous";
+          img.onload = () => resolve(img);
+          img.onerror = reject;
+          img.src = src;
+        });
+
+      const origin = typeof window !== "undefined" ? window.location.origin : "";
+      const [monogram, logo] = await Promise.all([
+        loadImage(`${origin}/monogram.png`).catch(() => null),
+        loadImage(`${origin}/logo.png`).catch(() => null),
+      ]);
+
+      // Canvas sizing
+      const baseW = Math.max(shot.width + 240, 1600);
+      const baseH = Math.max(shot.height + 360, 1200);
       const out = document.createElement("canvas");
-      out.width = w;
-      out.height = h;
+      out.width = baseW;
+      out.height = baseH;
       const ctx = out.getContext("2d")!;
 
-      // White bg
-      ctx.fillStyle = "#ffffff";
-      ctx.fillRect(0, 0, w, h);
+      // Background gradient + vignette
+      const grad = ctx.createLinearGradient(0, 0, baseW, baseH);
+      grad.addColorStop(0, "#0e1117");
+      grad.addColorStop(1, "#0b0c0f");
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, baseW, baseH);
 
-      // 6px black border
-      ctx.strokeStyle = "#000000";
+      const radial = ctx.createRadialGradient(baseW / 2, baseH / 2, baseW / 5, baseW / 2, baseH / 2, baseW / 1.2);
+      radial.addColorStop(0, "rgba(60, 255, 200, 0.08)");
+      radial.addColorStop(1, "rgba(0, 0, 0, 0)");
+      ctx.fillStyle = radial;
+      ctx.fillRect(0, 0, baseW, baseH);
+
+      // Card backdrop
+      const cardPad = 80;
+      const cardW = baseW - cardPad * 2;
+      const cardH = baseH - cardPad * 2;
+      ctx.fillStyle = "#0f1116";
+      ctx.strokeStyle = "#1f242f";
       ctx.lineWidth = 6;
-      ctx.strokeRect(3, 3, w - 6, h - 6);
+      ctx.beginPath();
+      ctx.roundRect(cardPad, cardPad, cardW, cardH, 28);
+      ctx.fill();
+      ctx.stroke();
 
-      // TALA logo box top-left
-      const logoSize = 44;
-      const lx = pad;
-      const ly = 24;
-      ctx.fillStyle = "#000000";
-      ctx.fillRect(lx, ly, logoSize, logoSize);
-      ctx.fillStyle = "#ffffff";
-      ctx.font = "bold 26px system-ui, sans-serif";
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
-      ctx.fillText("T", lx + logoSize / 2, ly + logoSize / 2);
+      // Soft inner shadow
+      ctx.save();
+      ctx.clip();
+      ctx.fillStyle = "rgba(0,0,0,0.35)";
+      ctx.fillRect(cardPad - 20, cardPad - 20, cardW + 40, cardH + 40);
+      ctx.restore();
 
-      // "T.A.L.A." text next to logo
-      ctx.fillStyle = "#000000";
-      ctx.font = "900 22px system-ui, sans-serif";
+      // Scale blog shot into card
+      const maxShotW = cardW - 140;
+      const maxShotH = cardH - 220;
+      const scale = Math.min(maxShotW / shot.width, maxShotH / shot.height);
+      const sW = shot.width * scale;
+      const sH = shot.height * scale;
+      const sX = cardPad + (cardW - sW) / 2;
+      const sY = cardPad + 80;
+
+      // Shadow behind shot
+      ctx.save();
+      ctx.filter = "drop-shadow(0px 28px 50px rgba(0,0,0,0.6))";
+      ctx.drawImage(shot, sX, sY, sW, sH);
+      ctx.restore();
+
+      // Top-right monogram badge
+      if (monogram) {
+        const badgeSize = 82;
+        const bx = cardPad + cardW - badgeSize - 32;
+        const by = cardPad + 24;
+        ctx.fillStyle = "rgba(255,255,255,0.06)";
+        ctx.beginPath();
+        ctx.roundRect(bx - 12, by - 12, badgeSize + 24, badgeSize + 24, 16);
+        ctx.fill();
+        ctx.drawImage(monogram, bx, by, badgeSize, badgeSize);
+      }
+
+      // Bottom ribbon with watermark
+      const ribbonH = 110;
+      const ry = cardPad + cardH - ribbonH;
+      ctx.fillStyle = "rgba(255,255,255,0.03)";
+      ctx.beginPath();
+      ctx.roundRect(cardPad + 16, ry, cardW - 32, ribbonH - 12, 18);
+      ctx.fill();
+
+      // Watermark text
+      ctx.fillStyle = "rgba(255,255,255,0.08)";
+      ctx.font = "900 120px 'Space Grotesk', system-ui, sans-serif";
+      ctx.textAlign = "right";
+      ctx.textBaseline = "bottom";
+      ctx.fillText("TALA", cardPad + cardW - 48, ry + ribbonH - 10);
+
+      // Bottom-left label
+      ctx.fillStyle = "#c7d2fe";
+      ctx.font = "700 18px 'Space Grotesk', system-ui, sans-serif";
+      ctx.textAlign = "left";
+      ctx.textBaseline = "bottom";
+      ctx.fillText("usetala.in", cardPad + 36, ry + ribbonH - 24);
+
+      // Wordmark bottom-left small
+      if (logo) {
+        const lw = 150;
+        const lh = (logo.height / logo.width) * lw;
+        ctx.drawImage(logo, cardPad + 32, ry + ribbonH - lh - 36, lw, lh);
+      }
+
+      // Title overlay above ribbon
+      ctx.fillStyle = "#e5e7eb";
+      ctx.font = "800 28px 'Space Grotesk', system-ui, sans-serif";
       ctx.textAlign = "left";
       ctx.textBaseline = "middle";
-      ctx.fillText("T.A.L.A.", lx + logoSize + 12, ly + logoSize / 2 - 7);
-      ctx.fillStyle = "#6b7280";
-      ctx.font = "700 11px system-ui, sans-serif";
-      ctx.fillText("Trust is Code", lx + logoSize + 12, ly + logoSize / 2 + 12);
+      ctx.fillText(post?.title ?? "T.A.L.A. Blog", cardPad + 32, ry - 28);
 
-      // Blog content
-      ctx.drawImage(canvas, pad, pad + brandH - 10);
-
-      // Bottom branding bar
-      const by = h - pad - 10;
-      // "usetala.in" small
+      // Small subtitle
       ctx.fillStyle = "#9ca3af";
-      ctx.font = "700 14px system-ui, sans-serif";
-      ctx.textAlign = "right";
-      ctx.textBaseline = "bottom";
-      ctx.fillText("usetala.in", w - pad, by - 32);
-      // "TALA" large
-      ctx.fillStyle = "#000000";
-      ctx.font = "900 40px system-ui, sans-serif";
-      ctx.textAlign = "right";
-      ctx.textBaseline = "bottom";
-      ctx.fillText("TALA", w - pad, by);
+      ctx.font = "700 18px 'Space Grotesk', system-ui, sans-serif";
+      ctx.fillText(post?.author ? `By ${post.author}` : "T.A.L.A.", cardPad + 32, ry - 28 + 30);
 
       return new Promise((resolve) => {
-        out.toBlob((blob) => resolve(blob), "image/png", 1);
+        out.toBlob((blob) => resolve(blob), "image/png", 0.95);
       });
     } catch {
       return null;
     } finally {
       setCapturing(false);
     }
-  }, []);
+  }, [post?.author, post?.title]);
 
   const handleShare = useCallback(async (platform: "twitter" | "linkedin" | "email") => {
     const blob = await captureSnapshot();
