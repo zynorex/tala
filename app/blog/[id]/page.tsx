@@ -897,7 +897,7 @@ export default function BlogPost() {
         logging: false,
       });
 
-      const loadImage = (src: string) =>
+      const loadImg = (src: string) =>
         new Promise<HTMLImageElement>((resolve, reject) => {
           const img = new Image();
           img.crossOrigin = "anonymous";
@@ -908,128 +908,214 @@ export default function BlogPost() {
 
       const origin = typeof window !== "undefined" ? window.location.origin : "";
       const [monogram, logo] = await Promise.all([
-        loadImage(`${origin}/monogram.png`).catch(() => null),
-        loadImage(`${origin}/logo.png`).catch(() => null),
+        loadImg(`${origin}/monogram.png`).catch(() => null),
+        loadImg(`${origin}/logo.png`).catch(() => null),
       ]);
 
-      // Canvas sizing
-      const baseW = Math.max(shot.width + 240, 1600);
-      const baseH = Math.max(shot.height + 360, 1200);
+      // ── Dimensions ──
+      // Outer image: dark bg. Inner card sits centered.
+      const outerPadX = 60;
+      const outerPadTop = 60;
+      const outerPadBot = 100; // extra space for watermark below card
+      const cardPadX = 48;
+      const cardPadTop = 44;
+      const cardPadBot = 44;
+      const headerH = 96;        // avatar row
+      const titleBlockH = 80;    // title + caption area
+      const innerPadding = 36;   // padding inside the inner dashed card
+      const innerGap = 28;       // space between title block and inner card
+
+      // Scale article screenshot to fit nicely (max ~880px wide)
+      const targetShotW = 880;
+      const shotScale = Math.min(targetShotW / shot.width, 1);
+      const sW = shot.width * shotScale;
+      const sH = shot.height * shotScale;
+
+      const innerW = sW + innerPadding * 2;
+      const innerH = sH + innerPadding * 2;
+      const cardW = Math.max(innerW + cardPadX * 2, 640);
+      const cardH = cardPadTop + headerH + titleBlockH + innerGap + innerH + cardPadBot;
+      const totalW = cardW + outerPadX * 2;
+      const totalH = cardH + outerPadTop + outerPadBot;
+
       const out = document.createElement("canvas");
-      out.width = baseW;
-      out.height = baseH;
+      out.width = totalW;
+      out.height = totalH;
       const ctx = out.getContext("2d")!;
 
-      // Background gradient + vignette
-      const grad = ctx.createLinearGradient(0, 0, baseW, baseH);
-      grad.addColorStop(0, "#0e1117");
-      grad.addColorStop(1, "#0b0c0f");
-      ctx.fillStyle = grad;
-      ctx.fillRect(0, 0, baseW, baseH);
+      // ── 1. Outer dark background ──
+      ctx.fillStyle = "#0a0b0e";
+      ctx.fillRect(0, 0, totalW, totalH);
 
-      const radial = ctx.createRadialGradient(baseW / 2, baseH / 2, baseW / 6, baseW / 2, baseH / 2, baseW / 1.3);
-      radial.addColorStop(0, "rgba(120, 255, 200, 0.08)");
-      radial.addColorStop(1, "rgba(0, 0, 0, 0)");
-      ctx.fillStyle = radial;
-      ctx.fillRect(0, 0, baseW, baseH);
+      // Subtle radial glow
+      const glow = ctx.createRadialGradient(totalW / 2, totalH * 0.4, 80, totalW / 2, totalH * 0.4, totalW * 0.7);
+      glow.addColorStop(0, "rgba(80, 200, 160, 0.06)");
+      glow.addColorStop(1, "rgba(0, 0, 0, 0)");
+      ctx.fillStyle = glow;
+      ctx.fillRect(0, 0, totalW, totalH);
 
-      // Card backdrop
-      const cardPad = 80;
-      const cardW = baseW - cardPad * 2;
-      const cardH = baseH - cardPad * 2;
-      ctx.fillStyle = "#0f1116";
-      ctx.strokeStyle = "#1f242f";
-      ctx.lineWidth = 6;
+      // ── 2. Main card ──
+      const cx = outerPadX;
+      const cy = outerPadTop;
+      ctx.fillStyle = "#14161b";
+      ctx.strokeStyle = "#2a2d36";
+      ctx.lineWidth = 2;
       ctx.beginPath();
-      ctx.roundRect(cardPad, cardPad, cardW, cardH, 28);
+      ctx.roundRect(cx, cy, cardW, cardH, 24);
       ctx.fill();
       ctx.stroke();
 
-      // Light base behind captured article for contrast
-      const lightPad = 70;
-      const lightW = cardW - lightPad * 2;
-      const lightH = cardH - lightPad * 2 - 120;
-      const lightX = cardPad + lightPad;
-      const lightY = cardPad + 90;
-      ctx.fillStyle = "#f8fafc";
+      // ── 3. Header row: avatar + name left, TALA monogram right ──
+      const hx = cx + cardPadX;
+      const hy = cy + cardPadTop;
+
+      // Circular avatar with initials
+      const avatarR = 28;
+      const avatarCx = hx + avatarR;
+      const avatarCy = hy + avatarR;
+      ctx.save();
       ctx.beginPath();
-      ctx.roundRect(lightX, lightY, lightW, lightH, 20);
+      ctx.arc(avatarCx, avatarCy, avatarR, 0, Math.PI * 2);
+      ctx.fillStyle = "#1e40af";
       ctx.fill();
-
-      // Soft inner shadow
-      ctx.save();
-      ctx.clip();
-      ctx.fillStyle = "rgba(0,0,0,0.35)";
-      ctx.fillRect(cardPad - 20, cardPad - 20, cardW + 40, cardH + 40);
       ctx.restore();
 
-      // Scale blog shot into card
-      const maxShotW = lightW - 40;
-      const maxShotH = lightH - 40;
-      const scale = Math.min(maxShotW / shot.width, maxShotH / shot.height);
-      const sW = shot.width * scale;
-      const sH = shot.height * scale;
-      const sX = lightX + (lightW - sW) / 2;
-      const sY = lightY + (lightH - sH) / 2;
-
-      // Shadow behind shot
-      ctx.save();
-      ctx.filter = "drop-shadow(0px 28px 50px rgba(0,0,0,0.6))";
-      ctx.drawImage(shot, sX, sY, sW, sH);
-      ctx.restore();
-
-      // Top-right monogram badge
+      // Draw monogram inside avatar if available, else initials
       if (monogram) {
-        const badgeSize = 82;
-        const bx = cardPad + cardW - badgeSize - 32;
-        const by = cardPad + 24;
-        ctx.fillStyle = "rgba(255,255,255,0.06)";
+        ctx.save();
         ctx.beginPath();
-        ctx.roundRect(bx - 12, by - 12, badgeSize + 24, badgeSize + 24, 16);
-        ctx.fill();
-        ctx.drawImage(monogram, bx, by, badgeSize, badgeSize);
+        ctx.arc(avatarCx, avatarCy, avatarR, 0, Math.PI * 2);
+        ctx.clip();
+        ctx.drawImage(monogram, avatarCx - avatarR, avatarCy - avatarR, avatarR * 2, avatarR * 2);
+        ctx.restore();
+      } else {
+        ctx.fillStyle = "#ffffff";
+        ctx.font = "bold 22px system-ui, sans-serif";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText("T", avatarCx, avatarCy);
       }
 
-      // Bottom ribbon with watermark
-      const ribbonH = 110;
-      const ry = cardPad + cardH - ribbonH;
-      ctx.fillStyle = "rgba(255,255,255,0.03)";
+      // Name + meta text
+      const nameX = hx + avatarR * 2 + 16;
+      ctx.fillStyle = "#f0f0f0";
+      ctx.font = "bold 22px system-ui, sans-serif";
+      ctx.textAlign = "left";
+      ctx.textBaseline = "top";
+      ctx.fillText("T.A.L.A.", nameX, hy + 4);
+
+      ctx.fillStyle = "#6b7280";
+      ctx.font = "500 15px system-ui, sans-serif";
+      ctx.fillText(`@usetala  •  ${post?.category ?? "Blog"}  •  ${post?.date ?? ""}`, nameX, hy + 32);
+
+      // TALA monogram badge top-right (like Peerlist "P" icon)
+      const badgeSize = 48;
+      const badgeX = cx + cardW - cardPadX - badgeSize;
+      const badgeY = hy + (headerH - badgeSize) / 2 - 8;
+      ctx.fillStyle = "#1a1d24";
+      ctx.strokeStyle = "#2a2d36";
+      ctx.lineWidth = 2;
       ctx.beginPath();
-      ctx.roundRect(cardPad + 16, ry, cardW - 32, ribbonH - 12, 18);
+      ctx.roundRect(badgeX, badgeY, badgeSize, badgeSize, 14);
+      ctx.fill();
+      ctx.stroke();
+      if (monogram) {
+        ctx.drawImage(monogram, badgeX + 6, badgeY + 6, badgeSize - 12, badgeSize - 12);
+      } else {
+        ctx.fillStyle = "#ffffff";
+        ctx.font = "bold 24px system-ui, sans-serif";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText("T", badgeX + badgeSize / 2, badgeY + badgeSize / 2);
+      }
+
+      // ── 4. Title / caption text ──
+      const titleY = hy + headerH;
+      ctx.fillStyle = "#e5e7eb";
+      ctx.font = "bold 20px system-ui, sans-serif";
+      ctx.textAlign = "left";
+      ctx.textBaseline = "top";
+
+      // Word-wrap title to fit card width
+      const maxTitleW = cardW - cardPadX * 2;
+      const titleText = post?.title ?? "T.A.L.A. Blog";
+      const words = titleText.split(" ");
+      let lines: string[] = [];
+      let currentLine = "";
+      for (const word of words) {
+        const testLine = currentLine ? `${currentLine} ${word}` : word;
+        if (ctx.measureText(testLine).width > maxTitleW && currentLine) {
+          lines.push(currentLine);
+          currentLine = word;
+        } else {
+          currentLine = testLine;
+        }
+      }
+      if (currentLine) lines.push(currentLine);
+      lines.forEach((line, i) => {
+        ctx.fillText(line, hx, titleY + i * 28);
+      });
+
+      const titleEndY = titleY + lines.length * 28 + 8;
+
+      // Author line
+      ctx.fillStyle = "#6b7280";
+      ctx.font = "500 15px system-ui, sans-serif";
+      ctx.fillText(`By ${post?.author ?? "T.A.L.A. Team"}  •  ${post?.readTime ?? ""}`, hx, titleEndY);
+
+      // ── 5. Inner content card (dashed border, like the Peerlist streak card) ──
+      const innerX = cx + (cardW - innerW) / 2;
+      const innerY = titleEndY + 36;
+      ctx.fillStyle = "#0f1116";
+      ctx.beginPath();
+      ctx.roundRect(innerX, innerY, innerW, innerH, 18);
       ctx.fill();
 
-      // Watermark text
-      ctx.fillStyle = "rgba(255,255,255,0.08)";
-      ctx.font = "900 120px 'Space Grotesk', system-ui, sans-serif";
-      ctx.textAlign = "right";
-      ctx.textBaseline = "bottom";
-      ctx.fillText("TALA", cardPad + cardW - 48, ry + ribbonH - 10);
+      // Dashed border
+      ctx.strokeStyle = "#2a2d36";
+      ctx.lineWidth = 2;
+      ctx.setLineDash([8, 6]);
+      ctx.beginPath();
+      ctx.roundRect(innerX, innerY, innerW, innerH, 18);
+      ctx.stroke();
+      ctx.setLineDash([]);
 
-      // Bottom-left label
-      ctx.fillStyle = "#c7d2fe";
-      ctx.font = "700 18px 'Space Grotesk', system-ui, sans-serif";
+      // Draw the article screenshot inside
+      ctx.save();
+      ctx.beginPath();
+      ctx.roundRect(innerX + innerPadding, innerY + innerPadding, sW, sH, 12);
+      ctx.clip();
+      ctx.drawImage(shot, innerX + innerPadding, innerY + innerPadding, sW, sH);
+      ctx.restore();
+
+      // ── 6. Bottom watermark (outside card, centered) ──
+      const wmY = cy + cardH + 36;
+      ctx.fillStyle = "#6b7280";
+      ctx.font = "500 18px system-ui, sans-serif";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "top";
+
+      const preText = "Shared from  ";
+      const brandText = "TALA";
+      const preW = ctx.measureText(preText).width;
+      ctx.font = "500 18px system-ui, sans-serif";
+      const brandW = ctx.measureText(brandText).width;
+      const totalTextW = preW + brandW;
+      const startX = totalW / 2 - totalTextW / 2;
+
       ctx.textAlign = "left";
-      ctx.textBaseline = "bottom";
-      ctx.fillText("usetala.in", cardPad + 36, ry + ribbonH - 24);
+      ctx.fillText(preText, startX, wmY);
 
-      // Wordmark bottom-left small
-      if (logo) {
-        const lw = 150;
-        const lh = (logo.height / logo.width) * lw;
-        ctx.drawImage(logo, cardPad + 32, ry + ribbonH - lh - 36, lw, lh);
-      }
-
-      // Title overlay above ribbon
       ctx.fillStyle = "#e5e7eb";
-      ctx.font = "800 28px 'Space Grotesk', system-ui, sans-serif";
-      ctx.textAlign = "left";
-      ctx.textBaseline = "middle";
-      ctx.fillText(post?.title ?? "T.A.L.A. Blog", cardPad + 32, ry - 28);
+      ctx.font = "800 18px system-ui, sans-serif";
+      ctx.fillText(brandText, startX + preW, wmY);
 
-      // Small subtitle
-      ctx.fillStyle = "#9ca3af";
-      ctx.font = "700 18px 'Space Grotesk', system-ui, sans-serif";
-      ctx.fillText(post?.author ? `By ${post.author}` : "T.A.L.A.", cardPad + 32, ry - 28 + 30);
+      // Small TALA logo next to watermark
+      if (logo) {
+        const lw = 20;
+        const lh = (logo.height / logo.width) * lw;
+        ctx.drawImage(logo, startX + preW + brandW + 8, wmY + 1, lw, lh);
+      }
 
       return new Promise((resolve) => {
         out.toBlob((blob) => resolve(blob), "image/png", 0.95);
@@ -1039,7 +1125,7 @@ export default function BlogPost() {
     } finally {
       setCapturing(false);
     }
-  }, [post?.author, post?.title]);
+  }, [post?.author, post?.title, post?.category, post?.date, post?.readTime]);
 
   const handleShare = useCallback(async (platform: "twitter" | "linkedin" | "email") => {
     const blob = await captureSnapshot();
