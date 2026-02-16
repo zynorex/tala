@@ -891,7 +891,7 @@ export default function BlogPost() {
     setCapturing(true);
     try {
       const shot = await html2canvas(el, {
-        backgroundColor: "#0b0c0f",
+        backgroundColor: "#ffffff",
         scale: 2,
         useCORS: true,
         logging: false,
@@ -927,8 +927,8 @@ export default function BlogPost() {
       ctx.fillStyle = grad;
       ctx.fillRect(0, 0, baseW, baseH);
 
-      const radial = ctx.createRadialGradient(baseW / 2, baseH / 2, baseW / 5, baseW / 2, baseH / 2, baseW / 1.2);
-      radial.addColorStop(0, "rgba(60, 255, 200, 0.08)");
+      const radial = ctx.createRadialGradient(baseW / 2, baseH / 2, baseW / 6, baseW / 2, baseH / 2, baseW / 1.3);
+      radial.addColorStop(0, "rgba(120, 255, 200, 0.08)");
       radial.addColorStop(1, "rgba(0, 0, 0, 0)");
       ctx.fillStyle = radial;
       ctx.fillRect(0, 0, baseW, baseH);
@@ -945,6 +945,17 @@ export default function BlogPost() {
       ctx.fill();
       ctx.stroke();
 
+      // Light base behind captured article for contrast
+      const lightPad = 70;
+      const lightW = cardW - lightPad * 2;
+      const lightH = cardH - lightPad * 2 - 120;
+      const lightX = cardPad + lightPad;
+      const lightY = cardPad + 90;
+      ctx.fillStyle = "#f8fafc";
+      ctx.beginPath();
+      ctx.roundRect(lightX, lightY, lightW, lightH, 20);
+      ctx.fill();
+
       // Soft inner shadow
       ctx.save();
       ctx.clip();
@@ -953,13 +964,13 @@ export default function BlogPost() {
       ctx.restore();
 
       // Scale blog shot into card
-      const maxShotW = cardW - 140;
-      const maxShotH = cardH - 220;
+      const maxShotW = lightW - 40;
+      const maxShotH = lightH - 40;
       const scale = Math.min(maxShotW / shot.width, maxShotH / shot.height);
       const sW = shot.width * scale;
       const sH = shot.height * scale;
-      const sX = cardPad + (cardW - sW) / 2;
-      const sY = cardPad + 80;
+      const sX = lightX + (lightW - sW) / 2;
+      const sY = lightY + (lightH - sH) / 2;
 
       // Shadow behind shot
       ctx.save();
