@@ -1,6 +1,27 @@
 'use client';
 
-import { Calendar, GitCommit, Shield, Database, Code2, Network, FileText, AlertCircle, CheckCircle, Zap, Globe } from 'lucide-react';
+import React, { useMemo, useState } from 'react';
+import {
+  AlertCircle,
+  Calendar,
+  CheckCircle,
+  Clock3,
+  Filter,
+  GitCommit,
+  Globe,
+  Layers,
+  ListFilter,
+  Search,
+  Shield,
+  Shuffle,
+  Sparkles,
+  TrendingUp,
+  Zap,
+  Database,
+  Code2,
+  Network,
+  FileText,
+} from 'lucide-react';
 import Link from 'next/link';
 
 interface ChangelogEntry {
@@ -396,163 +417,291 @@ export default function Changelog() {
       impact: 'major',
     },
   ];
+  const [categoryFilter, setCategoryFilter] = useState<'all' | ChangelogEntry['category']>('all');
+  const [impactFilter, setImpactFilter] = useState<'all' | ChangelogEntry['impact']>('all');
+  const [search, setSearch] = useState('');
+  const [sortOrder, setSortOrder] = useState<'desc' | 'asc'>('desc');
+
+  const derivedStats = useMemo(() => {
+    const totalReleases = changelog.length;
+    const majorFeatures = changelog.filter((c) => c.category === 'feature' && c.impact === 'major').length;
+    const fixesAndSecurity = changelog.filter((c) => c.category === 'fix' || c.category === 'security').length;
+    const firstDate = new Date(changelog[changelog.length - 1].date);
+    const lastDate = new Date(changelog[0].date);
+    const daysInDev = Math.max(1, Math.round((lastDate.getTime() - firstDate.getTime()) / (1000 * 60 * 60 * 24)) + 1);
+    return { totalReleases, majorFeatures, fixesAndSecurity, daysInDev };
+  }, [changelog]);
+
+  const filteredEntries = useMemo(() => {
+    let entries = [...changelog];
+    if (categoryFilter !== 'all') {
+      entries = entries.filter((c) => c.category === categoryFilter);
+    }
+    if (impactFilter !== 'all') {
+      entries = entries.filter((c) => c.impact === impactFilter);
+    }
+    if (search.trim()) {
+      const term = search.toLowerCase();
+      entries = entries.filter((c) => {
+        const haystack = [c.title, c.description, c.version, c.date, ...c.changes].join(' ').toLowerCase();
+        return haystack.includes(term);
+      });
+    }
+    if (sortOrder === 'asc') {
+      entries = [...entries].reverse();
+    }
+    return entries;
+  }, [categoryFilter, impactFilter, search, sortOrder, changelog]);
 
   const categoryColors = {
-    feature: 'border-l-heirlock-blue bg-white dark:bg-gray-900',
-    fix: 'border-l-heirlock-red bg-white dark:bg-gray-900',
-    improvement: 'border-l-heirlock-green bg-white dark:bg-gray-900',
-    security: 'border-l-heirlock-pink bg-white dark:bg-gray-900',
+    feature: 'border-l-heirlock-blue bg-white',
+    fix: 'border-l-heirlock-red bg-white',
+    improvement: 'border-l-heirlock-green bg-white',
+    security: 'border-l-heirlock-pink bg-white',
   };
 
   const categoryBadgeColors = {
     feature: 'bg-heirlock-blue text-black',
-    fix: 'bg-heirlock-red text-white',
+    fix: 'bg-red-600 text-white',
     improvement: 'bg-heirlock-green text-black',
     security: 'bg-heirlock-pink text-black',
   };
 
+  const lastUpdated = changelog[0]?.date || '—';
+
   return (
-    <main className="min-h-screen bg-white">
-      {/* Header */}
-      <section className="border-b-4 border-black py-12 md:py-20 bg-white">
-        <div className="max-w-5xl mx-auto px-4 md:px-6">
-          <div className="flex items-start gap-4 mb-6">
-            <GitCommit className="w-10 h-10 text-black flex-shrink-0 mt-1" />
-            <div>
-              <h1 className="text-4xl md:text-5xl font-bold text-black mb-3">
-                Changelog
-              </h1>
-              <p className="text-lg text-gray-700">
-                Major updates and improvements to the T.A.L.A. platform
-              </p>
+    <main className="min-h-screen bg-[#f7f5f2] text-black">
+      <section className="border-b-4 border-black bg-white">
+        <div className="max-w-6xl mx-auto px-4 md:px-6 py-12 md:py-16 flex flex-col gap-8">
+          <div className="flex flex-col lg:flex-row lg:items-start gap-6">
+            <div className="flex items-start gap-4 flex-1">
+              <div className="w-12 h-12 rounded-lg border-[3px] border-black bg-heirlock-yellow flex items-center justify-center shadow-[6px_6px_0_0_#000]">
+                <GitCommit className="w-6 h-6" />
+              </div>
+              <div className="space-y-2">
+                <div className="flex items-center gap-3 flex-wrap">
+                  <span className="px-3 py-1 rounded-full border-2 border-black bg-white text-xs font-semibold uppercase tracking-wide">Live</span>
+                  <span className="px-3 py-1 rounded-full border-2 border-black bg-black text-white text-xs font-semibold">Last updated {lastUpdated}</span>
+                </div>
+                <h1 className="text-4xl md:text-5xl font-black leading-tight">Changelog</h1>
+                <p className="text-lg text-gray-700 max-w-2xl">
+                  Track every release, fix, and security hardening across T.A.L.A. Use filters to jump to what matters.
+                </p>
+                <div className="flex flex-wrap gap-3 text-sm text-gray-700">
+                  <div className="inline-flex items-center gap-2 px-3 py-1 border-2 border-black rounded-full bg-white">
+                    <Sparkles className="w-4 h-4" />
+                    <span>Trust-first release notes</span>
+                  </div>
+                  <div className="inline-flex items-center gap-2 px-3 py-1 border-2 border-black rounded-full bg-white">
+                    <Shield className="w-4 h-4" />
+                    <span>Security tagged</span>
+                  </div>
+                  <div className="inline-flex items-center gap-2 px-3 py-1 border-2 border-black rounded-full bg-white">
+                    <TrendingUp className="w-4 h-4" />
+                    <span>Impact-aware</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="w-full lg:max-w-sm border-[3px] border-black rounded-xl bg-heirlock-yellow p-4 shadow-[10px_10px_0_0_#000]">
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center gap-2 text-sm font-semibold">
+                  <Layers className="w-4 h-4" />
+                  Release Health
+                </div>
+                <div className="text-xs uppercase font-bold px-2 py-1 border-2 border-black rounded-full">Snapshot</div>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="p-3 border-2 border-black rounded-lg bg-white">
+                  <p className="text-xs text-gray-600">Total releases</p>
+                  <p className="text-2xl font-black">{derivedStats.totalReleases}</p>
+                </div>
+                <div className="p-3 border-2 border-black rounded-lg bg-white">
+                  <p className="text-xs text-gray-600">Major features</p>
+                  <p className="text-2xl font-black">{derivedStats.majorFeatures}</p>
+                </div>
+                <div className="p-3 border-2 border-black rounded-lg bg-white">
+                  <p className="text-xs text-gray-600">Fixes & security</p>
+                  <p className="text-2xl font-black">{derivedStats.fixesAndSecurity}</p>
+                </div>
+                <div className="p-3 border-2 border-black rounded-lg bg-white">
+                  <p className="text-xs text-gray-600">Days in dev</p>
+                  <p className="text-2xl font-black">{derivedStats.daysInDev}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="border-[3px] border-black rounded-xl bg-white p-4 shadow-[8px_8px_0_0_#000] flex flex-col gap-4">
+            <div className="flex flex-col lg:flex-row gap-4 lg:items-center">
+              <div className="relative flex-1">
+                <Search className="w-4 h-4 absolute left-3 top-3 text-gray-500" />
+                <input
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  placeholder="Search releases, versions, or changes"
+                  className="w-full border-2 border-black rounded-lg py-2.5 pl-10 pr-3 text-sm bg-white focus:outline-none focus:ring-4 focus:ring-black/10"
+                />
+              </div>
+              <div className="flex flex-wrap gap-2">
+                <button
+                  onClick={() => setSortOrder(sortOrder === 'desc' ? 'asc' : 'desc')}
+                  className="inline-flex items-center gap-2 px-3 py-2 border-2 border-black rounded-lg bg-black text-white text-sm font-semibold hover:translate-y-[-1px] transition-transform"
+                >
+                  <Shuffle className="w-4 h-4" />
+                  {sortOrder === 'desc' ? 'Newest first' : 'Oldest first'}
+                </button>
+              </div>
+            </div>
+            <div className="flex flex-col md:flex-row gap-3 md:items-center md:justify-between">
+              <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-gray-600">
+                <ListFilter className="w-4 h-4" />
+                Quick filters
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {(['all', 'feature', 'fix', 'improvement', 'security'] as const).map((cat) => (
+                  <button
+                    key={cat}
+                    onClick={() => setCategoryFilter(cat)}
+                    className={`px-3 py-1.5 border-2 border-black rounded-full text-sm font-semibold transition-transform ${
+                      categoryFilter === cat ? 'bg-black text-white' : 'bg-white hover:-translate-y-0.5'
+                    }`}
+                  >
+                    {cat === 'all' ? 'All' : cat}
+                  </button>
+                ))}
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {(['all', 'major', 'minor'] as const).map((impact) => (
+                  <button
+                    key={impact}
+                    onClick={() => setImpactFilter(impact)}
+                    className={`px-3 py-1.5 border-2 border-black rounded-full text-sm font-semibold transition-transform ${
+                      impactFilter === impact ? 'bg-heirlock-yellow text-black' : 'bg-white hover:-translate-y-0.5'
+                    }`}
+                  >
+                    {impact === 'all' ? 'All impact' : impact === 'major' ? 'Major only' : 'Minor'}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Changelog Entries */}
       <section className="py-12 md:py-16">
-        <div className="max-w-5xl mx-auto px-4 md:px-6">
-          {/* Stats Section */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-16">
-            <div className="border-4 border-black bg-heirlock-yellow p-6 text-center">
-              <p className="text-4xl font-black text-black mb-2">18</p>
-              <p className="font-semibold text-black">Total Releases</p>
+        <div className="max-w-6xl mx-auto px-4 md:px-6">
+          {filteredEntries.length === 0 && (
+            <div className="border-[3px] border-black rounded-xl bg-white p-6 flex items-center gap-3 text-gray-700 shadow-[6px_6px_0_0_#000]">
+              <AlertCircle className="w-5 h-5" />
+              <span>No releases match your filters. Clear filters to see all.</span>
             </div>
-            <div className="border-4 border-black bg-heirlock-blue p-6 text-center">
-              <p className="text-4xl font-black text-black mb-2">15</p>
-              <p className="font-semibold text-black">Major Features</p>
-            </div>
-            <div className="border-4 border-black bg-heirlock-green p-6 text-center">
-              <p className="text-4xl font-black text-black mb-2">2</p>
-              <p className="font-semibold text-black">Critical Fixes</p>
-            </div>
-            <div className="border-4 border-black bg-heirlock-pink p-6 text-center">
-              <p className="text-4xl font-black text-black mb-2">27</p>
-              <p className="font-semibold text-black">Days in Dev</p>
-            </div>
-          </div>
+          )}
 
-          <div className="space-y-8">
-            {changelog.map((entry, index) => {
-              const Icon = entry.icon;
-              const badgeColor = categoryBadgeColors[entry.category];
-              const borderColor = categoryColors[entry.category];
+          <div className="relative mt-4">
+            <div className="absolute left-5 top-0 bottom-0 w-px bg-gray-300" aria-hidden />
+            <div className="space-y-6">
+              {filteredEntries.map((entry, index) => {
+                const Icon = entry.icon;
+                const badgeColor = categoryBadgeColors[entry.category];
+                const borderColor = categoryColors[entry.category];
+                const changeCount = entry.changes.length;
 
-              return (
-                <div
-                  key={index}
-                  className={`border-l-4 rounded-lg p-6 md:p-8 transition-all hover:shadow-lg dark:hover:shadow-gray-900/30 ${borderColor}`}
-                >
-                  {/* Header */}
-                  <div className="flex items-start justify-between gap-4 mb-4">
-                    <div className="flex items-start gap-4 flex-1">
-                      <Icon className="w-6 h-6 text-gray-700 dark:text-gray-300 flex-shrink-0 mt-1" />
-                      <div className="flex-1">
-                        <div className="flex items-center gap-3 mb-2 flex-wrap">
-                          <h2 className="text-2xl font-bold text-black">
-                            {entry.title}
-                          </h2>
-                          <span className={`px-3 py-1 rounded-full text-sm font-medium capitalize ${badgeColor}`}>
-                            {entry.category}
-                          </span>
-                          {entry.impact === 'major' && (
-                            <span className="px-3 py-1 rounded-full text-sm font-medium bg-heirlock-yellow text-black">
-                              Major
-                            </span>
-                          )}
+                return (
+                  <div
+                    key={`${entry.version}-${index}`}
+                    className={`relative border-[3px] border-black rounded-xl ${borderColor} shadow-[10px_10px_0_0_#000] transition-transform hover:-translate-y-1`}
+                  >
+                    <div className="absolute -left-3 top-6 w-6 h-6 rounded-full border-[3px] border-black bg-white flex items-center justify-center">
+                      <GitCommit className="w-3.5 h-3.5" />
+                    </div>
+                    <div className="p-6 md:p-7">
+                      <div className="flex flex-wrap items-start gap-3 justify-between">
+                        <div className="flex items-start gap-3 flex-1 min-w-[260px]">
+                          <div className="w-10 h-10 rounded-lg border-2 border-black bg-white flex items-center justify-center">
+                            <Icon className="w-5 h-5" />
+                          </div>
+                          <div className="space-y-2">
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <span className="px-2.5 py-1 border-2 border-black rounded-full text-xs font-black bg-black text-white">{entry.version}</span>
+                              <span className={`px-2.5 py-1 rounded-full text-xs font-semibold capitalize border-2 border-black ${badgeColor}`}>
+                                {entry.category}
+                              </span>
+                              {entry.impact === 'major' ? (
+                                <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-heirlock-yellow border-2 border-black">Major</span>
+                              ) : (
+                                <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-white border-2 border-black">Minor</span>
+                              )}
+                              <span className="inline-flex items-center gap-1 px-2 py-1 text-xs font-semibold border-2 border-black rounded-full bg-white">
+                                <Calendar className="w-3.5 h-3.5" />
+                                {entry.date}
+                              </span>
+                            </div>
+                            <h2 className="text-xl md:text-2xl font-black leading-tight">{entry.title}</h2>
+                            <p className="text-sm text-gray-700 max-w-3xl leading-relaxed">{entry.description}</p>
+                          </div>
                         </div>
-                        <p className="text-gray-700 text-sm mb-2">
-                          {entry.description}
-                        </p>
-                        <div className="flex items-center gap-3 text-sm text-gray-600 dark:text-gray-400">
-                          <Calendar className="w-4 h-4" />
-                          <span>{entry.date}</span>
-                          <span className="mx-2">•</span>
-                          <span className="font-mono text-gray-700 dark:text-gray-300">{entry.version}</span>
+                        <div className="flex flex-col items-end gap-2 text-sm text-gray-700">
+                          <div className="inline-flex items-center gap-2 px-3 py-1.5 border-2 border-black rounded-full bg-white font-semibold">
+                            <Filter className="w-4 h-4" />
+                            {changeCount} change{changeCount === 1 ? '' : 's'}
+                          </div>
+                          <div className="inline-flex items-center gap-2 px-3 py-1.5 border-2 border-black rounded-full bg-white font-semibold">
+                            <Clock3 className="w-4 h-4" />
+                            Release #{changelog.length - index}
+                          </div>
                         </div>
+                      </div>
+
+                      <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-3">
+                        {entry.changes.map((change, changeIndex) => (
+                          <div
+                            key={changeIndex}
+                            className="flex items-start gap-3 p-3 border-2 border-black rounded-lg bg-white"
+                          >
+                            <CheckCircle className="w-4 h-4 mt-1 text-black" />
+                            <p className="text-sm leading-relaxed">{change}</p>
+                          </div>
+                        ))}
                       </div>
                     </div>
                   </div>
-
-                  {/* Changes List */}
-                  <div className="mt-6 ml-10 space-y-3">
-                    <p className="text-sm font-semibold text-black uppercase tracking-wide">
-                      Changes
-                    </p>
-                    <ul className="space-y-2">
-                      {entry.changes.map((change, changeIndex) => (
-                        <li
-                          key={changeIndex}
-                          className="flex items-start gap-3 text-gray-800"
-                        >
-                          <CheckCircle className="w-4 h-4 text-gray-600 flex-shrink-0 mt-0.5" />
-                          <span className="text-sm leading-relaxed">{change}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
           </div>
 
-          {/* Footer Info */}
-          <div className="mt-16 p-6 md:p-8 border-4 border-black rounded-lg bg-heirlock-yellow">
+          <div className="mt-14 border-[3px] border-black rounded-xl bg-heirlock-yellow p-6 md:p-8 shadow-[10px_10px_0_0_#000]">
             <div className="flex items-start gap-4">
-              <AlertCircle className="w-6 h-6 text-black flex-shrink-0 mt-0.5" />
-              <div>
-                <h3 className="font-semibold text-black mb-2">
-                  What's Coming Next
-                </h3>
-                <p className="text-gray-800 mb-4">
-                  The development team is actively working on these features and improvements:
+              <AlertCircle className="w-6 h-6" />
+              <div className="space-y-3">
+                <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide">
+                  <Shield className="w-4 h-4" />
+                  Upcoming signals
+                </div>
+                <h3 className="text-xl font-black">What we are building next</h3>
+                <p className="text-sm text-gray-800 max-w-2xl">
+                  The roadmap below mirrors engineering priorities: security first, then scale, then polish.
                 </p>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="bg-heirlock-blue p-4 rounded border-2 border-black">
-                    <h4 className="font-bold text-black mb-2">💰 Smart Contract V2</h4>
-                    <p className="text-sm text-gray-800">Gas optimization and layer 2 scaling for cost reduction</p>
-                  </div>
-                  <div className="bg-heirlock-green p-4 rounded border-2 border-black">
-                    <h4 className="font-bold text-black mb-2">📱 Mobile App</h4>
-                    <p className="text-sm text-gray-800">Native iOS and Android apps for vault access on the go</p>
-                  </div>
-                  <div className="bg-heirlock-pink p-4 rounded border-2 border-black">
-                    <h4 className="font-bold text-black mb-2">🔄 Vault Recovery</h4>
-                    <p className="text-sm text-gray-800">Advanced file versioning and recovery system</p>
-                  </div>
-                  <div className="bg-heirlock-yellow p-4 rounded border-2 border-black">
-                    <h4 className="font-bold text-black mb-2">📊 Analytics</h4>
-                    <p className="text-sm text-gray-800">Enhanced security metrics and audit logging</p>
-                  </div>
-                  <div className="bg-heirlock-blue p-4 rounded border-2 border-black">
-                    <h4 className="font-bold text-black mb-2">⚙️ Batch Upload</h4>
-                    <p className="text-sm text-gray-800">Bulk vault creation for administrators</p>
-                  </div>
-                  <div className="bg-heirlock-green p-4 rounded border-2 border-black">
-                    <h4 className="font-bold text-black mb-2">🌐 Multi-Chain</h4>
-                    <p className="text-sm text-gray-800">Support for Ethereum, Arbitrum, and Optimism</p>
-                  </div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                  {[{
+                    title: 'Smart Contract V2',
+                    body: 'Gas optimization, L2 readiness, formal verification hooks.',
+                    color: 'bg-white',
+                  }, {
+                    title: 'Vault Recovery',
+                    body: 'Versioned file history and safe-guarded key recovery flows.',
+                    color: 'bg-white',
+                  }, {
+                    title: 'Observability',
+                    body: 'Deep analytics for unlock events, storage, and security posture.',
+                    color: 'bg-white',
+                  }].map((card) => (
+                    <div key={card.title} className={`p-4 border-2 border-black rounded-lg ${card.color}`}>
+                      <h4 className="font-bold mb-1">{card.title}</h4>
+                      <p className="text-sm text-gray-800 leading-relaxed">{card.body}</p>
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
@@ -560,27 +709,24 @@ export default function Changelog() {
         </div>
       </section>
 
-      {/* CTA Section */}
       <section className="border-t-4 border-black py-12 md:py-16 bg-white">
-        <div className="max-w-5xl mx-auto px-4 md:px-6 text-center">
-          <h2 className="text-2xl md:text-3xl font-bold text-black mb-4">
-            Ready to Secure Your Vaults?
-          </h2>
-          <p className="text-lg text-gray-700 mb-8">
-            Start using T.A.L.A. today and protect your sensitive documents with military-grade encryption and blockchain-enforced time-locks.
+        <div className="max-w-6xl mx-auto px-4 md:px-6 text-center">
+          <h2 className="text-3xl font-black mb-3">Stay ahead of every release</h2>
+          <p className="text-lg text-gray-700 max-w-2xl mx-auto mb-8">
+            Deploy with confidence. Review what shipped, filter security fixes, and share highlights with your team.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               href="/create-vault"
-              className="px-8 py-3 bg-black text-white font-medium rounded-lg hover:opacity-90 transition-opacity"
+              className="px-8 py-3 bg-black text-white font-semibold rounded-lg border-2 border-black hover:-translate-y-0.5 transition-transform"
             >
               Create Vault
             </Link>
             <Link
               href="/how-it-works"
-              className="px-8 py-3 border-2 border-black text-black font-medium rounded-lg hover:bg-heirlock-yellow transition-colors"
+              className="px-8 py-3 border-2 border-black text-black font-semibold rounded-lg bg-heirlock-yellow hover:-translate-y-0.5 transition-transform"
             >
-              Learn How It Works
+              Learn how it works
             </Link>
           </div>
         </div>
