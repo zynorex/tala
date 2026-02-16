@@ -980,13 +980,13 @@ export default function BlogPost() {
       ctx.fill();
       ctx.restore();
 
-      // Draw monogram inside avatar if available, else initials
-      if (monogram) {
+      // Draw logo inside avatar if available, else initials
+      if (logo) {
         ctx.save();
         ctx.beginPath();
         ctx.arc(avatarCx, avatarCy, avatarR, 0, Math.PI * 2);
         ctx.clip();
-        ctx.drawImage(monogram, avatarCx - avatarR, avatarCy - avatarR, avatarR * 2, avatarR * 2);
+        ctx.drawImage(logo, avatarCx - avatarR, avatarCy - avatarR, avatarR * 2, avatarR * 2);
         ctx.restore();
       } else {
         ctx.fillStyle = "#ffffff";
@@ -1008,7 +1008,7 @@ export default function BlogPost() {
       ctx.font = "500 15px system-ui, sans-serif";
       ctx.fillText(`@usetala  •  ${post?.category ?? "Blog"}  •  ${post?.date ?? ""}`, nameX, hy + 32);
 
-      // TALA monogram badge top-right (like Peerlist "P" icon)
+      // TALA logo badge top-right (like Peerlist "P" icon)
       const badgeSize = 48;
       const badgeX = cx + cardW - cardPadX - badgeSize;
       const badgeY = hy + (headerH - badgeSize) / 2 - 8;
@@ -1019,8 +1019,8 @@ export default function BlogPost() {
       ctx.roundRect(badgeX, badgeY, badgeSize, badgeSize, 14);
       ctx.fill();
       ctx.stroke();
-      if (monogram) {
-        ctx.drawImage(monogram, badgeX + 6, badgeY + 6, badgeSize - 12, badgeSize - 12);
+      if (logo) {
+        ctx.drawImage(logo, badgeX + 6, badgeY + 6, badgeSize - 12, badgeSize - 12);
       } else {
         ctx.fillStyle = "#ffffff";
         ctx.font = "bold 24px system-ui, sans-serif";
