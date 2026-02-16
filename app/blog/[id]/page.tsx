@@ -1,9 +1,10 @@
 'use client';
 
-import React, { useMemo } from "react";
-import { Calendar, User, Clock, ArrowLeft, Share2, Tag, Sparkles, BookOpen, Shield } from "lucide-react";
+import React, { useMemo, useRef, useState, useCallback } from "react";
+import { Calendar, User, Clock, ArrowLeft, Share2, Tag, Sparkles, BookOpen, Shield, Loader2, Download } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
+import html2canvas from "html2canvas";
 
 const blogContent = {
   1: {
@@ -881,6 +882,132 @@ export default function BlogPost() {
   const post = blogContent[id as keyof typeof blogContent];
 
   const cleanContent = useMemo(() => (post ? removeEmojis(post.content) : ""), [post]);
+  const articleRef = useRef<HTMLDivElement>(null);
+  const [capturing, setCapturing] = useState(false);
+
+  const captureSnapshot = useCallback(async (): Promise<Blob | null> => {
+    const el = articleRef.current;
+    if (!el) return null;
+    setCapturing(true);
+    try {
+      const canvas = await html2canvas(el, {
+        backgroundColor: "#ffffff",
+        scale: 2,
+        useCORS: true,
+        logging: false,
+      });
+
+      // Build a new canvas with branding
+      const pad = 48;
+      const brandH = 80;
+      const w = canvas.width + pad * 2;
+      const h = canvas.height + pad * 2 + brandH;
+      const out = document.createElement("canvas");
+      out.width = w;
+      out.height = h;
+      const ctx = out.getContext("2d")!;
+
+      // White bg
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(0, 0, w, h);
+
+      // 6px black border
+      ctx.strokeStyle = "#000000";
+      ctx.lineWidth = 6;
+      ctx.strokeRect(3, 3, w - 6, h - 6);
+
+      // TALA logo box top-left
+      const logoSize = 44;
+      const lx = pad;
+      const ly = 24;
+      ctx.fillStyle = "#000000";
+      ctx.fillRect(lx, ly, logoSize, logoSize);
+      ctx.fillStyle = "#ffffff";
+      ctx.font = "bold 26px system-ui, sans-serif";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText("T", lx + logoSize / 2, ly + logoSize / 2);
+
+      // "T.A.L.A." text next to logo
+      ctx.fillStyle = "#000000";
+      ctx.font = "900 22px system-ui, sans-serif";
+      ctx.textAlign = "left";
+      ctx.textBaseline = "middle";
+      ctx.fillText("T.A.L.A.", lx + logoSize + 12, ly + logoSize / 2 - 7);
+      ctx.fillStyle = "#6b7280";
+      ctx.font = "700 11px system-ui, sans-serif";
+      ctx.fillText("Trust is Code", lx + logoSize + 12, ly + logoSize / 2 + 12);
+
+      // Blog content
+      ctx.drawImage(canvas, pad, pad + brandH - 10);
+
+      // Bottom branding bar
+      const by = h - pad - 10;
+      // "usetala.in" small
+      ctx.fillStyle = "#9ca3af";
+      ctx.font = "700 14px system-ui, sans-serif";
+      ctx.textAlign = "right";
+      ctx.textBaseline = "bottom";
+      ctx.fillText("usetala.in", w - pad, by - 32);
+      // "TALA" large
+      ctx.fillStyle = "#000000";
+      ctx.font = "900 40px system-ui, sans-serif";
+      ctx.textAlign = "right";
+      ctx.textBaseline = "bottom";
+      ctx.fillText("TALA", w - pad, by);
+
+      return new Promise((resolve) => {
+        out.toBlob((blob) => resolve(blob), "image/png", 1);
+      });
+    } catch {
+      return null;
+    } finally {
+      setCapturing(false);
+    }
+  }, []);
+
+  const handleShare = useCallback(async (platform: "twitter" | "linkedin" | "email") => {
+    const blob = await captureSnapshot();
+    const url = `https://usetala.in/blog/${id}`;
+    const title = `${post?.title ?? "T.A.L.A. Blog"} — T.A.L.A.`;
+
+    if (blob) {
+      const file = new File([blob], `tala-blog-${id}.png`, { type: "image/png" });
+
+      // Try native share API (mobile + modern desktop)
+      if (navigator.share && navigator.canShare?.({ files: [file] })) {
+        try {
+          await navigator.share({ title, url, files: [file] });
+          return;
+        } catch {
+          // user cancelled or API failed — fall through to download + open
+        }
+      }
+
+      // Download the image
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = `tala-blog-${id}.png`;
+      link.click();
+      URL.revokeObjectURL(link.href);
+    }
+
+    // Open the share URL so the user can attach the downloaded image
+    switch (platform) {
+      case "twitter":
+        window.open(`https://x.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(title)}`, "_blank", "noopener,noreferrer");
+        break;
+      case "linkedin":
+        window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`, "_blank", "noopener,noreferrer");
+        break;
+      case "email": {
+        const subject = encodeURIComponent(title);
+        const body = encodeURIComponent(`Check out this article from T.A.L.A.:\n\n${post?.title}\n${url}`);
+        window.open(`mailto:?subject=${subject}&body=${body}`);
+        break;
+      }
+    }
+  }, [captureSnapshot, id, post?.title]);
 
   if (!post) {
     return (
@@ -941,41 +1068,55 @@ export default function BlogPost() {
 
       <section className="py-12 md:py-16">
         <div className="container mx-auto max-w-4xl px-4">
-          <article
-            className="prose prose-lg max-w-none text-black space-y-6"
-            dangerouslySetInnerHTML={{ __html: cleanContent }}
-          />
+          <div ref={articleRef}>
+            <article
+              className="prose prose-lg max-w-none text-black space-y-6"
+              dangerouslySetInnerHTML={{ __html: cleanContent }}
+            />
+          </div>
 
           <div className="mt-12 pt-8 border-t-4 border-black flex flex-wrap gap-3 items-center">
             <span className="font-bold flex items-center gap-2"><Share2 className="w-4 h-4" /> Share</span>
             <button
-              onClick={() => {
-                const url = `https://usetala.in/blog/${id}`;
-                const text = `${post.title} — T.A.L.A.`;
-                window.open(`https://x.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`, "_blank", "noopener,noreferrer");
-              }}
-              className="px-4 py-2 border-2 border-black font-semibold bg-white hover:bg-black hover:text-white transition-colors"
+              disabled={capturing}
+              onClick={() => handleShare("twitter")}
+              className="px-4 py-2 border-2 border-black font-semibold bg-white hover:bg-black hover:text-white transition-colors disabled:opacity-50 flex items-center gap-2"
             >
+              {capturing ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
               Twitter
             </button>
             <button
-              onClick={() => {
-                const url = `https://usetala.in/blog/${id}`;
-                window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`, "_blank", "noopener,noreferrer");
-              }}
-              className="px-4 py-2 border-2 border-black font-semibold bg-white hover:bg-black hover:text-white transition-colors"
+              disabled={capturing}
+              onClick={() => handleShare("linkedin")}
+              className="px-4 py-2 border-2 border-black font-semibold bg-white hover:bg-black hover:text-white transition-colors disabled:opacity-50 flex items-center gap-2"
             >
+              {capturing ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
               LinkedIn
             </button>
             <button
-              onClick={() => {
-                const subject = encodeURIComponent(`${post.title} — T.A.L.A.`);
-                const body = encodeURIComponent(`Check out this article from T.A.L.A.:\n\n${post.title}\nhttps://usetala.in/blog/${id}`);
-                window.open(`mailto:?subject=${subject}&body=${body}`);
-              }}
-              className="px-4 py-2 border-2 border-black font-semibold bg-white hover:bg-black hover:text-white transition-colors"
+              disabled={capturing}
+              onClick={() => handleShare("email")}
+              className="px-4 py-2 border-2 border-black font-semibold bg-white hover:bg-black hover:text-white transition-colors disabled:opacity-50 flex items-center gap-2"
             >
+              {capturing ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
               Email
+            </button>
+            <button
+              disabled={capturing}
+              onClick={async () => {
+                const blob = await captureSnapshot();
+                if (blob) {
+                  const link = document.createElement("a");
+                  link.href = URL.createObjectURL(blob);
+                  link.download = `tala-blog-${id}.png`;
+                  link.click();
+                  URL.revokeObjectURL(link.href);
+                }
+              }}
+              className="px-4 py-2 border-2 border-black font-semibold bg-white hover:bg-black hover:text-white transition-colors disabled:opacity-50 flex items-center gap-2"
+            >
+              {capturing ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
+              Save Image
             </button>
           </div>
         </div>
