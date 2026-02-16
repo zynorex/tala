@@ -28,8 +28,9 @@ const categoryColor: Record<string, string> = {
   "Case Study": "#c4b5fd",
 };
 
-export default function BlogOGImage({ params }: { params: { id: string } }) {
-  const post = posts[params.id];
+export default async function BlogOGImage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const post = posts[id];
   const title = post?.title ?? "T.A.L.A. Blog";
   const author = post?.author ?? "T.A.L.A. Team";
   const category = post?.category ?? "Blog";
