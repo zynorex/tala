@@ -948,9 +948,35 @@ export default function BlogPost() {
 
           <div className="mt-12 pt-8 border-t-4 border-black flex flex-wrap gap-3 items-center">
             <span className="font-bold flex items-center gap-2"><Share2 className="w-4 h-4" /> Share</span>
-            <button className="px-4 py-2 border-2 border-black font-semibold bg-white hover:bg-black hover:text-white transition-colors">Twitter</button>
-            <button className="px-4 py-2 border-2 border-black font-semibold bg-white hover:bg-black hover:text-white transition-colors">LinkedIn</button>
-            <button className="px-4 py-2 border-2 border-black font-semibold bg-white hover:bg-black hover:text-white transition-colors">Email</button>
+            <button
+              onClick={() => {
+                const url = `https://usetala.in/blog/${id}`;
+                const text = `${post.title} — T.A.L.A.`;
+                window.open(`https://x.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`, "_blank", "noopener,noreferrer");
+              }}
+              className="px-4 py-2 border-2 border-black font-semibold bg-white hover:bg-black hover:text-white transition-colors"
+            >
+              Twitter
+            </button>
+            <button
+              onClick={() => {
+                const url = `https://usetala.in/blog/${id}`;
+                window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`, "_blank", "noopener,noreferrer");
+              }}
+              className="px-4 py-2 border-2 border-black font-semibold bg-white hover:bg-black hover:text-white transition-colors"
+            >
+              LinkedIn
+            </button>
+            <button
+              onClick={() => {
+                const subject = encodeURIComponent(`${post.title} — T.A.L.A.`);
+                const body = encodeURIComponent(`Check out this article from T.A.L.A.:\n\n${post.title}\nhttps://usetala.in/blog/${id}`);
+                window.open(`mailto:?subject=${subject}&body=${body}`);
+              }}
+              className="px-4 py-2 border-2 border-black font-semibold bg-white hover:bg-black hover:text-white transition-colors"
+            >
+              Email
+            </button>
           </div>
         </div>
       </section>
