@@ -1,6 +1,7 @@
 'use client';
 
-import { Calendar, User, ArrowRight, Tag, Clock, Share2, ChevronRight } from "lucide-react";
+import React, { useMemo, useState } from "react";
+import { Calendar, User, ArrowRight, Tag, Clock, Search, Filter, Sparkles, LayoutGrid, BookOpen } from "lucide-react";
 import Link from "next/link";
 
 export default function Blog() {
@@ -14,7 +15,7 @@ export default function Blog() {
       date: "Dec 10, 2024",
       readTime: "5 min read",
       category: "Security",
-      image: "📚",
+      image: "Education",
     },
     {
       id: 2,
@@ -25,7 +26,7 @@ export default function Blog() {
       date: "Dec 8, 2024",
       readTime: "7 min read",
       category: "Technology",
-      image: "🔐",
+      image: "TimeLock",
     },
     {
       id: 3,
@@ -36,7 +37,7 @@ export default function Blog() {
       date: "Dec 5, 2024",
       readTime: "3 min read",
       category: "Announcement",
-      image: "🚀",
+      image: "Launch",
     },
     {
       id: 4,
@@ -47,7 +48,7 @@ export default function Blog() {
       date: "Dec 1, 2024",
       readTime: "6 min read",
       category: "Architecture",
-      image: "🛡️",
+      image: "Trust",
     },
     {
       id: 5,
@@ -58,7 +59,7 @@ export default function Blog() {
       date: "Nov 28, 2024",
       readTime: "4 min read",
       category: "Technology",
-      image: "⚡",
+      image: "Efficiency",
     },
     {
       id: 6,
@@ -69,7 +70,7 @@ export default function Blog() {
       date: "Nov 25, 2024",
       readTime: "8 min read",
       category: "Case Study",
-      image: "🎓",
+      image: "CaseStudy",
     },
     {
       id: 7,
@@ -80,7 +81,7 @@ export default function Blog() {
       date: "Nov 20, 2024",
       readTime: "6 min read",
       category: "Technology",
-      image: "🧠",
+      image: "Smart",
     },
     {
       id: 8,
@@ -91,7 +92,7 @@ export default function Blog() {
       date: "Nov 15, 2024",
       readTime: "7 min read",
       category: "Architecture",
-      image: "🌐",
+      image: "Web3",
     },
     {
       id: 9,
@@ -102,7 +103,7 @@ export default function Blog() {
       date: "Nov 10, 2024",
       readTime: "5 min read",
       category: "Technology",
-      image: "⛓️",
+      image: "Polygon",
     },
     {
       id: 10,
@@ -113,7 +114,7 @@ export default function Blog() {
       date: "Nov 5, 2024",
       readTime: "4 min read",
       category: "Security",
-      image: "🔒",
+      image: "Hashing",
     },
     {
       id: 11,
@@ -124,7 +125,7 @@ export default function Blog() {
       date: "Oct 30, 2024",
       readTime: "8 min read",
       category: "Security",
-      image: "🎯",
+      image: "ZK",
     },
     {
       id: 12,
@@ -135,109 +136,132 @@ export default function Blog() {
       date: "Oct 25, 2024",
       readTime: "5 min read",
       category: "Announcement",
-      image: "📋",
+      image: "Roadmap",
     },
   ];
 
-  const categories = [
-    "All",
-    "Security",
-    "Technology",
-    "Architecture",
-    "Announcement",
-    "Case Study",
-  ];
+  const categories = ["All", "Security", "Technology", "Architecture", "Announcement", "Case Study"] as const;
+
+  const [categoryFilter, setCategoryFilter] = useState<typeof categories[number]>("All");
+  const [search, setSearch] = useState("");
+
+  const filteredPosts = useMemo(() => {
+    return posts.filter((post) => {
+      const matchesCategory = categoryFilter === "All" || post.category === categoryFilter;
+      const term = search.toLowerCase();
+      const haystack = `${post.title} ${post.excerpt} ${post.author} ${post.category}`.toLowerCase();
+      const matchesSearch = term ? haystack.includes(term) : true;
+      return matchesCategory && matchesSearch;
+    });
+  }, [categoryFilter, search, posts]);
+
+  const getCover = (label: string) => {
+    const palette = [
+      "from-[#dbeafe] to-[#eff6ff]",
+      "from-[#ecfdf3] to-[#f0fdf4]",
+      "from-[#fff7ed] to-[#fffbeb]",
+      "from-[#f5f3ff] to-[#faf5ff]",
+      "from-[#eef2ff] to-[#f8fafc]",
+    ];
+    const color = palette[label.length % palette.length];
+    const initials = label.slice(0, 2).toUpperCase();
+    return { color, initials };
+  };
 
   return (
-    <main className="min-h-screen bg-white">
-      {/* Hero Section */}
-      <section className="bg-heirlock-green border-b-4 border-black py-12 md:py-20 pt-24 md:pt-32">
-        <div className="container mx-auto max-w-7xl px-3 sm:px-4">
-          <div className="space-y-4 md:space-y-6">
-            <h1 className="text-5xl md:text-7xl font-bold text-black leading-tight">
-              T.A.L.A. <br />
-              Blog
-            </h1>
-            <p className="text-lg md:text-xl text-black max-w-3xl">
-              Latest news, technical deep dives, and insights on blockchain education security.
-            </p>
+    <main className="min-h-screen bg-[#f7f5f2] text-black">
+      <section className="border-b-4 border-black bg-white py-12 md:py-16 pt-24 md:pt-28">
+        <div className="container mx-auto max-w-7xl px-4">
+          <div className="flex flex-col lg:flex-row lg:items-center gap-8">
+            <div className="flex-1 space-y-4">
+              <div className="inline-flex items-center gap-2 px-3 py-1 border-2 border-black rounded-full text-xs font-semibold uppercase">
+                <Sparkles className="w-4 h-4" /> Editorial
+              </div>
+              <h1 className="text-4xl md:text-5xl font-black leading-tight">T.A.L.A. Briefings and Deep Dives</h1>
+              <p className="text-lg md:text-xl text-gray-800 max-w-3xl">
+                Research notes, engineering updates, and field learnings on secure exam delivery and time-locked infrastructure.
+              </p>
+              <div className="flex flex-wrap gap-3 text-sm text-gray-700">
+                <div className="inline-flex items-center gap-2 px-3 py-1 border-2 border-black rounded-full bg-white">
+                  <LayoutGrid className="w-4 h-4" /> Six categories
+                </div>
+                <div className="inline-flex items-center gap-2 px-3 py-1 border-2 border-black rounded-full bg-white">
+                  <BookOpen className="w-4 h-4" /> Longform and summaries
+                </div>
+              </div>
+            </div>
+            <div className="w-full lg:w-96 border-[3px] border-black rounded-xl bg-heirlock-green p-4 shadow-[10px_10px_0_0_#000] space-y-3">
+              <div className="flex items-center gap-2 text-sm font-semibold">
+                <Filter className="w-4 h-4" /> Curate your view
+              </div>
+              <div className="relative">
+                <Search className="w-4 h-4 absolute left-3 top-3 text-gray-500" />
+                <input
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  placeholder="Search topics, authors, or titles"
+                  className="w-full border-2 border-black rounded-lg py-2.5 pl-10 pr-3 text-sm bg-white focus:outline-none focus:ring-4 focus:ring-black/10"
+                />
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {categories.map((category) => (
+                  <button
+                    key={category}
+                    onClick={() => setCategoryFilter(category)}
+                    className={`px-3 py-1.5 border-2 border-black rounded-full text-sm font-semibold transition-transform ${
+                      categoryFilter === category ? "bg-black text-white" : "bg-white hover:-translate-y-0.5"
+                    }`}
+                  >
+                    {category}
+                  </button>
+                ))}
+              </div>
+              <p className="text-sm text-gray-800">
+                Filter by topic or search to jump directly to the material you need. All posts are edited for clarity and auditability.
+              </p>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Categories and Posts */}
-      <section className="py-12 md:py-20 bg-white">
-        <div className="container mx-auto max-w-7xl px-3 sm:px-4">
-          {/* Categories */}
-          <div className="mb-16 flex flex-wrap gap-4">
-            {categories.map((category, index) => (
-              <button
-                key={index}
-                className={`px-6 py-2 font-bold rounded border-4 transition-colors ${
-                  index === 0
-                    ? "bg-heirlock-green text-black border-black"
-                    : "border-black text-black hover:bg-black hover:text-white"
-                }`}
-              >
-                {category}
-              </button>
-            ))}
-          </div>
-
-          {/* Blog Posts Grid */}
+      <section className="py-12 md:py-16">
+        <div className="container mx-auto max-w-7xl px-4">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {posts.map((post) => (
-              <a key={post.id} href={`/blog/${post.id}`}>
-                <div className="border-4 border-black bg-white shadow-brutal hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all h-full flex flex-col cursor-pointer group">
-                  {/* Image */}
-                  <div className="bg-gray-100 p-8 text-6xl flex items-center justify-center group-hover:bg-gray-200 transition-colors">
-                    {post.image}
-                  </div>
-
-                  {/* Content */}
-                  <div className="p-6 flex flex-col flex-1">
-                    {/* Category Tag */}
-                    <div className="flex items-center gap-2 mb-3">
-                      <Tag className="w-4 h-4 text-heirlock-green" />
-                      <span className="text-xs font-bold text-heirlock-green uppercase">
+            {filteredPosts.map((post) => {
+              const cover = getCover(post.image);
+              return (
+                <Link key={post.id} href={`/blog/${post.id}`} className="block h-full">
+                  <article className="h-full border-[3px] border-black bg-white rounded-xl shadow-[10px_10px_0_0_#000] hover:-translate-y-1 transition-transform flex flex-col">
+                    <div className={`h-36 rounded-t-lg border-b-2 border-black bg-gradient-to-br ${cover.color} flex items-center justify-between px-4`}>
+                      <div className="text-4xl font-black tracking-tight">{cover.initials}</div>
+                      <div className="flex items-center gap-2 px-3 py-1 bg-white border-2 border-black rounded-full text-xs font-semibold uppercase">
+                        <Tag className="w-4 h-4" />
                         {post.category}
-                      </span>
-                    </div>
-
-                    {/* Title */}
-                    <h3 className="text-lg font-bold mb-3 group-hover:text-heirlock-green transition-colors line-clamp-2">
-                      {post.title}
-                    </h3>
-
-                    {/* Excerpt */}
-                    <p className="text-gray-700 text-sm mb-4 flex-1 line-clamp-3">
-                      {post.excerpt}
-                    </p>
-
-                    {/* Meta */}
-                    <div className="space-y-2 text-xs text-gray-500 mb-4 border-t-2 border-gray-300 pt-4">
-                      <div className="flex items-center gap-2">
-                        <User className="w-4 h-4" />
-                        {post.author}
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Calendar className="w-4 h-4" />
-                        {post.date}
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Clock className="w-4 h-4" />
-                        {post.readTime}
                       </div>
                     </div>
-
-                    {/* Read More */}
-                    <div className="flex items-center gap-2 text-heirlock-green font-bold group-hover:gap-3 transition-all">
-                      Read Article <ArrowRight className="w-4 h-4" />
+                    <div className="p-5 flex flex-col flex-1 gap-4">
+                      <div className="space-y-2">
+                        <h3 className="text-xl font-black leading-snug line-clamp-2">{post.title}</h3>
+                        <p className="text-sm text-gray-700 leading-relaxed line-clamp-3">{post.excerpt}</p>
+                      </div>
+                      <div className="flex flex-wrap gap-3 text-xs text-gray-600 border-t-2 border-gray-200 pt-4">
+                        <span className="inline-flex items-center gap-2"><User className="w-4 h-4" /> {post.author}</span>
+                        <span className="inline-flex items-center gap-2"><Calendar className="w-4 h-4" /> {post.date}</span>
+                        <span className="inline-flex items-center gap-2"><Clock className="w-4 h-4" /> {post.readTime}</span>
+                      </div>
+                      <div className="mt-auto inline-flex items-center gap-2 text-sm font-semibold text-black">
+                        Read article <ArrowRight className="w-4 h-4" />
+                      </div>
                     </div>
-                  </div>
-                </div>
-              </a>
-            ))}
+                  </article>
+                </Link>
+              );
+            })}
+            {filteredPosts.length === 0 && (
+              <div className="col-span-full border-[3px] border-black rounded-xl bg-white p-6 text-gray-700 shadow-[6px_6px_0_0_#000]">
+                No posts match your filters. Try a different term or category.
+              </div>
+            )}
           </div>
         </div>
       </section>

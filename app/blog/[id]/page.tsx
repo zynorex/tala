@@ -1,6 +1,7 @@
 'use client';
 
-import { Calendar, User, Clock, ArrowLeft, Share2 } from "lucide-react";
+import React, { useMemo } from "react";
+import { Calendar, User, Clock, ArrowLeft, Share2, Tag, Sparkles, BookOpen, Shield } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 
@@ -11,7 +12,7 @@ const blogContent = {
     date: "Dec 10, 2024",
     readTime: "5 min read",
     category: "Security",
-    image: "📚",
+    image: "Education",
     content: `
       <h2>The Education Security Crisis</h2>
       <p>Exam paper leaks are not a minor issue. Every year, educational institutions lose millions to compromised assessments. Students gain unfair advantages, institutional credibility suffers, and the entire examination system becomes questioned.</p>
@@ -60,7 +61,7 @@ const blogContent = {
     date: "Dec 8, 2024",
     readTime: "7 min read",
     category: "Technology",
-    image: "🔐",
+    image: "TimeLock",
     content: `
       <h2>The Problem With Traditional Exams</h2>
       <p>Even with the best security, traditional exams have a critical flaw: they rely on human coordination. Papers must be printed, distributed, collected, and graded—each step introduces potential for error or manipulation.</p>
@@ -119,7 +120,7 @@ const blogContent = {
     date: "Dec 5, 2024",
     readTime: "3 min read",
     category: "Announcement",
-    image: "🚀",
+    image: "Launch",
     content: `
       <h2>We're Live! 🎉</h2>
       <p>After months of development, testing, and refinement, T.A.L.A. 1.0 is officially live on Polygon Amoy testnet.</p>
@@ -181,7 +182,7 @@ const blogContent = {
     date: "Dec 1, 2024",
     readTime: "6 min read",
     category: "Architecture",
-    image: "🛡️",
+    image: "Trust",
     content: `
       <h2>The Trust Problem</h2>
       <p>Every centralized exam security system asks institutions the same question: "Do you trust us with your data?"</p>
@@ -242,7 +243,7 @@ const blogContent = {
     date: "Nov 28, 2024",
     readTime: "4 min read",
     category: "Technology",
-    image: "⚡",
+    image: "Efficiency",
     content: `
       <h2>The Gas Problem</h2>
       <p>When T.A.L.A. was in development, we faced a critical challenge: blockchain transactions cost money (gas fees). For educational institutions with tight budgets, storing exam papers on Ethereum could cost hundreds of dollars per vault.</p>
@@ -297,7 +298,7 @@ const blogContent = {
     date: "Nov 25, 2024",
     readTime: "8 min read",
     category: "Case Study",
-    image: "🎓",
+    image: "CaseStudy",
     content: `
       <h2>The Challenge</h2>
       <p>As one of India's premier engineering institutes, IIT Delhi manages thousands of exams annually. With high-stakes placements and scholarships on the line, exam security is paramount.</p>
@@ -373,7 +374,7 @@ const blogContent = {
     date: "Nov 20, 2024",
     readTime: "6 min read",
     category: "Technology",
-    image: "🧠",
+    image: "Smart",
     content: `
       <h2>What is a Smart Contract?</h2>
       <p>A smart contract is a self-executing program on the blockchain. Think of it as a digital agreement where the terms are enforced automatically by code, not by lawyers or intermediaries.</p>
@@ -478,7 +479,7 @@ const blogContent = {
     date: "Nov 15, 2024",
     readTime: "7 min read",
     category: "Architecture",
-    image: "🌐",
+    image: "Web3",
     content: `
       <h2>The Web2 Education Problem</h2>
       <p>Educational systems today are built on Web2 architecture: centralized servers, proprietary databases, and intermediaries.</p>
@@ -570,7 +571,7 @@ const blogContent = {
     date: "Nov 10, 2024",
     readTime: "5 min read",
     category: "Technology",
-    image: "⛓️",
+    image: "Polygon",
     content: `
       <h2>The Blockchain Decision</h2>
       <p>When building T.A.L.A., we faced a critical choice: which blockchain to deploy on?</p>
@@ -636,7 +637,7 @@ const blogContent = {
     date: "Nov 5, 2024",
     readTime: "4 min read",
     category: "Security",
-    image: "🔒",
+    image: "Hashing",
     content: `
       <h2>The Problem: Document Integrity</h2>
       <p>How do you prove that a document hasn't been modified? In traditional systems, you don't. You rely on signatures, seals, and trust.</p>
@@ -712,7 +713,7 @@ const blogContent = {
     date: "Oct 30, 2024",
     readTime: "8 min read",
     category: "Security",
-    image: "🎯",
+    image: "ZK",
     content: `
       <h2>The Privacy Paradox</h2>
       <p>Education creates a privacy paradox: we need to verify information while keeping it secret.</p>
@@ -790,7 +791,7 @@ const blogContent = {
     date: "Oct 25, 2024",
     readTime: "5 min read",
     category: "Announcement",
-    image: "📋",
+    image: "Roadmap",
     content: `
       <h2>2026 Vision</h2>
       <p>We launched T.A.L.A. 1.0 in December 2024. Now, we're charting the course for 2026 and beyond.</p>
@@ -870,10 +871,16 @@ const blogContent = {
   }
 };
 
+const removeEmojis = (text: string) => {
+  return text.replace(/[\p{Extended_Pictographic}\p{Emoji_Presentation}]/gu, "");
+};
+
 export default function BlogPost() {
   const params = useParams();
   const id = parseInt(params.id as string);
   const post = blogContent[id as keyof typeof blogContent];
+
+  const cleanContent = useMemo(() => (post ? removeEmojis(post.content) : ""), [post]);
 
   if (!post) {
     return (
@@ -892,72 +899,71 @@ export default function BlogPost() {
   }
 
   return (
-    <main className="min-h-screen bg-white">
-      {/* Header */}
-      <section className="border-b-4 border-black py-12 md:py-20 pt-24 md:pt-32 bg-heirlock-yellow">
-        <div className="container mx-auto max-w-4xl px-3 sm:px-4">
-          <Link href="/blog" className="text-black font-bold hover:underline flex items-center gap-2 mb-6">
-            <ArrowLeft className="w-4 h-4" />
-            Back to Blog
+    <main className="min-h-screen bg-[#f7f5f2] text-black">
+      <section className="border-b-4 border-black bg-white py-12 md:py-16 pt-24 md:pt-28">
+        <div className="container mx-auto max-w-6xl px-4 space-y-6">
+          <Link href="/blog" className="inline-flex items-center gap-2 px-3 py-1 border-2 border-black rounded-full text-sm font-semibold hover:-translate-y-0.5 transition-transform">
+            <ArrowLeft className="w-4 h-4" /> Back to blog
           </Link>
-          
-          <h1 className="text-5xl md:text-6xl font-bold text-black mb-6">{post.title}</h1>
-          
-          <div className="space-y-4 text-black">
-            <div className="flex items-center gap-4 text-sm flex-wrap">
-              <div className="flex items-center gap-2">
-                <User className="w-4 h-4" />
-                {post.author}
+          <div className="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-6 lg:gap-10">
+            <div className="space-y-4">
+              <div className="flex items-center gap-3 flex-wrap text-xs font-semibold uppercase tracking-wide">
+                <span className="inline-flex items-center gap-2 px-3 py-1 border-2 border-black rounded-full bg-black text-white">
+                  <Tag className="w-3.5 h-3.5" /> {post.category}
+                </span>
+                <span className="inline-flex items-center gap-2 px-3 py-1 border-2 border-black rounded-full bg-white">
+                  <Calendar className="w-3.5 h-3.5" /> {post.date}
+                </span>
+                <span className="inline-flex items-center gap-2 px-3 py-1 border-2 border-black rounded-full bg-white">
+                  <Clock className="w-3.5 h-3.5" /> {post.readTime}
+                </span>
               </div>
-              <div className="flex items-center gap-2">
-                <Calendar className="w-4 h-4" />
-                {post.date}
+              <h1 className="text-4xl md:text-5xl font-black leading-tight">{post.title}</h1>
+              <p className="text-lg text-gray-800">Author: {post.author}. Edited for clarity and security accuracy.</p>
+            </div>
+            <div className="border-[3px] border-black rounded-xl bg-heirlock-yellow p-4 shadow-[10px_10px_0_0_#000] space-y-3">
+              <div className="flex items-center gap-2 text-sm font-semibold">
+                <Sparkles className="w-4 h-4" /> Article highlights
               </div>
-              <div className="flex items-center gap-2">
-                <Clock className="w-4 h-4" />
-                {post.readTime}
+              <ul className="space-y-2 text-sm text-gray-800 list-disc list-inside">
+                <li>Time-locked delivery and trust-minimized storage.</li>
+                <li>Auditability, encryption, and policy enforcement.</li>
+                <li>Practical guidance for secure exam operations.</li>
+              </ul>
+              <div className="flex flex-wrap gap-2 text-xs font-semibold">
+                <span className="px-3 py-1 border-2 border-black rounded-full bg-white inline-flex items-center gap-2"><Shield className="w-4 h-4" /> Security focus</span>
+                <span className="px-3 py-1 border-2 border-black rounded-full bg-white inline-flex items-center gap-2"><BookOpen className="w-4 h-4" /> Readable summary</span>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Content */}
-      <section className="py-12 md:py-20 bg-white">
-        <div className="container mx-auto max-w-4xl px-3 sm:px-4">
-          <div 
+      <section className="py-12 md:py-16">
+        <div className="container mx-auto max-w-4xl px-4">
+          <article
             className="prose prose-lg max-w-none text-black space-y-6"
-            dangerouslySetInnerHTML={{ __html: post.content }}
+            dangerouslySetInnerHTML={{ __html: cleanContent }}
           />
 
-          {/* Share Section */}
-          <div className="mt-12 pt-8 border-t-4 border-black flex gap-4">
-            <span className="font-bold flex items-center gap-2">
-              <Share2 className="w-4 h-4" />
-              Share:
-            </span>
-            <button className="px-4 py-2 border-2 border-black font-bold hover:bg-black hover:text-white transition-colors">
-              Twitter
-            </button>
-            <button className="px-4 py-2 border-2 border-black font-bold hover:bg-black hover:text-white transition-colors">
-              LinkedIn
-            </button>
-            <button className="px-4 py-2 border-2 border-black font-bold hover:bg-black hover:text-white transition-colors">
-              Email
-            </button>
+          <div className="mt-12 pt-8 border-t-4 border-black flex flex-wrap gap-3 items-center">
+            <span className="font-bold flex items-center gap-2"><Share2 className="w-4 h-4" /> Share</span>
+            <button className="px-4 py-2 border-2 border-black font-semibold bg-white hover:bg-black hover:text-white transition-colors">Twitter</button>
+            <button className="px-4 py-2 border-2 border-black font-semibold bg-white hover:bg-black hover:text-white transition-colors">LinkedIn</button>
+            <button className="px-4 py-2 border-2 border-black font-semibold bg-white hover:bg-black hover:text-white transition-colors">Email</button>
           </div>
         </div>
       </section>
 
-      {/* More Posts CTA */}
-      <section className="py-12 md:py-20 bg-heirlock-green border-t-4 border-black">
-        <div className="container mx-auto max-w-4xl px-3 sm:px-4 text-center">
-          <h2 className="text-4xl font-bold text-black mb-6">Read More Articles</h2>
+      <section className="py-12 md:py-16 bg-heirlock-green border-t-4 border-black">
+        <div className="container mx-auto max-w-4xl px-4 text-center">
+          <h2 className="text-3xl md:text-4xl font-black text-black mb-4">Keep exploring the T.A.L.A. blog</h2>
+          <p className="text-lg text-gray-800 mb-8">More research notes, release breakdowns, and security guidance.</p>
           <Link
             href="/blog"
-            className="inline-flex items-center gap-2 px-8 py-4 bg-black text-white font-bold border-4 border-black rounded-lg hover:opacity-90 transition-opacity"
+            className="inline-flex items-center gap-2 px-8 py-4 bg-black text-white font-semibold border-2 border-black rounded-lg hover:-translate-y-0.5 transition-transform"
           >
-            Back to Blog
+            Back to blog
             <ArrowLeft className="w-4 h-4" />
           </Link>
         </div>
