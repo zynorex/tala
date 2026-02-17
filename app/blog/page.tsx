@@ -16,6 +16,7 @@ export default function Blog() {
       readTime: "5 min read",
       category: "Security",
       image: "Education",
+      badge: "BLOCKCHAIN",
     },
     {
       id: 2,
@@ -27,6 +28,7 @@ export default function Blog() {
       readTime: "7 min read",
       category: "Technology",
       image: "TimeLock",
+      badge: "SMART CONTRACTS",
     },
     {
       id: 3,
@@ -38,6 +40,7 @@ export default function Blog() {
       readTime: "3 min read",
       category: "Announcement",
       image: "Launch",
+      badge: "LAUNCH",
     },
     {
       id: 4,
@@ -49,6 +52,7 @@ export default function Blog() {
       readTime: "6 min read",
       category: "Architecture",
       image: "Trust",
+      badge: "ARCHITECTURE",
     },
     {
       id: 5,
@@ -60,6 +64,7 @@ export default function Blog() {
       readTime: "4 min read",
       category: "Technology",
       image: "Efficiency",
+      badge: "OPTIMIZATION",
     },
     {
       id: 6,
@@ -71,6 +76,7 @@ export default function Blog() {
       readTime: "8 min read",
       category: "Case Study",
       image: "CaseStudy",
+      badge: "CASE STUDY",
     },
     {
       id: 7,
@@ -82,6 +88,7 @@ export default function Blog() {
       readTime: "6 min read",
       category: "Technology",
       image: "Smart",
+      badge: "CONTRACTS",
     },
     {
       id: 8,
@@ -93,6 +100,7 @@ export default function Blog() {
       readTime: "7 min read",
       category: "Architecture",
       image: "Web3",
+      badge: "WEB3",
     },
     {
       id: 9,
@@ -104,6 +112,7 @@ export default function Blog() {
       readTime: "5 min read",
       category: "Technology",
       image: "Polygon",
+      badge: "POLYGON",
     },
     {
       id: 10,
@@ -115,6 +124,7 @@ export default function Blog() {
       readTime: "4 min read",
       category: "Security",
       image: "Hashing",
+      badge: "HASHING",
     },
     {
       id: 11,
@@ -126,6 +136,7 @@ export default function Blog() {
       readTime: "8 min read",
       category: "Security",
       image: "ZK",
+      badge: "ZERO-KNOWLEDGE",
     },
     {
       id: 12,
@@ -137,6 +148,7 @@ export default function Blog() {
       readTime: "5 min read",
       category: "Announcement",
       image: "Roadmap",
+      badge: "ROADMAP",
     },
   ];
 
@@ -233,7 +245,7 @@ export default function Blog() {
                 <Link key={post.id} href={`/blog/${post.id}`} className="block h-full">
                   <article className="h-full border-[3px] border-black bg-white rounded-xl shadow-[10px_10px_0_0_#000] hover:-translate-y-1 transition-transform flex flex-col">
                     <div className={`h-36 rounded-t-lg border-b-2 border-black bg-gradient-to-br ${cover.color} flex items-center justify-between px-4`}>
-                      <div className="text-4xl font-black tracking-tight">{cover.initials}</div>
+                      <div className="text-2xl font-black tracking-tight leading-tight max-w-xs">{post.badge}</div>
                       <div className="flex items-center gap-2 px-3 py-1 bg-white border-2 border-black rounded-full text-xs font-semibold uppercase">
                         <Tag className="w-4 h-4" />
                         {post.category}

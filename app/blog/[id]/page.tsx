@@ -14,6 +14,7 @@ const blogContent = {
     readTime: "5 min read",
     category: "Security",
     image: "Education",
+    badge: "BLOCKCHAIN",
     content: `
       <h2>The Education Security Crisis</h2>
       <p>Exam paper leaks are not a minor issue. Every year, educational institutions lose millions to compromised assessments. Students gain unfair advantages, institutional credibility suffers, and the entire examination system becomes questioned.</p>
@@ -63,6 +64,7 @@ const blogContent = {
     readTime: "7 min read",
     category: "Technology",
     image: "TimeLock",
+    badge: "SMART CONTRACTS",
     content: `
       <h2>The Problem With Traditional Exams</h2>
       <p>Even with the best security, traditional exams have a critical flaw: they rely on human coordination. Papers must be printed, distributed, collected, and graded—each step introduces potential for error or manipulation.</p>
@@ -122,6 +124,7 @@ const blogContent = {
     readTime: "3 min read",
     category: "Announcement",
     image: "Launch",
+    badge: "LAUNCH",
     content: `
       <h2>We're Live! 🎉</h2>
       <p>After months of development, testing, and refinement, T.A.L.A. 1.0 is officially live on Polygon Amoy testnet.</p>
@@ -184,6 +187,7 @@ const blogContent = {
     readTime: "6 min read",
     category: "Architecture",
     image: "Trust",
+    badge: "ARCHITECTURE",
     content: `
       <h2>The Trust Problem</h2>
       <p>Every centralized exam security system asks institutions the same question: "Do you trust us with your data?"</p>
@@ -245,6 +249,7 @@ const blogContent = {
     readTime: "4 min read",
     category: "Technology",
     image: "Efficiency",
+    badge: "OPTIMIZATION",
     content: `
       <h2>The Gas Problem</h2>
       <p>When T.A.L.A. was in development, we faced a critical challenge: blockchain transactions cost money (gas fees). For educational institutions with tight budgets, storing exam papers on Ethereum could cost hundreds of dollars per vault.</p>
@@ -300,6 +305,7 @@ const blogContent = {
     readTime: "8 min read",
     category: "Case Study",
     image: "CaseStudy",
+    badge: "CASE STUDY",
     content: `
       <h2>The Challenge</h2>
       <p>As one of India's premier engineering institutes, IIT Delhi manages thousands of exams annually. With high-stakes placements and scholarships on the line, exam security is paramount.</p>
@@ -376,6 +382,7 @@ const blogContent = {
     readTime: "6 min read",
     category: "Technology",
     image: "Smart",
+    badge: "CONTRACTS",
     content: `
       <h2>What is a Smart Contract?</h2>
       <p>A smart contract is a self-executing program on the blockchain. Think of it as a digital agreement where the terms are enforced automatically by code, not by lawyers or intermediaries.</p>
@@ -481,6 +488,7 @@ const blogContent = {
     readTime: "7 min read",
     category: "Architecture",
     image: "Web3",
+    badge: "WEB3",
     content: `
       <h2>The Web2 Education Problem</h2>
       <p>Educational systems today are built on Web2 architecture: centralized servers, proprietary databases, and intermediaries.</p>
@@ -573,6 +581,7 @@ const blogContent = {
     readTime: "5 min read",
     category: "Technology",
     image: "Polygon",
+    badge: "POLYGON",
     content: `
       <h2>The Blockchain Decision</h2>
       <p>When building T.A.L.A., we faced a critical choice: which blockchain to deploy on?</p>
@@ -639,6 +648,7 @@ const blogContent = {
     readTime: "4 min read",
     category: "Security",
     image: "Hashing",
+    badge: "HASHING",
     content: `
       <h2>The Problem: Document Integrity</h2>
       <p>How do you prove that a document hasn't been modified? In traditional systems, you don't. You rely on signatures, seals, and trust.</p>
@@ -715,6 +725,7 @@ const blogContent = {
     readTime: "8 min read",
     category: "Security",
     image: "ZK",
+    badge: "ZERO-KNOWLEDGE",
     content: `
       <h2>The Privacy Paradox</h2>
       <p>Education creates a privacy paradox: we need to verify information while keeping it secret.</p>
@@ -793,6 +804,7 @@ const blogContent = {
     readTime: "5 min read",
     category: "Announcement",
     image: "Roadmap",
+    badge: "ROADMAP",
     content: `
       <h2>2026 Vision</h2>
       <p>We launched T.A.L.A. 1.0 in December 2024. Now, we're charting the course for 2026 and beyond.</p>
