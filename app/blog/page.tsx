@@ -12,7 +12,7 @@ export default function Blog() {
       excerpt:
         "Exam paper leaks cost institutions thousands every year. Learn how blockchain and cryptography solve this problem permanently.",
       author: "Dr. Rajesh Kumar",
-      date: "Dec 10, 2024",
+      date: "Jan 10, 2026",
       readTime: "5 min read",
       category: "Security",
       image: "Education",
@@ -24,7 +24,7 @@ export default function Blog() {
       excerpt:
         "Discover how time-lock smart contracts revolutionize exam administration and ensure absolute fairness for all students.",
       author: "Priya Sharma",
-      date: "Dec 8, 2024",
+      date: "Jan 8, 2026",
       readTime: "7 min read",
       category: "Technology",
       image: "TimeLock",
@@ -36,7 +36,7 @@ export default function Blog() {
       excerpt:
         "We're thrilled to announce that T.A.L.A. is now live on Polygon Amoy testnet. Start deploying vault today.",
       author: "Team T.A.L.A.",
-      date: "Dec 5, 2024",
+      date: "Jan 5, 2026",
       readTime: "3 min read",
       category: "Announcement",
       image: "Launch",
@@ -48,7 +48,7 @@ export default function Blog() {
       excerpt:
         "Understand the architectural decisions that make T.A.L.A. trustless. Your keys, your security, your papers.",
       author: "Dr. Rajesh Kumar",
-      date: "Dec 1, 2024",
+      date: "Dec 28, 2025",
       readTime: "6 min read",
       category: "Architecture",
       image: "Trust",
@@ -60,7 +60,7 @@ export default function Blog() {
       excerpt:
         "How we optimized smart contracts to reduce gas costs by 70%. Better security, lower expenses.",
       author: "Priya Sharma",
-      date: "Nov 28, 2024",
+      date: "Dec 25, 2025",
       readTime: "4 min read",
       category: "Technology",
       image: "Efficiency",
@@ -72,7 +72,7 @@ export default function Blog() {
       excerpt:
         "A detailed look at how India's leading institute leverages T.A.L.A. to prevent paper leaks and streamline exams.",
       author: "Team T.A.L.A.",
-      date: "Nov 25, 2024",
+      date: "Dec 22, 2025",
       readTime: "8 min read",
       category: "Case Study",
       image: "CaseStudy",
@@ -84,7 +84,7 @@ export default function Blog() {
       excerpt:
         "A beginner's guide to smart contracts and how they enable tamper-proof, automated exam administration without intermediaries.",
       author: "Rohan Patel",
-      date: "Nov 20, 2024",
+      date: "Dec 17, 2025",
       readTime: "6 min read",
       category: "Technology",
       image: "Smart",
@@ -96,7 +96,7 @@ export default function Blog() {
       excerpt:
         "Exploring how Web3 principles are transforming education from bottom-up. Real ownership, real control, real security.",
       author: "Dr. Rajesh Kumar",
-      date: "Nov 15, 2024",
+      date: "Dec 12, 2025",
       readTime: "7 min read",
       category: "Architecture",
       image: "Web3",
@@ -108,7 +108,7 @@ export default function Blog() {
       excerpt:
         "Technical deep-dive into why Polygon Amoy provides the ideal environment: low gas fees, high throughput, Ethereum security.",
       author: "Priya Sharma",
-      date: "Nov 10, 2024",
+      date: "Dec 7, 2025",
       readTime: "5 min read",
       category: "Technology",
       image: "Polygon",
@@ -120,7 +120,7 @@ export default function Blog() {
       excerpt:
         "Learn how SHA-256 and cryptographic hashing protect exam papers from modification, deletion, or forgery attempts.",
       author: "Rohan Patel",
-      date: "Nov 5, 2024",
+      date: "Dec 2, 2025",
       readTime: "4 min read",
       category: "Security",
       image: "Hashing",
@@ -132,7 +132,7 @@ export default function Blog() {
       excerpt:
         "Discover how zero-knowledge cryptography allows document verification while maintaining complete privacy of contents.",
       author: "Dr. Rajesh Kumar",
-      date: "Oct 30, 2024",
+      date: "Nov 27, 2025",
       readTime: "8 min read",
       category: "Security",
       image: "ZK",
@@ -144,7 +144,7 @@ export default function Blog() {
       excerpt:
         "A preview of our 2026 development roadmap: cross-chain support, zero-knowledge rollups, advanced analytics, and institutional features.",
       author: "Team T.A.L.A.",
-      date: "Oct 25, 2024",
+      date: "Nov 22, 2025",
       readTime: "5 min read",
       category: "Announcement",
       image: "Roadmap",
@@ -156,7 +156,7 @@ export default function Blog() {
       excerpt:
         "Educational data protection is paramount. Learn how our platform ensures full compliance with GDPR, FERPA, and other regulatory frameworks.",
       author: "Sarah Mitchell",
-      date: "Oct 20, 2024",
+      date: "Nov 17, 2025",
       readTime: "7 min read",
       category: "Security",
       image: "Compliance",
@@ -168,7 +168,7 @@ export default function Blog() {
       excerpt:
         "A comprehensive financial analysis showing how blockchain solutions dramatically reduce operational and infrastructure costs for institutions.",
       author: "Vikram Desai",
-      date: "Oct 15, 2024",
+      date: "Nov 12, 2025",
       readTime: "6 min read",
       category: "Technology",
       image: "Cost",
@@ -180,7 +180,7 @@ export default function Blog() {
       excerpt:
         "Seamless integration with Canvas, Blackboard, and Moodle. Learn how to connect T.A.L.A. with your existing learning management systems.",
       author: "James Chen",
-      date: "Oct 10, 2024",
+      date: "Nov 7, 2025",
       readTime: "5 min read",
       category: "Technology",
       image: "Integration",
@@ -192,7 +192,7 @@ export default function Blog() {
       excerpt:
         "Explore how students can own and control their educational credentials using decentralized identity systems built on blockchain.",
       author: "Dr. Rajesh Kumar",
-      date: "Oct 5, 2024",
+      date: "Nov 2, 2025",
       readTime: "8 min read",
       category: "Architecture",
       image: "Identity",
@@ -204,7 +204,7 @@ export default function Blog() {
       excerpt:
         "From planning to deployment. Our comprehensive guide helps institutions implement T.A.L.A. with minimal disruption to existing operations.",
       author: "Priya Sharma",
-      date: "Sep 28, 2024",
+      date: "Oct 26, 2025",
       readTime: "7 min read",
       category: "Technology",
       image: "Implementation",
@@ -216,7 +216,7 @@ export default function Blog() {
       excerpt:
         "T.A.L.A. is fully optimized for mobile and tablet devices. Discover how students and administrators can work securely on the go.",
       author: "Aisha Patel",
-      date: "Sep 22, 2024",
+      date: "Oct 20, 2025",
       readTime: "4 min read",
       category: "Technology",
       image: "Mobile",
@@ -228,7 +228,7 @@ export default function Blog() {
       excerpt:
         "Comprehensive training programs, documentation, and 24/7 support to ensure your faculty masters T.A.L.A. with confidence.",
       author: "Team T.A.L.A.",
-      date: "Sep 15, 2024",
+      date: "Oct 13, 2025",
       readTime: "5 min read",
       category: "Technology",
       image: "Training",
@@ -240,7 +240,7 @@ export default function Blog() {
       excerpt:
         "Learn about our international expansion strategy and how T.A.L.A. adapts to different educational systems and regulatory requirements worldwide.",
       author: "Dr. Rajesh Kumar",
-      date: "Sep 8, 2024",
+      date: "Oct 6, 2025",
       readTime: "6 min read",
       category: "Announcement",
       image: "Global",
@@ -252,7 +252,7 @@ export default function Blog() {
       excerpt:
         "Advanced machine learning techniques that detect suspicious exam behavior while respecting student privacy and avoiding oppressive surveillance.",
       author: "Rohan Patel",
-      date: "Sep 1, 2024",
+      date: "Sep 29, 2025",
       readTime: "7 min read",
       category: "Technology",
       image: "Detection",
@@ -264,7 +264,7 @@ export default function Blog() {
       excerpt:
         "How T.A.L.A. empowers students with complete control over their educational data through end to end encryption and self-sovereign identity.",
       author: "Sarah Mitchell",
-      date: "Aug 25, 2024",
+      date: "Sep 23, 2025",
       readTime: "6 min read",
       category: "Security",
       image: "Privacy",
@@ -276,7 +276,7 @@ export default function Blog() {
       excerpt:
         "How blockchain and time-locked assessment are reshaping educational evaluation to focus on real skills and competencies instead of test scores.",
       author: "Priya Sharma",
-      date: "Aug 18, 2024",
+      date: "Sep 16, 2025",
       readTime: "8 min read",
       category: "Architecture",
       image: "Assessment",
@@ -288,7 +288,7 @@ export default function Blog() {
       excerpt:
         "Every action is logged immutably. Understand how comprehensive audit trails protect institutions and ensure fair, transparent exam processes.",
       author: "Vikram Desai",
-      date: "Aug 12, 2024",
+      date: "Sep 10, 2025",
       readTime: "5 min read",
       category: "Security",
       image: "Audit",

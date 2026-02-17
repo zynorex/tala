@@ -10,7 +10,7 @@ const blogContent = {
   1: {
     title: "Why Blockchain is Essential for Education Security",
     author: "Dr. Rajesh Kumar",
-    date: "Dec 10, 2024",
+    date: "Jan 10, 2026",
     readTime: "5 min read",
     category: "Security",
     image: "Education",
@@ -60,7 +60,7 @@ const blogContent = {
   2: {
     title: "The Future of Fair Assessment: Time-Locked Education",
     author: "Priya Sharma",
-    date: "Dec 8, 2024",
+    date: "Jan 8, 2026",
     readTime: "7 min read",
     category: "Technology",
     image: "TimeLock",
@@ -120,7 +120,7 @@ const blogContent = {
   3: {
     title: "T.A.L.A. 1.0 Launch: Polygon Amoy is Live",
     author: "Team T.A.L.A.",
-    date: "Dec 5, 2024",
+    date: "Jan 5, 2026",
     readTime: "3 min read",
     category: "Announcement",
     image: "Launch",
@@ -183,7 +183,7 @@ const blogContent = {
   4: {
     title: "Non-Custodial Architecture: Why You Don't Have to Trust Us",
     author: "Dr. Rajesh Kumar",
-    date: "Dec 1, 2024",
+    date: "Dec 28, 2025",
     readTime: "6 min read",
     category: "Architecture",
     image: "Trust",
@@ -245,7 +245,7 @@ const blogContent = {
   5: {
     title: "Gas Optimization: Reducing Costs for Educational Institutions",
     author: "Priya Sharma",
-    date: "Nov 28, 2024",
+    date: "Dec 25, 2025",
     readTime: "4 min read",
     category: "Technology",
     image: "Efficiency",
@@ -301,7 +301,7 @@ const blogContent = {
   6: {
     title: "Case Study: How IIT Delhi Uses T.A.L.A. for Exam Security",
     author: "Team T.A.L.A.",
-    date: "Nov 25, 2024",
+    date: "Dec 22, 2025",
     readTime: "8 min read",
     category: "Case Study",
     image: "CaseStudy",
@@ -378,7 +378,7 @@ const blogContent = {
   7: {
     title: "Understanding Smart Contracts: The Foundation of T.A.L.A.",
     author: "Rohan Patel",
-    date: "Nov 20, 2024",
+    date: "Dec 17, 2025",
     readTime: "6 min read",
     category: "Technology",
     image: "Smart",
@@ -484,7 +484,7 @@ const blogContent = {
   8: {
     title: "Web3 for Education: From Centralized to Decentralized Systems",
     author: "Dr. Rajesh Kumar",
-    date: "Nov 15, 2024",
+    date: "Dec 12, 2025",
     readTime: "7 min read",
     category: "Architecture",
     image: "Web3",
@@ -577,7 +577,7 @@ const blogContent = {
   9: {
     title: "Polygon Amoy: Why We Chose It for T.A.L.A.",
     author: "Priya Sharma",
-    date: "Nov 10, 2024",
+    date: "Dec 7, 2025",
     readTime: "5 min read",
     category: "Technology",
     image: "Polygon",
@@ -644,7 +644,7 @@ const blogContent = {
   10: {
     title: "Cryptographic Hashing: How T.A.L.A. Detects Document Tampering",
     author: "Rohan Patel",
-    date: "Nov 5, 2024",
+    date: "Dec 2, 2025",
     readTime: "4 min read",
     category: "Security",
     image: "Hashing",
@@ -721,7 +721,7 @@ const blogContent = {
   11: {
     title: "Zero-Knowledge Proofs: Verification Without Exposure",
     author: "Dr. Rajesh Kumar",
-    date: "Oct 30, 2024",
+    date: "Nov 27, 2025",
     readTime: "8 min read",
     category: "Security",
     image: "ZK",
@@ -800,7 +800,7 @@ const blogContent = {
   12: {
     title: "T.A.L.A. Roadmap 2026: What's Coming Next",
     author: "Team T.A.L.A.",
-    date: "Oct 25, 2024",
+    date: "Nov 22, 2025",
     readTime: "5 min read",
     category: "Announcement",
     image: "Roadmap",
@@ -885,7 +885,7 @@ const blogContent = {
   13: {
     title: "GDPR and FERPA Compliance: How T.A.L.A. Meets International Standards",
     author: "Sarah Mitchell",
-    date: "Oct 20, 2024",
+    date: "Nov 17, 2025",
     readTime: "7 min read",
     category: "Security",
     image: "Compliance",
@@ -958,7 +958,7 @@ const blogContent = {
   14: {
     title: "The Total Cost of Ownership: T.A.L.A. vs Traditional Exam Security",
     author: "Vikram Desai",
-    date: "Oct 15, 2024",
+    date: "Nov 12, 2025",
     readTime: "6 min read",
     category: "Technology",
     image: "Cost",
@@ -1040,7 +1040,7 @@ const blogContent = {
   15: {
     title: "Integration with LMS Platforms: Making T.A.L.A. Your Ecosystem",
     author: "James Chen",
-    date: "Oct 10, 2024",
+    date: "Nov 7, 2025",
     readTime: "5 min read",
     category: "Technology",
     image: "Integration",
@@ -1126,7 +1126,7 @@ const blogContent = {
   16: {
     title: "Decentralized Identity in Education: Self-Sovereign Credentials",
     author: "Dr. Rajesh Kumar",
-    date: "Oct 5, 2024",
+    date: "Nov 2, 2025",
     readTime: "8 min read",
     category: "Architecture",
     image: "Identity",
@@ -1190,7 +1190,7 @@ const blogContent = {
   17: {
     title: "Institutional Adoption: A Step-by-Step Implementation Guide",
     author: "Priya Sharma",
-    date: "Sep 28, 2024",
+    date: "Oct 26, 2025",
     readTime: "7 min read",
     category: "Technology",
     image: "Implementation",
@@ -1316,7 +1316,7 @@ const blogContent = {
   18: {
     title: "Mobile First: Accessing Secure Exams from Any Device",
     author: "Aisha Patel",
-    date: "Sep 22, 2024",
+    date: "Oct 20, 2025",
     readTime: "4 min read",
     category: "Technology",
     image: "Mobile",
@@ -1398,7 +1398,7 @@ const blogContent = {
   19: {
     title: "Faculty Training and Support: Preparing Your Team for Success",
     author: "Team T.A.L.A.",
-    date: "Sep 15, 2024",
+    date: "Oct 13, 2025",
     readTime: "5 min read",
     category: "Technology",
     image: "Training",
@@ -1489,7 +1489,7 @@ const blogContent = {
   20: {
     title: "Global Expansion: T.A.L.A. Across Continents and Currencies",
     author: "Dr. Rajesh Kumar",
-    date: "Sep 8, 2024",
+    date: "Oct 6, 2025",
     readTime: "6 min read",
     category: "Announcement",
     image: "Global",
@@ -1600,7 +1600,7 @@ const blogContent = {
   21: {
     title: "Preventing Cheating with AI: Detection Without Surveillance",
     author: "Rohan Patel",
-    date: "Sep 1, 2024",
+    date: "Sep 29, 2025",
     readTime: "7 min read",
     category: "Technology",
     image: "Detection",
@@ -1714,7 +1714,7 @@ const blogContent = {
   22: {
     title: "Student Data Privacy: Your Information, Your Control",
     author: "Sarah Mitchell",
-    date: "Aug 25, 2024",
+    date: "Sep 23, 2025",
     readTime: "6 min read",
     category: "Security",
     image: "Privacy",
@@ -1828,7 +1828,7 @@ const blogContent = {
   23: {
     title: "The Future of Assessment: From Standardized Tests to Competency Verification",
     author: "Priya Sharma",
-    date: "Aug 18, 2024",
+    date: "Sep 16, 2025",
     readTime: "8 min read",
     category: "Architecture",
     image: "Assessment",
@@ -1930,7 +1930,7 @@ const blogContent = {
   24: {
     title: "Audit Trails and Transparency: Complete Accountability in Exam Administration",
     author: "Vikram Desai",
-    date: "Aug 12, 2024",
+    date: "Sep 10, 2025",
     readTime: "5 min read",
     category: "Security",
     image: "Audit",
