@@ -1,12 +1,81 @@
 'use client';
 
-import { useState } from 'react';
-import { Lock, Users, Upload, Settings, Zap, Shield, Clock, CheckCircle, ChevronRight, ArrowRight } from "lucide-react";
+import { useEffect, useState } from 'react';
+import { Lock, Users, Upload, Settings, Zap, Shield, Clock, CheckCircle, ChevronRight, ArrowRight, X } from "lucide-react";
 import Link from "next/link";
 import CreateVaultForm from "@/app/components/CreateVaultForm";
 
-function DemoVaultFormTab() {
-  const [activeTab, setActiveTab] = useState<'demo' | 'real'>('demo');
+type VaultTab = 'demo' | 'real';
+
+function AccessNoticeModal({
+  onClose,
+  onSelectDemo,
+  onSelectPaid,
+}: {
+  onClose: () => void;
+  onSelectDemo: () => void;
+  onSelectPaid: () => void;
+}) {
+  return (
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center">
+      <div className="fixed inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose} />
+      <div className="relative z-[10000] w-full max-w-xl mx-4">
+        <div className="bg-white border-4 border-black shadow-brutal rounded-lg overflow-hidden">
+          <div className="flex items-start justify-between gap-4 p-5 md:p-6 border-b-4 border-black bg-heirlock-yellow">
+            <div className="space-y-1">
+              <p className="text-[11px] md:text-xs font-black uppercase tracking-wide text-black">Access notice</p>
+              <h2 className="text-xl md:text-2xl font-black text-black leading-snug">Vault creation requires a paid workspace</h2>
+            </div>
+            <button onClick={onClose} className="p-1 rounded hover:bg-black/10 transition-colors">
+              <X className="w-5 h-5 text-black" />
+            </button>
+          </div>
+
+          <div className="p-5 md:p-6 space-y-4">
+            <p className="text-gray-900 text-base md:text-lg font-semibold">
+              New vaults are available to paid customers. To experience the workflow immediately, use the demo vault that unlocks in a few minutes.
+            </p>
+            <p className="text-gray-700 text-sm md:text-base">
+              The demo vault runs the same encryption, storage, and unlock process. When you are ready for production usage, continue to create a paid vault.
+            </p>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div className="border-3 border-black bg-white p-4 rounded-lg">
+                <p className="text-sm font-black text-black mb-1">Demo vault</p>
+                <p className="text-xs text-gray-700">Unlocks in minutes, ideal for validation and walkthroughs.</p>
+              </div>
+              <div className="border-3 border-black bg-white p-4 rounded-lg">
+                <p className="text-sm font-black text-black mb-1">Paid vault</p>
+                <p className="text-xs text-gray-700">Custom schedules, production storage, and support.</p>
+              </div>
+            </div>
+
+            <div className="flex flex-col sm:flex-row gap-3 pt-2">
+              <button
+                onClick={onSelectDemo}
+                className="w-full px-4 py-3 bg-black text-heirlock-yellow font-black text-sm md:text-base border-3 border-black rounded-lg shadow-brutal hover:-translate-y-0.5 transition-all"
+              >
+                Try the demo vault
+              </button>
+              <button
+                onClick={onSelectPaid}
+                className="w-full px-4 py-3 bg-white text-black font-black text-sm md:text-base border-3 border-black rounded-lg hover:bg-gray-50 transition-colors"
+              >
+                Continue to paid vaults
+              </button>
+            </div>
+
+            <p className="text-[11px] text-gray-600 text-center border-t-2 border-black pt-3">
+              You can switch to a paid vault at any time. The demo is for evaluation only.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function DemoVaultFormTab({ activeTab, setActiveTab }: { activeTab: VaultTab; setActiveTab: (tab: VaultTab) => void; }) {
 
   return (
     <div className="space-y-6">
@@ -20,7 +89,7 @@ function DemoVaultFormTab() {
               : 'border-transparent text-gray-600 hover:text-black'
           }`}
         >
-          ⏱️ Demo Vault (2 Minutes)
+          Demo Vault (2 Minutes)
         </button>
         <button
           onClick={() => setActiveTab('real')}
@@ -30,7 +99,7 @@ function DemoVaultFormTab() {
               : 'border-transparent text-gray-600 hover:text-black'
           }`}
         >
-          🔒 Real Vault (Custom Time)
+          Real Vault (Custom Time)
         </button>
       </div>
 
@@ -80,6 +149,42 @@ function DemoVaultFormTab() {
 }
 
 export default function CreateVault() {
+  const [activeTab, setActiveTab] = useState<VaultTab>('demo');
+  const [showAccessModal, setShowAccessModal] = useState(false);
+
+  useEffect(() => {
+    const seen = typeof window !== 'undefined' ? localStorage.getItem('createVaultAccessNotice') : 'true';
+    if (!seen) {
+      setShowAccessModal(true);
+    }
+  }, []);
+
+  const closeAccessModal = () => {
+    setShowAccessModal(false);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('createVaultAccessNotice', 'true');
+    }
+  };
+
+  const focusForm = () => {
+    const el = document.getElementById('vault-form');
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
+  const handleSelectDemo = () => {
+    setActiveTab('demo');
+    closeAccessModal();
+    focusForm();
+  };
+
+  const handleSelectPaid = () => {
+    setActiveTab('real');
+    closeAccessModal();
+    focusForm();
+  };
+
   const steps = [
     {
       number: "1",
@@ -132,6 +237,14 @@ export default function CreateVault() {
 
   return (
     <main className="min-h-screen bg-white">
+      {showAccessModal && (
+        <AccessNoticeModal
+          onClose={closeAccessModal}
+          onSelectDemo={handleSelectDemo}
+          onSelectPaid={handleSelectPaid}
+        />
+      )}
+
       {/* Hero Section */}
       <section className="bg-heirlock-blue border-b-4 border-black py-12 md:py-20 pt-24 md:pt-32">
         <div className="container mx-auto max-w-7xl px-3 sm:px-4">
@@ -163,7 +276,7 @@ export default function CreateVault() {
           <div className="mb-12">
             {/* Vault Form Tabs */}
             <div className="mb-12">
-              <DemoVaultFormTab />
+              <DemoVaultFormTab activeTab={activeTab} setActiveTab={setActiveTab} />
             </div>
           </div>
         </div>
