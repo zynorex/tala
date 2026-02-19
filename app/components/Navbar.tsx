@@ -155,184 +155,103 @@ export default function Navbar() {
                 <ChevronDown className="w-4 h-4 group-hover/resources:rotate-180 transition-transform" />
               </button>
 
-              <div className="absolute left-1/2 -translate-x-1/2 mt-0 w-[92vw] max-w-5xl bg-dark text-white border-4 border-black shadow-brutal rounded-xl opacity-0 invisible group-hover/resources:opacity-100 group-hover/resources:visible transition-all duration-200 ease-out z-50">
-                <div className="grid grid-cols-3 gap-8 p-8">
+              <div className="absolute left-1/2 -translate-x-1/2 mt-0 w-[94vw] max-w-5xl bg-black text-white border-4 border-black shadow-brutal rounded-xl opacity-0 invisible group-hover/resources:opacity-100 group-hover/resources:visible transition-all duration-200 ease-out z-50 overflow-hidden">
+                <div className="h-2 bg-gradient-to-r from-heirlock-yellow via-heirlock-green to-heirlock-blue" />
+                <div className="grid lg:grid-cols-[1.2fr_1.2fr_1fr] gap-8 p-8">
                   {/* Learn Column */}
                   <div>
                     <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Learn</h3>
-                    <div className="space-y-3">
-                      <Link href="/learn" onClick={closeMenu}>
-                        <div className="flex items-center gap-3 px-3 py-2 rounded-md border-2 border-transparent hover:border-black hover:bg-heirlock-yellow hover:text-black transition-all font-bold cursor-pointer">
-                          <BookOpen className="w-5 h-5" />
-                          <span>Learn T.A.L.A.</span>
-                        </div>
-                      </Link>
-                      <Link href="/documentation" onClick={closeMenu}>
-                        <div className="flex items-center gap-3 px-3 py-2 rounded-md border-2 border-transparent hover:border-black hover:bg-heirlock-green hover:text-black transition-all font-bold cursor-pointer">
-                          <BookOpen className="w-5 h-5" />
-                          <span>Documentation</span>
-                        </div>
-                      </Link>
-                      <Link href="/how-it-works" onClick={closeMenu}>
-                        <div className="flex items-center gap-3 px-3 py-2 rounded-md border-2 border-transparent hover:border-black hover:bg-heirlock-blue hover:text-black transition-all font-bold cursor-pointer">
-                          <Zap className="w-5 h-5" />
-                          <span>How It Works</span>
-                        </div>
-                      </Link>
-                      <Link href="/launch" onClick={closeMenu}>
-                        <div className="flex items-center gap-3 px-3 py-2 rounded-md border-2 border-transparent hover:border-black hover:bg-heirlock-pink hover:text-black transition-all font-bold cursor-pointer">
-                          <Rocket className="w-5 h-5" />
-                          <span>Launch Details</span>
-                        </div>
-                      </Link>
-                      <Link href="/faq" onClick={closeMenu}>
-                        <div className="flex items-center gap-3 px-3 py-2 rounded-md border-2 border-transparent hover:border-black hover:bg-heirlock-yellow hover:text-black transition-all font-bold cursor-pointer">
-                          <HelpCircle className="w-5 h-5" />
-                          <span>FAQ</span>
-                        </div>
-                      </Link>
-                      <Link href="/case-studies" onClick={closeMenu}>
-                        <div className="flex items-center gap-3 px-3 py-2 rounded-md border-2 border-transparent hover:border-black hover:bg-heirlock-pink hover:text-black transition-all font-bold cursor-pointer">
-                          <Zap className="w-5 h-5" />
-                          <span>Case Studies</span>
-                        </div>
-                      </Link>
-                      <Link href="/pricing" onClick={closeMenu}>
-                        <div className="flex items-center gap-3 px-3 py-2 rounded-md border-2 border-transparent hover:border-black hover:bg-heirlock-pink hover:text-black transition-all font-bold cursor-pointer">
-                          <Zap className="w-5 h-5" />
-                          <span>Pricing</span>
-                        </div>
-                      </Link>
-                      <Link href="/team" onClick={closeMenu}>
-                        <div className="flex items-center gap-3 px-3 py-2 rounded-md border-2 border-transparent hover:border-black hover:bg-heirlock-green hover:text-black transition-all font-bold cursor-pointer">
-                          <LayoutGrid className="w-5 h-5" />
-                          <span>Team</span>
-                        </div>
-                      </Link>
-                      <Link href="/api-status" onClick={closeMenu}>
-                        <div className="flex items-center gap-3 px-3 py-2 rounded-md border-2 border-transparent hover:border-black hover:bg-heirlock-blue hover:text-black transition-all font-bold cursor-pointer">
-                          <Shield className="w-5 h-5" />
-                          <span>API Status and Limits</span>
-                        </div>
-                      </Link>
-                      <Link href="/procurement" onClick={closeMenu}>
-                        <div className="flex items-center gap-3 px-3 py-2 rounded-md border-2 border-transparent hover:border-black hover:bg-heirlock-yellow hover:text-black transition-all font-bold cursor-pointer">
-                          <BookOpen className="w-5 h-5" />
-                          <span>Procurement Pack</span>
-                        </div>
-                      </Link>
-                      <Link href="/security" onClick={closeMenu}>
-                        <div className="flex items-center gap-3 px-3 py-2 rounded-md border-2 border-transparent hover:border-black hover:bg-heirlock-green hover:text-black transition-all font-bold cursor-pointer">
-                          <Shield className="w-5 h-5" />
-                          <span>Security</span>
-                        </div>
-                      </Link>
-                      <Link href="/trust-center" onClick={closeMenu}>
-                        <div className="flex items-center gap-3 px-3 py-2 rounded-md border-2 border-transparent hover:border-black hover:bg-heirlock-blue hover:text-black transition-all font-bold cursor-pointer">
-                          <Shield className="w-5 h-5" />
-                          <span>Trust Center</span>
-                        </div>
-                      </Link>
-                      <Link href="/roadmap" onClick={closeMenu}>
-                        <div className="flex items-center gap-3 px-3 py-2 rounded-md border-2 border-transparent hover:border-black hover:bg-heirlock-yellow hover:text-black transition-all font-bold cursor-pointer">
-                          <Zap className="w-5 h-5" />
-                          <span>Roadmap</span>
-                        </div>
-                      </Link>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      {[
+                        { href: '/learn', label: 'Learn T.A.L.A.', icon: BookOpen, bg: 'hover:bg-heirlock-yellow' },
+                        { href: '/documentation', label: 'Documentation', icon: BookOpen, bg: 'hover:bg-heirlock-green' },
+                        { href: '/how-it-works', label: 'How It Works', icon: Zap, bg: 'hover:bg-heirlock-blue' },
+                        { href: '/launch', label: 'Launch Details', icon: Rocket, bg: 'hover:bg-heirlock-pink' },
+                        { href: '/faq', label: 'FAQ', icon: HelpCircle, bg: 'hover:bg-heirlock-yellow' },
+                        { href: '/case-studies', label: 'Case Studies', icon: Zap, bg: 'hover:bg-heirlock-pink' },
+                        { href: '/pricing', label: 'Pricing', icon: Zap, bg: 'hover:bg-heirlock-pink' },
+                        { href: '/team', label: 'Team', icon: LayoutGrid, bg: 'hover:bg-heirlock-green' },
+                        { href: '/api-status', label: 'API Status and Limits', icon: Shield, bg: 'hover:bg-heirlock-blue' },
+                        { href: '/procurement', label: 'Procurement Pack', icon: BookOpen, bg: 'hover:bg-heirlock-yellow' },
+                        { href: '/security', label: 'Security', icon: Shield, bg: 'hover:bg-heirlock-green' },
+                        { href: '/trust-center', label: 'Trust Center', icon: Shield, bg: 'hover:bg-heirlock-blue' },
+                        { href: '/roadmap', label: 'Roadmap', icon: Zap, bg: 'hover:bg-heirlock-yellow' },
+                      ].map((item, idx) => {
+                        const Icon = item.icon;
+                        return (
+                          <Link href={item.href} onClick={closeMenu} key={idx}>
+                            <div className={`flex items-center gap-3 px-3 py-3 rounded-lg border-2 border-transparent ${item.bg} hover:text-black hover:border-black transition-all font-bold cursor-pointer bg-dark/60`}>
+                              <Icon className="w-5 h-5" />
+                              <span>{item.label}</span>
+                            </div>
+                          </Link>
+                        );
+                      })}
                     </div>
                   </div>
 
                   {/* Build Column */}
                   <div>
                     <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Build</h3>
-                    <div className="space-y-3">
-                      <Link href="/docs" onClick={closeMenu}>
-                        <div className="flex items-center gap-3 px-3 py-2 rounded-md border-2 border-transparent hover:border-black hover:bg-heirlock-green hover:text-black transition-all font-bold cursor-pointer">
-                          <Code className="w-5 h-5" />
-                          <span>Developer Docs</span>
-                        </div>
-                      </Link>
-                      <Link href="/docs/api" onClick={closeMenu}>
-                        <div className="flex items-center gap-3 px-3 py-2 rounded-md border-2 border-transparent hover:border-black hover:bg-heirlock-blue hover:text-black transition-all font-bold cursor-pointer">
-                          <Code className="w-5 h-5" />
-                          <span>API Documentation</span>
-                        </div>
-                      </Link>
-                      <Link href="/docs/quickstart" onClick={closeMenu}>
-                        <div className="flex items-center gap-3 px-3 py-2 rounded-md border-2 border-transparent hover:border-black hover:bg-heirlock-yellow hover:text-black transition-all font-bold cursor-pointer">
-                          <Code className="w-5 h-5" />
-                          <span>API Quickstart</span>
-                        </div>
-                      </Link>
-                      <Link href="/integrations" onClick={closeMenu}>
-                        <div className="flex items-center gap-3 px-3 py-2 rounded-md border-2 border-transparent hover:border-black hover:bg-heirlock-green hover:text-black transition-all font-bold cursor-pointer">
-                          <Code className="w-5 h-5" />
-                          <span>Integrations</span>
-                        </div>
-                      </Link>
-                      <Link href="/smart-contracts" onClick={closeMenu}>
-                        <div className="flex items-center gap-3 px-3 py-2 rounded-md border-2 border-transparent hover:border-black hover:bg-heirlock-pink hover:text-black transition-all font-bold cursor-pointer">
-                          <Code className="w-5 h-5" />
-                          <span>Smart Contracts</span>
-                        </div>
-                      </Link>
-                      <Link href="/admin" onClick={closeMenu}>
-                        <div className="flex items-center gap-3 px-3 py-2 rounded-md border-2 border-transparent hover:border-black hover:bg-heirlock-yellow hover:text-black transition-all font-bold cursor-pointer">
-                          <Shield className="w-5 h-5" />
-                          <span>Admin Upload</span>
-                        </div>
-                      </Link>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      {[
+                        { href: '/docs', label: 'Developer Docs', icon: Code, bg: 'hover:bg-heirlock-green' },
+                        { href: '/docs/api', label: 'API Documentation', icon: Code, bg: 'hover:bg-heirlock-blue' },
+                        { href: '/docs/quickstart', label: 'API Quickstart', icon: Code, bg: 'hover:bg-heirlock-yellow' },
+                        { href: '/integrations', label: 'Integrations', icon: Code, bg: 'hover:bg-heirlock-green' },
+                        { href: '/smart-contracts', label: 'Smart Contracts', icon: Code, bg: 'hover:bg-heirlock-pink' },
+                        { href: '/admin', label: 'Admin Upload', icon: Shield, bg: 'hover:bg-heirlock-yellow' },
+                      ].map((item, idx) => {
+                        const Icon = item.icon;
+                        return (
+                          <Link href={item.href} onClick={closeMenu} key={idx}>
+                            <div className={`flex items-center gap-3 px-3 py-3 rounded-lg border-2 border-transparent ${item.bg} hover:text-black hover:border-black transition-all font-bold cursor-pointer bg-dark/60`}>
+                              <Icon className="w-5 h-5" />
+                              <span>{item.label}</span>
+                            </div>
+                          </Link>
+                        );
+                      })}
                     </div>
                   </div>
 
                   {/* Stay Updated Column */}
                   <div>
                     <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Access</h3>
-                    <div className="space-y-3">
-                      <Link href="/access-portal" onClick={closeMenu}>
-                        <div className="flex items-center gap-3 px-3 py-2 rounded-md border-2 border-transparent hover:border-black hover:bg-heirlock-green hover:text-black transition-all font-bold cursor-pointer">
-                          <Zap className="w-5 h-5" />
-                          <span>Access Portal</span>
-                        </div>
-                      </Link>
-                      <Link href="/blog" onClick={closeMenu}>
-                        <div className="flex items-center gap-3 px-3 py-2 rounded-md border-2 border-transparent hover:border-black hover:bg-heirlock-pink hover:text-black transition-all font-bold cursor-pointer">
-                          <Newspaper className="w-5 h-5" />
-                          <span>Blog</span>
-                        </div>
-                      </Link>
-                      <Link href="/changelog" onClick={closeMenu}>
-                        <div className="flex items-center gap-3 px-3 py-2 rounded-md border-2 border-transparent hover:border-black hover:bg-heirlock-yellow hover:text-black transition-all font-bold cursor-pointer">
-                          <Code className="w-5 h-5" />
-                          <span>Changelog</span>
-                        </div>
-                      </Link>
-                      <Link href="/contact" onClick={closeMenu}>
-                        <div className="flex items-center gap-3 px-3 py-2 rounded-md border-2 border-transparent hover:border-black hover:bg-heirlock-yellow hover:text-black transition-all font-bold cursor-pointer">
-                          <Mail className="w-5 h-5" />
-                          <span>Contact</span>
-                        </div>
-                      </Link>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      {[
+                        { href: '/access-portal', label: 'Access Portal', icon: Zap, bg: 'hover:bg-heirlock-green' },
+                        { href: '/blog', label: 'Blog', icon: Newspaper, bg: 'hover:bg-heirlock-pink' },
+                        { href: '/changelog', label: 'Changelog', icon: Code, bg: 'hover:bg-heirlock-yellow' },
+                        { href: '/contact', label: 'Contact', icon: Mail, bg: 'hover:bg-heirlock-yellow' },
+                      ].map((item, idx) => {
+                        const Icon = item.icon;
+                        return (
+                          <Link href={item.href} onClick={closeMenu} key={idx}>
+                            <div className={`flex items-center gap-3 px-3 py-3 rounded-lg border-2 border-transparent ${item.bg} hover:text-black hover:border-black transition-all font-bold cursor-pointer bg-dark/60`}>
+                              <Icon className="w-5 h-5" />
+                              <span>{item.label}</span>
+                            </div>
+                          </Link>
+                        );
+                      })}
                     </div>
                   </div>
                 </div>
 
-                {/* Featured Guide Section */}
-                <div className="border-t-4 border-black p-8 bg-heirlock-yellow bg-opacity-50">
-                  <div className="grid grid-cols-2 gap-6 items-center">
-                    <div>
-                      <h4 className="text-sm font-bold text-black mb-2">Get Started</h4>
-                      <h3 className="text-xl font-bold mb-3 leading-tight text-black">Secure Your Exams Today</h3>
-                      <p className="text-sm text-black  mb-4">Create your first vault and start protecting exam papers in just 2 minutes.</p>
-                      <Link href="/create-vault" onClick={closeMenu}>
-                        <button className="px-4 py-2 bg-heirlock-green text-black font-bold border-2 border-black rounded-xl hover:translate-x-0.5 hover:translate-y-0.5 transition-all text-sm">
-                          Create Vault →
-                        </button>
-                      </Link>
-                    </div>
-                    <div className="bg-heirlock-pink rounded-3xl border-4 border-black h-40 flex items-center justify-center hover:shadow-brutal transition-all">
-                      <Image src="/monogram.png" alt="Hero Image" width={200} height={200} />
-                    </div>
+                <div className="border-t-4 border-black bg-heirlock-yellow/70 p-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                  <div className="space-y-1 text-black">
+                    <p className="text-xs font-black uppercase tracking-wide">Featured</p>
+                    <h4 className="text-xl font-black leading-tight">Create a vault in two minutes</h4>
+                    <p className="text-sm font-medium max-w-xl">Use the guided flow to lock files with device-side encryption and contract enforced unlocks.</p>
+                  </div>
+                  <div className="flex flex-col sm:flex-row gap-3">
+                    <Link href="/create-vault" onClick={closeMenu}>
+                      <button className="px-4 py-3 bg-black text-heirlock-yellow font-black border-3 border-black rounded-lg shadow-brutal hover:-translate-y-0.5 transition-all text-sm">Start a vault</button>
+                    </Link>
+                    <Link href="/docs/quickstart" onClick={closeMenu}>
+                      <button className="px-4 py-3 bg-white text-black font-black border-3 border-black rounded-lg hover:bg-heirlock-blue transition-all text-sm">View quickstart</button>
+                    </Link>
                   </div>
                 </div>
               </div>
