@@ -59,13 +59,13 @@ export default function LaunchAnnouncementModal() {
   const daysUntilLaunch = Math.ceil((launchDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
 
   return (
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center" role="dialog" aria-modal="true">
+    <div className="fixed inset-0 z-9999 flex items-center justify-center" role="dialog" aria-modal="true">
       <div
         className="fixed inset-0 bg-black/50 backdrop-blur-sm"
         onClick={handleClose}
       />
 
-      <div className="relative z-[10000] w-full max-w-md mx-4 max-h-[90vh] overflow-y-auto" ref={modalRef}>
+      <div className="relative z-10000 w-full max-w-md mx-4 max-h-[90vh] overflow-y-auto" ref={modalRef}>
         <div
           className={`bg-white border-4 border-black shadow-brutal rounded-lg overflow-hidden transition-all duration-200 ease-out ${
             animateIn ? 'opacity-100 scale-100 translate-y-0' : 'opacity-0 scale-95 translate-y-1'
@@ -81,7 +81,7 @@ export default function LaunchAnnouncementModal() {
             </div>
             <button
               onClick={handleClose}
-              className="p-1 hover:bg-black/10 rounded transition-colors flex-shrink-0 focus:outline-none focus:ring-2 focus:ring-black"
+              className="p-1 hover:bg-black/10 rounded transition-colors shrink-0 focus:outline-none focus:ring-2 focus:ring-black"
               aria-label="Close announcement"
             >
               <X className="w-5 h-5 md:w-6 md:h-6 text-black" />
@@ -132,7 +132,7 @@ export default function LaunchAnnouncementModal() {
                 onClick={() => handleClose()}
                 className="w-full px-3 md:px-4 py-3 md:py-3 bg-black text-heirlock-yellow font-black border-3 border-black rounded-lg hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2 text-center text-sm md:text-base shadow-brutal"
               >
-                <Zap className="w-4 h-4 md:w-5 md:h-5 flex-shrink-0" />
+                <Zap className="w-4 h-4 md:w-5 md:h-5 shrink-0" />
                 See the launch plan
               </a>
               <button
