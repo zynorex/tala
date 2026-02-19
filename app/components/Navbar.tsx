@@ -155,103 +155,159 @@ export default function Navbar() {
                 <ChevronDown className="w-4 h-4 group-hover/resources:rotate-180 transition-transform" />
               </button>
 
-              <div className="absolute left-1/2 -translate-x-1/2 mt-0 w-[94vw] max-w-5xl bg-black text-white border-4 border-black shadow-brutal rounded-xl opacity-0 invisible group-hover/resources:opacity-100 group-hover/resources:visible transition-all duration-200 ease-out z-50 overflow-hidden">
+              <div className="absolute left-1/2 -translate-x-1/2 mt-0 w-[94vw] max-w-5xl text-white border-4 border-black shadow-brutal rounded-xl opacity-0 invisible group-hover/resources:opacity-100 group-hover/resources:visible transition-all duration-200 ease-out z-50 overflow-hidden">
                 <div className="h-2 bg-linear-to-r from-heirlock-yellow via-heirlock-green to-heirlock-blue" />
-                <div className="grid lg:grid-cols-[1.2fr_1.2fr_1fr] gap-8 p-8">
-                  {/* Learn Column */}
-                  <div>
-                    <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Learn</h3>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      {[
-                        { href: '/learn', label: 'Learn T.A.L.A.', icon: BookOpen, bg: 'hover:bg-heirlock-yellow' },
-                        { href: '/documentation', label: 'Documentation', icon: BookOpen, bg: 'hover:bg-heirlock-green' },
-                        { href: '/how-it-works', label: 'How It Works', icon: Zap, bg: 'hover:bg-heirlock-blue' },
-                        { href: '/launch', label: 'Launch Details', icon: Rocket, bg: 'hover:bg-heirlock-pink' },
-                        { href: '/faq', label: 'FAQ', icon: HelpCircle, bg: 'hover:bg-heirlock-yellow' },
-                        { href: '/case-studies', label: 'Case Studies', icon: Zap, bg: 'hover:bg-heirlock-pink' },
-                        { href: '/pricing', label: 'Pricing', icon: Zap, bg: 'hover:bg-heirlock-pink' },
-                        { href: '/team', label: 'Team', icon: LayoutGrid, bg: 'hover:bg-heirlock-green' },
-                        { href: '/api-status', label: 'API Status and Limits', icon: Shield, bg: 'hover:bg-heirlock-blue' },
-                        { href: '/procurement', label: 'Procurement Pack', icon: BookOpen, bg: 'hover:bg-heirlock-yellow' },
-                        { href: '/security', label: 'Security', icon: Shield, bg: 'hover:bg-heirlock-green' },
-                        { href: '/trust-center', label: 'Trust Center', icon: Shield, bg: 'hover:bg-heirlock-blue' },
-                        { href: '/roadmap', label: 'Roadmap', icon: Zap, bg: 'hover:bg-heirlock-yellow' },
-                      ].map((item, idx) => {
-                        const Icon = item.icon;
-                        return (
-                          <Link href={item.href} onClick={closeMenu} key={idx}>
-                            <div className={`flex items-center gap-3 px-3 py-3 rounded-lg border-2 border-transparent ${item.bg} hover:text-black hover:border-black transition-all font-bold cursor-pointer bg-dark/60`}>
-                              <Icon className="w-5 h-5" />
-                              <span>{item.label}</span>
-                            </div>
-                          </Link>
-                        );
-                      })}
+                <div className="bg-black/95 backdrop-blur-sm">
+                  <div className="flex flex-wrap items-center justify-between gap-4 px-6 md:px-8 pt-6">
+                    <div className="flex items-center gap-3">
+                      <div className="h-10 w-10 rounded-lg bg-white text-black font-black flex items-center justify-center shadow-brutal">R</div>
+                      <div>
+                        <p className="text-[11px] uppercase tracking-[0.2em] text-gray-400 font-black">Resources</p>
+                        <p className="text-sm md:text-base text-white/80 font-semibold">Guides, launch notes, and build-ready docs.</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3 text-sm text-white/70">
+                      <span className="inline-flex items-center gap-2 px-3 py-2 rounded-full border border-white/20 bg-white/5">
+                        <Shield className="w-4 h-4" />
+                        Security-first content
+                      </span>
+                      <span className="hidden sm:inline-flex items-center gap-2 px-3 py-2 rounded-full border border-white/20 bg-white/5">
+                        <Zap className="w-4 h-4" />
+                        Updated weekly
+                      </span>
                     </div>
                   </div>
 
-                  {/* Build Column */}
-                  <div>
-                    <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Build</h3>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      {[
-                        { href: '/docs', label: 'Developer Docs', icon: Code, bg: 'hover:bg-heirlock-green' },
-                        { href: '/docs/api', label: 'API Documentation', icon: Code, bg: 'hover:bg-heirlock-blue' },
-                        { href: '/docs/quickstart', label: 'API Quickstart', icon: Code, bg: 'hover:bg-heirlock-yellow' },
-                        { href: '/integrations', label: 'Integrations', icon: Code, bg: 'hover:bg-heirlock-green' },
-                        { href: '/smart-contracts', label: 'Smart Contracts', icon: Code, bg: 'hover:bg-heirlock-pink' },
-                        { href: '/admin', label: 'Admin Upload', icon: Shield, bg: 'hover:bg-heirlock-yellow' },
-                      ].map((item, idx) => {
-                        const Icon = item.icon;
-                        return (
-                          <Link href={item.href} onClick={closeMenu} key={idx}>
-                            <div className={`flex items-center gap-3 px-3 py-3 rounded-lg border-2 border-transparent ${item.bg} hover:text-black hover:border-black transition-all font-bold cursor-pointer bg-dark/60`}>
-                              <Icon className="w-5 h-5" />
-                              <span>{item.label}</span>
-                            </div>
-                          </Link>
-                        );
-                      })}
+                  <div className="grid lg:grid-cols-[1.1fr_1.1fr_0.95fr] gap-6 md:gap-7 px-6 md:px-8 py-6 md:py-8">
+                    {/* Learn Column */}
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <h3 className="text-xs font-black text-gray-400 uppercase tracking-[0.25em]">Learn</h3>
+                        <span className="text-[11px] text-white/60">Orientation</span>
+                      </div>
+                      <div className="space-y-2">
+                        {[
+                          { href: '/learn', label: 'Learn T.A.L.A.', icon: BookOpen, desc: 'Overview of the platform and where to start.', tone: 'from-heirlock-yellow/40 to-transparent' },
+                          { href: '/documentation', label: 'Documentation', icon: BookOpen, desc: 'Full product docs and onboarding flows.', tone: 'from-heirlock-green/40 to-transparent' },
+                          { href: '/how-it-works', label: 'How It Works', icon: Zap, desc: 'Concepts, guarantees, and threat model.', tone: 'from-heirlock-blue/40 to-transparent' },
+                          { href: '/launch', label: 'Launch Details', icon: Rocket, desc: 'Release plans, timelines, and readiness.', tone: 'from-heirlock-pink/40 to-transparent' },
+                          { href: '/faq', label: 'FAQ', icon: HelpCircle, desc: 'Answers to the most common questions.', tone: 'from-heirlock-yellow/40 to-transparent' },
+                          { href: '/case-studies', label: 'Case Studies', icon: Zap, desc: 'Proof points from real deployments.', tone: 'from-heirlock-pink/40 to-transparent' },
+                          { href: '/pricing', label: 'Pricing', icon: Zap, desc: 'Plans, usage, and billing breakdown.', tone: 'from-heirlock-pink/40 to-transparent' },
+                          { href: '/team', label: 'Team', icon: LayoutGrid, desc: 'Meet the builders and advisors.', tone: 'from-heirlock-green/40 to-transparent' },
+                          { href: '/api-status', label: 'API Status and Limits', icon: Shield, desc: 'Availability, limits, and uptime.', tone: 'from-heirlock-blue/40 to-transparent' },
+                          { href: '/procurement', label: 'Procurement Pack', icon: BookOpen, desc: 'Security, legal, and procurement docs.', tone: 'from-heirlock-yellow/40 to-transparent' },
+                          { href: '/security', label: 'Security', icon: Shield, desc: 'Security practices and attestations.', tone: 'from-heirlock-green/40 to-transparent' },
+                          { href: '/trust-center', label: 'Trust Center', icon: Shield, desc: 'Compliance, policies, and audits.', tone: 'from-heirlock-blue/40 to-transparent' },
+                          { href: '/roadmap', label: 'Roadmap', icon: Zap, desc: 'What is shipping next.', tone: 'from-heirlock-yellow/40 to-transparent' },
+                        ].map((item, idx) => {
+                          const Icon = item.icon;
+                          return (
+                            <Link href={item.href} onClick={closeMenu} key={idx}>
+                              <div className="group/link flex items-start gap-3 p-3 rounded-lg border border-white/10 bg-white/3 hover:bg-white/10 hover:border-white/30 transition-all">
+                                <div className="h-10 w-10 rounded-md bg-linear-to-br from-white/15 to-white/5 flex items-center justify-center text-white shrink-0 border border-white/10">
+                                  <Icon className="w-5 h-5" />
+                                </div>
+                                <div className="flex-1 space-y-1">
+                                  <div className="flex items-center justify-between">
+                                    <span className="font-bold text-sm text-white">{item.label}</span>
+                                    <span className="w-2 h-2 rounded-full bg-white/30 group-hover/link:bg-heirlock-yellow" />
+                                  </div>
+                                  <p className="text-xs text-white/70 leading-snug">{item.desc}</p>
+                                </div>
+                              </div>
+                            </Link>
+                          );
+                        })}
+                      </div>
                     </div>
-                  </div>
 
-                  {/* Stay Updated Column */}
-                  <div>
-                    <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Access</h3>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      {[
-                        { href: '/access-portal', label: 'Access Portal', icon: Zap, bg: 'hover:bg-heirlock-green' },
-                        { href: '/blog', label: 'Blog', icon: Newspaper, bg: 'hover:bg-heirlock-pink' },
-                        { href: '/changelog', label: 'Changelog', icon: Code, bg: 'hover:bg-heirlock-yellow' },
-                        { href: '/contact', label: 'Contact', icon: Mail, bg: 'hover:bg-heirlock-yellow' },
-                      ].map((item, idx) => {
-                        const Icon = item.icon;
-                        return (
-                          <Link href={item.href} onClick={closeMenu} key={idx}>
-                            <div className={`flex items-center gap-3 px-3 py-3 rounded-lg border-2 border-transparent ${item.bg} hover:text-black hover:border-black transition-all font-bold cursor-pointer bg-dark/60`}>
-                              <Icon className="w-5 h-5" />
-                              <span>{item.label}</span>
-                            </div>
-                          </Link>
-                        );
-                      })}
+                    {/* Build Column */}
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <h3 className="text-xs font-black text-gray-400 uppercase tracking-[0.25em]">Build</h3>
+                        <span className="text-[11px] text-white/60">For developers</span>
+                      </div>
+                      <div className="space-y-2">
+                        {[
+                          { href: '/docs', label: 'Developer Docs', icon: Code, desc: 'SDKs, auth, environments, and examples.' },
+                          { href: '/docs/api', label: 'API Documentation', icon: Code, desc: 'Reference with request/response samples.' },
+                          { href: '/docs/quickstart', label: 'API Quickstart', icon: Code, desc: 'Ship in minutes with guided steps.' },
+                          { href: '/integrations', label: 'Integrations', icon: Code, desc: 'Prebuilt connectors and recipes.' },
+                          { href: '/smart-contracts', label: 'Smart Contracts', icon: Code, desc: 'Contract ABIs, audits, deployment info.' },
+                          { href: '/admin', label: 'Admin Upload', icon: Shield, desc: 'Operational tooling for admin actions.' },
+                        ].map((item, idx) => {
+                          const Icon = item.icon;
+                          return (
+                            <Link href={item.href} onClick={closeMenu} key={idx}>
+                              <div className="group/link flex items-start gap-3 p-3 rounded-lg border border-white/10 bg-white/3 hover:bg-white/10 hover:border-white/30 transition-all">
+                                <div className="h-10 w-10 rounded-md bg-linear-to-br from-white/15 to-white/5 flex items-center justify-center text-white shrink-0 border border-white/10">
+                                  <Icon className="w-5 h-5" />
+                                </div>
+                                <div className="flex-1 space-y-1">
+                                  <div className="flex items-center justify-between">
+                                    <span className="font-bold text-sm text-white">{item.label}</span>
+                                    <span className="w-2 h-2 rounded-full bg-white/30 group-hover/link:bg-heirlock-green" />
+                                  </div>
+                                  <p className="text-xs text-white/70 leading-snug">{item.desc}</p>
+                                </div>
+                              </div>
+                            </Link>
+                          );
+                        })}
+                      </div>
                     </div>
-                  </div>
-                </div>
 
-                <div className="border-t-4 border-black bg-heirlock-yellow/70 p-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                  <div className="space-y-1 text-black">
-                    <p className="text-xs font-black uppercase tracking-wide">Featured</p>
-                    <h4 className="text-xl font-black leading-tight">Create a vault in two minutes</h4>
-                    <p className="text-sm font-medium max-w-xl">Use the guided flow to lock files with device-side encryption and contract enforced unlocks.</p>
-                  </div>
-                  <div className="flex flex-col sm:flex-row gap-3">
-                    <Link href="/create-vault" onClick={closeMenu}>
-                      <button className="px-4 py-3 bg-black text-heirlock-yellow font-black border-3 border-black rounded-lg shadow-brutal hover:-translate-y-0.5 transition-all text-sm">Start a vault</button>
-                    </Link>
-                    <Link href="/docs/quickstart" onClick={closeMenu}>
-                      <button className="px-4 py-3 bg-white text-black font-black border-3 border-black rounded-lg hover:bg-heirlock-blue transition-all text-sm">View quickstart</button>
-                    </Link>
+                    {/* Access Column */}
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <h3 className="text-xs font-black text-gray-400 uppercase tracking-[0.25em]">Access</h3>
+                        <span className="text-[11px] text-white/60">Stay current</span>
+                      </div>
+                      <div className="space-y-2">
+                        {[
+                          { href: '/access-portal', label: 'Access Portal', icon: Zap, desc: 'Manage your workspace and vaults.' },
+                          { href: '/blog', label: 'Blog', icon: Newspaper, desc: 'Product thinking and release stories.' },
+                          { href: '/changelog', label: 'Changelog', icon: Code, desc: 'What shipped this week.' },
+                          { href: '/contact', label: 'Contact', icon: Mail, desc: 'Talk with the team or request access.' },
+                        ].map((item, idx) => {
+                          const Icon = item.icon;
+                          return (
+                            <Link href={item.href} onClick={closeMenu} key={idx}>
+                              <div className="group/link flex items-start gap-3 p-3 rounded-lg border border-white/10 bg-white/3 hover:bg-white/10 hover:border-white/30 transition-all">
+                                <div className="h-10 w-10 rounded-md bg-linear-to-br from-white/15 to-white/5 flex items-center justify-center text-white shrink-0 border border-white/10">
+                                  <Icon className="w-5 h-5" />
+                                </div>
+                                <div className="flex-1 space-y-1">
+                                  <div className="flex items-center justify-between">
+                                    <span className="font-bold text-sm text-white">{item.label}</span>
+                                    <span className="w-2 h-2 rounded-full bg-white/30 group-hover/link:bg-heirlock-pink" />
+                                  </div>
+                                  <p className="text-xs text-white/70 leading-snug">{item.desc}</p>
+                                </div>
+                              </div>
+                            </Link>
+                          );
+                        })}
+                      </div>
+
+                      <div className="p-4 rounded-xl border border-white/10 bg-white/5 mt-4 space-y-3">
+                        <div className="flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-white/60 font-black">
+                          Featured action
+                          <span className="w-2 h-2 rounded-full bg-heirlock-yellow" />
+                        </div>
+                        <p className="text-lg font-black text-white leading-tight">Create a vault in two minutes</p>
+                        <p className="text-sm text-white/70">Lock files with device-side encryption and contract-enforced unlocks. Guided flow, ready now.</p>
+                        <div className="flex flex-col sm:flex-row gap-3">
+                          <Link href="/create-vault" onClick={closeMenu}>
+                            <button className="w-full sm:w-auto px-4 py-3 bg-heirlock-yellow text-black font-black border-3 border-black rounded-lg shadow-brutal hover:-translate-y-0.5 transition-all text-sm">Start a vault</button>
+                          </Link>
+                          <Link href="/docs/quickstart" onClick={closeMenu}>
+                            <button className="w-full sm:w-auto px-4 py-3 bg-white text-black font-black border-3 border-black rounded-lg hover:bg-heirlock-blue transition-all text-sm">View quickstart</button>
+                          </Link>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
