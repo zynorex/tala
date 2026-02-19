@@ -137,96 +137,104 @@ export default function Navbar() {
             </Link>
 
             {/* Resources Dropdown */}
-            <div className="relative group/resources">
-              <button className={`px-4 lg:px-6 py-2 text-sm lg:text-base font-bold transition-all border-b-4 flex items-center gap-2 ${
-                isActive("/documentation") || isActive("/smart-contracts") || isActive("/faq") || isActive("/blog")
-                  ? isScrolled ? "border-heirlock-pink text-white" : "border-black"
-                  : isScrolled ? "border-transparent hover:bg-heirlock-pink hover:text-black" : "border-transparent group-hover:text-white"
-              }`}>
+            <div
+              className="relative group/resources"
+              onMouseEnter={() => setIsResourcesOpen(true)}
+              onMouseLeave={() => setIsResourcesOpen(false)}
+            >
+              <button
+                aria-haspopup="true"
+                aria-expanded={isResourcesOpen}
+                className={`px-4 lg:px-6 py-2 text-sm lg:text-base font-bold transition-all border-b-4 flex items-center gap-2 ${
+                  isActive("/documentation") || isActive("/smart-contracts") || isActive("/faq") || isActive("/blog")
+                    ? isScrolled ? "border-heirlock-pink text-white" : "border-black"
+                    : isScrolled ? "border-transparent hover:bg-heirlock-pink hover:text-black" : "border-transparent group-hover:text-white"
+                }`}
+              >
                 Resources
                 <ChevronDown className="w-4 h-4 group-hover/resources:rotate-180 transition-transform" />
               </button>
 
-              <div className="absolute left-1/2 -translate-x-1/2 mt-0 w-[90vw] max-w-4xl bg-black text-white border-4 border-black shadow-brutal opacity-0 invisible group-hover/resources:opacity-100 group-hover/resources:visible transition-all duration-200 z-50">
+              <div className="absolute left-1/2 -translate-x-1/2 mt-0 w-[92vw] max-w-5xl bg-dark text-white border-4 border-black shadow-brutal rounded-xl opacity-0 invisible group-hover/resources:opacity-100 group-hover/resources:visible transition-all duration-200 ease-out z-50">
                 <div className="grid grid-cols-3 gap-8 p-8">
                   {/* Learn Column */}
                   <div>
                     <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Learn</h3>
                     <div className="space-y-3">
                       <Link href="/learn" onClick={closeMenu}>
-                        <div className="flex items-center gap-3 px-3 py-2 rounded hover:bg-heirlock-yellow hover:text-black transition-all font-bold cursor-pointer">
+                        <div className="flex items-center gap-3 px-3 py-2 rounded-md border-2 border-transparent hover:border-black hover:bg-heirlock-yellow hover:text-black transition-all font-bold cursor-pointer">
                           <BookOpen className="w-5 h-5" />
                           <span>Learn T.A.L.A.</span>
                         </div>
                       </Link>
                       <Link href="/documentation" onClick={closeMenu}>
-                        <div className="flex items-center gap-3 px-3 py-2 rounded hover:bg-heirlock-green hover:text-black transition-all font-bold cursor-pointer">
+                        <div className="flex items-center gap-3 px-3 py-2 rounded-md border-2 border-transparent hover:border-black hover:bg-heirlock-green hover:text-black transition-all font-bold cursor-pointer">
                           <BookOpen className="w-5 h-5" />
                           <span>Documentation</span>
                         </div>
                       </Link>
                       <Link href="/how-it-works" onClick={closeMenu}>
-                        <div className="flex items-center gap-3 px-3 py-2 rounded hover:bg-heirlock-blue hover:text-black transition-all font-bold cursor-pointer">
+                        <div className="flex items-center gap-3 px-3 py-2 rounded-md border-2 border-transparent hover:border-black hover:bg-heirlock-blue hover:text-black transition-all font-bold cursor-pointer">
                           <Zap className="w-5 h-5" />
                           <span>How It Works</span>
                         </div>
                       </Link>
                       <Link href="/launch" onClick={closeMenu}>
-                        <div className="flex items-center gap-3 px-3 py-2 rounded hover:bg-heirlock-pink hover:text-black transition-all font-bold cursor-pointer">
+                        <div className="flex items-center gap-3 px-3 py-2 rounded-md border-2 border-transparent hover:border-black hover:bg-heirlock-pink hover:text-black transition-all font-bold cursor-pointer">
                           <Rocket className="w-5 h-5" />
                           <span>Launch Details</span>
                         </div>
                       </Link>
                       <Link href="/faq" onClick={closeMenu}>
-                        <div className="flex items-center gap-3 px-3 py-2 rounded hover:bg-heirlock-yellow hover:text-black transition-all font-bold cursor-pointer">
+                        <div className="flex items-center gap-3 px-3 py-2 rounded-md border-2 border-transparent hover:border-black hover:bg-heirlock-yellow hover:text-black transition-all font-bold cursor-pointer">
                           <HelpCircle className="w-5 h-5" />
                           <span>FAQ</span>
                         </div>
                       </Link>
                       <Link href="/case-studies" onClick={closeMenu}>
-                        <div className="flex items-center gap-3 px-3 py-2 rounded hover:bg-heirlock-pink hover:text-black transition-all font-bold cursor-pointer">
+                        <div className="flex items-center gap-3 px-3 py-2 rounded-md border-2 border-transparent hover:border-black hover:bg-heirlock-pink hover:text-black transition-all font-bold cursor-pointer">
                           <Zap className="w-5 h-5" />
                           <span>Case Studies</span>
                         </div>
                       </Link>
                       <Link href="/pricing" onClick={closeMenu}>
-                        <div className="flex items-center gap-3 px-3 py-2 rounded hover:bg-heirlock-pink hover:text-black transition-all font-bold cursor-pointer">
+                        <div className="flex items-center gap-3 px-3 py-2 rounded-md border-2 border-transparent hover:border-black hover:bg-heirlock-pink hover:text-black transition-all font-bold cursor-pointer">
                           <Zap className="w-5 h-5" />
                           <span>Pricing</span>
                         </div>
                       </Link>
                       <Link href="/team" onClick={closeMenu}>
-                        <div className="flex items-center gap-3 px-3 py-2 rounded hover:bg-heirlock-green hover:text-black transition-all font-bold cursor-pointer">
+                        <div className="flex items-center gap-3 px-3 py-2 rounded-md border-2 border-transparent hover:border-black hover:bg-heirlock-green hover:text-black transition-all font-bold cursor-pointer">
                           <LayoutGrid className="w-5 h-5" />
                           <span>Team</span>
                         </div>
                       </Link>
                       <Link href="/api-status" onClick={closeMenu}>
-                        <div className="flex items-center gap-3 px-3 py-2 rounded hover:bg-heirlock-blue hover:text-black transition-all font-bold cursor-pointer">
+                        <div className="flex items-center gap-3 px-3 py-2 rounded-md border-2 border-transparent hover:border-black hover:bg-heirlock-blue hover:text-black transition-all font-bold cursor-pointer">
                           <Shield className="w-5 h-5" />
                           <span>API Status and Limits</span>
                         </div>
                       </Link>
                       <Link href="/procurement" onClick={closeMenu}>
-                        <div className="flex items-center gap-3 px-3 py-2 rounded hover:bg-heirlock-yellow hover:text-black transition-all font-bold cursor-pointer">
+                        <div className="flex items-center gap-3 px-3 py-2 rounded-md border-2 border-transparent hover:border-black hover:bg-heirlock-yellow hover:text-black transition-all font-bold cursor-pointer">
                           <BookOpen className="w-5 h-5" />
                           <span>Procurement Pack</span>
                         </div>
                       </Link>
                       <Link href="/security" onClick={closeMenu}>
-                        <div className="flex items-center gap-3 px-3 py-2 rounded hover:bg-heirlock-green hover:text-black transition-all font-bold cursor-pointer">
+                        <div className="flex items-center gap-3 px-3 py-2 rounded-md border-2 border-transparent hover:border-black hover:bg-heirlock-green hover:text-black transition-all font-bold cursor-pointer">
                           <Shield className="w-5 h-5" />
                           <span>Security</span>
                         </div>
                       </Link>
                       <Link href="/trust-center" onClick={closeMenu}>
-                        <div className="flex items-center gap-3 px-3 py-2 rounded hover:bg-heirlock-blue hover:text-black transition-all font-bold cursor-pointer">
+                        <div className="flex items-center gap-3 px-3 py-2 rounded-md border-2 border-transparent hover:border-black hover:bg-heirlock-blue hover:text-black transition-all font-bold cursor-pointer">
                           <Shield className="w-5 h-5" />
                           <span>Trust Center</span>
                         </div>
                       </Link>
                       <Link href="/roadmap" onClick={closeMenu}>
-                        <div className="flex items-center gap-3 px-3 py-2 rounded hover:bg-heirlock-yellow hover:text-black transition-all font-bold cursor-pointer">
+                        <div className="flex items-center gap-3 px-3 py-2 rounded-md border-2 border-transparent hover:border-black hover:bg-heirlock-yellow hover:text-black transition-all font-bold cursor-pointer">
                           <Zap className="w-5 h-5" />
                           <span>Roadmap</span>
                         </div>
@@ -239,37 +247,37 @@ export default function Navbar() {
                     <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Build</h3>
                     <div className="space-y-3">
                       <Link href="/docs" onClick={closeMenu}>
-                        <div className="flex items-center gap-3 px-3 py-2 rounded hover:bg-heirlock-green hover:text-black transition-all font-bold cursor-pointer">
+                        <div className="flex items-center gap-3 px-3 py-2 rounded-md border-2 border-transparent hover:border-black hover:bg-heirlock-green hover:text-black transition-all font-bold cursor-pointer">
                           <Code className="w-5 h-5" />
                           <span>Developer Docs</span>
                         </div>
                       </Link>
                       <Link href="/docs/api" onClick={closeMenu}>
-                        <div className="flex items-center gap-3 px-3 py-2 rounded hover:bg-heirlock-blue hover:text-black transition-all font-bold cursor-pointer">
+                        <div className="flex items-center gap-3 px-3 py-2 rounded-md border-2 border-transparent hover:border-black hover:bg-heirlock-blue hover:text-black transition-all font-bold cursor-pointer">
                           <Code className="w-5 h-5" />
                           <span>API Documentation</span>
                         </div>
                       </Link>
                       <Link href="/docs/quickstart" onClick={closeMenu}>
-                        <div className="flex items-center gap-3 px-3 py-2 rounded hover:bg-heirlock-yellow hover:text-black transition-all font-bold cursor-pointer">
+                        <div className="flex items-center gap-3 px-3 py-2 rounded-md border-2 border-transparent hover:border-black hover:bg-heirlock-yellow hover:text-black transition-all font-bold cursor-pointer">
                           <Code className="w-5 h-5" />
                           <span>API Quickstart</span>
                         </div>
                       </Link>
                       <Link href="/integrations" onClick={closeMenu}>
-                        <div className="flex items-center gap-3 px-3 py-2 rounded hover:bg-heirlock-green hover:text-black transition-all font-bold cursor-pointer">
+                        <div className="flex items-center gap-3 px-3 py-2 rounded-md border-2 border-transparent hover:border-black hover:bg-heirlock-green hover:text-black transition-all font-bold cursor-pointer">
                           <Code className="w-5 h-5" />
                           <span>Integrations</span>
                         </div>
                       </Link>
                       <Link href="/smart-contracts" onClick={closeMenu}>
-                        <div className="flex items-center gap-3 px-3 py-2 rounded hover:bg-heirlock-pink hover:text-black transition-all font-bold cursor-pointer">
+                        <div className="flex items-center gap-3 px-3 py-2 rounded-md border-2 border-transparent hover:border-black hover:bg-heirlock-pink hover:text-black transition-all font-bold cursor-pointer">
                           <Code className="w-5 h-5" />
                           <span>Smart Contracts</span>
                         </div>
                       </Link>
                       <Link href="/admin" onClick={closeMenu}>
-                        <div className="flex items-center gap-3 px-3 py-2 rounded hover:bg-heirlock-yellow hover:text-black transition-all font-bold cursor-pointer">
+                        <div className="flex items-center gap-3 px-3 py-2 rounded-md border-2 border-transparent hover:border-black hover:bg-heirlock-yellow hover:text-black transition-all font-bold cursor-pointer">
                           <Shield className="w-5 h-5" />
                           <span>Admin Upload</span>
                         </div>
@@ -282,25 +290,25 @@ export default function Navbar() {
                     <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Access</h3>
                     <div className="space-y-3">
                       <Link href="/access-portal" onClick={closeMenu}>
-                        <div className="flex items-center gap-3 px-3 py-2 rounded hover:bg-heirlock-green hover:text-black transition-all font-bold cursor-pointer">
+                        <div className="flex items-center gap-3 px-3 py-2 rounded-md border-2 border-transparent hover:border-black hover:bg-heirlock-green hover:text-black transition-all font-bold cursor-pointer">
                           <Zap className="w-5 h-5" />
                           <span>Access Portal</span>
                         </div>
                       </Link>
                       <Link href="/blog" onClick={closeMenu}>
-                        <div className="flex items-center gap-3 px-3 py-2 rounded hover:bg-heirlock-pink hover:text-black transition-all font-bold cursor-pointer">
+                        <div className="flex items-center gap-3 px-3 py-2 rounded-md border-2 border-transparent hover:border-black hover:bg-heirlock-pink hover:text-black transition-all font-bold cursor-pointer">
                           <Newspaper className="w-5 h-5" />
                           <span>Blog</span>
                         </div>
                       </Link>
                       <Link href="/changelog" onClick={closeMenu}>
-                        <div className="flex items-center gap-3 px-3 py-2 rounded hover:bg-heirlock-yellow hover:text-black transition-all font-bold cursor-pointer">
+                        <div className="flex items-center gap-3 px-3 py-2 rounded-md border-2 border-transparent hover:border-black hover:bg-heirlock-yellow hover:text-black transition-all font-bold cursor-pointer">
                           <Code className="w-5 h-5" />
                           <span>Changelog</span>
                         </div>
                       </Link>
                       <Link href="/contact" onClick={closeMenu}>
-                        <div className="flex items-center gap-3 px-3 py-2 rounded hover:bg-heirlock-yellow hover:text-black transition-all font-bold cursor-pointer">
+                        <div className="flex items-center gap-3 px-3 py-2 rounded-md border-2 border-transparent hover:border-black hover:bg-heirlock-yellow hover:text-black transition-all font-bold cursor-pointer">
                           <Mail className="w-5 h-5" />
                           <span>Contact</span>
                         </div>
