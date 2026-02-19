@@ -99,27 +99,27 @@ export default function LaunchPage() {
               </div>
             </div>
 
-            <div className="border-8 border-black bg-heirlock-blue p-8 shadow-brutal">
-              <p className="text-sm font-black text-black uppercase tracking-wider mb-4">Launch countdown</p>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div className="border-4 border-black bg-white p-6 flex flex-col items-center justify-center min-w-[120px]">
+            <div className="border-8 border-black bg-heirlock-blue p-6 md:p-8 shadow-brutal">
+              <p className="text-sm font-black text-black uppercase tracking-wider mb-5 text-center">Launch countdown</p>
+              <div className="w-full max-w-3xl mx-auto grid grid-cols-2 sm:grid-cols-4 gap-4 md:gap-5">
+                <div className="border-4 border-black bg-white px-5 py-6 md:px-6 md:py-7 flex flex-col items-center justify-center">
                   <p className="text-4xl md:text-5xl font-black text-black leading-none tracking-tight">{String(countdown.days).padStart(2, '0')}</p>
-                  <p className="text-xs font-black text-gray-600 uppercase mt-3 tracking-wide">Days</p>
+                  <p className="text-[11px] md:text-xs font-black text-gray-600 uppercase mt-3 tracking-wide">Days</p>
                 </div>
-                <div className="border-4 border-black bg-white p-6 flex flex-col items-center justify-center min-w-[120px]">
+                <div className="border-4 border-black bg-white px-5 py-6 md:px-6 md:py-7 flex flex-col items-center justify-center">
                   <p className="text-4xl md:text-5xl font-black text-black leading-none tracking-tight">{String(countdown.hours).padStart(2, '0')}</p>
-                  <p className="text-xs font-black text-gray-600 uppercase mt-3 tracking-wide">Hours</p>
+                  <p className="text-[11px] md:text-xs font-black text-gray-600 uppercase mt-3 tracking-wide">Hours</p>
                 </div>
-                <div className="border-4 border-black bg-white p-6 flex flex-col items-center justify-center min-w-[120px]">
+                <div className="border-4 border-black bg-white px-5 py-6 md:px-6 md:py-7 flex flex-col items-center justify-center">
                   <p className="text-4xl md:text-5xl font-black text-black leading-none tracking-tight">{String(countdown.minutes).padStart(2, '0')}</p>
-                  <p className="text-xs font-black text-gray-600 uppercase mt-3 tracking-wide">Minutes</p>
+                  <p className="text-[11px] md:text-xs font-black text-gray-600 uppercase mt-3 tracking-wide">Minutes</p>
                 </div>
-                <div className="border-4 border-black bg-white p-6 flex flex-col items-center justify-center min-w-[120px]">
+                <div className="border-4 border-black bg-white px-5 py-6 md:px-6 md:py-7 flex flex-col items-center justify-center">
                   <p className="text-4xl md:text-5xl font-black text-black leading-none tracking-tight">{String(countdown.seconds).padStart(2, '0')}</p>
-                  <p className="text-xs font-black text-gray-600 uppercase mt-3 tracking-wide">Seconds</p>
+                  <p className="text-[11px] md:text-xs font-black text-gray-600 uppercase mt-3 tracking-wide">Seconds</p>
                 </div>
               </div>
-              <p className="text-sm font-black text-black mt-6">
+              <p className="text-sm font-black text-black mt-6 text-center">
                 March 14 2026 at 12:00 AM IST
               </p>
             </div>
