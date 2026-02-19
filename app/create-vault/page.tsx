@@ -1,9 +1,10 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { Lock, Users, Upload, Settings, Zap, Shield, Clock, CheckCircle, ChevronRight, ArrowRight, X } from "lucide-react";
+import { useEffect, useRef, useState } from 'react';
+import { Lock, Users, Upload, Settings, Zap, Shield, Clock, CheckCircle, ChevronRight, ArrowRight, X, Info } from "lucide-react";
 import Link from "next/link";
 import CreateVaultForm from "@/app/components/CreateVaultForm";
+import { useForm } from "react-hook-form";
 
 type VaultTab = 'demo' | 'real';
 
@@ -16,17 +17,47 @@ function AccessNoticeModal({
   onSelectDemo: () => void;
   onSelectPaid: () => void;
 }) {
+  const dialogRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const focusable = dialogRef.current?.querySelectorAll<HTMLElement>(
+      'button, a[href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+    );
+    focusable?.[0]?.focus();
+
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        onClose();
+      }
+      if (e.key === 'Tab' && focusable && focusable.length > 0) {
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
+    };
+
+    document.addEventListener('keydown', handleKey);
+    return () => document.removeEventListener('keydown', handleKey);
+  }, [onClose]);
+
   return (
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center">
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center" role="dialog" aria-modal="true">
       <div className="fixed inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative z-[10000] w-full max-w-xl mx-4">
-        <div className="bg-white border-4 border-black shadow-brutal rounded-lg overflow-hidden">
+      <div className="relative z-[10000] w-full max-w-xl mx-4" ref={dialogRef}>
+        <div className="bg-white border-4 border-black shadow-brutal rounded-lg overflow-hidden transition-all duration-200 ease-out opacity-100 scale-100">
           <div className="flex items-start justify-between gap-4 p-5 md:p-6 border-b-4 border-black bg-heirlock-yellow">
             <div className="space-y-1">
               <p className="text-[11px] md:text-xs font-black uppercase tracking-wide text-black">Access notice</p>
               <h2 className="text-xl md:text-2xl font-black text-black leading-snug">Vault creation requires a paid workspace</h2>
             </div>
-            <button onClick={onClose} className="p-1 rounded hover:bg-black/10 transition-colors">
+            <button onClick={onClose} className="p-1 rounded hover:bg-black/10 transition-colors focus:outline-none focus:ring-2 focus:ring-black" aria-label="Close notice">
               <X className="w-5 h-5 text-black" />
             </button>
           </div>
@@ -104,6 +135,15 @@ function DemoVaultFormTab({ activeTab, setActiveTab }: { activeTab: VaultTab; se
       </div>
 
       {/* Tab Content */}
+      <div className="border-4 border-black bg-cream p-4 flex items-center gap-3 shadow-brutal">
+        <Info className="w-5 h-5 text-black" />
+        <div className="flex-1 text-sm font-medium text-gray-800">
+          {activeTab === 'demo'
+            ? 'You are viewing the demo vault flow. It unlocks in minutes and does not require payment.'
+            : 'You are viewing the paid vault flow. Deployment charges apply based on your workspace plan.'}
+        </div>
+      </div>
+
       {activeTab === 'demo' && (
         <div className="space-y-6">
           <div className="border-4 border-black p-6 bg-gradient-to-r from-heirlock-green to-yellow-100 shadow-brutal">
@@ -184,6 +224,14 @@ export default function CreateVault() {
     closeAccessModal();
     focusForm();
   };
+
+  useEffect(() => {
+    if (!showAccessModal) return;
+    const timer = setTimeout(() => {
+      setShowAccessModal(false);
+    }, 30000);
+    return () => clearTimeout(timer);
+  }, [showAccessModal]);
 
   const steps = [
     {

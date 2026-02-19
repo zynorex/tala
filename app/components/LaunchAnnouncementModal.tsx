@@ -1,18 +1,51 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Calendar, Clock3, Rocket, ShieldCheck, X, Zap } from 'lucide-react';
 
 export default function LaunchAnnouncementModal() {
   const [isOpen, setIsOpen] = useState(false);
+  const [animateIn, setAnimateIn] = useState(false);
+  const modalRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     // Check if user has already seen this modal
     const hasSeenModal = localStorage.getItem('launchModalSeen');
     if (!hasSeenModal) {
       setIsOpen(true);
+      setAnimateIn(true);
     }
   }, []);
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const focusable = modalRef.current?.querySelectorAll<HTMLElement>(
+      'button, a[href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+    );
+    focusable?.[0]?.focus();
+
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        handleClose();
+      }
+      if (e.key === 'Tab' && focusable && focusable.length > 0) {
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
+    };
+
+    document.addEventListener('keydown', handleKey);
+    return () => document.removeEventListener('keydown', handleKey);
+  }, [isOpen]);
 
   const handleClose = () => {
     setIsOpen(false);
@@ -26,14 +59,18 @@ export default function LaunchAnnouncementModal() {
   const daysUntilLaunch = Math.ceil((launchDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
 
   return (
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center">
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center" role="dialog" aria-modal="true">
       <div
         className="fixed inset-0 bg-black/50 backdrop-blur-sm"
         onClick={handleClose}
       />
 
-      <div className="relative z-[10000] w-full max-w-md mx-4 max-h-[90vh] overflow-y-auto">
-        <div className="bg-white border-4 border-black shadow-brutal rounded-lg overflow-hidden">
+      <div className="relative z-[10000] w-full max-w-md mx-4 max-h-[90vh] overflow-y-auto" ref={modalRef}>
+        <div
+          className={`bg-white border-4 border-black shadow-brutal rounded-lg overflow-hidden transition-all duration-200 ease-out ${
+            animateIn ? 'opacity-100 scale-100 translate-y-0' : 'opacity-0 scale-95 translate-y-1'
+          }`}
+        >
           <div className="bg-heirlock-yellow border-b-4 border-black p-4 md:p-6 flex items-center justify-between">
             <div className="flex items-center gap-2 md:gap-3">
               <Rocket className="w-6 h-6 md:w-8 md:h-8 text-black" />
@@ -44,7 +81,8 @@ export default function LaunchAnnouncementModal() {
             </div>
             <button
               onClick={handleClose}
-              className="p-1 hover:bg-black/10 rounded transition-colors flex-shrink-0"
+              className="p-1 hover:bg-black/10 rounded transition-colors flex-shrink-0 focus:outline-none focus:ring-2 focus:ring-black"
+              aria-label="Close announcement"
             >
               <X className="w-5 h-5 md:w-6 md:h-6 text-black" />
             </button>
