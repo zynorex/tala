@@ -113,7 +113,7 @@ export default function Navbar() {
                 className="h-full w-auto object-contain"
               />
             </div>
-            <span className={`px-3 py-1 text-xs font-black rounded-sm transition-all !text-black ${getBadgeColor()}`}>
+            <span className={`px-3 py-1 text-xs font-black rounded-sm transition-all text-black! ${getBadgeColor()}`}>
               BETA
             </span>
           </Link>
@@ -156,7 +156,7 @@ export default function Navbar() {
               </button>
 
               <div className="absolute left-1/2 -translate-x-1/2 mt-0 w-[94vw] max-w-5xl bg-black text-white border-4 border-black shadow-brutal rounded-xl opacity-0 invisible group-hover/resources:opacity-100 group-hover/resources:visible transition-all duration-200 ease-out z-50 overflow-hidden">
-                <div className="h-2 bg-gradient-to-r from-heirlock-yellow via-heirlock-green to-heirlock-blue" />
+                <div className="h-2 bg-linear-to-r from-heirlock-yellow via-heirlock-green to-heirlock-blue" />
                 <div className="grid lg:grid-cols-[1.2fr_1.2fr_1fr] gap-8 p-8">
                   {/* Learn Column */}
                   <div>
@@ -295,7 +295,7 @@ export default function Navbar() {
                         className="rounded-full w-10 h-10"
                       />
                     ) : (
-                      <div className="w-10 h-10 bg-gradient-to-br from-heirlock-blue to-heirlock-pink rounded-full flex items-center justify-center text-white font-bold">
+                      <div className="w-10 h-10 bg-linear-to-br from-heirlock-blue to-heirlock-pink rounded-full flex items-center justify-center text-white font-bold">
                         {session.user.name?.charAt(0) || session.user.email?.charAt(0) || 'U'}
                       </div>
                     )}

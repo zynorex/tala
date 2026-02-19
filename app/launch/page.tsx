@@ -44,7 +44,7 @@ export default function LaunchPage() {
   }, []);
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-heirlock-yellow via-cream to-white">
+    <main className="min-h-screen bg-linear-to-b from-heirlock-yellow via-cream to-white">
       <section className="py-16 md:py-24 px-4 relative">
         <div className="max-w-5xl mx-auto">
           <div className="flex items-center justify-between mb-8">
@@ -134,7 +134,7 @@ export default function LaunchPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div className="border-4 border-black bg-heirlock-yellow p-8 shadow-brutal">
               <div className="flex items-start gap-4 mb-6">
-                <Lock className="w-8 h-8 text-black flex-shrink-0 mt-1" />
+                <Lock className="w-8 h-8 text-black shrink-0 mt-1" />
                 <div>
                   <h3 className="text-2xl font-black text-black mb-2">Complete vault journey</h3>
                   <p className="text-gray-800 font-medium">Create, lock, wait, unlock, and decrypt with a single flow. Every stage is auditable.</p>
@@ -144,7 +144,7 @@ export default function LaunchPage() {
 
             <div className="border-4 border-black bg-heirlock-blue p-8 shadow-brutal">
               <div className="flex items-start gap-4 mb-6">
-                <ShieldCheck className="w-8 h-8 text-black flex-shrink-0 mt-1" />
+                <ShieldCheck className="w-8 h-8 text-black shrink-0 mt-1" />
                 <div>
                   <h3 className="text-2xl font-black text-black mb-2">Device side encryption</h3>
                   <p className="text-gray-800 font-medium">AES 256 GCM runs on your device. Keys never leave your control and are never stored by TALA.</p>
@@ -154,7 +154,7 @@ export default function LaunchPage() {
 
             <div className="border-4 border-black bg-heirlock-green p-8 shadow-brutal">
               <div className="flex items-start gap-4 mb-6">
-                <Zap className="w-8 h-8 text-black flex-shrink-0 mt-1" />
+                <Zap className="w-8 h-8 text-black shrink-0 mt-1" />
                 <div>
                   <h3 className="text-2xl font-black text-black mb-2">Contract enforced timing</h3>
                   <p className="text-gray-800 font-medium">Polygon smart contracts hold unlock conditions. Vaults open at the exact scheduled time.</p>
@@ -164,7 +164,7 @@ export default function LaunchPage() {
 
             <div className="border-4 border-black bg-heirlock-pink p-8 shadow-brutal">
               <div className="flex items-start gap-4 mb-6">
-                <Shield className="w-8 h-8 text-black flex-shrink-0 mt-1" />
+                <Shield className="w-8 h-8 text-black shrink-0 mt-1" />
                 <div>
                   <h3 className="text-2xl font-black text-black mb-2">Distributed storage</h3>
                   <p className="text-gray-800 font-medium">Files stay on IPFS with redundant availability. No single failure can block access.</p>

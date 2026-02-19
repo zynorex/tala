@@ -48,9 +48,9 @@ function AccessNoticeModal({
   }, [onClose]);
 
   return (
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center" role="dialog" aria-modal="true">
+    <div className="fixed inset-0 z-9999 flex items-center justify-center" role="dialog" aria-modal="true">
       <div className="fixed inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative z-[10000] w-full max-w-xl mx-4" ref={dialogRef}>
+      <div className="relative z-10000 w-full max-w-xl mx-4" ref={dialogRef}>
         <div className="bg-white border-4 border-black shadow-brutal rounded-lg overflow-hidden transition-all duration-200 ease-out opacity-100 scale-100">
           <div className="flex items-start justify-between gap-4 p-5 md:p-6 border-b-4 border-black bg-heirlock-yellow">
             <div className="space-y-1">
@@ -146,7 +146,7 @@ function DemoVaultFormTab({ activeTab, setActiveTab }: { activeTab: VaultTab; se
 
       {activeTab === 'demo' && (
         <div className="space-y-6">
-          <div className="border-4 border-black p-6 bg-gradient-to-r from-heirlock-green to-yellow-100 shadow-brutal">
+          <div className="border-4 border-black p-6 bg-linear-to-r from-heirlock-green to-yellow-100 shadow-brutal">
             <h2 className="text-3xl font-black text-black mb-3">See It In Action</h2>
             <p className="text-black font-bold mb-4">
               Test the full T.A.L.A. experience with a real vault that unlocks in just 2 minutes. Upload any file, download your encryption key, and watch time-locking technology work.
@@ -168,7 +168,7 @@ function DemoVaultFormTab({ activeTab, setActiveTab }: { activeTab: VaultTab; se
 
       {activeTab === 'real' && (
         <div className="space-y-6">
-          <div className="border-4 border-black p-6 bg-gradient-to-r from-heirlock-blue to-blue-100 shadow-brutal">
+          <div className="border-4 border-black p-6 bg-linear-to-r from-heirlock-blue to-blue-100 shadow-brutal">
             <h2 className="text-3xl font-black text-black mb-3">Secure Forever</h2>
             <p className="text-black font-bold mb-4">
               Create a real vault with your own unlock date. Time-lock anything from hours to 100 years in the future. Complete control, military-grade security.
@@ -307,7 +307,7 @@ export default function CreateVault() {
             <div className="pt-4">
               <a
                 href="#vault-form"
-                className="inline-flex items-center gap-3 px-8 py-4 bg-black text-heirlock-yellow font-black text-lg border-4 border-black shadow-brutal hover:translate-y-[-4px] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-all duration-200"
+                className="inline-flex items-center gap-3 px-8 py-4 bg-black text-heirlock-yellow font-black text-lg border-4 border-black shadow-brutal hover:-translate-y-1 hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-all duration-200"
               >
                 <Lock className="w-5 h-5" />
                 <span>Start Creating Vault</span>
@@ -346,7 +346,7 @@ export default function CreateVault() {
                     <div className="flex items-center justify-center h-12 w-12 bg-heirlock-blue text-black font-bold text-lg">
                       {step.number}
                     </div>
-                    <Icon className="w-6 h-6 text-heirlock-blue flex-shrink-0" />
+                    <Icon className="w-6 h-6 text-heirlock-blue shrink-0" />
                   </div>
                   <h3 className="text-xl font-bold mb-3">{step.title}</h3>
                   <p className="text-gray-700">{step.description}</p>
