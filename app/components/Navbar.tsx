@@ -157,7 +157,7 @@ export default function Navbar() {
 
               <div className="absolute left-1/2 -translate-x-1/2 mt-0 w-[94vw] max-w-5xl text-white border-4 border-black shadow-brutal rounded-xl opacity-0 invisible group-hover/resources:opacity-100 group-hover/resources:visible transition-all duration-200 ease-out z-50 overflow-hidden">
                 <div className="h-2 bg-linear-to-r from-heirlock-yellow via-heirlock-green to-heirlock-blue" />
-                <div className="bg-black/95 backdrop-blur-sm">
+                <div className="bg-black/95 backdrop-blur-sm resources-scroll max-h-[70vh] overflow-y-auto">
                   <div className="flex flex-wrap items-center justify-between gap-4 px-6 md:px-8 pt-6">
                     <div className="flex items-center gap-3">
                       <div className="h-10 w-10 rounded-lg bg-white text-black font-black flex items-center justify-center shadow-brutal">R</div>
@@ -187,24 +187,24 @@ export default function Navbar() {
                       </div>
                       <div className="space-y-2">
                         {[
-                          { href: '/learn', label: 'Learn T.A.L.A.', icon: BookOpen, desc: 'Overview of the platform and where to start.', tone: 'from-heirlock-yellow/40 to-transparent' },
-                          { href: '/documentation', label: 'Documentation', icon: BookOpen, desc: 'Full product docs and onboarding flows.', tone: 'from-heirlock-green/40 to-transparent' },
-                          { href: '/how-it-works', label: 'How It Works', icon: Zap, desc: 'Concepts, guarantees, and threat model.', tone: 'from-heirlock-blue/40 to-transparent' },
-                          { href: '/launch', label: 'Launch Details', icon: Rocket, desc: 'Release plans, timelines, and readiness.', tone: 'from-heirlock-pink/40 to-transparent' },
-                          { href: '/faq', label: 'FAQ', icon: HelpCircle, desc: 'Answers to the most common questions.', tone: 'from-heirlock-yellow/40 to-transparent' },
-                          { href: '/case-studies', label: 'Case Studies', icon: Zap, desc: 'Proof points from real deployments.', tone: 'from-heirlock-pink/40 to-transparent' },
-                          { href: '/pricing', label: 'Pricing', icon: Zap, desc: 'Plans, usage, and billing breakdown.', tone: 'from-heirlock-pink/40 to-transparent' },
-                          { href: '/team', label: 'Team', icon: LayoutGrid, desc: 'Meet the builders and advisors.', tone: 'from-heirlock-green/40 to-transparent' },
-                          { href: '/api-status', label: 'API Status and Limits', icon: Shield, desc: 'Availability, limits, and uptime.', tone: 'from-heirlock-blue/40 to-transparent' },
-                          { href: '/procurement', label: 'Procurement Pack', icon: BookOpen, desc: 'Security, legal, and procurement docs.', tone: 'from-heirlock-yellow/40 to-transparent' },
-                          { href: '/security', label: 'Security', icon: Shield, desc: 'Security practices and attestations.', tone: 'from-heirlock-green/40 to-transparent' },
-                          { href: '/trust-center', label: 'Trust Center', icon: Shield, desc: 'Compliance, policies, and audits.', tone: 'from-heirlock-blue/40 to-transparent' },
-                          { href: '/roadmap', label: 'Roadmap', icon: Zap, desc: 'What is shipping next.', tone: 'from-heirlock-yellow/40 to-transparent' },
+                          { href: '/learn', label: 'Learn T.A.L.A.', icon: BookOpen, desc: 'Overview of the platform and where to start.', accent: 'hover:border-heirlock-yellow/60 hover:bg-heirlock-yellow/10' },
+                          { href: '/documentation', label: 'Documentation', icon: BookOpen, desc: 'Full product docs and onboarding flows.', accent: 'hover:border-heirlock-green/60 hover:bg-heirlock-green/10' },
+                          { href: '/how-it-works', label: 'How It Works', icon: Zap, desc: 'Concepts, guarantees, and threat model.', accent: 'hover:border-heirlock-blue/60 hover:bg-heirlock-blue/10' },
+                          { href: '/launch', label: 'Launch Details', icon: Rocket, desc: 'Release plans, timelines, and readiness.', accent: 'hover:border-heirlock-pink/60 hover:bg-heirlock-pink/10' },
+                          { href: '/faq', label: 'FAQ', icon: HelpCircle, desc: 'Answers to the most common questions.', accent: 'hover:border-heirlock-yellow/60 hover:bg-heirlock-yellow/10' },
+                          { href: '/case-studies', label: 'Case Studies', icon: Zap, desc: 'Proof points from real deployments.', accent: 'hover:border-heirlock-pink/60 hover:bg-heirlock-pink/10' },
+                          { href: '/pricing', label: 'Pricing', icon: Zap, desc: 'Plans, usage, and billing breakdown.', accent: 'hover:border-heirlock-pink/60 hover:bg-heirlock-pink/10' },
+                          { href: '/team', label: 'Team', icon: LayoutGrid, desc: 'Meet the builders and advisors.', accent: 'hover:border-heirlock-green/60 hover:bg-heirlock-green/10' },
+                          { href: '/api-status', label: 'API Status and Limits', icon: Shield, desc: 'Availability, limits, and uptime.', accent: 'hover:border-heirlock-blue/60 hover:bg-heirlock-blue/10' },
+                          { href: '/procurement', label: 'Procurement Pack', icon: BookOpen, desc: 'Security, legal, and procurement docs.', accent: 'hover:border-heirlock-yellow/60 hover:bg-heirlock-yellow/10' },
+                          { href: '/security', label: 'Security', icon: Shield, desc: 'Security practices and attestations.', accent: 'hover:border-heirlock-green/60 hover:bg-heirlock-green/10' },
+                          { href: '/trust-center', label: 'Trust Center', icon: Shield, desc: 'Compliance, policies, and audits.', accent: 'hover:border-heirlock-blue/60 hover:bg-heirlock-blue/10' },
+                          { href: '/roadmap', label: 'Roadmap', icon: Zap, desc: 'What is shipping next.', accent: 'hover:border-heirlock-yellow/60 hover:bg-heirlock-yellow/10' },
                         ].map((item, idx) => {
                           const Icon = item.icon;
                           return (
                             <Link href={item.href} onClick={closeMenu} key={idx}>
-                              <div className="group/link flex items-start gap-3 p-3 rounded-lg border border-white/10 bg-white/3 hover:bg-white/10 hover:border-white/30 transition-all">
+                              <div className={`group/link flex items-start gap-3 p-3 rounded-lg border border-white/10 bg-white/3 hover:border-white/40 hover:bg-white/10 transition-all ${item.accent}`}>
                                 <div className="h-10 w-10 rounded-md bg-linear-to-br from-white/15 to-white/5 flex items-center justify-center text-white shrink-0 border border-white/10">
                                   <Icon className="w-5 h-5" />
                                 </div>
@@ -230,17 +230,17 @@ export default function Navbar() {
                       </div>
                       <div className="space-y-2">
                         {[
-                          { href: '/docs', label: 'Developer Docs', icon: Code, desc: 'SDKs, auth, environments, and examples.' },
-                          { href: '/docs/api', label: 'API Documentation', icon: Code, desc: 'Reference with request/response samples.' },
-                          { href: '/docs/quickstart', label: 'API Quickstart', icon: Code, desc: 'Ship in minutes with guided steps.' },
-                          { href: '/integrations', label: 'Integrations', icon: Code, desc: 'Prebuilt connectors and recipes.' },
-                          { href: '/smart-contracts', label: 'Smart Contracts', icon: Code, desc: 'Contract ABIs, audits, deployment info.' },
-                          { href: '/admin', label: 'Admin Upload', icon: Shield, desc: 'Operational tooling for admin actions.' },
+                          { href: '/docs', label: 'Developer Docs', icon: Code, desc: 'SDKs, auth, environments, and examples.', accent: 'hover:border-heirlock-green/60 hover:bg-heirlock-green/10' },
+                          { href: '/docs/api', label: 'API Documentation', icon: Code, desc: 'Reference with request/response samples.', accent: 'hover:border-heirlock-blue/60 hover:bg-heirlock-blue/10' },
+                          { href: '/docs/quickstart', label: 'API Quickstart', icon: Code, desc: 'Ship in minutes with guided steps.', accent: 'hover:border-heirlock-yellow/60 hover:bg-heirlock-yellow/10' },
+                          { href: '/integrations', label: 'Integrations', icon: Code, desc: 'Prebuilt connectors and recipes.', accent: 'hover:border-heirlock-green/60 hover:bg-heirlock-green/10' },
+                          { href: '/smart-contracts', label: 'Smart Contracts', icon: Code, desc: 'Contract ABIs, audits, deployment info.', accent: 'hover:border-heirlock-pink/60 hover:bg-heirlock-pink/10' },
+                          { href: '/admin', label: 'Admin Upload', icon: Shield, desc: 'Operational tooling for admin actions.', accent: 'hover:border-heirlock-yellow/60 hover:bg-heirlock-yellow/10' },
                         ].map((item, idx) => {
                           const Icon = item.icon;
                           return (
                             <Link href={item.href} onClick={closeMenu} key={idx}>
-                              <div className="group/link flex items-start gap-3 p-3 rounded-lg border border-white/10 bg-white/3 hover:bg-white/10 hover:border-white/30 transition-all">
+                              <div className={`group/link flex items-start gap-3 p-3 rounded-lg border border-white/10 bg-white/3 hover:border-white/40 hover:bg-white/10 transition-all ${item.accent}`}>
                                 <div className="h-10 w-10 rounded-md bg-linear-to-br from-white/15 to-white/5 flex items-center justify-center text-white shrink-0 border border-white/10">
                                   <Icon className="w-5 h-5" />
                                 </div>
@@ -266,15 +266,15 @@ export default function Navbar() {
                       </div>
                       <div className="space-y-2">
                         {[
-                          { href: '/access-portal', label: 'Access Portal', icon: Zap, desc: 'Manage your workspace and vaults.' },
-                          { href: '/blog', label: 'Blog', icon: Newspaper, desc: 'Product thinking and release stories.' },
-                          { href: '/changelog', label: 'Changelog', icon: Code, desc: 'What shipped this week.' },
-                          { href: '/contact', label: 'Contact', icon: Mail, desc: 'Talk with the team or request access.' },
+                          { href: '/access-portal', label: 'Access Portal', icon: Zap, desc: 'Manage your workspace and vaults.', accent: 'hover:border-heirlock-green/60 hover:bg-heirlock-green/10' },
+                          { href: '/blog', label: 'Blog', icon: Newspaper, desc: 'Product thinking and release stories.', accent: 'hover:border-heirlock-pink/60 hover:bg-heirlock-pink/10' },
+                          { href: '/changelog', label: 'Changelog', icon: Code, desc: 'What shipped this week.', accent: 'hover:border-heirlock-yellow/60 hover:bg-heirlock-yellow/10' },
+                          { href: '/contact', label: 'Contact', icon: Mail, desc: 'Talk with the team or request access.', accent: 'hover:border-heirlock-yellow/60 hover:bg-heirlock-yellow/10' },
                         ].map((item, idx) => {
                           const Icon = item.icon;
                           return (
                             <Link href={item.href} onClick={closeMenu} key={idx}>
-                              <div className="group/link flex items-start gap-3 p-3 rounded-lg border border-white/10 bg-white/3 hover:bg-white/10 hover:border-white/30 transition-all">
+                              <div className={`group/link flex items-start gap-3 p-3 rounded-lg border border-white/10 bg-white/3 hover:border-white/40 hover:bg-white/10 transition-all ${item.accent}`}>
                                 <div className="h-10 w-10 rounded-md bg-linear-to-br from-white/15 to-white/5 flex items-center justify-center text-white shrink-0 border border-white/10">
                                   <Icon className="w-5 h-5" />
                                 </div>
@@ -312,6 +312,23 @@ export default function Navbar() {
                 </div>
               </div>
             </div>
+
+            <style jsx global>{`
+              .resources-scroll::-webkit-scrollbar {
+                width: 10px;
+              }
+              .resources-scroll::-webkit-scrollbar-track {
+                background: rgba(255, 255, 255, 0.05);
+              }
+              .resources-scroll::-webkit-scrollbar-thumb {
+                background: linear-gradient(180deg, #F2E85C, #5BE39D, #61A5FF);
+                border-radius: 999px;
+                border: 2px solid rgba(0, 0, 0, 0.6);
+              }
+              .resources-scroll::-webkit-scrollbar-thumb:hover {
+                background: linear-gradient(180deg, #F7F0A0, #7AF7B6, #8AC2FF);
+              }
+            `}</style>
 
             {/* Middle Section: Create Vault | Dashboard | Profile */}
             <div className="flex items-center gap-2 lg:gap-4 flex-1 justify-center">
