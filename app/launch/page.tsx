@@ -102,21 +102,21 @@ export default function LaunchPage() {
             <div className="border-8 border-black bg-heirlock-blue p-8 shadow-brutal">
               <p className="text-sm font-black text-black uppercase tracking-wider mb-4">Launch countdown</p>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div className="border-4 border-black bg-white p-6">
-                  <p className="text-4xl md:text-5xl font-black text-black">{String(countdown.days).padStart(2, '0')}</p>
-                  <p className="text-xs font-black text-gray-600 uppercase mt-2">Days</p>
+                <div className="border-4 border-black bg-white p-6 flex flex-col items-center justify-center min-w-[120px]">
+                  <p className="text-4xl md:text-5xl font-black text-black leading-none tracking-tight">{String(countdown.days).padStart(2, '0')}</p>
+                  <p className="text-xs font-black text-gray-600 uppercase mt-3 tracking-wide">Days</p>
                 </div>
-                <div className="border-4 border-black bg-white p-6">
-                  <p className="text-4xl md:text-5xl font-black text-black">{String(countdown.hours).padStart(2, '0')}</p>
-                  <p className="text-xs font-black text-gray-600 uppercase mt-2">Hours</p>
+                <div className="border-4 border-black bg-white p-6 flex flex-col items-center justify-center min-w-[120px]">
+                  <p className="text-4xl md:text-5xl font-black text-black leading-none tracking-tight">{String(countdown.hours).padStart(2, '0')}</p>
+                  <p className="text-xs font-black text-gray-600 uppercase mt-3 tracking-wide">Hours</p>
                 </div>
-                <div className="border-4 border-black bg-white p-6">
-                  <p className="text-4xl md:text-5xl font-black text-black">{String(countdown.minutes).padStart(2, '0')}</p>
-                  <p className="text-xs font-black text-gray-600 uppercase mt-2">Minutes</p>
+                <div className="border-4 border-black bg-white p-6 flex flex-col items-center justify-center min-w-[120px]">
+                  <p className="text-4xl md:text-5xl font-black text-black leading-none tracking-tight">{String(countdown.minutes).padStart(2, '0')}</p>
+                  <p className="text-xs font-black text-gray-600 uppercase mt-3 tracking-wide">Minutes</p>
                 </div>
-                <div className="border-4 border-black bg-white p-6">
-                  <p className="text-4xl md:text-5xl font-black text-black">{String(countdown.seconds).padStart(2, '0')}</p>
-                  <p className="text-xs font-black text-gray-600 uppercase mt-2">Seconds</p>
+                <div className="border-4 border-black bg-white p-6 flex flex-col items-center justify-center min-w-[120px]">
+                  <p className="text-4xl md:text-5xl font-black text-black leading-none tracking-tight">{String(countdown.seconds).padStart(2, '0')}</p>
+                  <p className="text-xs font-black text-gray-600 uppercase mt-3 tracking-wide">Seconds</p>
                 </div>
               </div>
               <p className="text-sm font-black text-black mt-6">

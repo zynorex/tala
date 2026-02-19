@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { X, Rocket, Calendar, Zap } from 'lucide-react';
+import { Calendar, Clock3, Rocket, ShieldCheck, X, Zap } from 'lucide-react';
 
 export default function LaunchAnnouncementModal() {
   const [isOpen, setIsOpen] = useState(false);
@@ -27,20 +27,20 @@ export default function LaunchAnnouncementModal() {
 
   return (
     <div className="fixed inset-0 z-[9999] flex items-center justify-center">
-      {/* Backdrop */}
       <div
         className="fixed inset-0 bg-black/50 backdrop-blur-sm"
         onClick={handleClose}
       />
 
-      {/* Modal */}
       <div className="relative z-[10000] w-full max-w-md mx-4 max-h-[90vh] overflow-y-auto">
         <div className="bg-white border-4 border-black shadow-brutal rounded-lg overflow-hidden">
-          {/* Header with Close Button */}
           <div className="bg-heirlock-yellow border-b-4 border-black p-4 md:p-6 flex items-center justify-between">
             <div className="flex items-center gap-2 md:gap-3">
-              <Rocket className="w-6 h-6 md:w-8 md:h-8 text-black animate-bounce flex-shrink-0" />
-              <h2 className="text-xl md:text-2xl font-black text-black">Coming Soon!</h2>
+              <Rocket className="w-6 h-6 md:w-8 md:h-8 text-black" />
+              <div>
+                <p className="text-[11px] md:text-xs font-black uppercase tracking-wide text-black">Launch update</p>
+                <h2 className="text-xl md:text-2xl font-black text-black">Production opens soon</h2>
+              </div>
             </div>
             <button
               onClick={handleClose}
@@ -50,73 +50,63 @@ export default function LaunchAnnouncementModal() {
             </button>
           </div>
 
-          {/* Content */}
-          <div className="p-4 md:p-8 space-y-4 md:space-y-6">
-            {/* Main Message */}
-            <div className="text-center space-y-2 md:space-y-3">
-              <p className="text-gray-800 text-base md:text-lg font-bold">
-                T.A.L.A. is launching very soon!
-              </p>
-              <p className="text-gray-700 text-xs md:text-sm">
-                Get ready to revolutionize vault security with military-grade encryption and blockchain verification.
-              </p>
-            </div>
-
-            {/* Launch Date */}
-            <div className="bg-heirlock-blue border-3 border-black p-3 md:p-4 rounded-lg">
-              <div className="flex items-center justify-center gap-2 mb-2">
-                <Calendar className="w-4 h-4 md:w-5 md:h-5 text-black flex-shrink-0" />
-                <span className="font-black text-black text-sm md:text-base">Launch Date</span>
+          <div className="p-4 md:p-8 space-y-5 md:space-y-6">
+            <div className="bg-heirlock-blue border-3 border-black p-4 rounded-lg space-y-2">
+              <div className="flex items-center justify-center gap-2 text-sm font-black uppercase tracking-wide text-black">
+                <Calendar className="w-4 h-4" />
+                March 14 2026
               </div>
-              <p className="text-center text-xl md:text-2xl font-black text-black">
-                March 14, 2026
+              <div className="flex items-center justify-center gap-2 text-xs text-gray-800 font-semibold">
+                <Clock3 className="w-4 h-4" />
+                {daysUntilLaunch} days until access opens
+              </div>
+            </div>
+
+            <div className="text-center space-y-3">
+              <p className="text-gray-900 text-base md:text-lg font-black">
+                TALA brings contract enforced unlocks, device side encryption, and distributed storage in one flow.
               </p>
-              <p className="text-center text-xs md:text-sm text-gray-700 mt-2 font-bold">
-                {daysUntilLaunch} days to go
+              <p className="text-gray-700 text-sm md:text-base font-medium">
+                Set a vault, lock it to a schedule, and verify availability without surrendering custody.
               </p>
             </div>
 
-            {/* Features Preview */}
-            <div className="space-y-2 md:space-y-3">
-              <h3 className="font-black text-black text-xs md:text-sm uppercase tracking-widest">
-                What's Coming
-              </h3>
-              <div className="space-y-1 md:space-y-2">
+            <div className="space-y-3">
+              <h3 className="font-black text-black text-xs md:text-sm uppercase tracking-widest">What to expect</h3>
+              <div className="space-y-2">
                 {[
-                  'Military-grade AES-256 encryption',
-                  'Blockchain-verified security',
-                  'Decentralized IPFS storage',
-                  'Zero-knowledge architecture',
+                  'Device side AES 256 encryption for every vault',
+                  'Smart contract unlock logic on Polygon',
+                  'Redundant IPFS distribution with audit trails',
+                  'Launch day support for teams and institutions',
                 ].map((feature, index) => (
                   <div key={index} className="flex items-center gap-2 md:gap-3 text-xs md:text-sm">
-                    <span className="text-black font-black">→</span>
+                    <ShieldCheck className="w-4 h-4 text-black" />
                     <span className="text-gray-800 font-medium">{feature}</span>
                   </div>
                 ))}
               </div>
             </div>
 
-            {/* CTA */}
-            <div className="space-y-2 md:space-y-3">
+            <div className="space-y-3">
               <a
-                href="/#pricing"
+                href="/launch"
                 onClick={() => handleClose()}
-                className="w-full px-3 md:px-4 py-2 md:py-3 bg-black text-white font-bold border-3 border-black rounded-lg hover:opacity-90 transition-opacity flex items-center justify-center gap-2 text-center text-sm md:text-base"
+                className="w-full px-3 md:px-4 py-3 md:py-3 bg-black text-heirlock-yellow font-black border-3 border-black rounded-lg hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2 text-center text-sm md:text-base shadow-brutal"
               >
                 <Zap className="w-4 h-4 md:w-5 md:h-5 flex-shrink-0" />
-                View Pricing Plans
+                See the launch plan
               </a>
               <button
                 onClick={handleClose}
-                className="w-full px-3 md:px-4 py-2 md:py-3 bg-white text-black font-bold border-3 border-black rounded-lg hover:bg-gray-50 transition-colors text-sm md:text-base"
+                className="w-full px-3 md:px-4 py-3 md:py-3 bg-white text-black font-black border-3 border-black rounded-lg hover:bg-gray-50 transition-colors text-sm md:text-base"
               >
-                I'll Wait
+                Remind me later
               </button>
             </div>
 
-            {/* Footer Text */}
-            <p className="text-xs text-center text-gray-600 border-t-2 border-black pt-3 md:pt-4">
-              🚀 Be among the first to experience next-generation vault security
+            <p className="text-xs text-center text-gray-700 border-t-2 border-black pt-3 md:pt-4">
+              Join early to verify timing, custody, and distribution before production opens.
             </p>
           </div>
         </div>
