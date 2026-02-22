@@ -50,13 +50,13 @@ export default function Changelog() {
       title: 'P0 Critical Security & Core Functionality Fixes',
       description: 'Resolved all 7 critical/broken functionality issues identified in the full-project audit. These fixes address authentication bypasses, broken encryption, and non-functional core features.',
       changes: [
-        'File Download Decryption: Replaced empty-buffer placeholder with full AES-256-GCM decryption pipeline — downloads IPFS ciphertext, reconstructs encryption params from DB, derives key via PBKDF2, and returns the decrypted file',
-        'IPFS Encryption Enforced: Fixed addFileToVault() uploading plaintext to IPFS — now serializes and uploads the encrypted data buffer instead of the original file',
+        'File Download Decryption: Replaced empty-buffer placeholder with full AES-256-GCM decryption pipeline, downloads IPFS ciphertext, reconstructs encryption params from DB, derives key via PBKDF2, and returns the decrypted file',
+        'IPFS Encryption Enforced: Fixed addFileToVault() uploading plaintext to IPFS, now serializes and uploads the encrypted data buffer instead of the original file',
         'Vault ID Extraction: Replaced hardcoded vaultId: 0 with waitForTransactionReceipt + decodeEventLog to parse VaultCreated event and extract the real on-chain vault ID',
-        'Deploy Script Corrected: Replaced all NilVault references with TALAVault — artifact path, contract variable names, environment contract address entry, and deployment logs',
-        'Login Signature Verification: Rewrote /api/auth/login to require EIP-191 wallet signature — verifies message + nonce cryptographically via viem before issuing JWT (prevents impersonation)',
+        'Deploy Script Corrected: Replaced all NilVault references with TALAVault, updating artifact path, contract variable names, environment contract address entry, and deployment logs',
+        'Login Signature Verification: Rewrote /api/auth/login to require EIP-191 wallet signature, verifies message plus nonce cryptographically via viem before issuing JWT (prevents impersonation)',
         'Admin Auth Hardened: Replaced base64 mock token with proper JWT (HS256, 4h expiry, admin role claim), added crypto.timingSafeEqual for credential comparison, and per-IP brute-force lockout (5 attempts → 15min)',
-        'Real Vault Creation Enabled: Removed disabled={!demoMode} gate from submit button — non-demo vault creation now fully functional with "Create Time-Locked Vault" CTA',
+        'Real Vault Creation Enabled: Removed disabled={!demoMode} gate from submit button, non-demo vault creation now fully functional with "Create Time-Locked Vault" CTA',
       ],
       impact: 'major',
     },
@@ -544,7 +544,7 @@ export default function Changelog() {
     security: 'bg-heirlock-pink text-black',
   };
 
-  const lastUpdated = changelog[0]?.date || '—';
+  const lastUpdated = changelog[0]?.date || 'N/A';
 
   return (
     <main className="min-h-screen bg-[#f7f5f2] text-black">
