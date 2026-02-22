@@ -11,8 +11,8 @@
  * - Transaction receipt polling
  */
 
-import { writeContract, readContract } from 'wagmi/actions';
-import { keccak256, stringToBytes } from 'viem';
+import { writeContract, readContract, waitForTransactionReceipt } from 'wagmi/actions';
+import { keccak256, stringToBytes, decodeEventLog } from 'viem';
 import { TALA_VAULT_ABI, TALA_VAULT_CONFIG } from './tala-vault';
 import { logger } from '@/lib/utils/logger';
 
@@ -191,10 +191,47 @@ export async function createVault(
     });
 
     logger.info(`Transaction submitted [${txId}]`, { transactionHash: hash });
-    logger.endTimer(`createVault_${txId}`, { transactionHash: hash });
+
+    // Wait for transaction receipt and extract vaultId from VaultCreated event
+    let vaultId = 0;
+    try {
+      const receipt = await waitForTransactionReceipt(wagmiConfig, {
+        hash,
+        confirmations: 1,
+        timeout: TRANSACTION_TIMEOUT,
+      });
+
+      // Parse VaultCreated event from transaction logs
+      for (const log of receipt.logs) {
+        try {
+          const event = decodeEventLog({
+            abi: TALA_VAULT_ABI,
+            data: log.data,
+            topics: log.topics,
+          });
+
+          if (event.eventName === 'VaultCreated') {
+            vaultId = Number((event.args as any).vaultId);
+            logger.info(`Vault ID extracted from event [${txId}]`, { vaultId });
+            break;
+          }
+        } catch {
+          // Not a VaultCreated event, continue to next log
+          continue;
+        }
+      }
+
+      if (vaultId === 0) {
+        logger.warn(`Could not extract vaultId from transaction logs [${txId}]. Receipt status: ${receipt.status}`);
+      }
+    } catch (receiptError) {
+      logger.warn(`Transaction receipt polling failed [${txId}], vault may still be created on-chain`, receiptError instanceof Error ? receiptError : undefined);
+    }
+
+    logger.endTimer(`createVault_${txId}`, { transactionHash: hash, vaultId });
 
     return {
-      vaultId: 0, // Would be extracted from VaultCreated event in production
+      vaultId,
       transactionHash: hash,
     };
   } catch (error) {

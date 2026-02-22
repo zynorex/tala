@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { verifyRequest } from '@/lib/auth/jwt';
 import { apiSuccess, apiError, handleDbError } from '@/lib/auth/api-response';
 import { downloadFromIPFS, unpinFileFromIPFS } from '@/lib/ipfs/ipfs';
-import { decryptFile } from '@/lib/crypto/encryption';
+import { decrypt, deriveKey } from '@/lib/crypto/encryption';
+import crypto from 'crypto';
 
 let prisma: any = null;
 
@@ -84,47 +85,78 @@ export async function GET(
       );
     }
 
-    // 5. Download encrypted file from IPFS
-    let encryptedData: any;
+    // 5. Validate decryption password
+    const password = req.headers.get('x-vault-password') ||
+      new URL(req.url).searchParams.get('password');
+
+    if (!password) {
+      return NextResponse.json(
+        apiError('Bad Request', 400, 'Vault password required for file decryption. Provide via X-Vault-Password header.'),
+        { status: 400 }
+      );
+    }
+
+    // Verify password matches stored hash
+    const providedKeyHash = crypto
+      .createHash('sha256')
+      .update(password)
+      .digest('hex');
+
+    if (providedKeyHash !== vaultFile.encryptionKeyHash) {
+      return NextResponse.json(
+        apiError('Forbidden', 403, 'Invalid vault password'),
+        { status: 403 }
+      );
+    }
+
+    // 6. Verify encryption metadata exists in database
+    if (!vaultFile.encryptionIV || !vaultFile.encryptionSalt || !vaultFile.encryptionAuthTag) {
+      return NextResponse.json(
+        apiError('Internal Server Error', 500, 'Missing encryption metadata for this file. File may have been uploaded with an older version.'),
+        { status: 500 }
+      );
+    }
+
+    // 7. Download encrypted ciphertext from IPFS
+    let encryptedCiphertext: Buffer;
     try {
       const response = await downloadFromIPFS(vaultFile.ipfsHash);
-      encryptedData = JSON.parse(response.data.toString());
+      encryptedCiphertext = Buffer.isBuffer(response.data)
+        ? response.data
+        : Buffer.from(response.data);
     } catch (error) {
-      console.error('IPFS download failed:', error);
       return NextResponse.json(
         apiError('Service Unavailable', 503, 'Failed to download file from IPFS'),
         { status: 503 }
       );
     }
 
-    // 6. Reconstruct encryption key from hash (enterprise pattern)
-    // Note: In production, store the actual key securely (KMS, vault)
-    const encryptionKeyHash = vaultFile.encryptionKeyHash;
+    // 8. Reconstruct EncryptedData object from IPFS ciphertext + DB metadata
+    const encryptedDataObj = {
+      ciphertext: encryptedCiphertext.toString('hex'),
+      iv: vaultFile.encryptionIV,
+      authTag: vaultFile.encryptionAuthTag,
+      salt: vaultFile.encryptionSalt,
+      version: '2.0',
+      timestamp: Date.now(),
+      algorithm: 'aes-256-gcm',
+    };
 
-    // 7. Decrypt file
+    // 9. Derive encryption key from password + stored salt using PBKDF2
     let decryptedBuffer: Buffer;
     try {
-      // Convert hex strings back to buffers
-      const encryptedObj = {
-        iv: Buffer.from(encryptedData.iv, 'hex'),
-        ciphertext: Buffer.from(encryptedData.ciphertext, 'hex'),
-        authTag: Buffer.from(encryptedData.authTag, 'hex'),
-        algorithm: encryptedData.algorithm,
-      };
-
-      // This is a simplified version - production uses secure key management
-      // For now, we store the encryption key hash for verification
-      // Actual decryption requires the original encryption key
-      decryptedBuffer = Buffer.from(''); // Placeholder
+      const salt = Buffer.from(vaultFile.encryptionSalt, 'hex');
+      const encryptionKey = deriveKey(password, salt);
+      const decrypted = decrypt(encryptedDataObj, encryptionKey);
+      decryptedBuffer = decrypted.data;
     } catch (error) {
-      console.error('Decryption failed:', error);
       return NextResponse.json(
-        apiError('Internal Server Error', 500, 'Failed to decrypt file'),
-        { status: 500 }
+        apiError('Forbidden', 403, 'Decryption failed — incorrect password or corrupted data'),
+        { status: 403 }
       );
     }
 
-    // 8. Log activity
+    // 10. Log activity
     await db.activityLog.create({
       data: {
         userId: payload.userId,
@@ -136,7 +168,7 @@ export async function GET(
       },
     });
 
-    // 9. Return file as response
+    // 11. Return decrypted file as response
     const duration = Date.now() - startTime;
     return new NextResponse(decryptedBuffer as any, {
       status: 200,

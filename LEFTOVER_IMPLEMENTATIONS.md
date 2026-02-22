@@ -343,13 +343,13 @@
 
 | # | Priority | Category | Issue | Status |
 |---|----------|----------|-------|--------|
-| 1 | **P0** | API | File download returns empty data | ⬜ TODO |
-| 2 | **P0** | Security | Unencrypted files uploaded to IPFS | ⬜ TODO |
-| 3 | **P0** | Blockchain | Vault ID always returns 0 | ⬜ TODO |
-| 4 | **P0** | Deploy | Deploy script references wrong contract | ⬜ TODO |
-| 5 | **P0** | Auth | Login issues JWT without password check | ⬜ TODO |
-| 6 | **P0** | Auth | Admin login uses mock base64 token | ⬜ TODO |
-| 7 | **P0** | UI | Real vault creation disabled (demo only) | ⬜ TODO |
+| 1 | **P0** | API | File download returns empty data | ✅ DONE |
+| 2 | **P0** | Security | Unencrypted files uploaded to IPFS | ✅ DONE |
+| 3 | **P0** | Blockchain | Vault ID always returns 0 | ✅ DONE |
+| 4 | **P0** | Deploy | Deploy script references wrong contract | ✅ DONE |
+| 5 | **P0** | Auth | Login issues JWT without password check | ✅ DONE |
+| 6 | **P0** | Auth | Admin login uses mock base64 token | ✅ DONE |
+| 7 | **P0** | UI | Real vault creation disabled (demo only) | ✅ DONE |
 | 8 | **P1** | Security | Hardcoded fallback JWT secret | ⬜ TODO |
 | 9 | **P1** | Security | Share link leaks vault key hash | ⬜ TODO |
 | 10 | **P1** | Security | Pinata secrets exposed client-side | ⬜ TODO |

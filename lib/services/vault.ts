@@ -170,8 +170,11 @@ export async function addFileToVault(input: AddFileInput): Promise<any> {
     const encryptedData = encryption.encrypt(input.file.buffer, encryptionKey);
     const fileHash = encryption.calculateFileHash(input.file.buffer);
 
-    // Upload to IPFS
-    const ipfsResult = await ipfs.uploadToIPFS(input.file.buffer, input.file.name, `File for vault ${input.vaultId}`, fileHash);
+    // Serialize encrypted data for IPFS upload (NEVER upload plaintext)
+    const encryptedBuffer = Buffer.from(JSON.stringify(encryptedData), 'utf-8');
+
+    // Upload encrypted data to IPFS
+    const ipfsResult = await ipfs.uploadToIPFS(encryptedBuffer, input.file.name, `File for vault ${input.vaultId}`, fileHash);
 
     // Save file metadata
     const vaultFile = await db.vaultFile.create({

@@ -1253,15 +1253,14 @@ export default function CreateVaultForm({ demoMode = false }: CreateVaultFormPro
       {/* Submit Button */}
       <button
         type="submit"
-        disabled={form.isSubmitting || !demoMode}
+        disabled={form.isSubmitting}
         className={`w-full px-8 py-5 font-black border-4 border-black shadow-brutal inline-flex items-center justify-center gap-3 text-xl transition-all duration-200 ${
-          form.isSubmitting || !demoMode
+          form.isSubmitting
             ? 'bg-gray-400 text-gray-600 cursor-not-allowed opacity-70'
             : demoMode
             ? 'bg-heirlock-green hover:bg-green-500 text-black hover:-translate-y-1 hover:shadow-brutal-lg'
             : 'bg-heirlock-yellow hover:bg-yellow-400 text-black hover:-translate-y-1 hover:shadow-brutal-lg'
         }`}
-        title={!demoMode ? 'Coming soon' : ''}
       >
         {form.isSubmitting ? (
           <>
@@ -1276,7 +1275,7 @@ export default function CreateVaultForm({ demoMode = false }: CreateVaultFormPro
         ) : (
           <>
             <Lock className="w-6 h-6" />
-            <span>Coming Soon</span>
+            <span>Create Time-Locked Vault</span>
           </>
         )}
       </button>
