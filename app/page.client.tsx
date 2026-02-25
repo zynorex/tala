@@ -180,26 +180,74 @@ const journeyTimeline = [
   {
     badge: 'T-72H',
     title: 'Create Capsule',
-    description: 'File encrypted on-device with AES-256-GCM. Metadata hashed client-side.',
-    detail: 'Design keeps plaintext on-device during normal operation.',
+    descriptions: [
+      'File encrypted on-device with AES-256-GCM. Metadata hashed client-side.',
+      'Key material never leaves the device. Payload sealed before it moves.',
+      'Client-side sealing prevents plaintext from touching the network.',
+      'Capsule assembly completes locally with per-vault salts.',
+      'Encryption completes before transport, no server-side plaintext.',
+    ],
+    details: [
+      'Design keeps plaintext on-device during normal operation.',
+      'Only ciphertext and proofs leave the machine.',
+      'Local sealing removes server-side exposure windows.',
+      'Metadata fingerprints are generated on the client.',
+      'No plaintext storage, no recovery key held by T.A.L.A.',
+    ],
   },
   {
     badge: 'T-48H',
     title: 'Sign & Commit',
-    description: 'Wallet signs the unlock schedule, contract records checksum, and IPFS pin occurs.',
-    detail: 'Validators attest that clock skew stays within agreed tolerances.',
+    descriptions: [
+      'Wallet signs the unlock schedule, contract records checksum, and IPFS pin occurs.',
+      'Unlock plan is signed, hashed, and anchored on-chain.',
+      'Smart contract stamps the schedule and verifies integrity.',
+      'Signed commits prevent silent edits after approval.',
+      'Network pins ciphertext once the commit is finalized.',
+    ],
+    details: [
+      'Validators attest that clock skew stays within agreed tolerances.',
+      'Consensus keeps time drift inside the policy window.',
+      'Watcher nodes verify schedule integrity and liveness.',
+      'Audit watchers flag any chain reorg anomalies.',
+      'Commit receipts are verifiable by external auditors.',
+    ],
   },
   {
     badge: 'T-00H',
     title: 'Unlock Moment',
-    description: 'Smart contract flips state, release proof emitted, recipients notified instantly.',
-    detail: 'Still encrypted—only holders of the key material can decrypt.',
+    descriptions: [
+      'Smart contract flips state, release proof emitted, recipients notified instantly.',
+      'On-chain state changes trigger the unlock broadcast.',
+      'Proof of release is emitted and listeners are notified.',
+      'Recipients receive alerts the second the state flips.',
+      'Unlock is deterministic, no manual approvals required.',
+    ],
+    details: [
+      'Still encrypted—only holders of the key material can decrypt.',
+      'Ciphertext remains sealed without the key fragments.',
+      'No key, no access even after release proofs.',
+      'Decryption requires the holder-approved key material.',
+      'Release does not expose plaintext, only signals readiness.',
+    ],
   },
   {
     badge: 'T+05M',
     title: 'Audit Trail Forever',
-    description: 'Public verifiers read on-chain log + IPFS CID for compliance reports.',
-    detail: 'The resulting audit trail outlives any human administrator.',
+    descriptions: [
+      'Public verifiers read on-chain log + IPFS CID for compliance reports.',
+      'Auditors replay the chain log against the sealed CID.',
+      'Compliance teams can verify every event post-release.',
+      'Proof trail is durable across networks and vendors.',
+      'Verification requires no T.A.L.A. involvement.',
+    ],
+    details: [
+      'The resulting audit trail outlives any human administrator.',
+      'Evidence survives staff turnover and vendor changes.',
+      'Logs are tamper-evident, replayable, and time-stamped.',
+      'Audit history remains intact even if apps change.',
+      'Chain proofs persist as long as the network does.',
+    ],
   },
 ];
 
@@ -359,6 +407,7 @@ export default function HomeClient() {
   useMicroInteractions();
   const [isLoading, setIsLoading] = useState(true);
   const [activeTimelineIndex, setActiveTimelineIndex] = useState(0);
+  const [activePhraseIndex, setActivePhraseIndex] = useState(0);
 
   useEffect(() => {
     const timer = setTimeout(() => setIsLoading(false), 700);
@@ -370,6 +419,13 @@ export default function HomeClient() {
       setActiveTimelineIndex((prev) => (prev + 1) % journeyTimeline.length);
     }, 3800);
     return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    const phraseInterval = setInterval(() => {
+      setActivePhraseIndex((prev) => (prev + 1) % 5);
+    }, 2200);
+    return () => clearInterval(phraseInterval);
   }, []);
 
   if (isLoading) {
@@ -442,13 +498,21 @@ export default function HomeClient() {
                       <p className="text-sm font-black text-gray-700 uppercase">{step.title}</p>
                       <p className="text-black font-bold">
                         <TypewriterText
-                          text={step.description}
+                          text={
+                            idx === activeTimelineIndex
+                              ? step.descriptions[activePhraseIndex]
+                              : step.descriptions[0]
+                          }
                           active={idx === activeTimelineIndex}
                         />
                       </p>
                       <p className="text-xs text-gray-600">
                         <TypewriterText
-                          text={step.detail}
+                          text={
+                            idx === activeTimelineIndex
+                              ? step.details[activePhraseIndex]
+                              : step.details[0]
+                          }
                           active={idx === activeTimelineIndex}
                         />
                       </p>
