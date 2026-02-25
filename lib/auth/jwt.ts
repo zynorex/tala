@@ -15,8 +15,9 @@ function getJWTSecret(): string {
     );
   }
   if (secret.length < 32) {
-    throw new Error(
-      'FATAL: JWT_SECRET is too short. Use a minimum of 32 characters for adequate security.'
+    console.warn(
+      '[SECURITY WARNING] JWT_SECRET is shorter than 32 characters. ' +
+      'Use a strong, unique secret (min 32 chars) in production.'
     );
   }
   return secret;
