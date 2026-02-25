@@ -203,6 +203,46 @@ const journeyTimeline = [
   },
 ];
 
+function TypewriterText({
+  text,
+  active,
+  className,
+}: {
+  text: string;
+  active: boolean;
+  className?: string;
+}) {
+  const [display, setDisplay] = useState(active ? '' : text);
+
+  useEffect(() => {
+    if (!active) {
+      setDisplay(text);
+      return;
+    }
+
+    let index = 0;
+    setDisplay('');
+    const timer = setInterval(() => {
+      index += 1;
+      setDisplay(text.slice(0, index));
+      if (index >= text.length) {
+        clearInterval(timer);
+      }
+    }, 22);
+
+    return () => clearInterval(timer);
+  }, [active, text]);
+
+  return (
+    <span className={className}>
+      {display}
+      {active && display.length < text.length && (
+        <span className="inline-block w-2 animate-pulse">|</span>
+      )}
+    </span>
+  );
+}
+
 const blueprint = [
   {
     icon: Laptop,
@@ -318,10 +358,18 @@ const pricingTiers = [
 export default function HomeClient() {
   useMicroInteractions();
   const [isLoading, setIsLoading] = useState(true);
+  const [activeTimelineIndex, setActiveTimelineIndex] = useState(0);
 
   useEffect(() => {
     const timer = setTimeout(() => setIsLoading(false), 700);
     return () => clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setActiveTimelineIndex((prev) => (prev + 1) % journeyTimeline.length);
+    }, 3800);
+    return () => clearInterval(interval);
   }, []);
 
   if (isLoading) {
@@ -374,19 +422,36 @@ export default function HomeClient() {
             <div className="space-y-4">
               {journeyTimeline.map((step, idx) => (
                 <ScrollFadeIn key={step.title} delay={idx * 0.15}>
-                  <div className="flex items-stretch gap-4">
-                    <div className="relative flex flex-col items-center px-1">
-                      <span className="font-black text-xs border-2 border-black px-3 py-1 bg-heirlock-yellow text-black z-10">
+                  <div className="grid grid-cols-[72px_1fr] gap-4 items-start">
+                    <div className="relative flex flex-col items-center">
+                      <span className="font-black text-xs border-2 border-black px-3 py-1 bg-heirlock-yellow text-black z-10 min-w-[56px] text-center">
                         {step.badge}
                       </span>
                       {idx < journeyTimeline.length - 1 && (
-                        <span className="absolute top-12 bottom-0 w-0.5 bg-black" aria-hidden />
+                        <span
+                          className="absolute top-10 bottom-0 left-1/2 -translate-x-1/2 w-0.5 bg-black"
+                          aria-hidden
+                        />
                       )}
                     </div>
-                    <div>
+                    <div
+                      className={`border-2 border-black p-3 shadow-brutal transition-all ${
+                        idx === activeTimelineIndex ? 'bg-heirlock-yellow/30' : 'bg-white'
+                      }`}
+                    >
                       <p className="text-sm font-black text-gray-700 uppercase">{step.title}</p>
-                      <p className="text-black font-bold">{step.description}</p>
-                      <p className="text-xs text-gray-600">{step.detail}</p>
+                      <p className="text-black font-bold">
+                        <TypewriterText
+                          text={step.description}
+                          active={idx === activeTimelineIndex}
+                        />
+                      </p>
+                      <p className="text-xs text-gray-600">
+                        <TypewriterText
+                          text={step.detail}
+                          active={idx === activeTimelineIndex}
+                        />
+                      </p>
                     </div>
                   </div>
                 </ScrollFadeIn>
