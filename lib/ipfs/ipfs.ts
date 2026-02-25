@@ -160,6 +160,12 @@ export async function uploadToIPFS(
     };
     formData.append('pinataMetadata', JSON.stringify(pinataMetadata));
 
+    // Add Pinata options
+    const pinataOptions = {
+      cidVersion: 0,
+    };
+    formData.append('pinataOptions', JSON.stringify(pinataOptions));
+
     // Upload with retry logic
     const uploadFn = async () => {
       const controller = new AbortController();
