@@ -70,13 +70,14 @@ function validateIPFSHash(hash: string): boolean {
 /**
  * Validate Pinata API credentials
  * Uses server-only env vars (no NEXT_PUBLIC_ prefix) to prevent browser exposure
+ * Also falls back to NEXT_PUBLIC_ prefixed vars for backward compatibility
  */
 function validatePinataCredentials(): { apiKey: string; apiSecret: string } {
-  const apiKey = process.env.PINATA_API_KEY;
-  const apiSecret = process.env.PINATA_SECRET_API_KEY;
+  const apiKey = process.env.PINATA_API_KEY || process.env.NEXT_PUBLIC_PINATA_API_KEY;
+  const apiSecret = process.env.PINATA_SECRET_API_KEY || process.env.NEXT_PUBLIC_PINATA_SECRET_API_KEY;
 
   if (!apiKey || !apiSecret) {
-    throw new Error('Pinata credentials not configured. Set PINATA_API_KEY and PINATA_SECRET_API_KEY environment variables (server-only, no NEXT_PUBLIC_ prefix).');
+    throw new Error('Pinata credentials not configured. Set PINATA_API_KEY and PINATA_SECRET_API_KEY environment variables.');
   }
 
   return { apiKey, apiSecret };
