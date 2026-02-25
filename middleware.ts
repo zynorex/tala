@@ -33,11 +33,24 @@ interface RateLimitEntry {
 const rateLimitStore = new Map<string, RateLimitEntry>();
 
 /**
- * Generate CSRF token
+ * Generate a cryptographically secure CSRF token
  */
 function generateCSRFToken(): string {
-  return Buffer.from(Math.random().toString()).toString('base64').substring(0, 32);
+  const array = new Uint8Array(32);
+  crypto.getRandomValues(array);
+  return Array.from(array, b => b.toString(16).padStart(2, '0')).join('');
 }
+
+/**
+ * Routes exempt from CSRF validation (they use their own auth mechanisms)
+ */
+const CSRF_EXEMPT_ROUTES = [
+  '/api/auth/login',
+  '/api/auth/wallet',
+  '/api/admin/login',
+  '/api/auth/callback',
+  '/api/webhooks',
+];
 
 /**
  * Check rate limit for IP address
@@ -162,7 +175,6 @@ function getClientIP(request: NextRequest): string {
   return (
     request.headers.get('x-forwarded-for')?.split(',')[0] ||
     request.headers.get('x-real-ip') ||
-    request.ip ||
     'unknown'
   );
 }
@@ -225,12 +237,15 @@ export function middleware(request: NextRequest) {
     
     // CSRF protection for state-changing operations
     if (['POST', 'PUT', 'DELETE', 'PATCH'].includes(method)) {
-      const csrfToken = request.headers.get('x-csrf-token');
+      const isExempt = CSRF_EXEMPT_ROUTES.some(route => pathname.startsWith(route));
       
-      // For development/testing, allow requests without token
-      // In production, enforce CSRF token validation
-      if (!csrfToken && process.env.NODE_ENV === 'production') {
-        return new NextResponse('CSRF Token Missing', { status: 403 });
+      if (!isExempt) {
+        const csrfToken = request.headers.get('x-csrf-token');
+        const csrfCookie = request.cookies.get('csrf-token')?.value;
+
+        if (!csrfToken || !csrfCookie || csrfToken !== csrfCookie) {
+          return new NextResponse('CSRF Token Missing or Invalid', { status: 403 });
+        }
       }
     }
 
@@ -256,6 +271,19 @@ export function middleware(request: NextRequest) {
       'Strict-Transport-Security',
       'max-age=31536000; includeSubDomains; preload'
     );
+  }
+
+  // 6. Set CSRF token cookie if not already present
+  //    Clients read this cookie and include it as x-csrf-token header on mutations
+  if (!request.cookies.get('csrf-token')?.value) {
+    const csrfToken = generateCSRFToken();
+    response.cookies.set('csrf-token', csrfToken, {
+      httpOnly: false,  // Must be readable by JS to include in headers
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      path: '/',
+      maxAge: 60 * 60 * 24, // 24 hours
+    });
   }
 
   return response;

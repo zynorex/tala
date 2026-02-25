@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { apiSuccess, httpErrors, handleDbError } from '@/lib/auth/api-response';
 import { generateToken } from '@/lib/auth/jwt';
+import { rateLimit, rateLimitConfigs } from '@/lib/middleware/rate-limit';
 import { verifyMessage } from 'ethers';
 import { z } from 'zod';
 
@@ -33,6 +34,10 @@ const walletAuthSchema = z.object({
  */
 export async function POST(req: NextRequest) {
   try {
+    // Rate limit: 10 wallet auth attempts per minute per IP
+    const { allowed, response } = await rateLimit(req, undefined, rateLimitConfigs.auth);
+    if (!allowed && response) return response;
+
     const body = await req.json();
     
     // Validate input

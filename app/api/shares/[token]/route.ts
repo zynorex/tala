@@ -39,7 +39,6 @@ export async function GET(
             id: true,
             name: true,
             description: true,
-            keyHash: true,
             fileHash: true,
             isActive: true,
             lockStatus: true,
@@ -121,7 +120,6 @@ export async function GET(
         id: share.vault.id,
         name: share.vault.name,
         description: share.vault.description,
-        keyHash: share.vault.keyHash, // For password verification on client
         isLocked,
         lockStatus: share.vault.lockStatus,
         unlockTime: share.vault.unlockTime,

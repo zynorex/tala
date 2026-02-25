@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import jwt from 'jsonwebtoken';
+import { rateLimit, rateLimitConfigs } from '@/lib/middleware/rate-limit';
 import crypto from 'crypto';
 
 // Track failed attempts per IP for basic brute-force protection
@@ -55,9 +56,13 @@ function safeCompare(a: string, b: string): boolean {
 
 export async function POST(req: NextRequest) {
   try {
+    // Global rate limit: 10 auth attempts per minute per IP
+    const { allowed, response: rateLimitResponse } = await rateLimit(req, undefined, rateLimitConfigs.auth);
+    if (!allowed && rateLimitResponse) return rateLimitResponse;
+
     const clientIP = getClientIP(req);
 
-    // Check rate limiting
+    // Check brute-force protection (stricter per-IP lockout)
     if (isRateLimited(clientIP)) {
       return NextResponse.json(
         { message: 'Too many failed attempts. Please try again later.' },

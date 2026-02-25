@@ -123,14 +123,17 @@ export function secureApiHandler(
           try {
             const body = await request.json();
             // Sanitize all string fields
-            Object.keys(body).forEach(key => {
-              if (typeof body[key] === 'string') {
-                body[key] = InputSanitizer.sanitizeString(body[key]);
+            const sanitizedBody: Record<string, any> = { ...body };
+            Object.keys(sanitizedBody).forEach(key => {
+              if (typeof sanitizedBody[key] === 'string') {
+                sanitizedBody[key] = InputSanitizer.sanitizeString(sanitizedBody[key]);
               }
             });
             
-            // Create new request with sanitized body
-            // Note: In production, you might want to validate the sanitized body
+            // Attach sanitized body to context so handlers can access it
+            // since request.json() can only be consumed once
+            if (!context) context = {};
+            context.sanitizedBody = sanitizedBody;
           } catch (e) {
             return NextResponse.json(
               { error: 'Invalid request body' },

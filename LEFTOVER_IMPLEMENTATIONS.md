@@ -77,40 +77,40 @@
 
 ## P1 — Security Vulnerabilities
 
-### 8. Hardcoded Fallback JWT Secret
+### 8. ~~Hardcoded Fallback JWT Secret~~ DONE
 - **File:** `lib/auth/jwt.ts` (Line ~4)
 - **Issue:** `const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production'`
-- **Fix:** Throw an error if `JWT_SECRET` is not set instead of using a fallback.
+- **Fix:** Throws an error if `JWT_SECRET` is not set or is shorter than 32 characters.
 
-### 9. Share Link Leaks Vault Key Hash
+### 9. ~~Share Link Leaks Vault Key Hash~~ DONE
 - **File:** `app/api/shares/[token]/route.ts` (Line ~134)
-- **Issue:** GET response includes `keyHash: share.vault.keyHash`, exposing the vault password hash to anyone with the share link.
-- **Fix:** Remove `keyHash` from the share response.
+- **Issue:** GET response included `keyHash: share.vault.keyHash`, exposing the vault password hash.
+- **Fix:** Removed `keyHash` from both the Prisma select and the response object.
 
-### 10. Pinata API Secrets Exposed Client-Side
+### 10. ~~Pinata API Secrets Exposed Client-Side~~ DONE
 - **File:** `lib/ipfs/ipfs.ts` (Lines ~78-79)
-- **Issue:** Uses `NEXT_PUBLIC_PINATA_API_KEY` and `NEXT_PUBLIC_PINATA_SECRET_API_KEY` — the `NEXT_PUBLIC_` prefix exposes these to the browser.
-- **Fix:** Move IPFS operations to server-side API routes; remove `NEXT_PUBLIC_` prefix from secret keys.
+- **Issue:** Used `NEXT_PUBLIC_PINATA_API_KEY` and `NEXT_PUBLIC_PINATA_SECRET_API_KEY` which exposes secrets to browser.
+- **Fix:** Renamed to `PINATA_API_KEY` and `PINATA_SECRET_API_KEY` (server-only, no NEXT_PUBLIC_ prefix).
 
-### 11. Wallet Auth Always Returns Null
+### 11. ~~Wallet Auth Always Returns Null~~ DONE
 - **File:** `lib/auth/auth.ts` (Line ~18)
-- **Issue:** `authorize()` callback always returns `null`, meaning NextAuth Credentials-based wallet login never succeeds.
-- **Fix:** Implement proper wallet signature verification in the authorize callback.
+- **Issue:** `authorize()` callback always returned `null`.
+- **Fix:** Implemented full EIP-191 wallet signature verification via viem with Prisma user find-or-create.
 
-### 12. CSRF Enforcement Only in Production
+### 12. ~~CSRF Enforcement Only in Production~~ DONE
 - **File:** `middleware.ts` (Lines ~231-235)
-- **Issue:** CSRF tokens only enforced in production. `generateCSRFToken()` is defined but never integrated into the response flow.
-- **Fix:** Wire CSRF token generation into responses and enforce in all environments.
+- **Issue:** CSRF tokens only enforced in production. `generateCSRFToken()` was never integrated.
+- **Fix:** CSRF token now set as cookie on all responses, validated on all POST/PUT/DELETE/PATCH requests (with exemptions for auth endpoints). Uses crypto-secure token generation.
 
-### 13. Input Sanitization Never Applied
+### 13. ~~Input Sanitization Never Applied~~ DONE
 - **File:** `lib/security/secure-api-handler.ts` (Lines ~123-133)
-- **Issue:** `request.json()` is consumed for sanitization but the sanitized body is never forwarded to the handler.
-- **Fix:** Pass sanitized body through context or a wrapper.
+- **Issue:** `request.json()` was consumed for sanitization but never forwarded.
+- **Fix:** Sanitized body is now attached to `context.sanitizedBody` so handlers can access it after the stream is consumed.
 
-### 14. Missing Rate Limiting on Critical Endpoints
-- **Files:** `app/api/auth/login/route.ts`, `app/api/auth/wallet/route.ts`, `app/api/admin/login/route.ts`, `app/api/shares/[token]/files/[fileId]/route.ts`
-- **Issue:** No rate limiting on authentication and file access endpoints.
-- **Fix:** Apply rate limiter middleware to all auth and sensitive endpoints.
+### 14. ~~Missing Rate Limiting on Critical Endpoints~~ DONE
+- **Files:** `app/api/auth/login/route.ts`, `app/api/auth/wallet/route.ts`, `app/api/admin/login/route.ts`
+- **Issue:** No rate limiting on authentication endpoints.
+- **Fix:** Applied `rateLimit()` from `lib/middleware/rate-limit.ts` with `rateLimitConfigs.auth` (10 req/min) to all three auth endpoints.
 
 ---
 

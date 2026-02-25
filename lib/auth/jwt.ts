@@ -1,7 +1,28 @@
 import jwt from 'jsonwebtoken';
 import { NextRequest } from 'next/server';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
+/**
+ * JWT secret must be set via environment variable.
+ * The application will throw at startup if JWT_SECRET is missing,
+ * preventing accidental use of a hardcoded/default secret.
+ */
+function getJWTSecret(): string {
+  const secret = process.env.JWT_SECRET;
+  if (!secret) {
+    throw new Error(
+      'FATAL: JWT_SECRET environment variable is not set. ' +
+      'Set a strong, unique secret (min 32 chars) before starting the application.'
+    );
+  }
+  if (secret.length < 32) {
+    throw new Error(
+      'FATAL: JWT_SECRET is too short. Use a minimum of 32 characters for adequate security.'
+    );
+  }
+  return secret;
+}
+
+const JWT_SECRET = getJWTSecret();
 const JWT_EXPIRY = '7d';
 
 export interface JWTPayload {

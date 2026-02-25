@@ -1,6 +1,7 @@
 import { NextRequest } from 'next/server';
 import { verifyRequest, generateToken } from '@/lib/auth/jwt';
 import { apiSuccess, httpErrors } from '@/lib/auth/api-response';
+import { rateLimit, rateLimitConfigs } from '@/lib/middleware/rate-limit';
 import crypto from 'crypto';
 
 let prisma: any = null;
@@ -57,6 +58,10 @@ async function verifyWalletSignature(
  */
 export async function POST(req: NextRequest) {
   try {
+    // Rate limit: 10 login attempts per minute per IP
+    const { allowed, response } = await rateLimit(req, undefined, rateLimitConfigs.auth);
+    if (!allowed && response) return response;
+
     const body = await req.json();
     const { walletAddress, signature, message, nonce } = body;
 
