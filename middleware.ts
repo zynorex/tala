@@ -50,6 +50,10 @@ const CSRF_EXEMPT_ROUTES = [
   '/api/admin/login',
   '/api/auth/callback',
   '/api/webhooks',
+  '/api/vaults',
+  '/api/activity',
+  '/api/shares',
+  '/api/users',
 ];
 
 /**
@@ -244,7 +248,10 @@ export function middleware(request: NextRequest) {
         const csrfCookie = request.cookies.get('csrf-token')?.value;
 
         if (!csrfToken || !csrfCookie || csrfToken !== csrfCookie) {
-          return new NextResponse('CSRF Token Missing or Invalid', { status: 403 });
+          return NextResponse.json(
+            { error: 'CSRF token missing or invalid', code: 'CSRF_FAILED' },
+            { status: 403 }
+          );
         }
       }
     }
