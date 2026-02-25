@@ -236,8 +236,10 @@ export async function POST(req: NextRequest): Promise<Response> {
       logger.info("IPFS upload successful", { ipfsHash, fileName: file.name, size: ipfsResult.size });
     } catch (error) {
       logger.error("IPFS upload failed", error instanceof Error ? error : undefined);
+      const errMsg = error instanceof Error ? error.message : 'Unknown IPFS error';
+      console.error('[UPLOAD] IPFS upload error details:', errMsg);
       return Response.json<UploadResponse>(
-        { success: false, error: "Failed to upload file to storage. Please try again." },
+        { success: false, error: `Failed to upload file to storage. ${errMsg}` },
         { status: 500 }
       );
     }
