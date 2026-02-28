@@ -55,7 +55,7 @@ export default function SmartContracts() {
   if (isLoading) {
     return (
       <main className="min-h-screen bg-cream">
-        <section className="relative overflow-hidden border-b-4 border-black bg-[radial-gradient(circle_at_20%_20%,#FFE66D_0%,#fff2bf_35%,#ffffff_70%)] pt-24 pb-14">
+        <section className="relative overflow-hidden border-b-4 border-black bg-[radial-gradient(circle_at_20%_20%,#B7FFB7_0%,#e8ffe8_35%,#ffffff_70%)] pt-24 pb-14">
           <div className="container mx-auto max-w-6xl px-4">
             <div className="h-6 w-40 bg-black/10 rounded-full shimmer" />
             <div className="mt-6 h-16 w-2/3 bg-black/10 rounded-lg shimmer" />
@@ -78,7 +78,7 @@ export default function SmartContracts() {
 
   return (
     <main className="min-h-screen bg-cream">
-      <section className="relative overflow-hidden border-b-4 border-black bg-[radial-gradient(circle_at_20%_20%,#FFE66D_0%,#fff2bf_35%,#ffffff_70%)] pt-24 pb-14">
+      <section className="relative overflow-hidden border-b-4 border-black bg-[radial-gradient(circle_at_20%_20%,#B7FFB7_0%,#e8ffe8_35%,#ffffff_70%)] pt-24 pb-14">
         <div className="absolute inset-0 opacity-50 pointer-events-none">
           <div className="absolute -left-20 top-10 h-60 w-60 rounded-full bg-heirlock-green/40 blur-3xl" />
           <div className="absolute right-0 top-24 h-72 w-72 rounded-full bg-heirlock-blue/30 blur-3xl" />
