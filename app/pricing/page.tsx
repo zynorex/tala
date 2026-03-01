@@ -41,7 +41,7 @@ export default function PricingPage() {
   const pricingTiers: PricingTier[] = [
     {
       name: 'Starter',
-      price: 999,
+      price: 99,
       description: 'Perfect for individuals getting started with vault protection.',
       color: 'bg-heirlock-blue',
       icon: Lock,
@@ -58,7 +58,7 @@ export default function PricingPage() {
     },
     {
       name: 'Professional',
-      price: 4999,
+      price: 499,
       description: 'Ideal for institutions and organizations with moderate vault needs.',
       color: 'bg-heirlock-yellow',
       icon: Shield,
@@ -79,7 +79,7 @@ export default function PricingPage() {
     },
     {
       name: 'Enterprise',
-      price: 9999,
+      price: 999,
       description: 'Complete solution for large-scale operations with advanced security needs.',
       color: 'bg-heirlock-green',
       icon: Zap,
@@ -103,7 +103,7 @@ export default function PricingPage() {
     },
     {
       name: 'Government',
-      price: 99999,
+      price: 9999,
       description: 'Tailored for government agencies and critical infrastructure protection.',
       color: 'bg-heirlock-pink',
       icon: BarChart3,

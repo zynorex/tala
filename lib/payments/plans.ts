@@ -22,8 +22,8 @@ export const PLANS: Record<PlanTier, PlanDefinition> = {
   STARTER: {
     tier: 'STARTER',
     name: 'Starter',
-    monthlyPaise: 99900,    // ₹999
-    yearlyPaise: 958080,    // ₹999 × 12 × 0.8 = ₹9,590.40
+    monthlyPaise: 9900,     // ₹99  (was ₹999, reduced 90%)
+    yearlyPaise: 95040,     // ₹99 × 12 × 0.8 = ₹950.40
     directCheckout: true,
     maxVaults: 99,
     maxStorageBytes: 500 * 1024 * 1024, // 500 MB
@@ -33,8 +33,8 @@ export const PLANS: Record<PlanTier, PlanDefinition> = {
   PROFESSIONAL: {
     tier: 'PROFESSIONAL',
     name: 'Professional',
-    monthlyPaise: 499900,   // ₹4,999
-    yearlyPaise: 4799040,   // ₹4,999 × 12 × 0.8 = ₹47,990.40
+    monthlyPaise: 49900,    // ₹499  (was ₹4,999, reduced 90%)
+    yearlyPaise: 479040,    // ₹499 × 12 × 0.8 = ₹4,790.40
     directCheckout: true,
     maxVaults: null,        // unlimited
     maxStorageBytes: 1024 * 1024 * 1024, // 1 GB
@@ -44,8 +44,8 @@ export const PLANS: Record<PlanTier, PlanDefinition> = {
   ENTERPRISE: {
     tier: 'ENTERPRISE',
     name: 'Enterprise',
-    monthlyPaise: 999900,   // ₹9,999
-    yearlyPaise: 9599040,   // ₹9,999 × 12 × 0.8 = ₹95,990.40
+    monthlyPaise: 99900,    // ₹999  (was ₹9,999, reduced 90%)
+    yearlyPaise: 959040,    // ₹999 × 12 × 0.8 = ₹9,590.40
     directCheckout: true,
     maxVaults: null,
     maxStorageBytes: null,
@@ -55,8 +55,8 @@ export const PLANS: Record<PlanTier, PlanDefinition> = {
   GOVERNMENT: {
     tier: 'GOVERNMENT',
     name: 'Government',
-    monthlyPaise: 9999900,  // ₹99,999
-    yearlyPaise: 95999040,  // ₹99,999 × 12 × 0.8
+    monthlyPaise: 999900,   // ₹9,999  (was ₹99,999, reduced 90%)
+    yearlyPaise: 9599040,   // ₹9,999 × 12 × 0.8 = ₹95,990.40
     directCheckout: false,  // Contact sales only
     maxVaults: null,
     maxStorageBytes: null,
@@ -89,7 +89,7 @@ export function getPlanExpiry(interval: BillingInterval): Date {
 }
 
 /**
- * Format paise to a human-readable INR string (e.g. 99900 → "₹999").
+ * Format paise to a human-readable INR string (e.g. 9900 → "₹99").
  */
 export function formatPaise(paise: number): string {
   const rupees = paise / 100;

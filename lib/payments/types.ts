@@ -18,7 +18,7 @@ export type PaymentStatus =
 export interface PlanDefinition {
   tier: PlanTier;
   name: string;
-  /** Monthly price in INR paise (₹999 = 99900 paise) */
+  /** Monthly price in INR paise (₹99 = 9900 paise) */
   monthlyPaise: number;
   /** Yearly price in INR paise (20 % discount) */
   yearlyPaise: number;
