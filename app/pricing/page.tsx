@@ -1,8 +1,12 @@
 'use client';
 
-import { CheckCircle, Lock, Upload, Users, BarChart3, Shield, Zap, ChevronRight } from 'lucide-react';
+import { CheckCircle, Lock, BarChart3, Shield, Zap, ChevronRight, ExternalLink } from 'lucide-react';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
+import { RazorpayButton } from '@/app/components/RazorpayCheckout';
+import type { PlanTier, BillingInterval } from '@/lib/payments/types';
 
 interface PricingTier {
   name: string;
@@ -12,10 +16,27 @@ interface PricingTier {
   icon: React.ComponentType<any>;
   features: string[];
   highlighted?: boolean;
+  /** Corresponding PlanTier key; null means contact-sales only */
+  planTierKey: PlanTier | null;
+  contactSales?: boolean;
 }
 
 export default function PricingPage() {
   const [isYearly, setIsYearly] = useState(false);
+  const [activatedPlan, setActivatedPlan] = useState<PlanTier | null>(null);
+  const { data: session } = useSession();
+  const router = useRouter();
+
+  const handlePaymentSuccess = useCallback(
+    (planTier: PlanTier) => (data: { planTier: PlanTier; planExpiresAt: string }) => {
+      setActivatedPlan(data.planTier);
+      // Redirect to dashboard after a short celebration delay
+      setTimeout(() => router.push('/dashboard?upgrade=success'), 2000);
+    },
+    [router],
+  );
+
+  const billingInterval: BillingInterval = isYearly ? 'YEARLY' : 'MONTHLY';
 
   const pricingTiers: PricingTier[] = [
     {
@@ -24,6 +45,7 @@ export default function PricingPage() {
       description: 'Perfect for individuals getting started with vault protection.',
       color: 'bg-heirlock-blue',
       icon: Lock,
+      planTierKey: 'STARTER' as PlanTier,
       features: [
         'Up to 99 vaults',
         'Up to 500MB per vault',
@@ -41,6 +63,7 @@ export default function PricingPage() {
       color: 'bg-heirlock-yellow',
       icon: Shield,
       highlighted: true,
+      planTierKey: 'PROFESSIONAL' as PlanTier,
       features: [
         'Unlimited vaults',
         'Up to 1GB per vault',
@@ -60,6 +83,7 @@ export default function PricingPage() {
       description: 'Complete solution for large-scale operations with advanced security needs.',
       color: 'bg-heirlock-green',
       icon: Zap,
+      planTierKey: 'ENTERPRISE' as PlanTier,
       features: [
         'Unlimited everything',
         'Unlimited storage',
@@ -83,6 +107,8 @@ export default function PricingPage() {
       description: 'Tailored for government agencies and critical infrastructure protection.',
       color: 'bg-heirlock-pink',
       icon: BarChart3,
+      planTierKey: null,
+      contactSales: true,
       features: [
         'Unlimited everything',
         'Dedicated infrastructure',
@@ -232,12 +258,36 @@ export default function PricingPage() {
                   </div>
 
                   {/* CTA Button */}
-                  <button
-                    disabled
-                    className="w-full px-4 py-3 bg-gray-400 text-white border-3 border-black rounded-lg font-bold cursor-not-allowed opacity-70 mb-8 flex items-center justify-center gap-2"
-                  >
-                    Coming Soon
-                  </button>
+                  <div className="mb-8">
+                    {tier.contactSales ? (
+                      <Link
+                        href="/contact"
+                        className="w-full px-4 py-3 bg-black text-white border-2 border-black rounded-lg font-bold flex items-center justify-center gap-2 hover:bg-gray-800 transition-colors"
+                      >
+                        Contact Sales
+                        <ExternalLink className="w-4 h-4" />
+                      </Link>
+                    ) : !session ? (
+                      <Link
+                        href={`/auth/login?redirect=/pricing`}
+                        className="w-full px-4 py-3 bg-black text-white border-2 border-black rounded-lg font-bold flex items-center justify-center gap-2 hover:bg-gray-800 transition-colors"
+                      >
+                        Sign in to Subscribe
+                      </Link>
+                    ) : activatedPlan === tier.planTierKey ? (
+                      <div className="w-full px-4 py-3 bg-green-400 text-black border-2 border-black rounded-lg font-bold flex items-center justify-center gap-2">
+                        <CheckCircle className="w-4 h-4" />
+                        Plan Activated!
+                      </div>
+                    ) : (
+                      <RazorpayButton
+                        planTier={tier.planTierKey!}
+                        billingInterval={billingInterval}
+                        label={`Get ${tier.name}`}
+                        onSuccess={handlePaymentSuccess(tier.planTierKey!)}
+                      />
+                    )}
+                  </div>
 
                   {/* Features List */}
                   <div className="space-y-3">
@@ -360,11 +410,11 @@ export default function PricingPage() {
               },
               {
                 question: 'Is there a free trial?',
-                answer: 'Coming soon! Once our billing system launches, all new users will get a 14-day free trial on any plan.',
+                answer: 'Yes! All new users start on a 14-day free trial. No credit card required for the trial period.',
               },
               {
                 question: 'What payment methods do you accept?',
-                answer: 'We will accept UPI, Credit Card, Debit Card, and Bank Transfer. All payments are secure and encrypted.',
+                answer: 'We accept UPI, Credit Card, Debit Card, Net Banking, and Wallets via Razorpay — India\'s most trusted payment gateway. All payments are fully encrypted and PCI-DSS compliant.',
               },
               {
                 question: 'Can I get a custom plan?',
@@ -434,12 +484,16 @@ export default function PricingPage() {
             Choose a plan and start protecting your sensitive documents with military-grade encryption today.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button className="px-8 py-4 bg-black text-white font-bold border-3 border-black rounded-lg hover:opacity-90 transition-opacity cursor-not-allowed opacity-70">
-              Coming Soon
-            </button>
+            <Link
+              href={session ? '/dashboard' : '/auth/login?redirect=/pricing'}
+              className="px-8 py-4 bg-black text-white font-bold border-2 border-black rounded-lg hover:bg-gray-800 transition-colors flex items-center justify-center gap-2"
+            >
+              {session ? 'Go to Dashboard' : 'Get Started Free'}
+              <ChevronRight className="w-5 h-5" />
+            </Link>
             <Link
               href="/contact"
-              className="px-8 py-4 border-3 border-black text-black font-bold rounded-lg bg-white hover:bg-heirlock-yellow transition-colors flex items-center justify-center gap-2"
+              className="px-8 py-4 border-2 border-black text-black font-bold rounded-lg bg-white hover:bg-heirlock-yellow transition-colors flex items-center justify-center gap-2"
             >
               Contact Sales
               <ChevronRight className="w-5 h-5" />

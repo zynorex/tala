@@ -42,7 +42,12 @@ model User {
   createdAt     DateTime   @default(now())
   updatedAt     DateTime   @updatedAt
   deletedAt     DateTime?
-  
+
+  // Subscription / Billing
+  plan            PlanTier   @default(FREE)
+  planExpiresAt   DateTime?  // Null = lifetime or free tier
+  razorpayContactId String?  // Razorpay customer ID for recurring billing
+
   // Relations
   accounts      Account[]
   sessions      Session[]
@@ -51,6 +56,8 @@ model User {
   apiKeys       ApiKey[]
   unlockEvents  UnlockEvent[] @relation("UnlockEventUser")
   sharedVaults  VaultShare[]  @relation("SharedVaults")
+  payments      Payment[]
+  subscriptions Subscription[]
   
   @@index([email])
   @@index([walletAddress])
@@ -300,4 +307,107 @@ model ApiKey {
   updatedAt     DateTime   @updatedAt
   
   @@index([userId])
+}
+
+// ─────────────────────────────────────────────
+// BILLING & PAYMENTS
+// ─────────────────────────────────────────────
+
+enum PlanTier {
+  FREE
+  STARTER
+  PROFESSIONAL
+  ENTERPRISE
+  GOVERNMENT
+}
+
+enum PaymentStatus {
+  CREATED     // Order created, awaiting payment
+  AUTHORIZED  // Payment authorised (card payments)
+  CAPTURED    // Payment successfully captured
+  FAILED      // Payment failed
+  REFUNDED    // Payment refunded (full)
+  PARTIALLY_REFUNDED
+}
+
+enum BillingInterval {
+  MONTHLY
+  YEARLY
+}
+
+// Payment Model - records every Razorpay transaction
+model Payment {
+  id                  String         @id @default(cuid())
+  userId              String
+  user                User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Plan purchased
+  planTier            PlanTier
+  billingInterval     BillingInterval
+
+  // Razorpay identifiers
+  razorpayOrderId     String         @unique // order_xxx
+  razorpayPaymentId   String?        @unique // pay_xxx (set on capture)
+  razorpaySignature   String?        // Payment signature for audit
+
+  // Amounts (in paise — INR smallest unit)
+  amountPaise         Int            // Total charged
+  currency            String         @default("INR")
+
+  // Status
+  status              PaymentStatus  @default(CREATED)
+  failureReason       String?
+
+  // Validity window this payment covers
+  periodStart         DateTime?
+  periodEnd           DateTime?
+
+  // Metadata
+  ipAddress           String?
+  userAgent           String?
+  notes               Json?          // Razorpay order notes
+
+  createdAt           DateTime       @default(now())
+  updatedAt           DateTime       @updatedAt
+
+  @@index([userId])
+  @@index([razorpayOrderId])
+  @@index([razorpayPaymentId])
+  @@index([status])
+  @@index([createdAt])
+}
+
+// Subscription Model - tracks recurring Razorpay subscriptions
+model Subscription {
+  id                      String          @id @default(cuid())
+  userId                  String
+  user                    User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Plan
+  planTier                PlanTier
+  billingInterval         BillingInterval
+
+  // Razorpay subscription identifiers
+  razorpaySubscriptionId  String          @unique // sub_xxx
+  razorpayPlanId          String          // Razorpay plan ID
+
+  // Status (mirrors Razorpay subscription states)
+  status                  String          @default("created") // created | authenticated | active | pending | halted | cancelled | completed | expired
+
+  // Billing window
+  currentPeriodStart      DateTime?
+  currentPeriodEnd        DateTime?
+  cancelledAt             DateTime?
+  cancelReason            String?
+
+  // Amounts (paise)
+  amountPaise             Int
+  currency                String         @default("INR")
+
+  createdAt               DateTime       @default(now())
+  updatedAt               DateTime       @updatedAt
+
+  @@index([userId])
+  @@index([razorpaySubscriptionId])
+  @@index([status])
 }

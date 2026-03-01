@@ -202,6 +202,14 @@ export const rateLimitConfigs = {
     windowMs: 60 * 1000,
     maxRequests: 30, // 30 downloads per minute
   },
+  payment: {
+    windowMs: 60 * 1000,
+    maxRequests: 8, // 8 payment-create attempts per minute per user
+  },
+  paymentVerify: {
+    windowMs: 60 * 1000,
+    maxRequests: 5, // 5 verify attempts per minute (tight — prevents brute-force)
+  },
   default: {
     windowMs: 60 * 1000,
     maxRequests: 100,

@@ -54,6 +54,8 @@ const CSRF_EXEMPT_ROUTES = [
   '/api/activity',
   '/api/shares',
   '/api/users',
+  // Payment routes use NextAuth session cookies + HMAC signature (not CSRF tokens)
+  '/api/payments',
 ];
 
 /**
