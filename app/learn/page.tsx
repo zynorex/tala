@@ -281,30 +281,76 @@ export default function LearnPage() {
   return (
     <main className="min-h-screen bg-cream" onMouseMove={handleMouseMove}>
       {/* HERO SECTION */}
-      <section className="bg-black text-white py-20 md:py-32 px-4 border-b-4 border-heirlock-yellow overflow-hidden relative">
-        <div className="container mx-auto max-w-5xl">
-          <div 
-            data-reveal
-            id="hero-text"
-            className={`text-center transition-all duration-1000 transform ${
-              visibleElements.has('hero-text') 
-                ? 'opacity-100 translate-y-0' 
-                : 'opacity-0 translate-y-10'
-            }`}
-          >
-            <h1 className="text-5xl md:text-7xl font-black mb-6 leading-tight hover:text-heirlock-yellow transition-colors duration-500 cursor-default">
-              LEARN T.A.L.A.
-            </h1>
-            <p className="text-xl md:text-2xl font-bold text-heirlock-yellow mb-8 max-w-3xl mx-auto transition-all duration-500 hover:text-white hover:scale-105 hover:translate-y-[-4px] cursor-default">
-              Your Complete Guide to Time-Locked Vaults, End-to-End Encryption, and Blockchain Security
-            </p>
-            <p className="text-lg text-gray-300 max-w-3xl mx-auto group cursor-default transition-all duration-500 hover:text-white">
-              Understanding how T.A.L.A. enables{' '}
-              <span className="font-bold text-heirlock-yellow group-hover:text-white transition-all duration-500 group-hover:scale-110 inline-block">
-                mathematical certainty
-              </span>
-              , mathematical trust, and mathematical proof.
-            </p>
+      <section className="bg-black text-white py-16 md:py-24 px-4 border-b-4 border-heirlock-yellow overflow-hidden relative">
+        <div className="absolute -top-20 -left-16 w-64 h-64 bg-heirlock-blue border-4 border-heirlock-yellow rounded-full opacity-20"></div>
+        <div className="absolute -bottom-24 -right-10 w-72 h-72 bg-heirlock-pink border-4 border-heirlock-yellow rounded-full opacity-20"></div>
+        <div className="container mx-auto max-w-6xl relative">
+          <div className="grid grid-cols-1 lg:grid-cols-[1.2fr_0.8fr] gap-10 items-center">
+            <div
+              data-reveal
+              id="hero-text"
+              className={`transition-all duration-1000 transform ${
+                visibleElements.has('hero-text')
+                  ? 'opacity-100 translate-y-0'
+                  : 'opacity-0 translate-y-10'
+              }`}
+            >
+              <div className="inline-flex items-center gap-2 bg-heirlock-yellow text-black px-3 py-1 rounded-full text-xs font-black uppercase tracking-widest">
+                Learn
+              </div>
+              <h1 className="text-5xl md:text-6xl font-black mt-5 mb-4">
+                Learn T.A.L.A.
+              </h1>
+              <p className="text-lg md:text-xl font-bold text-heirlock-yellow mb-6 max-w-2xl">
+                Your complete guide to time-locked vaults, end-to-end encryption, and blockchain security.
+              </p>
+              <p className="text-base text-gray-300 max-w-2xl">
+                Understand how T.A.L.A. delivers mathematical certainty, immutable audit trails, and non-custodial privacy.
+              </p>
+              <div className="flex flex-wrap gap-3 mt-6">
+                <span className="px-3 py-1 border-2 border-heirlock-yellow text-xs font-bold">No hype</span>
+                <span className="px-3 py-1 border-2 border-heirlock-yellow text-xs font-bold">No fluff</span>
+                <span className="px-3 py-1 border-2 border-heirlock-yellow text-xs font-bold">Only proof</span>
+              </div>
+            </div>
+
+            <div className="border-4 border-heirlock-yellow bg-white text-black rounded-xl p-6 shadow-brutal">
+              <p className="text-xs font-black uppercase tracking-widest text-gray-700">Learning Path</p>
+              <div className="mt-4 space-y-4">
+                <div className="border-2 border-black rounded-lg p-4 bg-heirlock-yellow/40">
+                  <p className="text-sm font-black">Start Here</p>
+                  <p className="text-xs text-gray-700 mt-1">What T.A.L.A. is and why time-locks matter.</p>
+                </div>
+                <div className="border-2 border-black rounded-lg p-4 bg-heirlock-blue/40">
+                  <p className="text-sm font-black">Security Stack</p>
+                  <p className="text-xs text-gray-700 mt-1">Encryption, blockchain, IPFS, and audit trails.</p>
+                </div>
+                <div className="border-2 border-black rounded-lg p-4 bg-heirlock-green/40">
+                  <p className="text-sm font-black">Real-world Use</p>
+                  <p className="text-xs text-gray-700 mt-1">Education, governance, legal, and safety.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* VALUE STRIP */}
+      <section className="border-b-4 border-black py-10 bg-white">
+        <div className="container mx-auto max-w-6xl px-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="border-2 border-black rounded-lg p-4 bg-heirlock-blue/30">
+              <p className="text-sm font-black">Mathematical Trust</p>
+              <p className="text-sm text-gray-700 mt-2">Unlock rules live on-chain and cannot be bypassed.</p>
+            </div>
+            <div className="border-2 border-black rounded-lg p-4 bg-heirlock-yellow/40">
+              <p className="text-sm font-black">Non-Custodial</p>
+              <p className="text-sm text-gray-700 mt-2">Keys stay with you. We never see your data.</p>
+            </div>
+            <div className="border-2 border-black rounded-lg p-4 bg-heirlock-green/40">
+              <p className="text-sm font-black">Auditability</p>
+              <p className="text-sm text-gray-700 mt-2">Every action recorded, immutable, and verifiable.</p>
+            </div>
           </div>
         </div>
       </section>
@@ -312,9 +358,14 @@ export default function LearnPage() {
       {/* WHAT IS TALA SECTION */}
       <section className="py-16 md:py-24 px-4 bg-heirlock-yellow border-b-4 border-black">
         <div className="container mx-auto max-w-5xl">
-          <h2 className="text-5xl md:text-6xl font-black text-black mb-12">
-            WHAT IS T.A.L.A.?
-          </h2>
+          <div className="flex flex-col lg:flex-row items-start justify-between gap-6 mb-12">
+            <h2 className="text-5xl md:text-6xl font-black text-black">
+              WHAT IS T.A.L.A.?
+            </h2>
+            <p className="text-black font-bold max-w-xl">
+              A transparent authority for time-locked data. Built on encryption, smart contracts, and decentralized storage.
+            </p>
+          </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
             <div className="micro-card border-4 border-black bg-white p-8 shadow-brutal">
@@ -412,9 +463,14 @@ export default function LearnPage() {
       {/* HOW IT WORKS SECTION */}
       <section className="py-16 md:py-24 px-4 bg-white border-b-4 border-black">
         <div className="container mx-auto max-w-5xl">
-          <h2 className="text-5xl md:text-6xl font-black text-black mb-12">
-            HOW T.A.L.A. WORKS
-          </h2>
+          <div className="flex flex-col lg:flex-row items-start justify-between gap-6 mb-12">
+            <h2 className="text-5xl md:text-6xl font-black text-black">
+              HOW T.A.L.A. WORKS
+            </h2>
+            <p className="text-gray-700 font-bold max-w-xl">
+              Six steps, zero shortcuts. Everything is enforced by math, not by policy.
+            </p>
+          </div>
 
           <div className="space-y-6">
             {howitworks.map((step, idx) => (
@@ -454,13 +510,14 @@ export default function LearnPage() {
       {/* SECURITY LAYERS SECTION */}
       <section className="py-16 md:py-24 px-4 bg-heirlock-pink border-b-4 border-black">
         <div className="container mx-auto max-w-5xl">
-          <h2 className="text-5xl md:text-6xl font-black text-black mb-12">
-            SECURITY ARCHITECTURE
-          </h2>
-
-          <p className="text-xl font-bold text-black mb-12">
-            T.A.L.A. uses 5 overlapping security layers. Compromise one? Five others remain.
-          </p>
+          <div className="flex flex-col lg:flex-row items-start justify-between gap-6 mb-12">
+            <h2 className="text-5xl md:text-6xl font-black text-black">
+              SECURITY ARCHITECTURE
+            </h2>
+            <p className="text-black font-bold max-w-xl">
+              Five overlapping layers protect every vault. Compromise one, four still stand.
+            </p>
+          </div>
 
           <div className="space-y-4">
             {securityModel.map((layer, idx) => {
@@ -496,9 +553,14 @@ export default function LearnPage() {
       {/* FEATURES SECTION */}
       <section className="py-16 md:py-24 px-4 bg-heirlock-green border-b-4 border-black">
         <div className="container mx-auto max-w-5xl">
-          <h2 className="text-5xl md:text-6xl font-black text-black mb-12">
-            CORE FEATURES EXPLAINED
-          </h2>
+          <div className="flex flex-col lg:flex-row items-start justify-between gap-6 mb-12">
+            <h2 className="text-5xl md:text-6xl font-black text-black">
+              CORE FEATURES EXPLAINED
+            </h2>
+            <p className="text-black font-bold max-w-xl">
+              Each feature is designed to remove human trust and replace it with cryptographic guarantees.
+            </p>
+          </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {features.map((feature, idx) => {
@@ -651,9 +713,12 @@ export default function LearnPage() {
       {/* FAQ SECTION */}
       <section className="py-16 md:py-24 px-4 bg-heirlock-yellow border-b-4 border-black">
         <div className="container mx-auto max-w-5xl">
-          <h2 className="text-5xl md:text-6xl font-black text-black mb-12">
+          <h2 className="text-5xl md:text-6xl font-black text-black mb-4">
             FREQUENTLY ASKED QUESTIONS
           </h2>
+          <p className="text-black font-bold max-w-3xl mb-10">
+            Clear answers to the most common questions about time-locking, encryption, and the blockchain guarantees behind T.A.L.A.
+          </p>
 
           <div className="space-y-4">
             {faqItems.map((item, idx) => (
@@ -701,11 +766,18 @@ export default function LearnPage() {
       </section>
 
       {/* GETTING STARTED SECTION */}
-      <section className="py-16 md:py-24 px-4 bg-black text-white border-b-4 border-heirlock-green">
-        <div className="container mx-auto max-w-5xl">
-          <h2 className="text-5xl md:text-6xl font-black mb-12">
+      <section className="py-16 md:py-24 px-4 bg-black text-white border-b-4 border-heirlock-green relative overflow-hidden">
+        <div className="absolute -top-16 right-10 w-56 h-56 bg-heirlock-green border-4 border-heirlock-green rounded-full opacity-15"></div>
+        <div className="container mx-auto max-w-5xl relative">
+          <div className="inline-flex items-center gap-2 bg-heirlock-green text-black px-3 py-1 rounded-full text-xs font-black uppercase tracking-widest mb-4">
+            Start Secure
+          </div>
+          <h2 className="text-5xl md:text-6xl font-black mb-4">
             READY TO GET STARTED?
           </h2>
+          <p className="text-gray-200 font-bold max-w-3xl mb-10">
+            Pick a path below. Each step is built for clarity, speed, and security.
+          </p>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
             <div 
