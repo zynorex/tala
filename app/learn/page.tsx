@@ -78,52 +78,52 @@ export default function LearnPage() {
     {
       question: 'What makes T.A.L.A. different from traditional cloud storage?',
       answer:
-        'T.A.L.A. adds three critical layers traditional storage lacks: (1) Time-locking—your data cannot be accessed until a specific moment, enforced by immutable smart contracts; (2) End-to-end encryption—files are encrypted client-side before leaving your device, keys never reach our servers; (3) Blockchain verification—all actions are recorded on an immutable ledger, creating an audit trail that cannot be altered or deleted.'
+        'T.A.L.A. adds three layers that standard storage does not: time locking enforced by smart contracts, end to end encryption performed on your device, and blockchain verification that creates a tamper evident audit trail.'
     },
     {
       question: 'Can T.A.L.A. access my files or encryption keys?',
       answer:
-        'No. T.A.L.A. operates as a non-custodial system. Your encryption keys never leave your device. We store only encrypted files and metadata. Even our team cannot decrypt your vaults—only you can, using your private encryption key. This is mathematically guaranteed by AES-256-GCM encryption.'
+        'No. T.A.L.A. is a non custodial system. Your encryption keys stay on your device. We store only encrypted files and metadata, and only you can decrypt your vaults.'
     },
     {
       question: 'What happens if I lose my encryption key?',
       answer:
-        'Your encrypted files cannot be recovered without your key. This is intentional and ensures security. We recommend: (1) Store your key in a password manager; (2) Back up your key securely; (3) Use our key export feature before deleting your account. T.A.L.A. cannot recover lost keys, even with administrative access.'
+        'Encrypted files cannot be recovered without the key. We recommend storing the key in a password manager, keeping a secure backup, and exporting it before deleting your account.'
     },
     {
       question: 'How secure is the blockchain component?',
       answer:
-        'T.A.L.A. uses the Polygon network, a layer-2 blockchain secured by Ethereum validators. All vault contracts are immutable once deployed. Unlock times and deletion permissions are enforced by cryptographic proofs, not our servers. Even if T.A.L.A. disappeared, your vaults would remain unlockable at their scheduled times.'
+        'T.A.L.A. uses the Polygon network, secured by Ethereum validators. Vault contracts are immutable after deployment, and unlock rules are enforced by cryptographic proofs rather than server policies.'
     },
     {
       question: 'Can someone access my vault before the unlock time?',
       answer:
-        'No. The smart contract enforces the unlock time cryptographically. Before the unlock time: (1) Even you cannot access it; (2) T.A.L.A. cannot override it; (3) No one can delete it (if you locked it); (4) The blockchain ensures this is mathematically impossible to bypass. After unlock time, the vault becomes readable to anyone with access.'
+        'No. The smart contract enforces the unlock time. Before that moment, the vault remains locked for everyone. After unlock time, access depends on the vault ID and the encryption key.'
     },
     {
       question: 'What file types and sizes does T.A.L.A. support?',
       answer:
-        'T.A.L.A. supports any file type (documents, images, videos, code, databases, archives, etc.). File size limits: Single file up to 500MB, total vault up to 5GB. Recommended for documents (under 100MB) for best performance. Larger files work but may take longer to encrypt/upload.'
+        'T.A.L.A. supports all file types. Current limits are up to 500 MB per file and up to 5 GB per vault. For best performance, smaller files are recommended.'
     },
     {
       question: 'How much does T.A.L.A. cost?',
       answer:
-        'T.A.L.A. uses tiered pricing: Free tier includes 1 vault, 100MB storage. Premium tier ($9.99/month) includes 10 vaults, 10GB storage. Enterprise tier includes unlimited vaults, 500GB storage, API access, and dedicated support. Blockchain gas fees (for vault creation) are paid in MATIC tokens on Polygon.'
+        'T.A.L.A. offers a free plan and paid tiers for higher limits and advanced features. Vault creation also incurs a small blockchain gas fee paid in MATIC.'
     },
     {
-      question: 'Is T.A.L.A. compliant with GDPR/HIPAA/SOC2?',
+      question: 'Is T.A.L.A. compliant with GDPR, HIPAA, or SOC 2?',
       answer:
-        'T.A.L.A. is designed for GDPR compliance: (1) Users own their data; (2) Data deletion is permanent; (3) No tracking; (4) Users have full data export. HIPAA/SOC2 compliance is in progress for enterprise customers. Security audit (9.2/10 score) covers cryptographic implementations, access controls, and audit logging.'
+        'T.A.L.A. is designed for GDPR compliance. HIPAA and SOC 2 readiness is in progress for enterprise customers. Security audits cover encryption, access controls, and audit logging.'
     },
     {
       question: 'Can I share a vault with someone else?',
       answer:
-        'Yes. You can generate shareable links with time-limited access or permanent access. Recipients can decrypt using the key you provide. Shared vaults can be read-only or allow file uploads. All access is logged and traceable via the blockchain audit trail.'
+        'Yes. You can generate shareable links with limited or permanent access. Recipients can decrypt using the key you provide, and access is logged for verification.'
     },
     {
       question: 'What happens when my vault unlocks?',
       answer:
-        'When unlock time is reached: (1) Smart contract state changes to "unlocked"; (2) Anyone with the vault ID can access it; (3) Creator can still delete it (configurable); (4) All files remain encrypted—decryption requires the encryption key. You receive a notification 24 hours before unlock.'
+        'At the unlock time, the smart contract marks the vault as available. Files remain encrypted and require the key to decrypt. You receive a notification before the unlock.'
     }
   ];
 
@@ -133,36 +133,36 @@ export default function LearnPage() {
       title: 'Education',
       description: 'Exam Security',
       details:
-        'Professors create time-locked exam papers. Papers unlock automatically at the scheduled exam time (e.g., 10:00 AM sharp on test day). No early leaks, no delays. Replaces trust with mathematical certainty.',
+        'Instructors create time locked exam papers. Papers unlock at the scheduled exam time. This prevents early access and replaces trust with cryptographic certainty.',
       color: 'bg-heirlock-yellow',
-      example: 'University publishes 100 exam papers, locked until 9:00 AM. At 9:00 AM exactly, all students get simultaneous access. Impossible to access early.'
+      example: 'A university publishes 100 exam papers locked until 9:00 AM. At 9:00 AM, all students get access.'
     },
     {
       icon: Target,
       title: 'Governance',
       description: 'Fair Procurement',
       details:
-        'Government agencies lock sealed contractor bids until official opening. All bids remain encrypted until the public opening ceremony. Corruption-proof tendering.',
+        'Agencies lock contractor bids until the official opening. Bids remain encrypted until the public opening time, improving fairness and auditability.',
       color: 'bg-heirlock-pink',
-      example: 'City publishes RFP with 5 contractors bidding. All bids locked. At 2:00 PM on opening day, they unlock simultaneously. Everyone sees results at the same moment.'
+      example: 'A city publishes an RFP with five bids. At 2:00 PM on opening day, all bids unlock simultaneously.'
     },
     {
       icon: Lightbulb,
       title: 'Legal',
       description: 'Evidence Protection',
       details:
-        'Whistleblowers encrypt sensitive documents with a future unlock date. If anything happens to them, the evidence auto-releases. Journalists lock investigations until publication date.',
+        'Whistleblowers encrypt documents with a future unlock date. Journalists can lock investigations until a publication date while keeping the content private.',
       color: 'bg-heirlock-green',
-      example: 'Journalist writes expose, locks it until publication date. If arrested, the article auto-publishes. Prevents suppression. Cannot be stopped once locked.'
+      example: 'A journalist locks an investigation until publication day. The release cannot be stopped once locked.'
     },
     {
       icon: Shield,
       title: 'Security',
-      description: 'Inheritance & Dead Mans Switch',
+      description: 'Inheritance and Contingency Release',
       details:
-        'Users lock sensitive data (passwords, documents, keys) to unlock in case of death. Digital legacy that auto-releases when scheduled unlock time arrives.',
+        'Users lock sensitive data to unlock at a scheduled time, supporting digital legacy planning without intermediaries.',
       color: 'bg-heirlock-blue',
-      example: 'CEO locks recovery codes set to unlock in 5 years. If they pass away, company gets access exactly on schedule. Fully automated, no intermediaries needed.'
+      example: 'Recovery codes are locked to unlock in five years and release automatically on schedule.'
     }
   ];
 
@@ -171,37 +171,37 @@ export default function LearnPage() {
       icon: Lock,
       title: 'AES-256-GCM Encryption',
       description:
-        'Military-grade encryption used by governments and banks. Every file encrypted locally before upload. Keys never touch our servers. Authenticated encryption detects tampering.'
+        'Bank grade encryption used by governments and financial institutions. Files are encrypted locally before upload. Keys never reach our servers. Authenticated encryption detects tampering.'
     },
     {
       icon: Clock,
-      title: 'Smart Contract Time-Locking',
+      title: 'Smart Contract Time Locking',
       description:
-        'Unlock times enforced by immutable blockchain code. Not a timer—a cryptographic guarantee. Impossible to access early, override, or circumvent. Mathematically certain.'
+        'Unlock times are enforced by immutable blockchain code. This is a cryptographic guarantee and cannot be bypassed.'
     },
     {
       icon: Key,
-      title: 'Non-Custodial Key Management',
+      title: 'Non Custodial Key Management',
       description:
-        'You hold your encryption keys. T.A.L.A. never stores them. Even our admins cannot decrypt your vaults. Complete privacy. Complete control. Complete responsibility.'
+        'You hold your encryption keys. T.A.L.A. never stores them. Even administrators cannot decrypt your vaults.'
     },
     {
       icon: Globe,
       title: 'IPFS Decentralized Storage',
       description:
-        'Files stored on IPFS (InterPlanetary File System), not on T.A.L.A. servers. Pinned to Pinata nodes for reliability. Survives server failures. Censorship-resistant.'
+        'Files are stored on IPFS, not on T.A.L.A. servers. They are pinned to Pinata nodes for reliability and resilience.'
     },
     {
       icon: Database,
       title: 'Immutable Audit Trail',
       description:
-        'Every action logged on Polygon blockchain: vault creation, file uploads, sharing, access attempts. Tamper-proof record. Transparent accountability.'
+        'Every action is logged on Polygon, including vault creation, file uploads, sharing, and access attempts. This creates a tamper evident record.'
     },
     {
       icon: Zap,
-      title: 'Instant Decentralized Access',
+      title: 'Instant Access After Unlock',
       description:
-        'No approval process. Once unlocked, vaults are accessible immediately. No rate limits. No denial of service. Peer-to-peer powered, not centralized servers.'
+        'Once unlocked, vaults are accessible immediately. There is no approval workflow or manual intervention required.'
     }
   ];
 
@@ -209,44 +209,44 @@ export default function LearnPage() {
     {
       number: 1,
       title: 'CREATE',
-      description: 'You choose a future unlock time and upload files',
+      description: 'Choose a future unlock time and upload files',
       details:
-        'Connect your wallet. Set unlock date/time. Files are encrypted on your device using AES-256-GCM. Your key never leaves your computer. You remain in complete control.'
+        'Connect your wallet. Set the unlock date and time. Files are encrypted on your device using AES-256-GCM. Your key never leaves your computer.'
     },
     {
       number: 2,
       title: 'LOCK',
-      description: 'Smart contract records the vault on blockchain',
+      description: 'Smart contract records the vault on the blockchain',
       details:
-        'Contract stores: vault ID, creator address, unlock timestamp, file hashes. Once created, unlock time cannot be changed by anyone. Enforced cryptographically.'
+        'The contract stores the vault ID, creator address, unlock timestamp, and file hashes. Once created, the unlock time cannot be changed.'
     },
     {
       number: 3,
       title: 'WAIT',
-      description: 'Time passes. Blockchain counts down. You stay notified',
+      description: 'Time passes. The blockchain enforces the schedule',
       details:
-        'You receive notifications 24 hours before unlock. During this time: vault remains locked, files encrypted, access impossible. Time-lock is absolute.'
+        'You receive notifications 24 hours before unlock. During this period the vault remains locked, files are encrypted, and access is not possible.'
     },
     {
       number: 4,
       title: 'UNLOCK',
-      description: 'Timestamp reached. Smart contract changes state automatically',
+      description: 'At the timestamp, the contract changes state automatically',
       details:
-        'Blockchain reaches exact unlock time. Contract state flips. Vault becomes accessible. Anyone with the ID can now retrieve your encrypted files.'
+        'At the exact time, the contract state changes and the vault becomes accessible. Anyone with the ID can retrieve the encrypted files.'
     },
     {
       number: 5,
       title: 'DECRYPT',
-      description: 'Recipients use encryption key to decrypt files',
+      description: 'Recipients use the encryption key to decrypt files',
       details:
-        'Only encryption key (which you control) can decrypt. You share key out-of-band (email, Signal, in-person). T.A.L.A. never sees it. Decryption happens on recipient device.'
+        'Only the encryption key you control can decrypt. You share the key out of band. T.A.L.A. never sees it. Decryption happens on the recipient device.'
     },
     {
       number: 6,
       title: 'VERIFY',
-      description: 'Blockchain proves vault history and integrity',
+      description: 'The blockchain proves vault history and integrity',
       details:
-        'All actions verifiable on-chain: who created it, when, from where, all file hashes. Tamper-proof record. Audit trail cannot be deleted or altered. Permanent transparency.'
+        'All actions are verifiable on chain, including creator, timestamps, and file hashes. The audit trail cannot be altered.'
     }
   ];
 
@@ -254,36 +254,36 @@ export default function LearnPage() {
     {
       layer: 'Layer 1: Device Encryption',
       icon: Lock,
-      details: 'AES-256-GCM encryption on your device. Keys never sent to servers. Authenticated encryption prevents tampering.'
+      details: 'AES-256-GCM encryption on your device. Keys are never sent to servers. Authenticated encryption prevents tampering.'
     },
     {
       layer: 'Layer 2: Blockchain Lock',
       icon: Shield,
-      details: 'Smart contract enforces unlock time. Immutable. Cannot be overridden. Cryptographically guaranteed by Polygon network.'
+      details: 'The smart contract enforces unlock time. It is immutable and cannot be overridden. This is guaranteed by the Polygon network.'
     },
     {
       layer: 'Layer 3: Decentralized Storage',
       icon: Globe,
-      details: 'Files on IPFS, not on centralized servers. Multiple pinned copies. Survives server failures. Censorship-resistant.'
+      details: 'Files are stored on IPFS, not on centralized servers. Multiple pinned copies reduce dependency on any single host.'
     },
     {
       layer: 'Layer 4: Access Control',
       icon: Key,
-      details: 'Wallets prove ownership via cryptographic signatures. No passwords. No databases. Impossible to guess or brute-force.'
+      details: 'Wallets prove ownership through cryptographic signatures. No passwords. No credential database. Resistant to guessing attacks.'
     },
     {
       layer: 'Layer 5: Audit Trail',
       icon: Database,
-      details: 'All actions logged on blockchain. Permanent record. Cannot be altered. Complete transparency. Accountability guaranteed.'
+      details: 'All actions are logged on the blockchain. The record is permanent and cannot be altered.'
     }
   ];
 
   return (
     <main className="min-h-screen bg-cream" onMouseMove={handleMouseMove}>
       {/* HERO SECTION */}
-      <section className="bg-black text-white py-16 md:py-24 px-4 border-b-4 border-heirlock-yellow overflow-hidden relative">
-        <div className="absolute -top-20 -left-16 w-64 h-64 bg-heirlock-blue border-4 border-heirlock-yellow rounded-full opacity-20"></div>
-        <div className="absolute -bottom-24 -right-10 w-72 h-72 bg-heirlock-pink border-4 border-heirlock-yellow rounded-full opacity-20"></div>
+      <section className="bg-heirlock-yellow text-black py-16 md:py-24 px-4 border-b-4 border-black overflow-hidden relative">
+        <div className="absolute -top-20 -left-16 w-64 h-64 bg-heirlock-blue border-4 border-black rounded-full opacity-20"></div>
+        <div className="absolute -bottom-24 -right-10 w-72 h-72 bg-heirlock-pink border-4 border-black rounded-full opacity-20"></div>
         <div className="container mx-auto max-w-6xl relative">
           <div className="grid grid-cols-1 lg:grid-cols-[1.2fr_0.8fr] gap-10 items-center">
             <div
@@ -295,38 +295,38 @@ export default function LearnPage() {
                   : 'opacity-0 translate-y-10'
               }`}
             >
-              <div className="inline-flex items-center gap-2 bg-heirlock-yellow text-black px-3 py-1 rounded-full text-xs font-black uppercase tracking-widest">
+              <div className="inline-flex items-center gap-2 bg-black text-white px-3 py-1 rounded-full text-xs font-black uppercase tracking-widest">
                 Learn
               </div>
               <h1 className="text-5xl md:text-6xl font-black mt-5 mb-4">
                 Learn T.A.L.A.
               </h1>
-              <p className="text-lg md:text-xl font-bold text-heirlock-yellow mb-6 max-w-2xl">
-                Your complete guide to time-locked vaults, end-to-end encryption, and blockchain security.
+              <p className="text-lg md:text-xl font-bold text-black mb-6 max-w-2xl">
+                A clear guide to time locked vaults, encrypted storage, and blockchain verification.
               </p>
-              <p className="text-base text-gray-300 max-w-2xl">
-                Understand how T.A.L.A. delivers mathematical certainty, immutable audit trails, and non-custodial privacy.
+              <p className="text-base text-gray-700 max-w-2xl">
+                See how T.A.L.A. provides verifiable security, transparent audit trails, and user-controlled privacy.
               </p>
               <div className="flex flex-wrap gap-3 mt-6">
-                <span className="px-3 py-1 border-2 border-heirlock-yellow text-xs font-bold">No hype</span>
-                <span className="px-3 py-1 border-2 border-heirlock-yellow text-xs font-bold">No fluff</span>
-                <span className="px-3 py-1 border-2 border-heirlock-yellow text-xs font-bold">Only proof</span>
+                <span className="px-3 py-1 border-2 border-black text-xs font-bold">Clear guidance</span>
+                <span className="px-3 py-1 border-2 border-black text-xs font-bold">Verified security</span>
+                <span className="px-3 py-1 border-2 border-black text-xs font-bold">Actionable steps</span>
               </div>
             </div>
 
-            <div className="border-4 border-heirlock-yellow bg-white text-black rounded-xl p-6 shadow-brutal">
+            <div className="border-4 border-black bg-white text-black rounded-xl p-6 shadow-brutal">
               <p className="text-xs font-black uppercase tracking-widest text-gray-700">Learning Path</p>
               <div className="mt-4 space-y-4">
                 <div className="border-2 border-black rounded-lg p-4 bg-heirlock-yellow/40">
                   <p className="text-sm font-black">Start Here</p>
-                  <p className="text-xs text-gray-700 mt-1">What T.A.L.A. is and why time-locks matter.</p>
+                  <p className="text-xs text-gray-700 mt-1">What T.A.L.A. is and why time locks matter.</p>
                 </div>
                 <div className="border-2 border-black rounded-lg p-4 bg-heirlock-blue/40">
                   <p className="text-sm font-black">Security Stack</p>
                   <p className="text-xs text-gray-700 mt-1">Encryption, blockchain, IPFS, and audit trails.</p>
                 </div>
                 <div className="border-2 border-black rounded-lg p-4 bg-heirlock-green/40">
-                  <p className="text-sm font-black">Real-world Use</p>
+                  <p className="text-sm font-black">Real World Use</p>
                   <p className="text-xs text-gray-700 mt-1">Education, governance, legal, and safety.</p>
                 </div>
               </div>
@@ -341,15 +341,15 @@ export default function LearnPage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="border-2 border-black rounded-lg p-4 bg-heirlock-blue/30">
               <p className="text-sm font-black">Mathematical Trust</p>
-              <p className="text-sm text-gray-700 mt-2">Unlock rules live on-chain and cannot be bypassed.</p>
+              <p className="text-sm text-gray-700 mt-2">Unlock rules live on chain and cannot be bypassed.</p>
             </div>
             <div className="border-2 border-black rounded-lg p-4 bg-heirlock-yellow/40">
-              <p className="text-sm font-black">Non-Custodial</p>
+              <p className="text-sm font-black">User-Controlled</p>
               <p className="text-sm text-gray-700 mt-2">Keys stay with you. We never see your data.</p>
             </div>
             <div className="border-2 border-black rounded-lg p-4 bg-heirlock-green/40">
               <p className="text-sm font-black">Auditability</p>
-              <p className="text-sm text-gray-700 mt-2">Every action recorded, immutable, and verifiable.</p>
+              <p className="text-sm text-gray-700 mt-2">Every action is recorded and independently verifiable.</p>
             </div>
           </div>
         </div>
@@ -363,7 +363,7 @@ export default function LearnPage() {
               WHAT IS T.A.L.A.?
             </h2>
             <p className="text-black font-bold max-w-xl">
-              A transparent authority for time-locked data. Built on encryption, smart contracts, and decentralized storage.
+              A transparent authority for time locked data, built on encryption, smart contracts, and decentralized storage.
             </p>
           </div>
 
@@ -374,16 +374,16 @@ export default function LearnPage() {
                 <strong>T</strong>ransparent <strong>A</strong>uthority <strong>L</strong>ocked <strong>A</strong>ssurance
               </p>
               <p className="text-sm text-gray-700 mt-4">
-                A blockchain-based system where time, encryption, and cryptography replace trust in institutions.
+                A blockchain based system where time, encryption, and cryptography replace trust in institutions.
               </p>
             </div>
 
             <div className="micro-card border-4 border-black bg-white p-8 shadow-brutal">
               <h3 className="text-2xl font-black text-black mb-4">Core Promise</h3>
               <p className="text-black font-bold">
-                📜 Lock sensitive data with guaranteed unlock times<br />
-                🔐 Encrypt with keys only you control<br />
-                ✅ Verify integrity via blockchain audit trails
+                Lock sensitive data with guaranteed unlock times<br />
+                Encrypt with keys only you control<br />
+                Verify integrity through blockchain audit trails
               </p>
             </div>
 
@@ -398,7 +398,7 @@ export default function LearnPage() {
             </div>
           </div>
 
-          <div className="bg-white border-4 border-black p-8 shadow-brutal">
+            <div className="bg-white border-4 border-black p-8 shadow-brutal">
             <h3 className="text-3xl font-black text-black mb-6">The Problem We Solve</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
@@ -447,7 +447,7 @@ export default function LearnPage() {
                   </li>
                   <li className="flex gap-3">
                     <CheckCircle className="w-6 h-6 text-heirlock-green flex-shrink-0" />
-                    <span className="text-black font-medium">Time-lock guarantees</span>
+                    <span className="text-black font-medium">Time lock guarantees</span>
                   </li>
                   <li className="flex gap-3">
                     <CheckCircle className="w-6 h-6 text-heirlock-green flex-shrink-0" />
@@ -492,16 +492,16 @@ export default function LearnPage() {
           </div>
 
           <div className="mt-12 bg-heirlock-blue border-4 border-black p-8 shadow-brutal">
-            <h3 className="text-2xl font-black text-black mb-4">⏱️ The Timeline Guarantee</h3>
+            <h3 className="text-2xl font-black text-black mb-4">The Timeline Guarantee</h3>
             <p className="text-black font-bold mb-4">
-              Your vault unlock is locked in. Nothing can change it:
+              Unlock time is fixed and cannot be changed.
             </p>
             <div className="space-y-2 text-black font-medium">
-              <p>• Set unlock time: Locked by smart contract</p>
-              <p>• You cannot change it: Immutable code</p>
-              <p>• T.A.L.A. cannot override: Decentralized enforcement</p>
-              <p>• Hackers cannot accelerate: Blockchain protects</p>
-              <p>• Only time can unlock: After exact timestamp</p>
+              <p>• Unlock time is stored by smart contract</p>
+              <p>• The creator cannot modify the schedule</p>
+              <p>• T.A.L.A. cannot override the contract</p>
+              <p>• Early access is not possible</p>
+              <p>• Access begins only at the exact timestamp</p>
             </div>
           </div>
         </div>
@@ -539,12 +539,12 @@ export default function LearnPage() {
           </div>
 
           <div className="mt-12 bg-black text-white border-4 border-black p-8 shadow-brutal">
-            <h3 className="text-2xl font-black mb-4">🔒 What This Means</h3>
+            <h3 className="text-2xl font-black mb-4">What This Means</h3>
             <ul className="space-y-2 font-bold">
-              <li>✅ Even if T.A.L.A. servers are hacked: Files remain encrypted</li>
-              <li>✅ Even if blockchain is compromised: IPFS storage survives</li>
-              <li>✅ Even if you lose your wallet: Vault remains locked until scheduled time</li>
-              <li>✅ Even if all this fails: Immutable audit trail proves what happened</li>
+              <li>• Even if T.A.L.A. servers are compromised, files remain encrypted</li>
+              <li>• Even if a node fails, IPFS storage remains accessible</li>
+              <li>• If a wallet is lost, the vault stays locked until the scheduled time</li>
+              <li>• The audit trail remains immutable and verifiable</li>
             </ul>
           </div>
         </div>
@@ -585,7 +585,7 @@ export default function LearnPage() {
       <section className="py-16 md:py-24 px-4 bg-white border-b-4 border-black">
         <div className="container mx-auto max-w-5xl">
           <h2 className="text-5xl md:text-6xl font-black text-black mb-12">
-            REAL-WORLD USE CASES
+            REAL WORLD USE CASES
           </h2>
 
           <div className="space-y-8">
@@ -717,7 +717,7 @@ export default function LearnPage() {
             FREQUENTLY ASKED QUESTIONS
           </h2>
           <p className="text-black font-bold max-w-3xl mb-10">
-            Clear answers to the most common questions about time-locking, encryption, and the blockchain guarantees behind T.A.L.A.
+            Clear answers to common questions about time locks, encryption, and blockchain verification.
           </p>
 
           <div className="space-y-4">
@@ -776,7 +776,7 @@ export default function LearnPage() {
             READY TO GET STARTED?
           </h2>
           <p className="text-gray-200 font-bold max-w-3xl mb-10">
-            Pick a path below. Each step is built for clarity, speed, and security.
+            Choose a path below. Each step is focused on clarity, speed, and security.
           </p>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
@@ -796,7 +796,7 @@ export default function LearnPage() {
               }`}
             >
               <h3 className="text-2xl font-black mb-4 transition-all duration-500 hover:text-white">Step 1: Learn More</h3>
-              <p className="font-bold mb-6 transition-all duration-500 hover:text-white">Dive deeper into our documentation and understand the architecture.</p>
+              <p className="font-bold mb-6 transition-all duration-500 hover:text-white">Review the documentation and understand the architecture.</p>
               <Link href="/documentation">
                 <button className="w-full px-6 py-3 bg-black text-white font-bold border-2 border-black hover:bg-white hover:text-black hover:scale-105 hover:-translate-y-1 transition-all duration-300 flex items-center justify-center gap-2">
                   Documentation <ChevronRight className="w-4 h-4 transition-transform hover:translate-x-1" />
@@ -820,7 +820,7 @@ export default function LearnPage() {
               }`}
             >
               <h3 className="text-2xl font-black mb-4 transition-all duration-500 hover:text-white">Step 2: Try It Free</h3>
-              <p className="font-bold mb-6 transition-all duration-500 hover:text-white">Create your first vault with our free tier. No credit card required.</p>
+              <p className="font-bold mb-6 transition-all duration-500 hover:text-white">Create your first vault with the free tier. No credit card required.</p>
               <Link href="/create-vault">
                 <button className="w-full px-6 py-3 bg-black text-white font-bold border-2 border-black hover:bg-white hover:text-black hover:scale-105 hover:-translate-y-1 transition-all duration-300 flex items-center justify-center gap-2">
                   Create Vault <ChevronRight className="w-4 h-4 transition-transform hover:translate-x-1" />
@@ -844,7 +844,7 @@ export default function LearnPage() {
               }`}
             >
               <h3 className="text-2xl font-black mb-4 transition-all duration-500 hover:text-white">Step 3: Access Portal</h3>
-              <p className="font-bold mb-6 transition-all duration-500 hover:text-white">Retrieve and decrypt your vaults with the secure access portal.</p>
+              <p className="font-bold mb-6 transition-all duration-500 hover:text-white">Retrieve and decrypt vaults with the secure access portal.</p>
               <Link href="/access-portal">
                 <button className="w-full px-6 py-3 bg-black text-white font-bold border-2 border-black hover:bg-white hover:text-black hover:scale-105 hover:-translate-y-1 transition-all duration-300 flex items-center justify-center gap-2">
                   Access Portal <ChevronRight className="w-4 h-4 transition-transform hover:translate-x-1" />
@@ -855,7 +855,7 @@ export default function LearnPage() {
 
           <div className="bg-heirlock-blue border-4 border-white p-8 shadow-brutal text-center">
             <h3 className="text-3xl font-black mb-4">Questions?</h3>
-            <p className="text-lg font-bold mb-6">Check our FAQ or reach out directly. We're here to help.</p>
+            <p className="text-lg font-bold mb-6">Review the FAQ or reach out directly. We are here to help.</p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link href="/faq">
                 <button className="px-8 py-3 bg-white text-black font-bold border-4 border-white hover:bg-black hover:text-white transition-all">
@@ -881,41 +881,41 @@ export default function LearnPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="flex gap-4">
-              <div className="text-5xl font-black text-heirlock-yellow flex-shrink-0">📜</div>
+              <div className="text-5xl font-black text-heirlock-yellow flex-shrink-0">T</div>
               <div>
-                <h3 className="text-2xl font-black text-black mb-2">Time-Locking</h3>
+                <h3 className="text-2xl font-black text-black mb-2">Time Locking</h3>
                 <p className="text-black font-medium">
-                  Unlock times are enforced by immutable smart contracts, not timers. Mathematical certainty replaces institutional trust.
+                  Unlock times are enforced by immutable smart contracts. This replaces institutional trust with cryptographic certainty.
                 </p>
               </div>
             </div>
 
             <div className="flex gap-4">
-              <div className="text-5xl font-black text-heirlock-green flex-shrink-0">🔐</div>
+              <div className="text-5xl font-black text-heirlock-green flex-shrink-0">E</div>
               <div>
                 <h3 className="text-2xl font-black text-black mb-2">Encryption</h3>
                 <p className="text-black font-medium">
-                  AES-256-GCM encryption with keys you control. Even T.A.L.A. cannot decrypt your vaults.
+                  AES-256-GCM encryption with keys you control. T.A.L.A. cannot decrypt your vaults.
                 </p>
               </div>
             </div>
 
             <div className="flex gap-4">
-              <div className="text-5xl font-black text-heirlock-blue flex-shrink-0">⛓️</div>
+              <div className="text-5xl font-black text-heirlock-blue flex-shrink-0">B</div>
               <div>
                 <h3 className="text-2xl font-black text-black mb-2">Blockchain</h3>
                 <p className="text-black font-medium">
-                  Polygon network records all actions immutably. Audit trails cannot be altered or deleted.
+                  Polygon records all actions immutably. Audit trails cannot be altered or deleted.
                 </p>
               </div>
             </div>
 
             <div className="flex gap-4">
-              <div className="text-5xl font-black text-heirlock-pink flex-shrink-0">🌐</div>
+              <div className="text-5xl font-black text-heirlock-pink flex-shrink-0">D</div>
               <div>
                 <h3 className="text-2xl font-black text-black mb-2">Decentralized</h3>
                 <p className="text-black font-medium">
-                  IPFS storage, blockchain enforcement, wallet authentication. No single point of failure.
+                  IPFS storage, blockchain enforcement, and wallet authentication reduce single points of failure.
                 </p>
               </div>
             </div>
@@ -924,10 +924,10 @@ export default function LearnPage() {
           <div className="mt-12 bg-black text-white border-4 border-black p-8 shadow-brutal text-center">
             <h3 className="text-3xl font-black mb-4">The Bottom Line</h3>
             <p className="text-xl font-bold mb-4">
-              T.A.L.A. replaces trust in institutions with trust in mathematics.
+              T.A.L.A. replaces institutional trust with verifiable cryptography.
             </p>
             <p className="text-lg font-bold text-heirlock-yellow">
-              Guaranteed. Immutable. Transparent.
+              Verified. Immutable. Transparent.
             </p>
           </div>
         </div>
