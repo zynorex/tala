@@ -190,30 +190,96 @@ export default function PricingPage() {
   return (
     <main className="min-h-screen bg-white">
       {/* Header */}
-      <section className="border-b-4 border-black py-12 md:py-20">
-        <div className="max-w-6xl mx-auto px-4 md:px-6 text-center">
-          <h1 className="text-4xl md:text-5xl font-black text-black mb-4">
-            Simple, Transparent Pricing
-          </h1>
-          <p className="text-xl text-gray-700 mb-6 max-w-2xl mx-auto">
-            Choose the perfect plan for your vault protection needs. All plans include military-grade encryption and blockchain-verified security.
-          </p>
-          <div className="flex items-center justify-center gap-4">
-            <span className={`text-lg font-bold ${!isYearly ? 'text-black' : 'text-gray-500'}`}>Pay Monthly</span>
-            <button
-              onClick={() => setIsYearly(!isYearly)}
-              className="w-12 h-8 bg-heirlock-yellow border-2 border-black rounded-full flex items-center cursor-pointer transition-all"
-            >
-              <div className={`w-6 h-6 bg-black rounded-full transition-all ${isYearly ? 'ml-5' : 'ml-1'}`}></div>
-            </button>
-            <span className={`text-lg font-bold ${isYearly ? 'text-black' : 'text-gray-500'}`}>Pay Yearly (Save 20%)</span>
+      <section className="border-b-4 border-black py-12 md:py-20 relative overflow-hidden">
+        <div className="absolute -top-20 -left-16 w-64 h-64 bg-heirlock-blue border-4 border-black rounded-full opacity-40"></div>
+        <div className="absolute -bottom-24 -right-10 w-72 h-72 bg-heirlock-pink border-4 border-black rounded-full opacity-30"></div>
+        <div className="max-w-6xl mx-auto px-4 md:px-6 relative">
+          <div className="grid grid-cols-1 lg:grid-cols-[1.2fr_0.8fr] gap-10 items-center">
+            <div>
+              <div className="inline-flex items-center gap-2 bg-black text-white px-3 py-1 rounded-full text-xs font-black uppercase tracking-widest">
+                Pricing
+              </div>
+              <h1 className="text-4xl md:text-5xl font-black text-black mt-5 mb-4">
+                Simple, Transparent Pricing
+              </h1>
+              <p className="text-xl text-gray-700 mb-6 max-w-2xl">
+                Choose the perfect plan for your vault protection needs. Every tier includes military-grade encryption and blockchain-verified security.
+              </p>
+              <div className="flex flex-wrap gap-3">
+                <span className="px-3 py-1 border-2 border-black bg-white text-xs font-bold">14-day free trial</span>
+                <span className="px-3 py-1 border-2 border-black bg-white text-xs font-bold">Cancel anytime</span>
+                <span className="px-3 py-1 border-2 border-black bg-white text-xs font-bold">GST invoices</span>
+              </div>
+            </div>
+
+            <div className="border-4 border-black bg-white rounded-xl p-6 shadow-brutal">
+              <p className="text-xs font-black uppercase tracking-widest text-gray-700">Billing Options</p>
+              <div className="mt-4 flex items-center gap-4">
+                <span className={`text-sm font-bold ${!isYearly ? 'text-black' : 'text-gray-500'}`}>
+                  Monthly
+                </span>
+                <button
+                  onClick={() => setIsYearly(!isYearly)}
+                  className="w-14 h-8 bg-heirlock-yellow border-2 border-black rounded-full flex items-center cursor-pointer transition-all"
+                  aria-label="Toggle yearly billing"
+                >
+                  <div className={`w-6 h-6 bg-black rounded-full transition-all ${isYearly ? 'ml-6' : 'ml-1'}`}></div>
+                </button>
+                <span className={`text-sm font-bold ${isYearly ? 'text-black' : 'text-gray-500'}`}>
+                  Yearly
+                </span>
+              </div>
+              <p className="text-xs text-gray-600 mt-3">
+                {isYearly ? 'Save 20% with annual billing.' : 'Switch to yearly to save 20%.'}
+              </p>
+              <div className="mt-6 grid grid-cols-3 gap-3 text-center">
+                <div className="border-2 border-black rounded-lg p-3 bg-heirlock-blue/40">
+                  <p className="text-xs font-bold">Instant</p>
+                  <p className="text-xs text-gray-700">Activation</p>
+                </div>
+                <div className="border-2 border-black rounded-lg p-3 bg-heirlock-yellow/50">
+                  <p className="text-xs font-bold">Secure</p>
+                  <p className="text-xs text-gray-700">Payments</p>
+                </div>
+                <div className="border-2 border-black rounded-lg p-3 bg-heirlock-green/50">
+                  <p className="text-xs font-bold">Priority</p>
+                  <p className="text-xs text-gray-700">Support</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Value Strip */}
+      <section className="border-b-4 border-black py-10 bg-white">
+        <div className="max-w-6xl mx-auto px-4 md:px-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="border-2 border-black rounded-lg p-4 bg-heirlock-blue/30">
+              <p className="text-sm font-black">Security First</p>
+              <p className="text-sm text-gray-700 mt-2">AES-256-GCM encryption, zero-trust architecture, and immutable audit trails.</p>
+            </div>
+            <div className="border-2 border-black rounded-lg p-4 bg-heirlock-yellow/40">
+              <p className="text-sm font-black">Compliance Ready</p>
+              <p className="text-sm text-gray-700 mt-2">SOC 2, ISO 27001, and GDPR-aligned controls built into every tier.</p>
+            </div>
+            <div className="border-2 border-black rounded-lg p-4 bg-heirlock-green/40">
+              <p className="text-sm font-black">Human Support</p>
+              <p className="text-sm text-gray-700 mt-2">Fast onboarding, priority response times, and expert security guidance.</p>
+            </div>
           </div>
         </div>
       </section>
 
       {/* Pricing Cards */}
-      <section className="py-16 md:py-24 px-4 md:px-6">
+      <section className="py-16 md:py-24 px-4 md:px-6" id="plans">
         <div className="max-w-7xl mx-auto">
+          <div className="text-center max-w-3xl mx-auto mb-12">
+            <h2 className="text-3xl md:text-4xl font-black text-black">Choose your plan</h2>
+            <p className="text-gray-700 mt-3">
+              Upgrade anytime. Your data stays encrypted and portable across plans.
+            </p>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {pricingTiers.map((tier, index) => {
               const Icon = tier.icon;
@@ -311,9 +377,12 @@ export default function PricingPage() {
       {/* Comparison Table */}
       <section className="py-16 md:py-24 bg-heirlock-yellow border-y-4 border-black">
         <div className="max-w-6xl mx-auto px-4 md:px-6">
-          <h2 className="text-3xl md:text-4xl font-black text-black text-center mb-12">
-            Feature Comparison
-          </h2>
+          <div className="flex flex-col lg:flex-row items-start justify-between gap-6 mb-12">
+            <h2 className="text-3xl md:text-4xl font-black text-black">Feature Comparison</h2>
+            <p className="text-gray-800 max-w-2xl">
+              Every plan includes core vault protection. Compare limits, support, and advanced controls at a glance.
+            </p>
+          </div>
 
           <div className="overflow-x-auto">
             <table className="w-full border-4 border-black">
@@ -393,12 +462,15 @@ export default function PricingPage() {
 
       {/* FAQ */}
       <section className="py-16 md:py-24">
-        <div className="max-w-4xl mx-auto px-4 md:px-6">
-          <h2 className="text-3xl md:text-4xl font-black text-black text-center mb-12">
+        <div className="max-w-5xl mx-auto px-4 md:px-6">
+          <h2 className="text-3xl md:text-4xl font-black text-black text-center mb-4">
             Frequently Asked Questions
           </h2>
+          <p className="text-gray-700 text-center max-w-2xl mx-auto mb-10">
+            Clear answers, no sales fluff. If you need deeper guidance, our team is a click away.
+          </p>
 
-          <div className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {[
               {
                 question: 'Can I upgrade or downgrade my plan?',
@@ -465,7 +537,7 @@ export default function PricingPage() {
                 answer: 'Starter: Community forum. Professional: Priority email support. Enterprise: 24/7 phone and email. Government: Dedicated account manager with 24/7 phone support.',
               },
             ].map((faq, index) => (
-              <div key={index} className="border-4 border-black p-6 rounded-lg hover:shadow-brutal transition-all">
+              <div key={index} className="border-4 border-black p-6 rounded-lg hover:shadow-brutal transition-all bg-white">
                 <h3 className="text-lg font-black text-black mb-3">{faq.question}</h3>
                 <p className="text-gray-700">{faq.answer}</p>
               </div>
@@ -475,9 +547,13 @@ export default function PricingPage() {
       </section>
 
       {/* CTA */}
-      <section className="border-t-4 border-black py-16 md:py-24 bg-heirlock-blue">
-        <div className="max-w-4xl mx-auto px-4 md:px-6 text-center">
-          <h2 className="text-3xl md:text-4xl font-black text-black mb-6">
+      <section className="border-t-4 border-black py-16 md:py-24 bg-heirlock-blue relative overflow-hidden">
+        <div className="absolute -top-16 right-10 w-56 h-56 bg-white border-4 border-black rounded-full opacity-30"></div>
+        <div className="max-w-4xl mx-auto px-4 md:px-6 text-center relative">
+          <div className="inline-flex items-center gap-2 bg-black text-white px-3 py-1 rounded-full text-xs font-black uppercase tracking-widest mb-4">
+            Start Secure
+          </div>
+          <h2 className="text-3xl md:text-4xl font-black text-black mb-4">
             Ready to Secure Your Vaults?
           </h2>
           <p className="text-lg text-gray-800 mb-8 max-w-2xl mx-auto">
@@ -499,6 +575,9 @@ export default function PricingPage() {
               <ChevronRight className="w-5 h-5" />
             </Link>
           </div>
+          <p className="text-xs text-gray-700 mt-6">
+            All plans include AES-256-GCM encryption, blockchain audit trails, and secure storage on IPFS.
+          </p>
         </div>
       </section>
     </main>
