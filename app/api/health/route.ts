@@ -123,15 +123,26 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // 2. Check Authentication Service
+    // 2. Check Authentication Service — verify secrets are present
     try {
-      // NextAuth should be accessible even if not authenticated
-      response.checks.authentication = {
-        status: "ok",
-        message: "Authentication service configured",
-        endpoint: "/api/auth/session",
-      };
-      logger.debug("Authentication check passed");
+      const hasNextAuth = !!process.env.NEXTAUTH_SECRET;
+      const hasJWT = !!process.env.JWT_SECRET;
+
+      if (hasNextAuth && hasJWT) {
+        response.checks.authentication = {
+          status: "ok",
+          message: "NextAuth + JWT secrets configured",
+          endpoint: "/api/auth/session",
+        };
+      } else {
+        response.checks.authentication = {
+          status: "error",
+          message: `Missing: ${[!hasNextAuth && 'NEXTAUTH_SECRET', !hasJWT && 'JWT_SECRET'].filter(Boolean).join(', ')}`,
+          endpoint: "/api/auth/session",
+        };
+        response.warnings.push("Authentication secrets incomplete");
+      }
+      logger.debug("Authentication check completed", { hasNextAuth, hasJWT });
     } catch (error) {
       response.checks.authentication = {
         status: "error",
@@ -145,16 +156,27 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // 3. Check File Upload Configuration
+    // 3. Check File Upload — verify IPFS upload capability by testing Pinata auth
     try {
-      // Check if file validation service is properly configured
-      // This is always available in production
-      response.checks.fileUpload = {
-        status: "ok",
-        message: "File upload service configured",
-        validated: true,
-      };
-      logger.debug("File upload check passed");
+      const hasApiKey = !!(process.env.PINATA_API_KEY || process.env.NEXT_PUBLIC_PINATA_API_KEY);
+      const hasApiSecret = !!(process.env.PINATA_SECRET_API_KEY || process.env.NEXT_PUBLIC_PINATA_SECRET_API_KEY);
+      const hasJWT_pin = !!process.env.PINATA_JWT;
+
+      if (hasJWT_pin || (hasApiKey && hasApiSecret)) {
+        response.checks.fileUpload = {
+          status: "ok",
+          message: "File upload service configured (Pinata credentials present)",
+          validated: true,
+        };
+      } else {
+        response.checks.fileUpload = {
+          status: "error",
+          message: "Pinata credentials missing — file uploads will fail",
+          validated: false,
+        };
+        response.warnings.push("File upload service not configured");
+      }
+      logger.debug("File upload check completed");
     } catch (error) {
       response.checks.fileUpload = {
         status: "error",
@@ -164,21 +186,57 @@ export async function GET(request: NextRequest) {
       response.warnings.push("File upload service may be misconfigured");
     }
 
-    // 4. Check IPFS Configuration
-    const pinataJWT = !!process.env.PINATA_JWT;
+    // 4. Check IPFS — real Pinata API auth test
+    const pinataJWT = process.env.PINATA_JWT;
+    const pinataKey = process.env.PINATA_API_KEY || process.env.NEXT_PUBLIC_PINATA_API_KEY;
+    const pinataSecret = process.env.PINATA_SECRET_API_KEY || process.env.NEXT_PUBLIC_PINATA_SECRET_API_KEY;
     const pinataGateway = process.env.PINATA_GATEWAY || null;
 
-    if (pinataJWT && pinataGateway) {
-      response.checks.ipfs = {
-        status: "ok",
-        message: "IPFS (Pinata) configured",
-        gateway: pinataGateway,
-      };
-      logger.debug("IPFS check passed");
+    if (pinataJWT || (pinataKey && pinataSecret)) {
+      try {
+        const headers: Record<string, string> = pinataJWT
+          ? { Authorization: `Bearer ${pinataJWT}` }
+          : { pinata_api_key: pinataKey!, pinata_secret_api_key: pinataSecret! };
+
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 8000);
+        const ipfsStart = Date.now();
+
+        const ipfsRes = await fetch('https://api.pinata.cloud/data/testAuthentication', {
+          headers,
+          signal: controller.signal,
+        });
+        clearTimeout(timeout);
+
+        const ipfsElapsed = Date.now() - ipfsStart;
+
+        if (ipfsRes.ok) {
+          response.checks.ipfs = {
+            status: ipfsElapsed > 5000 ? "ok" : "ok",
+            message: `Pinata authenticated (${ipfsElapsed}ms)`,
+            gateway: pinataGateway || 'https://gateway.pinata.cloud',
+          };
+        } else {
+          response.checks.ipfs = {
+            status: "error",
+            message: `Pinata auth failed: HTTP ${ipfsRes.status}`,
+            gateway: null,
+          };
+          response.warnings.push("IPFS authentication failed");
+        }
+      } catch (ipfsErr) {
+        response.checks.ipfs = {
+          status: "error",
+          message: `Pinata unreachable: ${ipfsErr instanceof Error ? ipfsErr.message : 'timeout'}`,
+          gateway: null,
+        };
+        response.warnings.push("IPFS service unreachable");
+      }
+      logger.debug("IPFS check completed");
     } else {
       response.checks.ipfs = {
         status: "unconfigured",
-        message: "IPFS configuration incomplete",
+        message: "IPFS configuration incomplete — set PINATA_API_KEY + PINATA_SECRET_API_KEY",
         gateway: null,
       };
       response.warnings.push("IPFS not fully configured");

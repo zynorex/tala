@@ -50,18 +50,26 @@ async function findOrphanedFiles(): Promise<string[]> {
 }
 
 /**
- * Delete file from IPFS
+ * Delete file from IPFS by unpinning via Pinata.
+ * Uses the `unpinFileFromIPFS` helper which calls DELETE /pinning/unpin/:hash.
  */
 async function deleteFromIPFS(ipfsHash: string): Promise<boolean> {
   try {
-    // Call IPFS service to unpin and delete
-    // This would be implemented in your IPFS service
-    logger.debug('Deleting file from IPFS', { ipfsHash });
+    if (!ipfsHash || ipfsHash.length === 0) {
+      logger.warn('Skipping IPFS deletion — empty hash');
+      return false;
+    }
 
-    // For now, just log it
-    // In production, you'd call: await ipfs.delete(ipfsHash);
+    logger.debug('Unpinning file from IPFS via Pinata', { ipfsHash });
+    const ok = await ipfs.unpinFileFromIPFS(ipfsHash);
 
-    return true;
+    if (ok) {
+      logger.info('IPFS file unpinned successfully', { ipfsHash });
+    } else {
+      logger.warn('IPFS unpin returned false — file may already be unpinned', { ipfsHash });
+    }
+
+    return ok;
   } catch (error) {
     logger.error('Failed to delete from IPFS', error instanceof Error ? error : undefined);
     return false;
@@ -211,14 +219,39 @@ export async function deduplicateFiles(): Promise<{ duplicatesFound: number; spa
 
     for (const hashGroup of fileHashes) {
       if (hashGroup._count.id > 1) {
-        duplicatesFound += hashGroup._count.id - 1;
+        const dupeCount = hashGroup._count.id - 1;
+        duplicatesFound += dupeCount;
 
-        // In a real system, you'd deduplicate by storing a reference to the first file
-        // For now, just log it
         logger.debug('Found duplicate files', {
           fileHash: hashGroup.fileHash,
           count: hashGroup._count.id,
         });
+
+        // Keep the oldest file (canonical), unpin duplicates from IPFS
+        const dupes = await db.vaultFile.findMany({
+          where: {
+            fileHash: hashGroup.fileHash,
+            vault: { isActive: true },
+          },
+          orderBy: { uploadedAt: 'asc' },
+          select: { id: true, ipfsHash: true, fileSizeBytes: true },
+        });
+
+        // Skip the first (canonical) — process the rest
+        for (let i = 1; i < dupes.length; i++) {
+          const dupe = dupes[i];
+          // Point the duplicate DB record's ipfsHash to the canonical copy
+          await db.vaultFile.update({
+            where: { id: dupe.id },
+            data: { ipfsHash: dupes[0].ipfsHash },
+          });
+
+          // Unpin the duplicate from IPFS if it differs from canonical
+          if (dupe.ipfsHash !== dupes[0].ipfsHash) {
+            await deleteFromIPFS(dupe.ipfsHash);
+            spaceFreed += dupe.fileSizeBytes;
+          }
+        }
       }
     }
 
@@ -255,12 +288,29 @@ export async function verifyFileIntegrity(vaultId: string): Promise<{
 
     for (const file of files) {
       try {
-        // In production, download file from IPFS and verify hash
-        // await ipfs.verifyHash(file.ipfsHash);
+        // Check the file is still available on IPFS
+        const info = await ipfs.getIPFSFileInfo(file.ipfsHash);
+
+        if (!info.available) {
+          result.corrupted++;
+          result.errors.push(`File ${file.id} (${file.ipfsHash}) is not available on IPFS`);
+          continue;
+        }
+
+        // If stored size is available, compare it
+        if (info.size > 0 && file.fileSizeBytes > 0) {
+          // Encrypted size may differ from original, but a zero-size response is a red flag
+          if (info.size === 0) {
+            result.corrupted++;
+            result.errors.push(`File ${file.id} IPFS content is 0 bytes`);
+            continue;
+          }
+        }
+
         result.verified++;
       } catch (error) {
         result.corrupted++;
-        result.errors.push(`File ${file.id} failed integrity check`);
+        result.errors.push(`File ${file.id} integrity check error: ${error instanceof Error ? error.message : error}`);
       }
     }
 

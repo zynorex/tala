@@ -122,8 +122,8 @@ export async function recordBandwidthUsage(userId: string, bytes: number): Promi
     const tomorrow = new Date(today);
     tomorrow.setDate(tomorrow.getDate() + 1);
 
-    // Try to update existing record
-    const updated = await db.activityLog.updateMany({
+    // Find today's existing bandwidth record
+    const existing = await db.activityLog.findFirst({
       where: {
         userId,
         action: 'bandwidth_usage',
@@ -132,11 +132,20 @@ export async function recordBandwidthUsage(userId: string, bytes: number): Promi
           lt: tomorrow,
         },
       },
-      data: {
-        // Store bytes in description as JSON
-        description: (existingBytes: number) => `${(existingBytes || 0) + bytes}`,
-      },
+      select: { id: true, description: true },
     });
+
+    let updatedCount = 0;
+    if (existing) {
+      const previousBytes = parseInt(existing.description || '0', 10) || 0;
+      await db.activityLog.update({
+        where: { id: existing.id },
+        data: { description: `${previousBytes + bytes}` },
+      });
+      updatedCount = 1;
+    }
+
+    const updated = { count: updatedCount };
 
     // If no record was updated, create a new one
     if (updated.count === 0) {

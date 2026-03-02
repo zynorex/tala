@@ -84,9 +84,9 @@ export async function getAdminUsers(req: NextRequest) {
           vaultCount: u._count.vaults,
           activityCount: u._count.activityLogs,
         })),
+        total,
         page,
         limit,
-        total,
         200
       ),
       { status: 200 }
@@ -159,9 +159,9 @@ export async function getAdminVaults(req: NextRequest) {
           activityCount: v._count.activityLogs,
           fileCount: v._count.files,
         })),
+        total,
         page,
         limit,
-        total,
         200
       ),
       { status: 200 }
@@ -387,7 +387,7 @@ export async function getAdminLogs(req: NextRequest) {
     ]);
 
     return NextResponse.json(
-      apiPaginated(logs, page, limit, total, 200),
+      apiPaginated(logs, total, page, limit, 200),
       { status: 200 }
     );
   } catch (error) {
