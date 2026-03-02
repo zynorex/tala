@@ -95,20 +95,50 @@ async function generateImagePreview(
 }
 
 /**
- * Generate preview for PDF files
- * Returns first page as image
+ * Generate preview for PDF files.
+ * Extracts the first ~500 bytes of text content from the PDF binary
+ * by scanning for text stream operators (Tj, TJ, BT/ET blocks).
+ * This is a lightweight heuristic that avoids heavy dependencies.
  */
 async function generatePdfPreview(
   file: File | Blob,
 ): Promise<{ preview: string | null; thumbnail: string | null }> {
   try {
-    // In production, use a library like pdf.js to generate preview
-    // For now, return null - requires pdf.js library
-    logger.debug('PDF preview generation requires pdf.js library');
+    const buffer = await file.arrayBuffer();
+    const bytes = new Uint8Array(buffer);
+
+    // Simple text extraction: decode the raw PDF bytes as latin-1 and search for
+    // text between parentheses in Tj/TJ operators. This catches most basic PDFs.
+    const raw = Array.from(bytes.slice(0, Math.min(bytes.length, 65536)))
+      .map((b) => String.fromCharCode(b))
+      .join('');
+
+    // Match text inside ( ... ) Tj operators
+    const textParts: string[] = [];
+    const regex = /\(([^)]{1,200})\)\s*T[jJ]/g;
+    let match;
+    while ((match = regex.exec(raw)) !== null && textParts.length < 20) {
+      // Unescape PDF string escapes
+      const cleaned = match[1]
+        .replace(/\\n/g, '\n')
+        .replace(/\\r/g, '\r')
+        .replace(/\\t/g, '\t')
+        .replace(/\\\(/g, '(')
+        .replace(/\\\)/g, ')')
+        .replace(/\\\\/g, '\\');
+      if (cleaned.trim()) textParts.push(cleaned.trim());
+    }
+
+    const preview = textParts.length > 0 ? textParts.join(' ').slice(0, 500) : null;
+
+    logger.debug('PDF preview generated', {
+      extractedChars: preview?.length ?? 0,
+      segments: textParts.length,
+    });
 
     return {
-      preview: null,
-      thumbnail: null,
+      preview,
+      thumbnail: null, // Thumbnail generation would require canvas / pdf.js
     };
   } catch (error) {
     logger.error('Failed to generate PDF preview', error instanceof Error ? error : undefined);
