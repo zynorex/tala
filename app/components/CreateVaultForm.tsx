@@ -516,114 +516,14 @@ export default function CreateVaultForm({ demoMode = false }: CreateVaultFormPro
 
       updateStep('create-vault', 'completed');
 
-      // Step 1.5: For real vaults, create blockchain record
-      if (!demoMode) {
-        updateStep('blockchain', 'in-progress', 'Waiting for wallet confirmation...');
-        
-        try {
-          // Create encrypted key hash (keccak256 of encrypted key)
-          const encryptedKeyHash = keccak256(toBytes(form.decryptionKey));
-          
-          // For real vaults, we need IPFS hash, but file hasn't been uploaded yet
-          // So we'll use a placeholder and update the contract after file upload
-          const placeholderIpfsHash = 'QmPlaceholder0000000000000000000000000000000000'; // Will be updated after upload
-          
-          // Get file size for contract
-          const fileSize = form.file?.size || 0;
-
-          console.log('[BLOCKCHAIN] Calling smart contract createVault with:', {
-            ipfsHash: placeholderIpfsHash,
-            encryptedKeyHash,
-            unlockTime: unlockTimestamp,
-            description: form.vaultDescription,
-            fileSize,
-          });
-
-          // Call smart contract and wait for confirmation
-          // This will show the user a wallet popup to approve the transaction and pay gas fees
-          let transactionRejected = false;
-          
-          await new Promise<void>((resolve, reject) => {
-            try {
-              // Set up timeout for wallet confirmation (30 seconds)
-              const confirmationTimeout = setTimeout(() => {
-                if (!transactionRejected) {
-                  clearTimeout(confirmationTimeout);
-                  transactionRejected = true;
-                  reject(new Error('Wallet confirmation timeout - please try again'));
-                }
-              }, 30000);
-
-              createVaultOnChain(
-                placeholderIpfsHash,
-                encryptedKeyHash,
-                unlockTimestamp,
-                form.vaultDescription,
-                fileSize
-              );
-
-              // Monitor for transaction success or rejection
-              updateStep('blockchain', 'in-progress', 'Confirm transaction in your wallet...');
-              
-              // Check if transaction was submitted (hook will update isChainLoading)
-              const transactionCheck = setInterval(() => {
-                // If user rejected, isChainLoading stays false and no hash is generated
-                // We need a way to detect rejection - check if enough time has passed
-                if (transactionRejected) {
-                  clearInterval(transactionCheck);
-                  clearTimeout(confirmationTimeout);
-                  return;
-                }
-              }, 500);
-
-              // Wait up to 120 seconds for final confirmation
-              const maxWaitTime = 120000;
-              const startTime = Date.now();
-              
-              const finalCheck = setInterval(() => {
-                const elapsed = Date.now() - startTime;
-                if (elapsed > maxWaitTime) {
-                  clearInterval(finalCheck);
-                  clearInterval(transactionCheck);
-                  clearTimeout(confirmationTimeout);
-                  
-                  if (!transactionRejected) {
-                    updateStep('blockchain', 'completed', 'Transaction submitted to blockchain');
-                    resolve();
-                  }
-                }
-              }, 1000);
-
-            } catch (err) {
-              transactionRejected = true;
-              reject(err);
-            }
-          });
-
-          if (!transactionRejected) {
-            updateStep('blockchain', 'completed', 'Transaction confirmed on blockchain');
-          }
-        } catch (blockchainError) {
-          console.error('[BLOCKCHAIN] Error creating vault on-chain:', blockchainError);
-          const errorMessage = blockchainError instanceof Error ? blockchainError.message : 'Transaction failed or was rejected';
-          
-          // Check if it's a user rejection
-          const isRejection = errorMessage.toLowerCase().includes('rejected') || 
-                             errorMessage.toLowerCase().includes('user denied') ||
-                             errorMessage.toLowerCase().includes('denied');
-          
-          updateStep('blockchain', 'error', isRejection ? 'Transaction rejected by user' : errorMessage);
-          throw new Error(`Blockchain transaction failed: ${errorMessage}`);
-        }
-      }
-
+      // Step 1.5: Upload file FIRST so we have the real IPFS hash for blockchain
       updateStep('process-file', 'in-progress');
       updateStep('encrypt-file', 'in-progress');
 
-      // Step 2: Upload file (only if file exists)
       let fileUploadSuccess = false;
       let uploadError = null;
-      
+      let realIpfsHash = '';
+
       if (form.file) {
         try {
           const formData = new FormData();
