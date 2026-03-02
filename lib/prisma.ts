@@ -15,13 +15,50 @@ export const db = (() => {
   if (!process.env.DATABASE_URL) {
     logger.warn('DATABASE_URL not configured, using mock client for build-time');
     
-    // Return a mock client for build-time or when DB is not configured
+    // Comprehensive mock matching every model in prisma/schema.prisma
+    const noop = async () => ({});
+    const noopNull = async () => null;
+    const noopArr = async () => [];
+    const noopCount = async () => 0;
+    const noopDeleteMany = async () => ({ count: 0 });
+    const noopUpdateMany = async () => ({ count: 0 });
+    const noopAggregate = async () => ({ _sum: {}, _count: {}, _avg: {}, _min: {}, _max: {} });
+    const noopGroupBy = async () => [];
+
+    const mockModel = () => ({
+      findUnique: noopNull,
+      findFirst: noopNull,
+      findMany: noopArr,
+      create: noop,
+      update: noop,
+      delete: noop,
+      deleteMany: noopDeleteMany,
+      updateMany: noopUpdateMany,
+      count: noopCount,
+      aggregate: noopAggregate,
+      groupBy: noopGroupBy,
+      upsert: noop,
+    });
+
     return {
-      user: { findUnique: async () => null, findMany: async () => [], create: async () => ({}) },
-      vault: { findMany: async () => [], create: async () => ({}), findUnique: async () => null, update: async () => ({}) },
-      vaultFile: { findMany: async () => [], create: async () => ({}), delete: async () => ({}) },
-      encryptionMetadata: { create: async () => ({}), findUnique: async () => null },
-      activityLog: { create: async () => ({}), findMany: async () => [] },
+      user: mockModel(),
+      account: mockModel(),
+      session: mockModel(),
+      verificationToken: mockModel(),
+      vault: mockModel(),
+      vaultFile: mockModel(),
+      vaultShare: mockModel(),
+      activityLog: mockModel(),
+      apiKey: mockModel(),
+      unlockEvent: mockModel(),
+      encryptionMetadata: mockModel(),
+      payment: mockModel(),
+      subscription: mockModel(),
+      $queryRaw: noopArr,
+      $queryRawUnsafe: noopArr,
+      $executeRaw: noopCount,
+      $connect: noop,
+      $disconnect: noop,
     } as any;
   }
 
