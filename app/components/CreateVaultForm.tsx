@@ -565,6 +565,7 @@ export default function CreateVaultForm({ demoMode = false }: CreateVaultFormPro
 
           console.log('[VAULT] File uploaded successfully', uploadData);
           fileUploadSuccess = true;
+          realIpfsHash = uploadData.ipfsHash;
           updateStep('encrypt-file', 'completed');
           updateStep('upload-ipfs', 'completed');
         } catch (uploadErr) {
