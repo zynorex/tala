@@ -3,16 +3,7 @@ import { verifyRequest } from '@/lib/auth/jwt';
 import { updateVaultSchema, deleteVaultSchema } from '@/lib/auth/schemas';
 import { apiSuccess, apiError, handleValidationError, handleDbError, httpErrors } from '@/lib/auth/api-response';
 import { unpinFileFromIPFS } from '@/lib/ipfs/ipfs';
-
-let prisma: any = null;
-
-async function getPrisma() {
-  if (!prisma) {
-    const { prisma: prismaInstance } = await import('@/lib/prisma');
-    prisma = prismaInstance;
-  }
-  return prisma;
-}
+import { db, withRetry } from '@/lib/prisma';
 
 /**
  * GET /api/vaults/[id]
@@ -29,25 +20,33 @@ export async function GET(
     }
 
     const { id } = await params;
-    const db = await getPrisma();
 
-    const vault = await db.vault.findUnique({
-      where: { id },
-      select: {
-        id: true,
-        userId: true,
-        name: true,
-        description: true,
-        keyHash: true,
-        fileHash: true,
-        isActive: true,
-        isDemo: true,
-        demoExpiresAt: true,
-        unlockTime: true,
-        lockStatus: true,
-        createdAt: true,
-        updatedAt: true,
-        files: {
+    // Split into two lighter queries to avoid Accelerate timeout on cold starts
+    const [vault, files] = await Promise.all([
+      withRetry(
+        () => db.vault.findUnique({
+          where: { id },
+          select: {
+            id: true,
+            userId: true,
+            name: true,
+            description: true,
+            keyHash: true,
+            fileHash: true,
+            isActive: true,
+            isDemo: true,
+            demoExpiresAt: true,
+            unlockTime: true,
+            lockStatus: true,
+            createdAt: true,
+            updatedAt: true,
+          },
+        }),
+        { label: 'getVault', maxRetries: 3 }
+      ),
+      withRetry(
+        () => db.vaultFile.findMany({
+          where: { vaultId: id },
           select: {
             id: true,
             fileName: true,
@@ -59,14 +58,10 @@ export async function GET(
             deletedAt: true,
           },
           orderBy: { uploadedAt: 'desc' },
-        },
-        _count: {
-          select: {
-            files: true,
-          },
-        },
-      },
-    });
+        }),
+        { label: 'getVaultFiles', maxRetries: 3 }
+      ),
+    ]);
 
     if (!vault) {
       return httpErrors.notFound('Vault');
@@ -77,7 +72,11 @@ export async function GET(
       return httpErrors.forbidden();
     }
 
-    return apiSuccess(vault);
+    return apiSuccess({
+      ...vault,
+      files,
+      _count: { files: files.length },
+    });
   } catch (error) {
     return NextResponse.json(handleDbError(error), { status: 500 });
   }
@@ -109,13 +108,14 @@ export async function PUT(
       return NextResponse.json(handleValidationError(validation.error), { status: 400 });
     }
 
-    const db = await getPrisma();
-
     // Verify ownership
-    const vault = await db.vault.findUnique({
-      where: { id },
-      select: { userId: true },
-    });
+    const vault = await withRetry(
+      () => db.vault.findUnique({
+        where: { id },
+        select: { userId: true },
+      }),
+      { label: 'verifyOwner-PUT' }
+    );
 
     if (!vault) {
       return httpErrors.notFound('Vault');
@@ -128,32 +128,38 @@ export async function PUT(
     // Update vault
     const { name, description } = validation.data;
 
-    const updated = await db.vault.update({
-      where: { id },
-      data: {
-        ...(name && { name }),
-        ...(description !== undefined && { description }),
-      },
-      select: {
-        id: true,
-        userId: true,
-        name: true,
-        description: true,
-        isActive: true,
-        createdAt: true,
-        updatedAt: true,
-      },
-    });
+    const updated = await withRetry(
+      () => db.vault.update({
+        where: { id },
+        data: {
+          ...(name && { name }),
+          ...(description !== undefined && { description }),
+        },
+        select: {
+          id: true,
+          userId: true,
+          name: true,
+          description: true,
+          isActive: true,
+          createdAt: true,
+          updatedAt: true,
+        },
+      }),
+      { label: 'updateVault' }
+    );
 
     // Log activity
-    await db.activityLog.create({
-      data: {
-        userId: payload.userId,
-        vaultId: id,
-        action: 'VAULT_UPDATED',
-        description: `Updated vault metadata`,
-      },
-    });
+    await withRetry(
+      () => db.activityLog.create({
+        data: {
+          userId: payload.userId,
+          vaultId: id,
+          action: 'VAULT_UPDATED',
+          description: `Updated vault metadata`,
+        },
+      }),
+      { label: 'logUpdate' }
+    );
 
     return apiSuccess(updated);
   } catch (error) {
@@ -187,13 +193,14 @@ export async function DELETE(
       return NextResponse.json(handleValidationError(validation.error), { status: 400 });
     }
 
-    const db = await getPrisma();
-
     // Verify ownership
-    const vault = await db.vault.findUnique({
-      where: { id },
-      select: { userId: true },
-    });
+    const vault = await withRetry(
+      () => db.vault.findUnique({
+        where: { id },
+        select: { userId: true },
+      }),
+      { label: 'verifyOwner-DELETE' }
+    );
 
     if (!vault) {
       return httpErrors.notFound('Vault');
@@ -204,23 +211,28 @@ export async function DELETE(
     }
 
     // Soft delete vault
-    const deleted = await db.vault.update({
-      where: { id },
-      data: { isActive: false },
-      select: {
-        id: true,
-        userId: true,
-        name: true,
-        isActive: true,
-      },
-    });
+    const deleted = await withRetry(
+      () => db.vault.update({
+        where: { id },
+        data: { isActive: false },
+        select: {
+          id: true,
+          userId: true,
+          name: true,
+          isActive: true,
+        },
+      }),
+      { label: 'softDeleteVault' }
+    );
 
     // Clean up IPFS files (unpin from Pinata)
-    // Get all files for this vault before deletion
-    const filesToDelete = await db.vaultFile.findMany({
-      where: { vaultId: id },
-      select: { ipfsHash: true, id: true },
-    });
+    const filesToDelete = await withRetry(
+      () => db.vaultFile.findMany({
+        where: { vaultId: id },
+        select: { ipfsHash: true, id: true },
+      }),
+      { label: 'getFilesToDelete' }
+    );
 
     // Unpin files from IPFS in parallel
     const unpinPromises = filesToDelete.map((file: { ipfsHash: string; id: string }) =>
@@ -234,14 +246,17 @@ export async function DELETE(
     const successCount = unpinResults.filter(r => r).length;
 
     // Log activity with cleanup details
-    await db.activityLog.create({
-      data: {
-        userId: payload.userId,
-        vaultId: id,
-        action: 'VAULT_DELETED',
-        description: `Deleted vault: ${deleted.name} (unpinned ${successCount}/${filesToDelete.length} files from IPFS)`,
-      },
-    });
+    await withRetry(
+      () => db.activityLog.create({
+        data: {
+          userId: payload.userId,
+          vaultId: id,
+          action: 'VAULT_DELETED',
+          description: `Deleted vault: ${deleted.name} (unpinned ${successCount}/${filesToDelete.length} files from IPFS)`,
+        },
+      }),
+      { label: 'logDelete' }
+    );
 
     return apiSuccess({
       ...deleted,
