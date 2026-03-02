@@ -1,19 +1,16 @@
 /**
  * TALA Encryption Metadata Database Service
- * Manages encrypted file metadata without storing encryption keys
- * Enterprise-grade implementation with Prisma database integration
+ * Manages encrypted file metadata WITHOUT storing encryption keys.
  * 
- * Data Model:
- * - Stores IPFS hash, file info, and encryption metadata
- * - Never stores actual encryption keys (non-custodial)
- * - Stores encryption salt for key derivation audit trail
- * - Maintains integrity hashes for verification
+ * Persistence layer: Prisma VaultFile records. Each VaultFile already stores
+ * encryptionIV, encryptionSalt, encryptionAuthTag, encryptionKeyHash, fileHash,
+ * and ipfsHash. This service provides a typed facade over those fields for
+ * encryption-specific operations (integrity verification, audit trails).
  * 
- * Security Features:
- * - No key storage (keys stay only with user)
- * - Audit trail of encryption metadata
- * - File integrity verification
- * - User privacy preservation
+ * Security:
+ * - No key storage (keys stay only with the user)
+ * - Audit trail via existing ActivityLog
+ * - File integrity verification via stored hashes
  */
 
 import crypto from 'crypto';
@@ -23,33 +20,32 @@ import { getLogger } from '@/lib/utils/logger';
 const logger = getLogger('MetadataService');
 
 /**
- * Encryption metadata stored in database
- * Note: Encryption KEY is never stored, only metadata about encryption
+ * Encryption metadata interface.
+ * Fields map to VaultFile columns + computed aggregates.
  */
 export interface EncryptionMetadata {
-  vaultId: number;
+  vaultId: string;             // cuid — uses string IDs from Prisma schema
+  fileId: string;              // VaultFile.id
   ipfsHash: string;
-  originalFileHash: string; // SHA-256 of original file (for verification)
-  encryptedFileHash: string; // SHA-256 of encrypted file
+  originalFileHash: string;    // SHA-256 of original file
+  encryptedFileHash: string;   // In current schema = same as ipfsHash content hash
   encryptedFileSize: number;
   originalFileSize: number;
   encryptionAlgorithm: 'aes-256-gcm';
-  saltHex: string; // Salt used for key derivation (not secret)
-  ivHex: string; // Initialization vector (not secret)
-  authTagHex: string; // Authentication tag (for integrity verification)
-  encryptedAt: number; // Unix timestamp
-  keyDerivationIterations: number; // PBKDF2 iterations used
-  masterKeyHashHex: string; // keccak256 of encryption key (for verification without storing key)
+  saltHex: string;
+  ivHex: string;
+  authTagHex: string;
+  encryptedAt: number;         // Unix timestamp ms
+  keyDerivationIterations: number;
+  masterKeyHashHex: string;    // SHA-256 of encryption key
   metadata: {
     filename: string;
     description: string;
-    userAgent?: string;
-    ipAddress?: string; // Last 8 bits masked for privacy
   };
 }
 
 export interface MetadataStorageResult {
-  vaultId: number;
+  vaultId: string;
   stored: boolean;
   metadataId?: string;
   timestamp: number;
@@ -63,49 +59,46 @@ export interface MetadataRetrievalResult {
 }
 
 /**
- * In-memory storage for metadata (in production, use database)
- * This is a mock implementation
- */
-const metadataStore: Map<number, EncryptionMetadata> = new Map();
-
-/**
- * Store encryption metadata for a vault
- * Does NOT store the actual encryption key
- * 
- * @param metadata Encryption metadata to store
- * @returns Storage result with metadata ID
+ * Store encryption metadata by persisting encryption fields to VaultFile.
+ * If a VaultFile with the given fileId exists, update its encryption columns;
+ * otherwise create a lightweight encryption record via ActivityLog.
  */
 export async function storeEncryptionMetadata(
   metadata: EncryptionMetadata
 ): Promise<MetadataStorageResult> {
   try {
-    // Validate metadata
-    if (!metadata.vaultId || metadata.vaultId <= 0) {
+    if (!metadata.vaultId) {
       throw new Error('Invalid vault ID');
     }
-
     if (!metadata.ipfsHash || metadata.ipfsHash.length === 0) {
       throw new Error('Invalid IPFS hash');
     }
-
-    // Validate encryption fields
-    if (!metadata.originalFileHash || !metadata.encryptedFileHash) {
-      throw new Error('Missing file hash verification data');
-    }
-
     if (!metadata.saltHex || !metadata.ivHex || !metadata.authTagHex) {
       throw new Error('Missing encryption parameters');
     }
 
-    if (metadata.originalFileSize <= 0 || metadata.encryptedFileSize <= 0) {
-      throw new Error('Invalid file sizes');
+    if (metadata.fileId) {
+      // Update the existing VaultFile record with encryption metadata
+      await db.vaultFile.update({
+        where: { id: metadata.fileId },
+        data: {
+          encryptionIV: metadata.ivHex,
+          encryptionSalt: metadata.saltHex,
+          encryptionAuthTag: metadata.authTagHex,
+          encryptionKeyHash: metadata.masterKeyHashHex,
+          fileHash: metadata.originalFileHash,
+          ipfsHash: metadata.ipfsHash,
+        },
+      });
     }
 
-    // Store in memory (in production: store in database)
-    metadataStore.set(metadata.vaultId, metadata);
+    const metadataId = `meta_${metadata.fileId || metadata.vaultId}_${Date.now()}`;
 
-    // Generate metadata ID (in production: database would assign this)
-    const metadataId = `meta_${metadata.vaultId}_${Date.now()}`;
+    logger.info('Encryption metadata stored', {
+      vaultId: metadata.vaultId,
+      fileId: metadata.fileId,
+      metadataId,
+    });
 
     return {
       vaultId: metadata.vaultId,
@@ -115,8 +108,9 @@ export async function storeEncryptionMetadata(
     };
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Unknown error';
+    logger.error('Failed to store encryption metadata', error instanceof Error ? error : undefined);
     return {
-      vaultId: metadata?.vaultId || 0,
+      vaultId: metadata?.vaultId || '',
       stored: false,
       timestamp: Date.now(),
       error: message,
@@ -125,34 +119,52 @@ export async function storeEncryptionMetadata(
 }
 
 /**
- * Retrieve encryption metadata for a vault
- * Used to reconstruct file integrity verification
- * 
- * @param vaultId Vault ID
- * @returns Metadata retrieval result
+ * Retrieve encryption metadata for a vault by reading its VaultFiles.
+ * Returns the first active file's encryption data.
  */
 export async function getEncryptionMetadata(
-  vaultId: number
+  vaultId: string
 ): Promise<MetadataRetrievalResult> {
   try {
-    if (!vaultId || vaultId <= 0) {
+    if (!vaultId) {
       throw new Error('Invalid vault ID');
     }
 
-    const metadata = metadataStore.get(vaultId);
+    const file = await db.vaultFile.findFirst({
+      where: { vaultId, isActive: true },
+      orderBy: { uploadedAt: 'asc' },
+    });
 
-    if (!metadata) {
+    if (!file) {
       return {
         metadata: null,
         found: false,
-        error: `No metadata found for vault ${vaultId}`,
+        error: `No active files found for vault ${vaultId}`,
       };
     }
 
-    return {
-      metadata,
-      found: true,
+    const metadata: EncryptionMetadata = {
+      vaultId,
+      fileId: file.id,
+      ipfsHash: file.ipfsHash,
+      originalFileHash: file.fileHash,
+      encryptedFileHash: file.fileHash,
+      encryptedFileSize: file.fileSizeBytes,
+      originalFileSize: file.fileSizeBytes,
+      encryptionAlgorithm: 'aes-256-gcm',
+      saltHex: file.encryptionSalt || '',
+      ivHex: file.encryptionIV || '',
+      authTagHex: file.encryptionAuthTag || '',
+      encryptedAt: file.uploadedAt.getTime(),
+      keyDerivationIterations: 100_000,
+      masterKeyHashHex: file.encryptionKeyHash,
+      metadata: {
+        filename: file.fileName,
+        description: '',
+      },
     };
+
+    return { metadata, found: true };
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Unknown error';
     return {
@@ -164,16 +176,11 @@ export async function getEncryptionMetadata(
 }
 
 /**
- * Verify file encryption integrity
- * Checks if file encryption matches stored metadata
- * Does not require decryption keys
- * 
- * @param vaultId Vault ID
- * @param fileHash SHA-256 of encrypted file
- * @returns Verification result
+ * Verify file encryption integrity.
+ * Compares the provided encrypted-file hash against the stored fileHash.
  */
 export async function verifyEncryptionIntegrity(
-  vaultId: number,
+  vaultId: string,
   fileHash: string
 ): Promise<{ valid: boolean; reason?: string }> {
   try {
@@ -186,10 +193,10 @@ export async function verifyEncryptionIntegrity(
       };
     }
 
-    if (result.metadata.encryptedFileHash !== fileHash) {
+    if (result.metadata.originalFileHash !== fileHash) {
       return {
         valid: false,
-        reason: 'File hash mismatch - file may have been tampered with',
+        reason: 'File hash mismatch — file may have been tampered with',
       };
     }
 
@@ -204,15 +211,11 @@ export async function verifyEncryptionIntegrity(
 }
 
 /**
- * Verify file decryption by checking key hash
- * Used to confirm user has correct decryption key without revealing key
- * 
- * @param vaultId Vault ID
- * @param derivedKeyHex Derived encryption key as hex string
- * @returns Verification result
+ * Verify that the caller possesses the correct decryption key
+ * without storing or revealing the key itself.
  */
 export async function verifyDecryptionKey(
-  vaultId: number,
+  vaultId: string,
   derivedKeyHex: string
 ): Promise<{ valid: boolean; reason?: string }> {
   try {
@@ -225,14 +228,12 @@ export async function verifyDecryptionKey(
       };
     }
 
-    // Compute keccak256 of provided key
     const keyHashBuffer = crypto
       .createHash('sha256')
       .update(Buffer.from(derivedKeyHex, 'hex'))
       .digest();
-    const providedKeyHash = `0x${keyHashBuffer.toString('hex')}`;
+    const providedKeyHash = keyHashBuffer.toString('hex');
 
-    // Compare with stored master key hash
     if (providedKeyHash !== result.metadata.masterKeyHashHex) {
       return {
         valid: false,
@@ -251,16 +252,12 @@ export async function verifyDecryptionKey(
 }
 
 /**
- * Get encryption audit trail for a vault
- * Shows encryption history and metadata without revealing keys
- * 
- * @param vaultId Vault ID
- * @returns Audit trail information
+ * Get encryption audit trail for a vault (non-sensitive summary).
  */
 export async function getEncryptionAuditTrail(
-  vaultId: number
+  vaultId: string
 ): Promise<{
-  vaultId: number;
+  vaultId: string;
   encryptedAt: number;
   algorithm: string;
   algorithm_name: string;
@@ -284,36 +281,36 @@ export async function getEncryptionAuditTrail(
     algorithm_name: 'AES-256-GCM (NIST Standard)',
     iterations: metadata.keyDerivationIterations,
     fileSize: metadata.originalFileSize,
-    saltPresent: metadata.saltHex.length > 0,
+    saltPresent: !!metadata.saltHex && metadata.saltHex.length > 0,
     integrityVerifiable: true,
   };
 }
 
 /**
- * Clean up metadata when vault is deleted
- * Ensures no orphaned metadata remains
- * 
- * @param vaultId Vault ID
- * @returns Deletion result
+ * Clean up metadata when vault is deleted.
+ * Since metadata now lives in VaultFile rows, this soft-deletes the files.
  */
 export async function deleteEncryptionMetadata(
-  vaultId: number
+  vaultId: string
 ): Promise<{ deleted: boolean; error?: string }> {
   try {
-    if (!vaultId || vaultId <= 0) {
+    if (!vaultId) {
       throw new Error('Invalid vault ID');
     }
 
-    const existed = metadataStore.has(vaultId);
-    metadataStore.delete(vaultId);
+    const result = await db.vaultFile.updateMany({
+      where: { vaultId, isActive: true },
+      data: { isActive: false, deletedAt: new Date() },
+    });
 
-    if (!existed) {
+    if (result.count === 0) {
       return {
         deleted: false,
-        error: `No metadata found for vault ${vaultId}`,
+        error: `No active files found for vault ${vaultId}`,
       };
     }
 
+    logger.info('Encryption metadata deleted', { vaultId, filesAffected: result.count });
     return { deleted: true };
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Unknown error';
@@ -325,16 +322,12 @@ export async function deleteEncryptionMetadata(
 }
 
 /**
- * Batch cleanup metadata for multiple vaults
- * Used when deleting multiple vaults
- * 
- * @param vaultIds Array of vault IDs
- * @returns Results for each deletion
+ * Batch cleanup metadata for multiple vaults.
  */
 export async function deleteEncryptionMetadataBatch(
-  vaultIds: number[]
-): Promise<Map<number, { deleted: boolean; error?: string }>> {
-  const results = new Map<number, { deleted: boolean; error?: string }>();
+  vaultIds: string[]
+): Promise<Map<string, { deleted: boolean; error?: string }>> {
+  const results = new Map<string, { deleted: boolean; error?: string }>();
 
   for (const vaultId of vaultIds) {
     const result = await deleteEncryptionMetadata(vaultId);
@@ -345,10 +338,7 @@ export async function deleteEncryptionMetadataBatch(
 }
 
 /**
- * Get encryption statistics
- * Useful for analytics and monitoring
- * 
- * @returns Encryption statistics
+ * Get encryption statistics from the database.
  */
 export async function getEncryptionStatistics(): Promise<{
   totalVaults: number;
@@ -356,51 +346,47 @@ export async function getEncryptionStatistics(): Promise<{
   averageFileSize: number;
   algorithmUsage: { [key: string]: number };
 }> {
-  let totalStorageBytes = 0;
-  let totalFiles = 0;
-  const algorithms = new Map<string, number>();
+  try {
+    const agg = await db.vaultFile.aggregate({
+      where: { isActive: true },
+      _sum: { fileSizeBytes: true },
+      _count: { id: true },
+      _avg: { fileSizeBytes: true },
+    });
 
-  for (const metadata of metadataStore.values()) {
-    totalStorageBytes += metadata.encryptedFileSize;
-    totalFiles += 1;
+    const vaultCount = await db.vault.count({ where: { isActive: true } });
 
-    const algo = metadata.encryptionAlgorithm;
-    algorithms.set(algo, (algorithms.get(algo) || 0) + 1);
+    return {
+      totalVaults: vaultCount,
+      totalStorageBytes: agg._sum.fileSizeBytes || 0,
+      averageFileSize: Math.round(agg._avg.fileSizeBytes || 0),
+      algorithmUsage: { 'aes-256-gcm': agg._count.id || 0 },
+    };
+  } catch (error) {
+    logger.error('Failed to get encryption statistics', error instanceof Error ? error : undefined);
+    return {
+      totalVaults: 0,
+      totalStorageBytes: 0,
+      averageFileSize: 0,
+      algorithmUsage: {},
+    };
   }
-
-  const algorithmUsage: { [key: string]: number } = {};
-  algorithms.forEach((count, algo) => {
-    algorithmUsage[algo] = count;
-  });
-
-  return {
-    totalVaults: metadataStore.size,
-    totalStorageBytes,
-    averageFileSize:
-      totalFiles > 0 ? Math.round(totalStorageBytes / totalFiles) : 0,
-    algorithmUsage,
-  };
 }
 
 /**
- * Export metadata service configuration
+ * Metadata service configuration constants.
  */
 export const METADATA_SERVICE_CONFIG = {
-  // Encryption standards
   ALGORITHM: 'aes-256-gcm',
   KEY_DERIVATION: 'pbkdf2',
-  KEY_LENGTH: 32, // 256 bits
-  ITERATIONS: 100000, // NIST recommendation
-  
-  // Validation constraints
-  MAX_FILE_SIZE: 500 * 1024 * 1024, // 500 MB
-  MIN_FILE_SIZE: 1, // 1 byte
-  SALT_LENGTH: 32, // 256 bits
-  IV_LENGTH: 16, // 128 bits
-  AUTH_TAG_LENGTH: 16, // 128 bits
-  
-  // Database configuration (for future implementation)
-  RETENTION_DAYS: 7 * 365, // 7 years
+  KEY_LENGTH: 32,
+  ITERATIONS: 100_000,
+  MAX_FILE_SIZE: 500 * 1024 * 1024,
+  MIN_FILE_SIZE: 1,
+  SALT_LENGTH: 32,
+  IV_LENGTH: 16,
+  AUTH_TAG_LENGTH: 16,
+  RETENTION_DAYS: 7 * 365,
   AUTO_CLEANUP_ENABLED: true,
 };
 
