@@ -159,22 +159,42 @@ export async function POST(req: NextRequest): Promise<Response> {
       );
     }
 
-    // 6. Check storage quota (default to 'free' plan since plan system is not yet implemented)
-    const userPlan = "free";
+    // 6. Check storage quota — resolve user's real plan from DB
+    let userPlan = 'free';
+    try {
+      const userRecord = await db.user.findUnique({
+        where: { id: userId },
+        select: { plan: true },
+      });
+      if (userRecord?.plan) {
+        // Map PlanTier enum (FREE/STARTER/PROFESSIONAL/ENTERPRISE/GOVERNMENT) to quota key
+        const PLAN_TIER_TO_QUOTA: Record<string, string> = {
+          FREE: 'free',
+          STARTER: 'starter',
+          PROFESSIONAL: 'pro',
+          ENTERPRISE: 'enterprise',
+          GOVERNMENT: 'enterprise', // Government gets enterprise-level quotas
+        };
+        userPlan = PLAN_TIER_TO_QUOTA[userRecord.plan] || 'free';
+      }
+    } catch (planError) {
+      logger.warn('Could not fetch user plan, defaulting to free', { userId });
+    }
     logger.info("Checking storage quota", { userId, userPlan, fileSize: file.size });
 
     const canUpload = await canUserUpload(userId, file.size, userPlan);
 
-    if (!canUpload) {
+    if (!canUpload.allowed) {
       logger.warn("Upload failed: Storage quota exceeded", {
         userId,
         userPlan,
         fileSize: file.size,
+        reason: canUpload.reason,
       });
       return Response.json<UploadResponse>(
         {
           success: false,
-          error: `Storage quota exceeded. You have used your ${userPlan} plan's limit. Upgrade your plan to continue.`,
+          error: canUpload.reason || `Storage quota exceeded. Upgrade your plan to continue.`,
         },
         { status: 413 }
       );

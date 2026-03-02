@@ -10,17 +10,20 @@ import { db } from '@/lib/prisma';
 const logger = getLogger('StorageQuotaService');
 
 // Default storage quotas per plan (in bytes)
-export const STORAGE_QUOTAS = {
-  free: 100 * 1024 * 1024, // 100MB
-  pro: 10 * 1024 * 1024 * 1024, // 10GB
-  enterprise: 1024 * 1024 * 1024 * 1024, // 1TB
+// Keys align with PlanTier enum mapping: FREE→free, STARTER→starter, PROFESSIONAL→pro, ENTERPRISE→enterprise
+export const STORAGE_QUOTAS: Record<string, number> = {
+  free: 100 * 1024 * 1024,           // 100 MB
+  starter: 500 * 1024 * 1024,        // 500 MB
+  pro: 1024 * 1024 * 1024,           // 1 GB  (Professional)
+  enterprise: 1024 * 1024 * 1024 * 1024, // 1 TB  (Enterprise / Government)
 };
 
 // Daily bandwidth limits per plan (in bytes)
-export const BANDWIDTH_QUOTAS = {
-  free: 500 * 1024 * 1024, // 500MB/day
-  pro: 100 * 1024 * 1024 * 1024, // 100GB/day
-  enterprise: Infinity, // Unlimited
+export const BANDWIDTH_QUOTAS: Record<string, number> = {
+  free: 500 * 1024 * 1024,           // 500 MB/day
+  starter: 2 * 1024 * 1024 * 1024,   // 2 GB/day
+  pro: 100 * 1024 * 1024 * 1024,     // 100 GB/day
+  enterprise: Number.MAX_SAFE_INTEGER, // Effectively unlimited
 };
 
 export interface StorageMetrics {
@@ -64,7 +67,7 @@ export async function getUserStorageUsage(userId: string): Promise<number> {
  * Get user's storage metrics
  */
 export async function getStorageMetrics(userId: string, plan: string = 'free'): Promise<StorageMetrics> {
-  const quota = STORAGE_QUOTAS[plan as keyof typeof STORAGE_QUOTAS] || STORAGE_QUOTAS.free;
+  const quota = STORAGE_QUOTAS[plan] || STORAGE_QUOTAS.free;
   const totalUsed = await getUserStorageUsage(userId);
 
   const percentageUsed = (totalUsed / quota) * 100;

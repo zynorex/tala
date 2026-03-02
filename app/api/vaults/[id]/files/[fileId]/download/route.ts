@@ -136,7 +136,70 @@ export async function POST(
       },
     });
 
-    // Return file metadata for client-side decryption
+    // Determine download mode from query parameter
+    const mode = request.nextUrl.searchParams.get('mode');
+
+    // ─── Server-side decryption mode ────────────────────────────────────
+    if (mode === 'server') {
+      // Verify the file has encryption metadata
+      if (!file.encryptionIV || !file.encryptionSalt || !file.encryptionAuthTag) {
+        return NextResponse.json(
+          { error: 'File encryption metadata is missing — cannot decrypt server-side' },
+          { status: 422 }
+        );
+      }
+
+      // Verify password matches stored hash
+      const passwordHash = crypto.createHash('sha256').update(password).digest('hex');
+      if (file.encryptionKeyHash && passwordHash !== file.encryptionKeyHash) {
+        return NextResponse.json({ error: 'Invalid decryption password' }, { status: 403 });
+      }
+
+      // Download encrypted file from IPFS
+      let encryptedData: Buffer;
+      try {
+        encryptedData = await downloadFromIPFS(file.ipfsHash);
+      } catch (ipfsError) {
+        console.error('IPFS download failed:', ipfsError);
+        return NextResponse.json(
+          { error: 'Failed to retrieve file from storage' },
+          { status: 502 }
+        );
+      }
+
+      // Decrypt the file
+      let decryptedData: Buffer;
+      try {
+        decryptedData = decryptFileData(
+          encryptedData.toString('hex'),
+          password,
+          file.encryptionIV,
+          file.encryptionSalt,
+          file.encryptionAuthTag
+        );
+      } catch (decryptError) {
+        console.error('Decryption failed:', decryptError);
+        return NextResponse.json(
+          { error: 'Decryption failed — invalid password or corrupted file' },
+          { status: 422 }
+        );
+      }
+
+      // Return the decrypted binary with proper headers
+      const safeFileName = file.fileName.replace(/[^\w.\-]/g, '_');
+      return new NextResponse(decryptedData, {
+        status: 200,
+        headers: {
+          'Content-Type': file.mimeType || 'application/octet-stream',
+          'Content-Disposition': `attachment; filename="${safeFileName}"`,
+          'Content-Length': String(decryptedData.length),
+          'X-Content-Type-Options': 'nosniff',
+          'Cache-Control': 'no-store, no-cache, must-revalidate, private',
+        },
+      });
+    }
+
+    // ─── Default: return metadata for client-side decryption ────────────
     return NextResponse.json(
       {
         success: true,
