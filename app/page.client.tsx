@@ -545,32 +545,37 @@ export default function HomeClient() {
         </div>
       </section>
 
-      <section className="py-14 md:py-20 px-4 border-b-4 border-black bg-white">
-        <div className="container mx-auto max-w-6xl space-y-10">
-          <div className="flex flex-col md:flex-row gap-6 md:items-center md:justify-between">
-            <div className="space-y-3">
-              <p className="text-sm font-black text-gray-700 uppercase">Who we serve</p>
-              <h2 className="text-4xl font-black text-black">One protocol, many workflows</h2>
-              <p className="text-lg text-gray-800 font-medium max-w-3xl">
-                Education boards, government procurement desks, legal aid groups, and estates teams use T.A.L.A. to remove early-access risk. Same rails, different deadlines.
+      <section className="py-20 md:py-32 px-4 border-b-8 border-black bg-white relative">
+        <div className="absolute top-0 right-0 w-32 h-32 bg-heirlock-yellow border-b-8 border-l-8 border-black"></div>
+        <div className="container mx-auto max-w-7xl space-y-16 relative z-10">
+          <div className="flex flex-col md:flex-row gap-8 md:items-end md:justify-between border-b-8 border-black pb-8">
+            <div className="space-y-4 max-w-4xl">
+              <span className="inline-block bg-black text-white px-3 py-1 font-black uppercase text-sm tracking-widest shadow-[4px_4px_0_0_#BAE1FF]">
+                Deployment Sectors
+              </span>
+              <h2 className="text-5xl md:text-7xl font-black text-black uppercase leading-tight tracking-tighter">One Protocol.<br/>Many Workflows.</h2>
+              <p className="text-xl md:text-2xl text-black font-bold max-w-3xl leading-snug">
+                Education boards, public procurement desks, legal firms, and asset managers use T.A.L.A. to eliminate early access execution risks. The underlying rails remain identical.
               </p>
             </div>
-            <div className="border-4 border-black bg-black text-heirlock-yellow px-5 py-4 font-mono text-sm shadow-brutal">
-              OTPs fail. Passwords leak. Cryptographic unlocks do not depend on good behavior.
+            <div className="border-4 border-black bg-heirlock-pink text-black px-6 py-5 font-bold text-lg shadow-[8px_8px_0_0_#000] rotate-2 max-w-sm">
+              "Cryptographic unlocks do not depend on good behavior. They depend on math."
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {useCases.map((use) => {
               const Icon = use.icon;
               return (
-                <div key={use.title} className="border-4 border-black bg-cream p-5 shadow-brutal flex flex-col gap-3 micro-card">
-                  <div className="flex items-center gap-3">
-                    <Icon className="w-8 h-8 text-black" />
-                    <h3 className="text-xl font-black text-black leading-tight">{use.title}</h3>
+                <div key={use.title} className="border-4 border-black bg-cream p-8 shadow-[8px_8px_0_0_#000] hover:shadow-[12px_12px_0_0_#000] hover:-translate-y-2 transition-all flex flex-col gap-5 group cursor-default">
+                  <div className="w-16 h-16 bg-black flex items-center justify-center border-4 border-black group-hover:bg-heirlock-yellow transition-colors rotate-[-3deg]">
+                    <Icon className="w-8 h-8 text-white group-hover:text-black transition-colors" />
                   </div>
-                  <p className="text-sm text-gray-800 leading-relaxed flex-1">{use.summary}</p>
-                  <p className="text-xs font-bold text-gray-700">{use.impact}</p>
+                  <h3 className="text-2xl font-black text-black uppercase leading-none">{use.title}</h3>
+                  <p className="text-base text-black font-bold leading-relaxed flex-1 border-l-4 border-black pl-3">{use.summary}</p>
+                  <div className="bg-black text-white p-3 text-sm font-bold uppercase">
+                    Outcome: {use.impact}
+                  </div>
                 </div>
               );
             })}
@@ -578,68 +583,88 @@ export default function HomeClient() {
         </div>
       </section>
 
-      <section className="py-14 md:py-20 px-4 bg-cream border-b-4 border-black">
-        <div className="container mx-auto max-w-6xl grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <div className="space-y-4">
-            <p className="text-sm font-black text-gray-700 uppercase">Why leaks persist</p>
-            <h2 className="text-4xl font-black text-black">Humans are the attack surface</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <section className="py-20 md:py-32 px-4 bg-black border-b-8 border-black text-white relative overflow-hidden">
+        {/* Background Grids for dark section */}
+        <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.05)_1px,transparent_1px)] bg-[size:40px_40px]"></div>
+        
+        <div className="container mx-auto max-w-7xl grid grid-cols-1 lg:grid-cols-12 gap-16 relative z-10">
+          <div className="lg:col-span-5 space-y-8">
+            <span className="inline-block bg-white text-black px-3 py-1 font-black uppercase text-sm tracking-widest shadow-[4px_4px_0_0_#FFB3BA]">
+              Vulnerability Analysis
+            </span>
+            <h2 className="text-6xl md:text-7xl font-black text-white uppercase tracking-tighter leading-none">Humans Are The<br/>Attack Surface.</h2>
+            <div className="space-y-6">
               {narrativeBlocks.map((block) => (
-                <div key={block.title} className="border-4 border-black bg-white p-4 shadow-brutal h-full">
-                  <p className="text-sm font-black text-gray-700 uppercase mb-2">{block.title}</p>
-                  <p className="text-sm text-gray-800 leading-relaxed">{block.body}</p>
+                <div key={block.title} className="border-4 border-white bg-dark p-6 shadow-[8px_8px_0_0_#FFFACD]">
+                  <p className="text-xl font-black text-heirlock-yellow uppercase mb-3 px-2 bg-white/10 inline-block">{block.title}</p>
+                  <p className="text-lg text-white font-medium leading-relaxed">{block.body}</p>
                 </div>
               ))}
             </div>
-            <div className="border-4 border-black bg-black text-heirlock-yellow px-4 py-3 font-mono text-sm">
-              Code treats every actor the same. No bribes. No pressure. No manual loopholes.
-            </div>
           </div>
 
-          <div className="border-4 border-black bg-white p-6 shadow-brutal flex flex-col gap-5">
-            <div className="flex items-center gap-3">
-              <Shield className="w-6 h-6" />
-              <h3 className="text-2xl font-black text-black">Proof-first stack</h3>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {securityLayers.map((layer) => {
-                const Icon = layer.icon;
-                return (
-                  <div key={layer.title} className="border-2 border-black bg-cream p-3 flex gap-3">
-                    <Icon className="w-5 h-5" />
-                    <div>
-                      <p className="text-sm font-black text-black">{layer.title}</p>
-                      <p className="text-xs text-gray-700">{layer.description}</p>
+          <div className="lg:col-span-7 flex flex-col justify-center">
+            <div className="border-4 border-white bg-black p-8 md:p-12 shadow-[12px_12px_0_0_#BAE1FF] relative">
+              
+              <div className="absolute -top-6 -right-6 bg-heirlock-red text-white border-4 border-white px-4 py-2 font-black uppercase text-xl transform rotate-6 z-10">
+                ARCHITECTURE
+              </div>
+
+              <div className="flex items-center gap-4 mb-10 border-b-4 border-white pb-6">
+                <Shield className="w-12 h-12 text-heirlock-green" />
+                <h3 className="text-4xl font-black text-white uppercase tracking-tight">Proof First Stack</h3>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                {securityLayers.map((layer) => {
+                  const Icon = layer.icon;
+                  return (
+                    <div key={layer.title} className="border-4 border-white bg-white/5 p-5 flex flex-col gap-4 hover:bg-white/10 transition-colors">
+                      <div className="w-12 h-12 bg-white text-black flex items-center justify-center border-2 border-white">
+                        <Icon className="w-6 h-6" />
+                      </div>
+                      <div>
+                        <p className="text-xl font-black text-white uppercase mb-2">{layer.title}</p>
+                        <p className="text-sm text-gray-300 font-bold leading-relaxed">{layer.description}</p>
+                      </div>
                     </div>
-                  </div>
-                );
-              })}
+                  );
+                })}
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      <section className="py-14 md:py-20 px-4 bg-white border-b-4 border-black">
-        <div className="container mx-auto max-w-6xl space-y-10">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <section className="py-20 md:py-32 px-4 bg-cream border-b-8 border-black relative">
+        <div className="container mx-auto max-w-7xl space-y-16">
+          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 border-b-8 border-black pb-8">
             <div>
-              <p className="text-sm font-black text-gray-700 uppercase">Blueprint</p>
-              <h2 className="text-4xl font-black text-black">Layers you can audit</h2>
+              <span className="inline-block bg-heirlock-yellow text-black px-3 py-1 font-black uppercase text-sm tracking-widest shadow-[4px_4px_0_0_#000] mb-4">
+                Architecture Blueprint
+              </span>
+              <h2 className="text-5xl md:text-7xl font-black text-black uppercase tracking-tighter leading-none">Layers You<br/>Can Audit.</h2>
             </div>
-            <Link href="/docs/architecture" className="text-sm font-bold underline text-black">View architecture</Link>
+            <Link href="/docs/architecture" className="inline-flex items-center gap-2 font-black text-xl text-black bg-white border-4 border-black px-6 py-4 shadow-[6px_6px_0_0_#000] hover:-translate-y-1 hover:shadow-[10px_10px_0_0_#000] transition-all uppercase">
+              View Architecture <ChevronRight className="w-6 h-6" />
+            </Link>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {blueprint.map((layer) => {
               const Icon = layer.icon;
               return (
-                <div key={layer.title} className="border-4 border-black bg-cream p-5 shadow-brutal flex flex-col gap-3">
-                  <div className="flex items-center gap-3">
-                    <Icon className="w-6 h-6" />
-                    <h3 className="text-xl font-black text-black">{layer.title}</h3>
+                <div key={layer.title} className="border-4 border-black bg-white p-6 shadow-[8px_8px_0_0_#000] flex flex-col gap-5 hover:bg-black hover:text-white transition-colors group">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 bg-cream text-black flex items-center justify-center border-4 border-black group-hover:bg-heirlock-yellow group-hover:border-heirlock-yellow">
+                      <Icon className="w-6 h-6" />
+                    </div>
+                    <h3 className="text-2xl font-black uppercase leading-tight">{layer.title}</h3>
                   </div>
-                  <ul className="text-sm text-gray-800 list-disc list-inside space-y-1">
+                  <ul className="text-base font-bold list-none space-y-3 flex-1 mt-4">
                     {layer.bullets.map((b) => (
-                      <li key={b}>{b}</li>
+                      <li key={b} className="flex items-start gap-3">
+                        <span className="w-2 h-2 mt-2 bg-black border border-black group-hover:bg-heirlock-yellow group-hover:border-heirlock-yellow shrink-0"></span>
+                        <span className="group-hover:text-gray-200">{b}</span>
+                      </li>
                     ))}
                   </ul>
                 </div>
@@ -649,129 +674,174 @@ export default function HomeClient() {
         </div>
       </section>
 
-      <section className="py-14 md:py-20 px-4 bg-heirlock-yellow border-b-4 border-black">
-        <div className="container mx-auto max-w-6xl grid grid-cols-1 lg:grid-cols-2 gap-10">
-          <div className="space-y-4">
-            <p className="text-sm font-black text-gray-700 uppercase">Trust signals</p>
-            <h2 className="text-4xl font-black text-black">Telemetry from pilots</h2>
-            <p className="text-sm text-gray-800">Real numbers from current pilots and synthetic drills.</p>
-            <div className="grid grid-cols-2 gap-4">
+      <section className="py-20 md:py-32 px-4 bg-heirlock-yellow border-b-8 border-black">
+        <div className="container mx-auto max-w-7xl grid grid-cols-1 lg:grid-cols-12 gap-16">
+          <div className="lg:col-span-5 space-y-8">
+            <span className="inline-block bg-black text-white px-3 py-1 font-black uppercase text-sm tracking-widest shadow-[4px_4px_0_0_#FFFACD]">
+              Trust Signals
+            </span>
+            <h2 className="text-6xl md:text-7xl font-black text-black uppercase tracking-tighter leading-none">Telemetry<br/>From Pilots.</h2>
+            <p className="text-xl text-black font-bold border-l-8 border-black pl-4">Real numbers from current deployments and synthetic drills.</p>
+            <div className="grid grid-cols-2 gap-6 mt-8">
               {trustSignals.map((signal) => (
-                <div key={signal.label} className="border-4 border-black bg-white p-4 shadow-brutal">
-                  <p className="text-3xl font-black text-black">{signal.value}</p>
-                  <p className="text-sm font-bold text-gray-700">{signal.label}</p>
-                  <p className="text-xs text-gray-600">{signal.detail}</p>
+                <div key={signal.label} className="border-4 border-black bg-white p-6 shadow-[6px_6px_0_0_#000]">
+                  <p className="text-4xl md:text-5xl font-black text-black mb-2">{signal.value}</p>
+                  <p className="text-sm font-black text-black uppercase">{signal.label}</p>
+                  <p className="text-xs text-gray-700 font-bold mt-2 leading-tight">{signal.detail}</p>
                 </div>
               ))}
             </div>
           </div>
 
-          <div className="border-4 border-black bg-white p-6 shadow-brutal space-y-4">
-            <div className="flex items-center gap-3">
-              <Database className="w-6 h-6" />
-              <h3 className="text-2xl font-black text-black">Who can verify?</h3>
-            </div>
-            <p className="text-sm text-gray-800">Anyone with the on-chain tx hash and the CID can verify unlock proofs. No dashboards required.</p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {proofRail.map((entity) => (
-                <div key={entity.name} className="border-2 border-black bg-cream p-3 flex items-center justify-between">
-                  <div>
-                    <p className="font-black text-black">{entity.name}</p>
-                    <p className="text-xs text-gray-700">{entity.note}</p>
-                  </div>
-                  <span className="font-mono text-xs text-gray-600">✓</span>
+          <div className="lg:col-span-7">
+            <div className="border-4 border-black bg-white p-8 md:p-12 shadow-[12px_12px_0_0_#000] h-full flex flex-col">
+              <div className="flex items-center gap-4 mb-8">
+                <div className="w-16 h-16 bg-heirlock-blue border-4 border-black flex items-center justify-center">
+                  <Database className="w-8 h-8 text-black" strokeWidth={2.5} />
                 </div>
-              ))}
+                <h3 className="text-4xl font-black text-black uppercase tracking-tight">Who Can Verify?</h3>
+              </div>
+              <p className="text-xl text-black font-bold mb-10 border-b-4 border-black pb-8">Anyone with the chain transaction hash and the CID can verify unlock proofs. No dashboard required.</p>
+              
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mt-auto">
+                {proofRail.map((entity) => (
+                  <div key={entity.name} className="border-4 border-black bg-cream p-4 flex items-center justify-between hover:-translate-y-1 hover:shadow-[4px_4px_0_0_#000] transition-all">
+                    <div>
+                      <p className="font-black text-black text-xl uppercase">{entity.name}</p>
+                      <p className="text-sm text-gray-700 font-bold">{entity.note}</p>
+                    </div>
+                    <div className="w-8 h-8 bg-black text-heirlock-green flex items-center justify-center border-2 border-black font-bold">✓</div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      <section className="py-14 md:py-20 px-4 bg-cream border-b-4 border-black">
-        <div className="container mx-auto max-w-6xl space-y-10">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <section className="py-20 md:py-32 px-4 bg-white border-b-8 border-black relative overflow-hidden">
+        <div className="container mx-auto max-w-7xl space-y-16 relative z-10">
+          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 border-b-8 border-black pb-8">
             <div>
-              <p className="text-sm font-black text-gray-700 uppercase">Pricing</p>
-              <h2 className="text-4xl font-black text-black">Start with pilots</h2>
+              <span className="inline-block bg-heirlock-blue text-black px-3 py-1 font-black uppercase text-sm tracking-widest shadow-[4px_4px_0_0_#000] mb-4">
+                Operations Scale
+              </span>
+              <h2 className="text-6xl md:text-7xl font-black text-black uppercase tracking-tighter leading-none">Start With<br/>Pilots.</h2>
             </div>
-            <Link href="/pricing" className="text-sm font-bold underline text-black">See full pricing</Link>
+            <Link href="/pricing" className="inline-flex items-center gap-2 font-black text-xl text-white bg-black border-4 border-black px-6 py-4 shadow-[6px_6px_0_0_#BAE1FF] hover:-translate-y-1 hover:shadow-[10px_10px_0_0_#BAE1FF] transition-all uppercase">
+              See Full Pricing <ChevronRight className="w-6 h-6" />
+            </Link>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {pricingTiers.map((tier) => (
-              <div key={tier.name} className={`border-4 border-black ${tier.accent} p-6 shadow-brutal flex flex-col gap-3`}>
-                <div className="flex items-center justify-between">
-                  <h3 className="text-2xl font-black text-black">{tier.name}</h3>
-                  <p className="text-lg font-black text-black">{tier.price}</p>
+              <div key={tier.name} className={`border-4 border-black ${tier.accent} p-8 md:p-10 shadow-[10px_10px_0_0_#000] flex flex-col gap-6 relative group overflow-hidden`}>
+                <div className="flex items-center justify-between border-b-4 border-black pb-6">
+                  <h3 className="text-3xl font-black text-black uppercase">{tier.name}</h3>
+                  <p className="text-2xl font-black text-black bg-white border-4 border-black px-3 py-1 -rotate-2">{tier.price}</p>
                 </div>
-                <ul className="text-sm text-gray-800 list-disc list-inside space-y-1 flex-1">
+                <ul className="text-lg font-bold text-black flex-1 space-y-4 z-10 relative">
                   {tier.bullets.map((b) => (
-                    <li key={b}>{b}</li>
+                    <li key={b} className="flex items-start gap-4">
+                      <CheckCircle className="w-6 h-6 shrink-0 mt-0.5" strokeWidth={3} />
+                      <span>{b}</span>
+                    </li>
                   ))}
                 </ul>
-                <Link href={tier.cta.href} className="inline-flex items-center gap-2 font-black text-sm text-black bg-white border-3 border-black px-4 py-3 shadow-brutal w-max">
-                  {tier.cta.label} <ChevronRight className="w-4 h-4" />
-                </Link>
+                <div className="pt-6 relative z-10">
+                  <Link href={tier.cta.href} className="inline-flex items-center justify-center gap-3 font-black text-xl text-black bg-white border-4 border-black px-6 py-5 shadow-[6px_6px_0_0_#000] hover:shadow-[10px_10px_0_0_#000] hover:-translate-y-1 transition-all w-full uppercase">
+                    {tier.cta.label} <ChevronRight className="w-6 h-6" strokeWidth={3} />
+                  </Link>
+                </div>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="py-14 md:py-20 px-4 bg-white border-b-4 border-black">
-        <div className="container mx-auto max-w-6xl grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <div className="space-y-4">
-            <p className="text-sm font-black text-gray-700 uppercase">Frequently asked</p>
-            <h2 className="text-4xl font-black text-black">Answers we give in procurement calls</h2>
-            <p className="text-sm text-gray-800">If you need a longer packet, head to the Procurement Pack or Trust Center.</p>
-            <Link href="/procurement" className="inline-flex items-center gap-2 font-black text-sm text-black underline">Procurement Pack <ChevronRight className="w-4 h-4" /></Link>
+      <section className="py-20 md:py-32 px-4 bg-white border-b-8 border-black">
+        <div className="container mx-auto max-w-7xl grid grid-cols-1 lg:grid-cols-2 gap-16">
+          <div className="space-y-6">
+            <span className="inline-block bg-heirlock-pink text-black px-3 py-1 font-black uppercase text-sm tracking-widest shadow-[4px_4px_0_0_#000]">
+              Frequently Asked
+            </span>
+            <h2 className="text-5xl md:text-6xl font-black text-black uppercase tracking-tighter leading-none">Procurement<br/>Answers.</h2>
+            <p className="text-xl text-black font-bold border-l-8 border-black pl-4">Require a comprehensive technical packet? Access the Procurement Pack or visit our Trust Center.</p>
+            <Link href="/procurement" className="inline-flex items-center gap-3 font-black text-xl text-white bg-black border-4 border-black px-6 py-5 shadow-[6px_6px_0_0_#000] hover:-translate-y-1 hover:shadow-[10px_10px_0_0_#000] transition-all uppercase mt-4">
+              Procurement Pack <ChevronRight className="w-6 h-6" strokeWidth={3} />
+            </Link>
           </div>
-          <div className="space-y-3">
+          <div className="space-y-4">
             {faqs.map((item) => (
-              <div key={item.q} className="border-4 border-black bg-cream p-4 shadow-brutal">
-                <p className="text-sm font-black text-black">{item.q}</p>
-                <p className="text-sm text-gray-700 mt-1">{item.a}</p>
+              <div key={item.q} className="border-4 border-black bg-cream p-6 md:p-8 shadow-[8px_8px_0_0_#000] hover:-translate-y-1 hover:shadow-[12px_12px_0_0_#000] transition-all">
+                <div className="flex gap-4 items-start">
+                  <span className="text-2xl font-black text-heirlock-yellow drop-shadow-[2px_2px_0_rgba(0,0,0,1)] mt-1">Q.</span>
+                  <div>
+                    <p className="text-xl font-black text-black uppercase leading-tight mb-2">{item.q}</p>
+                    <p className="text-base text-black font-bold leading-relaxed">{item.a}</p>
+                  </div>
+                </div>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="py-14 md:py-20 px-4 bg-heirlock-blue border-b-4 border-black">
-        <div className="container mx-auto max-w-6xl grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
-          <div className="space-y-4">
-            <p className="text-sm font-black text-black uppercase">Ready to test?</p>
-            <h2 className="text-4xl font-black text-black">Create a vault and simulate unlocks</h2>
-            <p className="text-sm text-black">Start with a small pilot. Validate on staging. Mirror on production when your reviewers approve.</p>
-            <div className="flex flex-col sm:flex-row gap-3">
-              <Link href="/create-vault" className="inline-flex items-center justify-center gap-2 font-black text-lg text-heirlock-yellow bg-black border-4 border-black px-8 py-4 shadow-brutal">
-                Launch Vault <ChevronRight className="w-5 h-5" />
+      <section className="py-24 md:py-32 px-4 bg-heirlock-blue border-b-8 border-black relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-64 h-64 bg-heirlock-yellow rounded-full mix-blend-multiply blur-[80px] opacity-60"></div>
+        <div className="absolute bottom-0 left-0 w-80 h-80 bg-heirlock-pink rounded-full mix-blend-multiply blur-[80px] opacity-60"></div>
+        
+        <div className="container mx-auto max-w-7xl grid grid-cols-1 lg:grid-cols-2 gap-16 items-center relative z-10">
+          <div className="space-y-8">
+            <span className="inline-block bg-black text-white px-3 py-1 font-black uppercase text-sm tracking-widest shadow-[4px_4px_0_0_#FFFACD]">
+              Deployment Ready
+            </span>
+            <h2 className="text-6xl md:text-8xl font-black text-black uppercase tracking-tighter leading-none">Simulate<br/><span className="bg-white border-4 border-black px-2 inline-block -rotate-2 transform shadow-[8px_8px_0_0_#000] mt-2">Unlocks.</span></h2>
+            <p className="text-xl text-black font-bold bg-white/50 backdrop-blur-sm p-4 border-4 border-black shadow-[4px_4px_0_0_#000]">Initiate a zero cost pilot. Validate operations on staging. Replicate to production upon stakeholder approval.</p>
+            <div className="flex flex-col sm:flex-row gap-5 pt-4">
+              <Link href="/create-vault" className="flex-1 text-center font-black text-xl lg:text-2xl text-heirlock-yellow bg-black border-4 border-black px-6 py-6 shadow-[8px_8px_0_0_#FFB3BA] hover:shadow-[12px_12px_0_0_#FFB3BA] hover:-translate-y-1 transition-all uppercase group">
+                <span className="flex items-center justify-center gap-3">
+                  LAUNCH VAULT <ChevronRight className="w-8 h-8 group-hover:translate-x-2 transition-transform" strokeWidth={3} />
+                </span>
               </Link>
-              <Link href="/integrations" className="inline-flex items-center justify-center gap-2 font-black text-lg text-black bg-white border-4 border-black px-8 py-4 shadow-brutal">
-                View Integrations
+              <Link href="/integrations" className="flex-1 text-center font-black text-xl lg:text-2xl text-black bg-white border-4 border-black px-6 py-6 shadow-[8px_8px_0_0_#000] hover:shadow-[12px_12px_0_0_#000] hover:-translate-y-1 hover:bg-cream transition-all uppercase">
+                Integrations
               </Link>
             </div>
           </div>
 
-          <div className="border-4 border-black bg-white p-6 shadow-brutal space-y-4">
-            <div className="flex items-center gap-3">
-              <Unlock className="w-6 h-6" />
-              <h3 className="text-2xl font-black text-black">Launch flow</h3>
-            </div>
-            <ol className="space-y-3 list-decimal list-inside text-sm text-gray-800">
-              <li>Encrypt your payload locally.</li>
-              <li>Set unlock timestamp; contract records the checksum.</li>
-              <li>Distribute the CID + tx hash to reviewers.</li>
-              <li>Watch the unlock proof emit on-chain at the scheduled time.</li>
-            </ol>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <div className="border-2 border-black bg-cream p-3">
-                <p className="text-xs font-bold text-gray-700 uppercase">Latency</p>
-                <p className="text-lg font-black text-black">~2s webhook dispatch</p>
+          <div className="border-4 border-black bg-white p-8 md:p-12 shadow-[12px_12px_0_0_#000] flex flex-col gap-8 md:rotate-1 hover:rotate-0 transition-transform duration-500">
+            <div className="flex items-center gap-5 border-b-4 border-black pb-6">
+              <div className="w-16 h-16 bg-black flex items-center justify-center border-4 border-black">
+                <Unlock className="w-8 h-8 text-heirlock-yellow" strokeWidth={2.5} />
               </div>
-              <div className="border-2 border-black bg-cream p-3">
-                <p className="text-xs font-bold text-gray-700 uppercase">Auditability</p>
-                <p className="text-lg font-black text-black">On-chain + IPFS references</p>
+              <h3 className="text-3xl font-black text-black uppercase">Launch Flow</h3>
+            </div>
+            
+            <ol className="space-y-6 text-lg font-bold text-black counter-reset-flow">
+              {[
+                'Encrypt local payload.',
+                'Specify timestamp; contract signs checksum.',
+                'Distribute CID and hash to reviewers.',
+                'Monitor on chain proof emit at schedule.'
+              ].map((step, i) => (
+                <li key={i} className="flex gap-4 items-start">
+                  <div className="w-8 h-8 shrink-0 bg-heirlock-pink border-4 border-black flex items-center justify-center font-black text-black mt-1">
+                    {i + 1}
+                  </div>
+                  <span className="leading-snug pt-1">{step}</span>
+                </li>
+              ))}
+            </ol>
+            
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mt-4">
+              <div className="border-4 border-black bg-cream p-5">
+                <p className="text-sm font-black text-black uppercase mb-1">Latency</p>
+                <p className="text-2xl font-black text-black">~2s Webhook</p>
+              </div>
+              <div className="border-4 border-black bg-cream p-5">
+                <p className="text-sm font-black text-black uppercase mb-1">Auditability</p>
+                <p className="text-xl font-black text-black leading-tight mt-1">Chain + IPFS</p>
               </div>
             </div>
           </div>
