@@ -434,101 +434,114 @@ export default function HomeClient() {
 
   return (
     <main className="min-h-screen bg-cream">
-      <section className="bg-gradient-to-br from-heirlock-yellow via-white to-heirlock-blue border-b-4 border-black py-14 md:py-20 px-4 relative overflow-hidden">
-        <div className="container mx-auto max-w-6xl grid grid-cols-1 lg:grid-cols-2 gap-10 relative z-10">
-          <div className="space-y-6">
-            <p className="inline-flex items-center gap-2 font-black text-sm uppercase tracking-widest text-black bg-white border-4 border-black px-4 py-2 shadow-brutal">
-              Zero-trust time capsules
-            </p>
-            <h1 className="text-5xl md:6xl font-black text-black leading-tight">
-              Secure sensitive drops today.
-              <br />
-              Release them when your process requires.
+      <section className="bg-cream border-b-8 border-black pt-20 pb-28 px-4 sm:px-6 lg:px-8 relative overflow-hidden selection:bg-black selection:text-heirlock-yellow min-h-[90vh] flex items-center">
+        {/* Background shapes */}
+        <div className="absolute top-10 left-10 w-[300px] h-[300px] md:w-[400px] md:h-[400px] bg-heirlock-pink border-4 border-black rounded-none mix-blend-multiply blur-sm opacity-80 animate-pulse transform rotate-12"></div>
+        <div className="absolute bottom-10 right-10 w-[400px] h-[400px] md:w-[600px] md:h-[600px] bg-heirlock-blue border-4 border-black rounded-full mix-blend-multiply blur-sm opacity-80"></div>
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-[120%] bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMiIgY3k9IjIiIHI9IjEuNSIgZmlsbD0iIzAwMDAwMCIgZmlsbC1vcGFjaXR5PSIwLjA4Ii8+PC9zdmc+')] opacity-60 pointer-events-none z-0"></div>
+
+        <div className="container mx-auto max-w-7xl grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 relative z-10">
+          
+          <div className="lg:col-span-7 flex flex-col justify-center relative">
+            {/* Flairs */}
+            <div className="absolute -top-12 -left-4 md:-top-16 md:-left-8 z-20">
+              <div className="bg-heirlock-yellow text-black border-4 border-black px-4 py-2 font-black uppercase text-lg md:text-xl transform -rotate-6 shadow-[6px_6px_0_0_#000]">
+                v2.0 PROTOCOL
+              </div>
+            </div>
+
+            <h1 className="text-7xl md:text-8xl lg:text-[120px] font-black uppercase tracking-tighter text-black leading-[0.85] mb-8 drop-shadow-sm w-full">
+              <span className="inline-block transform hover:-translate-y-2 transition-transform">TRUST</span><br />
+              <span className="inline-block transform hover:-translate-y-2 transition-transform bg-black text-white px-2 md:px-4 border-4 border-black mt-2 lg:mt-4 shadow-[8px_8px_0_0_#BAE1FF]">IS CODE.</span>
             </h1>
-            <p className="text-lg md:text-xl text-gray-800 font-medium">
-              T.A.L.A. is a trustless release prototype built for Indian exam, tender, and evidence workflows.
-              Files remain encrypted end-to-end, clocks are anchored to chain events, and each unlock produces on-chain proof material.
+            
+            <p className="text-xl md:text-2xl lg:text-3xl font-bold border-l-8 border-heirlock-blue pl-6 py-2 mb-10 text-black/80 max-w-2xl leading-tight bg-white/50 backdrop-blur-sm shadow-[4px_4px_0_0_#000]">
+              Zero-trust time capsules for Indian exam, tender, and evidence workflows.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4">
-              <Link href="/create-vault" className="micro-sheen inline-flex items-center justify-center gap-2 font-black text-lg text-heirlock-yellow bg-black border-4 border-black px-8 py-4 shadow-brutal">
-                Launch Vault <ChevronRight className="w-5 h-5" />
+
+            <div className="flex flex-col sm:flex-row gap-5 md:gap-6 mb-12">
+              <Link href="/create-vault" className="flex-1 text-center font-black text-xl lg:text-2xl text-white bg-black border-4 border-black px-6 py-5 shadow-[8px_8px_0_0_#FFB3BA] hover:shadow-[12px_12px_0_0_#FFB3BA] hover:-translate-y-1 transition-all uppercase tracking-wider group">
+                <span className="flex items-center justify-center gap-3">
+                  LAUNCH VAULT <ChevronRight className="w-8 h-8 group-hover:translate-x-2 transition-transform" strokeWidth={3} />
+                </span>
               </Link>
-              <Link href="/documentation" className="inline-flex items-center justify-center gap-2 font-black text-lg text-black bg-white border-4 border-black px-8 py-4 shadow-brutal">
-                Explore Docs <ChevronRight className="w-5 h-5" />
+              <Link href="/documentation" className="flex-1 text-center font-black text-xl lg:text-2xl text-black bg-white border-4 border-black px-6 py-5 shadow-[8px_8px_0_0_#000] hover:shadow-[12px_12px_0_0_#000] hover:-translate-y-1 hover:bg-heirlock-yellow transition-all uppercase tracking-wider group">
+                <span className="flex items-center justify-center gap-3">
+                  EXPLORE DOCS <BookOpen className="w-8 h-8 group-hover:rotate-12 transition-transform" strokeWidth={3} />
+                </span>
               </Link>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-6">
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mt-auto">
               {heroHighlights.map((stat, idx) => (
                 <ScrollFadeIn key={stat.label} delay={idx * 0.2}>
-                  <div className="border-4 border-black bg-white p-4 shadow-brutal">
-                    <div className="text-3xl font-black text-black">{stat.value}</div>
-                    <p className="text-sm font-bold text-gray-700">{stat.label}</p>
-                    <p className="text-xs text-gray-600 mt-1">{stat.detail}</p>
+                  <div className="border-4 border-black bg-white p-5 md:p-6 shadow-[6px_6px_0_0_#000] hover:shadow-[10px_10px_0_0_#000] hover:-translate-y-1 transition-all group cursor-default">
+                    <div className="text-4xl lg:text-5xl font-black text-black mb-2 group-hover:text-heirlock-pink transition-colors">{stat.value}</div>
+                    <p className="text-sm md:text-base font-black text-black uppercase leading-tight">{stat.label}</p>
                   </div>
                 </ScrollFadeIn>
               ))}
             </div>
           </div>
 
-          <div className="border-4 border-black bg-white shadow-brutal p-6 flex flex-col gap-6 micro-grid relative">
-            <div>
-              <p className="font-black text-sm text-gray-600 uppercase tracking-widest">Dynamic timeline</p>
-              <h2 className="text-3xl font-black text-black">Every unlock is pre-written in code</h2>
-            </div>
-            <div className="space-y-4">
-              {journeyTimeline.map((step, idx) => (
-                <ScrollFadeIn key={step.title} delay={idx * 0.15}>
-                  <div className="grid grid-cols-[72px_1fr] gap-4 items-start">
-                    <div className="relative flex flex-col items-center">
-                      <span className="font-black text-xs border-2 border-black px-3 py-1 bg-heirlock-yellow text-black z-10 min-w-[56px] text-center">
-                        {step.badge}
-                      </span>
-                      {idx < journeyTimeline.length - 1 && (
-                        <span
-                          className="absolute top-10 bottom-0 left-1/2 -translate-x-1/2 w-0.5 bg-black"
-                          aria-hidden
-                        />
-                      )}
+          <div className="lg:col-span-5 relative mt-10 lg:mt-0 xl:scale-105 xl:origin-left">
+            <div className="absolute -inset-2 md:-inset-4 bg-heirlock-green border-4 border-black transform rotate-2 md:rotate-3 shadow-[12px_12px_0_0_#000] z-0 hidden sm:block"></div>
+            
+            <div className="border-4 border-black bg-white p-6 md:p-8 lg:p-10 relative z-10 h-full flex flex-col micro-grid shadow-[8px_8px_0_0_#000] sm:shadow-none">
+              <div className="mb-8 border-b-4 border-black pb-6">
+                <div className="inline-flex items-center gap-3 bg-black text-white px-4 py-2 font-black uppercase text-xs md:text-sm mb-5 shadow-[4px_4px_0_0_#BAE1FF]">
+                  <div className="w-3 h-3 bg-heirlock-red border-2 border-white animate-pulse"></div>
+                  Dynamic Timeline
+                </div>
+                <h2 className="text-4xl lg:text-[42px] font-black text-black uppercase tracking-tight leading-[0.95]">Every unlock<br/>pre-written<br/>in code.</h2>
+              </div>
+              
+              <div className="space-y-6 md:space-y-8 flex-grow">
+                {journeyTimeline.map((step, idx) => (
+                  <ScrollFadeIn key={step.title} delay={idx * 0.15}>
+                    <div className="grid grid-cols-[64px_1fr] md:grid-cols-[80px_1fr] gap-4 md:gap-6 items-start group">
+                      <div className="relative flex flex-col items-center">
+                        <span className={`font-black text-sm md:text-base border-4 border-black py-2 w-full text-center transition-transform duration-300 z-10 ${idx === activeTimelineIndex ? 'bg-heirlock-yellow text-black transform rotate-3 scale-110 shadow-[4px_4px_0_0_#000]' : 'bg-white text-black'}`}>
+                          {step.badge}
+                        </span>
+                        {idx < journeyTimeline.length - 1 && (
+                          <span
+                            className={`absolute top-12 md:top-14 bottom-[-24px] md:bottom-[-32px] left-1/2 -translate-x-1/2 w-1.5 transition-colors ${idx < activeTimelineIndex ? 'bg-black' : 'bg-black/10'}`}
+                            aria-hidden
+                          />
+                        )}
+                      </div>
+                      <div
+                        className={`border-4 border-black p-4 transition-all duration-300 ${
+                          idx === activeTimelineIndex ? 'bg-heirlock-yellow translate-x-1 shadow-[6px_6px_0_0_#000]' : 'bg-white group-hover:bg-cream'
+                        }`}
+                      >
+                        <p className="text-lg md:text-xl font-black text-black uppercase mb-1.5">{step.title}</p>
+                        <div className="border-l-4 border-black pl-3 mb-2 min-h-[40px] flex items-center">
+                          <p className="text-black font-bold text-sm md:text-base leading-snug">
+                            <TypewriterText
+                              text={
+                                idx === activeTimelineIndex
+                                  ? step.descriptions[activePhraseIndex]
+                                  : step.descriptions[0]
+                              }
+                              active={idx === activeTimelineIndex}
+                            />
+                          </p>
+                        </div>
+                      </div>
                     </div>
-                    <div
-                      className={`border-2 border-black p-3 shadow-brutal transition-all ${
-                        idx === activeTimelineIndex ? 'bg-heirlock-yellow/30' : 'bg-white'
-                      }`}
-                    >
-                      <p className="text-sm font-black text-gray-700 uppercase">{step.title}</p>
-                      <p className="text-black font-bold">
-                        <TypewriterText
-                          text={
-                            idx === activeTimelineIndex
-                              ? step.descriptions[activePhraseIndex]
-                              : step.descriptions[0]
-                          }
-                          active={idx === activeTimelineIndex}
-                        />
-                      </p>
-                      <p className="text-xs text-gray-600">
-                        <TypewriterText
-                          text={
-                            idx === activeTimelineIndex
-                              ? step.details[activePhraseIndex]
-                              : step.details[0]
-                          }
-                          active={idx === activeTimelineIndex}
-                        />
-                      </p>
-                    </div>
-                  </div>
-                </ScrollFadeIn>
-              ))}
-            </div>
-            <div className="border-4 border-black bg-black text-heirlock-yellow px-4 py-3 font-mono text-sm">
-              [ polygon amoy ] • block height synced • gas 0.01 gwei • status: operational
+                  </ScrollFadeIn>
+                ))}
+              </div>
+              
+              <div className="mt-10 border-4 border-black bg-black text-heirlock-green px-4 py-3 font-mono text-xs md:text-sm tracking-widest font-bold text-center uppercase flex justify-between shadow-[4px_4px_0_0_#FFFACD]">
+                <span>[ AMOY_TESTNET ]</span>
+                <span>SYNCED</span>
+                <span>0.01 GWEI</span>
+              </div>
             </div>
           </div>
-        </div>
-        <div className="absolute inset-0 opacity-40 pointer-events-none" aria-hidden>
-          <div className="absolute -left-10 top-10 w-64 h-64 bg-heirlock-yellow rounded-full mix-blend-multiply blur-3xl" />
-          <div className="absolute right-0 bottom-0 w-80 h-80 bg-heirlock-blue rounded-full mix-blend-multiply blur-3xl" />
         </div>
       </section>
 
