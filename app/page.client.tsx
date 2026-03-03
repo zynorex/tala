@@ -652,18 +652,18 @@ export default function HomeClient() {
             {blueprint.map((layer) => {
               const Icon = layer.icon;
               return (
-                <div key={layer.title} className="border-4 border-black bg-white p-6 shadow-[8px_8px_0_0_#000] flex flex-col gap-5 hover:bg-black hover:text-white transition-colors group">
+                <div key={layer.title} className="border-4 border-black bg-white p-6 shadow-[8px_8px_0_0_#000] flex flex-col gap-5 hover:bg-black transition-colors duration-300 group cursor-default">
                   <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 bg-cream text-black flex items-center justify-center border-4 border-black group-hover:bg-heirlock-yellow group-hover:border-heirlock-yellow">
-                      <Icon className="w-6 h-6" />
+                    <div className="w-12 h-12 bg-cream text-black flex items-center justify-center border-4 border-black group-hover:bg-heirlock-yellow group-hover:border-black transition-colors duration-300">
+                      <Icon className="w-6 h-6 transform group-hover:scale-110 transition-transform duration-300" />
                     </div>
-                    <h3 className="text-2xl font-black uppercase leading-tight">{layer.title}</h3>
+                    <h3 className="text-2xl font-black text-black group-hover:text-white uppercase leading-tight transition-colors duration-300">{layer.title}</h3>
                   </div>
                   <ul className="text-base font-bold list-none space-y-3 flex-1 mt-4">
                     {layer.bullets.map((b) => (
                       <li key={b} className="flex items-start gap-3">
-                        <span className="w-2 h-2 mt-2 bg-black border border-black group-hover:bg-heirlock-yellow group-hover:border-heirlock-yellow shrink-0"></span>
-                        <span className="group-hover:text-gray-200">{b}</span>
+                        <span className="w-2 h-2 mt-2 bg-black border border-black group-hover:border-heirlock-yellow group-hover:bg-heirlock-yellow shrink-0 transition-colors duration-300"></span>
+                        <span className="text-black group-hover:text-gray-100 transition-colors duration-300">{b}</span>
                       </li>
                     ))}
                   </ul>
