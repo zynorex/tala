@@ -219,6 +219,14 @@ function LoginContent() {
 
       {/* Right Panel - Login Area */}
       <div className="w-full md:w-7/12 p-8 md:p-16 flex flex-col justify-center items-center bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iMiIgY3k9IjIiIHI9IjEiIGZpbGw9IiMwMDAwMDAiIGZpbGwtb3BhY2l0eT0iMC4wNSIvPjwvc3ZnPg==')] relative">
+        
+        {/* Back to Home Button */}
+        <div className="absolute top-6 right-6 md:top-8 md:right-8 z-50">
+          <Link href="/" className="inline-flex items-center gap-2 bg-white border-4 border-black px-4 py-2 font-black uppercase text-sm shadow-[4px_4px_0_0_#000] hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all Group">
+            <span className="text-xl leading-none -mt-1">&larr;</span> HOME
+          </Link>
+        </div>
+
         <div className="w-full max-w-md relative z-10 flex flex-col gap-8">
           
           <div>

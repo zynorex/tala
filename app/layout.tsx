@@ -6,8 +6,7 @@ import { ThemeProvider } from "./providers/ThemeProvider";
 import { AdminShortcutProvider } from "./providers/AdminShortcutProvider";
 import { NextAuthSessionProvider } from "./providers/SessionProvider";
 import { ErrorBoundary } from "./components/ErrorBoundary";
-import Navbar from "./components/Navbar";
-import Footer from "./components/Footer";
+import MainLayout from "./components/MainLayout";
 import DeviceBlocker from "./components/DeviceBlocker";
 import DevelopmentNotification from "./components/DevelopmentNotification";
 import CookieConsent from "./components/CookieConsent";
@@ -111,13 +110,9 @@ export default function RootLayout({
                   <ToastProvider>
                     <DeviceBlocker />
                     <LaunchAnnouncementModal />
-                    <Navbar />
                     <DevelopmentNotification />
                     <CookieConsent />
-                    <div className="pt-16 md:pt-20">
-                      {children}
-                    </div>
-                    <Footer />
+                    <MainLayout>{children}</MainLayout>
                   </ToastProvider>
                 </Web3ClientWrapper>
               </ThemeProvider>
