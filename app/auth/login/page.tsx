@@ -56,25 +56,21 @@ function LoginContent() {
     completeGoogleLogin();
   }, [searchParams, router]);
 
-  // Google Login
+  // Google Login — OAuth requires a full browser redirect to Google's consent screen.
+  // After authentication, NextAuth redirects back to callbackUrl with a session cookie.
   const handleGoogleLogin = async () => {
     setLoading(true);
     setError('');
     try {
-      const result = await signIn('google', {
-        redirect: false,
+      // redirect: true (default) navigates the browser to Google.
+      // After consent, NextAuth redirects to /auth/login?sessionReady=true
+      await signIn('google', {
+        callbackUrl: '/auth/login?sessionReady=true',
       });
-
-      if (result?.error) {
-        setError(result.error);
-      } else if (result?.ok) {
-        // Redirect to callback that generates token
-        router.push('/auth/login?sessionReady=true');
-      }
+      // The browser leaves this page — no code runs after this.
     } catch (err) {
       setError('Failed to sign in with Google');
       console.error(err);
-    } finally {
       setLoading(false);
     }
   };

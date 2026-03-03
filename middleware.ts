@@ -45,10 +45,8 @@ function generateCSRFToken(): string {
  * Routes exempt from CSRF validation (they use their own auth mechanisms)
  */
 const CSRF_EXEMPT_ROUTES = [
-  '/api/auth/login',
-  '/api/auth/wallet',
+  '/api/auth',          // All NextAuth routes — NextAuth has its own CSRF protection
   '/api/admin/login',
-  '/api/auth/callback',
   '/api/webhooks',
   '/api/vaults',
   '/api/activity',
