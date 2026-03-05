@@ -65,212 +65,166 @@ export default function Footer() {
   };
 
   return (
-    <footer className="bg-gradient-to-b from-cream via-white to-gray-100 border-t-4 border-black">
-      {/* Desktop Footer */}
-      <div className="container mx-auto max-w-7xl px-4 py-16">
-        {/* Top Section - Brand & Newsletter */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-16">
-          {/* Brand Section */}
-          <div className="space-y-6">
-            <div>
-              <Link href="/" className="text-5xl font-black text-black mb-2 inline-block hover:text-gray-700 transition-colors">
-                T.A.L.A.
-              </Link>
-              <div className="w-16 h-1 bg-black"></div>
-            </div>
-            <p className="text-lg text-gray-700 font-medium leading-relaxed">
-              Enterprise-grade vault protection for exam papers with blockchain-verified security and military-grade AES-256-GCM encryption.
+    <footer className="bg-black border-t-8 border-black text-white relative overflow-hidden">
+      {/* Grid Background Pattern */}
+      <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.05)_1px,transparent_1px)] bg-[size:40px_40px]"></div>
+      
+      <div className="container mx-auto max-w-7xl px-4 py-20 md:py-32 relative z-10">
+        
+        {/* Massive Brand Section */}
+        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-10 border-b-8 border-white pb-10 md:pb-16 mb-16">
+          <div>
+            <h2 className="text-6xl md:text-8xl lg:text-[140px] font-black uppercase tracking-tighter leading-none mb-6 -ml-1 drop-shadow-[4px_4px_0_#FFFACD]">T.A.L.A.</h2>
+            <p className="text-lg md:text-2xl font-bold max-w-2xl bg-white text-black p-4 inline-block shadow-[8px_8px_0_0_#FFB3BA] leading-snug">
+              Zero-trust time capsules for the next generation of public record.
             </p>
-            <div className="flex gap-3">
-              {footerLinks.social.map((social) => {
-                const Icon = social.icon;
-                return (
-                  <a
-                    key={social.label}
-                    href={social.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={`p-3 border-4 border-black ${social.bg} text-black hover:scale-110 transition-transform shadow-brutal font-bold`}
-                    title={social.label}
-                    aria-label={social.label}
-                  >
-                    <Icon className="w-5 h-5" />
-                  </a>
-                );
-              })}
-            </div>
           </div>
-
-          {/* Newsletter Section */}
-          <div className="border-4 border-black bg-heirlock-yellow p-8 shadow-brutal flex flex-col justify-center">
-            {submitted ? (
-              <div className="flex items-center gap-3 animate-pulse">
-                <CheckCircle className="w-8 h-8 text-green-600" />
-                <div>
-                  <p className="text-lg font-black text-black">Success!</p>
-                  <p className="text-sm text-gray-800 font-medium">{successMessage}</p>
-                </div>
-              </div>
-            ) : (
-              <>
-                <h3 className="text-2xl font-black text-black mb-3">Stay Updated</h3>
-                <p className="text-gray-800 font-medium mb-6">Get notified about new features and security updates</p>
-                <div className="flex gap-2">
-                  <input
-                    type="email"
-                    placeholder="your@email.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    onKeyPress={(e) => e.key === 'Enter' && handleNewsletterSubmit()}
-                    className="flex-1 px-4 py-3 border-3 border-black font-bold text-sm focus:outline-none"
-                  />
-                  <button 
-                    onClick={handleNewsletterSubmit}
-                    className="px-6 py-3 bg-black text-white border-3 border-black font-black hover:bg-gray-900 transition-all flex items-center gap-2"
-                  >
-                    <Send className="w-4 h-4" />
-                    Join
-                  </button>
-                </div>
-              </>
-            )}
+          
+          <div className="flex flex-wrap gap-4 shrink-0 mt-4 lg:mt-0">
+            {footerLinks.social.map((social) => {
+              const Icon = social.icon;
+              return (
+                <a
+                  key={social.label}
+                  href={social.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`w-14 h-14 md:w-16 md:h-16 flex items-center justify-center border-4 border-black ${social.bg} text-black hover:-translate-y-2 transition-transform shadow-[6px_6px_0_0_#FFF] hover:shadow-[10px_10px_0_0_#FFF]`}
+                  title={social.label}
+                  aria-label={social.label}
+                >
+                  <Icon className="w-6 h-6 md:w-8 md:h-8" strokeWidth={2.5} />
+                </a>
+              );
+            })}
           </div>
         </div>
 
         {/* Main Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
-          {/* Product */}
-          <div className="border-4 border-black bg-white p-6 shadow-brutal hover:shadow-none transition-all">
-            <h4 className="text-lg font-black text-black mb-6 flex items-center gap-2">
-              <Zap className="w-5 h-5 text-heirlock-yellow" />
-              Product
-            </h4>
-            <ul className="space-y-3">
-              {footerLinks.product.map((link) => (
-                <li key={link.label}>
-                  <Link
-                    href={link.href}
-                    className="text-gray-700 font-medium hover:text-black hover:font-black flex items-center gap-2 group transition-all"
-                  >
-                    <ArrowRight className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" />
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 mb-20">
+          
+          {/* Navigation Columns */}
+          <div className="lg:col-span-7 grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-4">
+            {/* Product */}
+            <div>
+              <h4 className="text-xl font-black text-heirlock-yellow mb-6 uppercase inline-block bg-white/10 px-2 py-1 border-l-4 border-heirlock-yellow">Product</h4>
+              <ul className="space-y-4">
+                {footerLinks.product.map((link) => (
+                  <li key={link.label}>
+                    <Link href={link.href} className="text-base font-bold text-gray-400 hover:text-white hover:pl-2 transition-all flex items-center gap-2 group">
+                      <ArrowRight className="w-4 h-4 opacity-0 -ml-6 group-hover:opacity-100 group-hover:ml-0 transition-all text-heirlock-yellow" strokeWidth={3} />
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Resources */}
+            <div>
+              <h4 className="text-xl font-black text-heirlock-green mb-6 uppercase inline-block bg-white/10 px-2 py-1 border-l-4 border-heirlock-green">Resources</h4>
+              <ul className="space-y-4">
+                {footerLinks.resources.map((link) => (
+                  <li key={link.label}>
+                    <Link href={link.href} className="text-base font-bold text-gray-400 hover:text-white hover:pl-2 transition-all flex items-center gap-2 group">
+                      <ArrowRight className="w-4 h-4 opacity-0 -ml-6 group-hover:opacity-100 group-hover:ml-0 transition-all text-heirlock-green" strokeWidth={3} />
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Company */}
+            <div>
+              <h4 className="text-xl font-black text-heirlock-blue mb-6 uppercase inline-block bg-white/10 px-2 py-1 border-l-4 border-heirlock-blue">Company</h4>
+              <ul className="space-y-4">
+                {footerLinks.company.map((link) => (
+                  <li key={link.label}>
+                    <Link href={link.href} className="text-base font-bold text-gray-400 hover:text-white hover:pl-2 transition-all flex items-center gap-2 group">
+                      <ArrowRight className="w-4 h-4 opacity-0 -ml-6 group-hover:opacity-100 group-hover:ml-0 transition-all text-heirlock-blue" strokeWidth={3} />
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Legal */}
+            <div>
+              <h4 className="text-xl font-black text-heirlock-pink mb-6 uppercase inline-block bg-white/10 px-2 py-1 border-l-4 border-heirlock-pink">Legal</h4>
+              <ul className="space-y-4">
+                {footerLinks.legal.map((link) => (
+                  <li key={link.label}>
+                    <Link href={link.href} className="text-base font-bold text-gray-400 hover:text-white hover:pl-2 transition-all flex items-center gap-2 group">
+                      <ArrowRight className="w-4 h-4 opacity-0 -ml-6 group-hover:opacity-100 group-hover:ml-0 transition-all text-heirlock-pink" strokeWidth={3} />
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
 
-          {/* Resources */}
-          <div className="border-4 border-black bg-white p-6 shadow-brutal hover:shadow-none transition-all">
-            <h4 className="text-lg font-black text-black mb-6 flex items-center gap-2">
-              <Globe className="w-5 h-5 text-heirlock-green" />
-              Resources
-            </h4>
-            <ul className="space-y-3">
-              {footerLinks.resources.map((link) => (
-                <li key={link.label}>
-                  <Link
-                    href={link.href}
-                    className="text-gray-700 font-medium hover:text-black hover:font-black flex items-center gap-2 group transition-all"
+          {/* Newsletter Box */}
+          <div className="lg:col-span-5 relative mt-8 lg:mt-0 xl:scale-105 xl:origin-right">
+            <div className="absolute -inset-2 bg-heirlock-yellow border-4 border-white transform -rotate-2 shadow-[12px_12px_0_0_#FFF] z-0 hidden md:block"></div>
+            <div className="bg-white text-black border-4 border-black p-6 md:p-8 relative z-10 shadow-[8px_8px_0_0_#FFF] md:shadow-none h-full flex flex-col justify-center">
+              <div className="mb-6 border-b-4 border-black pb-4">
+                <div className="inline-flex items-center gap-2 bg-black text-white px-3 py-1 text-xs font-black uppercase tracking-widest shadow-[4px_4px_0_0_#BAE1FF] mb-4">
+                  <div className="w-2 h-2 bg-heirlock-red rounded-full animate-pulse"></div>
+                  Dispatch Waitlist
+                </div>
+                <h3 className="text-3xl lg:text-4xl font-black uppercase tracking-tight leading-[0.95]">Architect's Log</h3>
+              </div>
+              <p className="text-lg font-bold text-gray-700 mb-6 leading-snug">Security audits, protocol upgrades, and zero-knowledge briefings delivered straight to your inbox.</p>
+              
+              {submitted ? (
+                <div className="bg-black text-white border-4 border-black p-5 shadow-[6px_6px_0_0_#98FB98]">
+                  <div className="flex items-center gap-3">
+                    <CheckCircle className="w-8 h-8 text-heirlock-green" strokeWidth={2.5} />
+                    <div>
+                      <p className="text-xl font-black uppercase">Secured!</p>
+                      <p className="text-sm font-bold text-gray-300">{successMessage}</p>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <input
+                    type="email"
+                    placeholder="ENTER.EMAIL@HERE"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    onKeyPress={(e) => e.key === 'Enter' && handleNewsletterSubmit()}
+                    className="flex-1 px-4 py-4 border-4 border-black font-mono text-base font-bold focus:outline-none focus:shadow-[4px_4px_0_0_#000] uppercase placeholder-gray-400"
+                  />
+                  <button 
+                    onClick={handleNewsletterSubmit}
+                    className="px-6 py-4 bg-black text-white border-4 border-black font-black hover:bg-heirlock-yellow hover:text-black transition-all shadow-[4px_4px_0_0_#000] hover:shadow-[6px_6px_0_0_#000] hover:-translate-y-1 flex items-center justify-center gap-2 uppercase tracking-wider text-lg"
                   >
-                    <ArrowRight className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" />
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
+                    Subscribe
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
 
-          {/* Company */}
-          <div className="border-4 border-black bg-white p-6 shadow-brutal hover:shadow-none transition-all">
-            <h4 className="text-lg font-black text-black mb-6 flex items-center gap-2">
-              <Lock className="w-5 h-5 text-heirlock-blue" />
-              Company
-            </h4>
-            <ul className="space-y-3">
-              {footerLinks.company.map((link) => (
-                <li key={link.label}>
-                  <Link
-                    href={link.href}
-                    className="text-gray-700 font-medium hover:text-black hover:font-black flex items-center gap-2 group transition-all"
-                  >
-                    <ArrowRight className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" />
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Legal */}
-          <div className="border-4 border-black bg-white p-6 shadow-brutal hover:shadow-none transition-all">
-            <h4 className="text-lg font-black text-black mb-6 flex items-center gap-2">
-              <Shield className="w-5 h-5 text-heirlock-pink" />
-              Legal
-            </h4>
-            <ul className="space-y-3">
-              {footerLinks.legal.map((link) => (
-                <li key={link.label}>
-                  <Link
-                    href={link.href}
-                    className="text-gray-700 font-medium hover:text-black hover:font-black flex items-center gap-2 group transition-all"
-                  >
-                    <ArrowRight className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" />
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
         </div>
 
-        {/* Bottom Section */}
-        <div className="border-t-4 border-black pt-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center md:text-left">
-            {/* Left - Copyright & Tagline */}
-            <div>
-              <p className="font-black text-black text-lg">© {currentYear} T.A.L.A.</p>
-              <p className="text-gray-600 font-medium mt-2 italic">
-                "Securing the future of education, one vault at a time."
-              </p>
-            </div>
-
-            {/* Center - Features */}
-            <div className="flex items-center justify-center gap-4 flex-wrap">
-              <div className="flex items-center gap-2 text-sm font-bold text-gray-700">
-                <Lock className="w-4 h-4 text-heirlock-pink" />
-                AES-256-GCM
-              </div>
-              <span className="text-gray-400">•</span>
-              <div className="flex items-center gap-2 text-sm font-bold text-gray-700">
-                <Heart className="w-4 h-4 text-heirlock-pink" />
-                Open Source
-              </div>
-            </div>
-
-            {/* Right - Quick Links */}
-            <div className="flex justify-center md:justify-end gap-4 flex-wrap">
-              <Link
-                href="/terms"
-                className="text-sm font-bold text-gray-700 hover:text-black border-b-2 border-transparent hover:border-black pb-1 transition-all"
-              >
-                Terms
-              </Link>
-              <span className="text-gray-400">•</span>
-              <Link
-                href="/privacy"
-                className="text-sm font-bold text-gray-700 hover:text-black border-b-2 border-transparent hover:border-black pb-1 transition-all"
-              >
-                Privacy
-              </Link>
-              <span className="text-gray-400">•</span>
-              <a
-                href="mailto:support@usetala.in"
-                className="text-sm font-bold text-gray-700 hover:text-black border-b-2 border-transparent hover:border-black pb-1 transition-all"
-              >
-                Support
-              </a>
-            </div>
+        {/* Bottom Bar */}
+        <div className="flex flex-col md:flex-row justify-between items-center gap-8 pt-8 border-t-8 border-white">
+          <div className="text-center md:text-left">
+            <p className="text-xl font-black uppercase tracking-widest leading-none mb-2">© {currentYear} T.A.L.A. PROTOCOL</p>
+            <p className="text-sm font-bold text-gray-400">Not financial advice. Trust the math.</p>
+          </div>
+          
+          <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-6 bg-white/5 border-2 border-white/20 px-4 py-3 font-mono text-xs sm:text-sm font-bold text-gray-300 backdrop-blur-sm">
+             <span className="flex items-center gap-2"><Lock className="w-4 h-4 text-heirlock-pink" /> AES-256-GCM</span>
+             <span className="hidden sm:inline">|</span>
+             <span className="text-heirlock-green">OPEN SOURCE</span>
+             <span className="hidden sm:inline">|</span>
+             <span className="flex items-center gap-2"><Globe className="w-4 h-4 text-heirlock-yellow" /> IPFS MESH</span>
           </div>
         </div>
       </div>
