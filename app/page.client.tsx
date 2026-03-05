@@ -487,38 +487,38 @@ export default function HomeClient() {
           <div className="lg:col-span-5 relative mt-10 lg:mt-0 xl:scale-105 xl:origin-left">
             <div className="absolute -inset-2 md:-inset-4 bg-heirlock-green border-4 border-black transform rotate-2 md:rotate-3 shadow-[12px_12px_0_0_#000] z-0 hidden sm:block"></div>
             
-            <div className="border-4 border-black bg-white p-6 md:p-8 lg:p-10 relative z-10 h-full flex flex-col micro-grid shadow-[8px_8px_0_0_#000] sm:shadow-none">
-              <div className="mb-8 border-b-4 border-black pb-6">
-                <div className="inline-flex items-center gap-3 bg-black text-white px-4 py-2 font-black uppercase text-xs md:text-sm mb-5 shadow-[4px_4px_0_0_#BAE1FF]">
+            <div className="border-4 border-black bg-white p-6 md:p-8 lg:p-10 relative z-10 lg:h-[700px] flex flex-col micro-grid shadow-[8px_8px_0_0_#000] sm:shadow-none">
+              <div className="mb-4 md:mb-6 border-b-4 border-black pb-4">
+                <div className="inline-flex items-center gap-3 bg-black text-white px-4 py-2 font-black uppercase text-xs md:text-sm mb-3 shadow-[4px_4px_0_0_#BAE1FF]">
                   <div className="w-3 h-3 bg-heirlock-red border-2 border-white animate-pulse"></div>
                   Dynamic Timeline
                 </div>
-                <h2 className="text-4xl lg:text-[42px] font-black text-black uppercase tracking-tight leading-[0.95]">Every unlock<br/>pre-written<br/>in code.</h2>
+                <h2 className="text-3xl lg:text-4xl font-black text-black uppercase tracking-tight leading-[0.95]">Every unlock<br/>pre-written<br/>in code.</h2>
               </div>
               
-              <div className="space-y-6 md:space-y-8 flex-grow">
+              <div className="flex-grow flex flex-col justify-between pt-2">
                 {journeyTimeline.map((step, idx) => (
                   <ScrollFadeIn key={step.title} delay={idx * 0.15}>
-                    <div className="grid grid-cols-[64px_1fr] md:grid-cols-[80px_1fr] gap-4 md:gap-6 items-start group">
+                    <div className="grid grid-cols-[64px_1fr] md:grid-cols-[72px_1fr] gap-4 items-start group">
                       <div className="relative flex flex-col items-center">
-                        <span className={`font-black text-sm md:text-base border-4 border-black py-2 w-full text-center transition-transform duration-300 z-10 ${idx === activeTimelineIndex ? 'bg-heirlock-yellow text-black transform rotate-3 scale-110 shadow-[4px_4px_0_0_#000]' : 'bg-white text-black'}`}>
+                        <span className={`font-black text-xs md:text-sm border-4 border-black py-1.5 w-full text-center transition-transform duration-300 z-10 ${idx === activeTimelineIndex ? 'bg-heirlock-yellow text-black transform rotate-3 scale-110 shadow-[4px_4px_0_0_#000]' : 'bg-white text-black'}`}>
                           {step.badge}
                         </span>
                         {idx < journeyTimeline.length - 1 && (
                           <span
-                            className={`absolute top-12 md:top-14 bottom-[-24px] md:bottom-[-32px] left-1/2 -translate-x-1/2 w-1.5 transition-colors ${idx < activeTimelineIndex ? 'bg-black' : 'bg-black/10'}`}
+                            className={`absolute top-10 md:top-10 bottom-[-16px] md:bottom-[-20px] left-1/2 -translate-x-1/2 w-1.5 transition-colors ${idx < activeTimelineIndex ? 'bg-black' : 'bg-black/10'}`}
                             aria-hidden
                           />
                         )}
                       </div>
                       <div
-                        className={`border-4 border-black p-4 transition-all duration-300 ${
-                          idx === activeTimelineIndex ? 'bg-heirlock-yellow translate-x-1 shadow-[6px_6px_0_0_#000]' : 'bg-white group-hover:bg-cream'
+                        className={`border-4 border-black p-3 md:p-3.5 transition-all duration-300 ${
+                          idx === activeTimelineIndex ? 'bg-heirlock-yellow translate-x-1 shadow-[4px_4px_0_0_#000]' : 'bg-white group-hover:bg-cream'
                         }`}
                       >
-                        <p className="text-lg md:text-xl font-black text-black uppercase mb-1.5">{step.title}</p>
-                        <div className="border-l-4 border-black pl-3 mb-2 min-h-[40px] flex items-center">
-                          <p className="text-black font-bold text-sm md:text-base leading-snug">
+                        <p className="text-base md:text-lg font-black text-black uppercase mb-1">{step.title}</p>
+                        <div className="border-l-4 border-black pl-2.5 min-h-[36px] flex flex-col justify-center">
+                          <p className="text-black font-bold text-xs md:text-sm leading-tight">
                             <TypewriterText
                               text={
                                 idx === activeTimelineIndex
@@ -535,7 +535,7 @@ export default function HomeClient() {
                 ))}
               </div>
               
-              <div className="mt-10 border-4 border-black bg-black text-heirlock-green px-4 py-3 font-mono text-xs md:text-sm tracking-widest font-bold text-center uppercase flex justify-between shadow-[4px_4px_0_0_#FFFACD]">
+              <div className="mt-6 border-4 border-black bg-black text-heirlock-green px-4 py-2.5 font-mono text-xs tracking-widest font-bold text-center uppercase flex justify-between shadow-[4px_4px_0_0_#FFFACD] shrink-0">
                 <span>[ AMOY_TESTNET ]</span>
                 <span>SYNCED</span>
                 <span>0.01 GWEI</span>
