@@ -68,42 +68,14 @@ export default function Navbar() {
     setMounted(true);
   }, []);
 
-  const getNavBgColor = () => {
-    if (isScrolled) return "bg-black";
-    if (isActive("/")) return "bg-heirlock-yellow";
-    if (isActive("/about")) return "bg-heirlock-green";
-    if (isActive("/how-it-works")) return "bg-heirlock-blue";
-    if (isActive("/team")) return "bg-heirlock-blue";
-    if (isActive("/admin")) return "bg-heirlock-pink";
-    if (isActive("/access-portal")) return "bg-heirlock-green";
-    if (isActive("/create-vault")) return "bg-gradient-to-r from-heirlock-blue to-heirlock-green";
-    if (isActive("/documentation") || isActive("/smart-contracts") || isActive("/faq") || isActive("/blog")) return "bg-heirlock-green";
-    if (isActive("/dashboard")) return "bg-heirlock-pink";
-    return "bg-heirlock-yellow";
-  };
-
-  const getNavTextColor = () => (isScrolled ? "text-white" : "hover:text-white");
-
-  const getBadgeColor = () => {
-    if (isScrolled) return "bg-heirlock-yellow text-black border-2 border-heirlock-yellow group-hover:text-black group-hover:bg-heirlock-yellow";
-    if (isActive("/")) return "bg-heirlock-yellow text-black border-4 border-heirlock-yellow group-hover:text-black";
-    if (isActive("/about")) return "bg-heirlock-green text-black border-4 border-heirlock-green group-hover:text-black";
-    if (isActive("/how-it-works")) return "bg-heirlock-blue text-black border-4 border-heirlock-blue group-hover:text-black";
-    if (isActive("/team")) return "bg-heirlock-blue text-black border-4 border-heirlock-blue group-hover:text-black";
-    if (isActive("/admin")) return "bg-heirlock-pink text-black border-4 border-heirlock-pink group-hover:text-black";
-    if (isActive("/access-portal")) return "bg-heirlock-green text-black border-4 border-heirlock-green group-hover:text-black";
-    if (isActive("/create-vault")) return "bg-heirlock-blue text-black border-4 border-heirlock-blue group-hover:text-black";
-    if (isActive("/dashboard")) return "bg-heirlock-pink text-black border-4 border-heirlock-pink group-hover:text-black";
-    if (isActive("/documentation") || isActive("/smart-contracts") || isActive("/faq") || isActive("/blog")) return "bg-heirlock-green text-black border-4 border-heirlock-green group-hover:text-black";
-    return "bg-heirlock-yellow text-black border-4 border-heirlock-yellow group-hover:text-black";
-  };
-
   return (
-    <nav className={`fixed top-0 left-0 right-0 z-50 border-b-4 border-transparent transition-all duration-300 group hover:bg-black hover:border-b-black hover:text-white ${getNavBgColor()} ${getNavTextColor()} group-hover:text-white`}>
+    <nav className={`fixed top-0 left-0 right-0 z-50 border-b-8 border-black transition-all duration-300 ${
+      isScrolled ? "bg-white shadow-[0_8px_0_0_rgba(0,0,0,1)] py-0" : "bg-cream py-2"
+    }`}>
       <div className="container mx-auto max-w-7xl px-4">
         <div className="flex justify-between items-center h-16 md:h-20">
-          <Link href="/" className="flex items-center gap-3">
-            <div className="relative h-10 md:h-12 w-auto">
+          <Link href="/" className="flex items-center gap-4 group">
+            <div className="relative h-10 md:h-12 w-auto bg-white border-4 border-transparent group-hover:border-black transition-all p-1">
               <Image 
                 src="/logo.png" 
                 alt="T.A.L.A. Logo" 
@@ -113,26 +85,26 @@ export default function Navbar() {
                 className="h-full w-auto object-contain"
               />
             </div>
-            <span className={`px-3 py-1 text-xs font-black rounded-sm transition-all text-black! ${getBadgeColor()}`}>
+            <span className="px-3 py-1.5 text-xs font-black border-4 border-black bg-heirlock-yellow text-black shadow-[4px_4px_0_0_#000] rotate-2 group-hover:rotate-0 transition-transform hidden sm:inline-block uppercase tracking-widest">
               BETA
             </span>
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-2 lg:gap-4">
+          <div className="hidden md:flex items-center gap-2 lg:gap-3">
             <Link href="/how-it-works">
-              <button className={`px-4 lg:px-6 py-2 text-sm lg:text-base font-bold transition-all border-b-4 ${
+              <button className={`px-4 lg:px-5 py-2.5 text-sm lg:text-base font-black uppercase tracking-wider transition-all border-4 ${
                 isActive("/how-it-works")
-                  ? isScrolled ? "border-heirlock-yellow text-white" : "border-black"
-                  : isScrolled ? "border-transparent hover:bg-heirlock-yellow hover:text-black" : "border-transparent group-hover:text-white"
+                  ? "border-black bg-heirlock-yellow text-black shadow-[4px_4px_0_0_#000]"
+                  : "border-transparent bg-transparent text-black hover:border-black hover:bg-heirlock-yellow hover:shadow-[4px_4px_0_0_#000] hover:-translate-y-1"
               }`}>How It Works</button>
             </Link>
 
             <Link href="/about">
-              <button className={`px-4 lg:px-6 py-2 text-sm lg:text-base font-bold transition-all border-b-4 ${
+              <button className={`px-4 lg:px-5 py-2.5 text-sm lg:text-base font-black uppercase tracking-wider transition-all border-4 ${
                 isActive("/about")
-                  ? isScrolled ? "border-heirlock-green text-white" : "border-black"
-                  : isScrolled ? "border-transparent hover:bg-heirlock-green hover:text-black" : "border-transparent group-hover:text-white"
+                  ? "border-black bg-heirlock-green text-black shadow-[4px_4px_0_0_#000]"
+                  : "border-transparent bg-transparent text-black hover:border-black hover:bg-heirlock-green hover:shadow-[4px_4px_0_0_#000] hover:-translate-y-1"
               }`}>About</button>
             </Link>
 
@@ -145,14 +117,14 @@ export default function Navbar() {
               <button
                 aria-haspopup="true"
                 aria-expanded={isResourcesOpen}
-                className={`px-4 lg:px-6 py-2 text-sm lg:text-base font-bold transition-all border-b-4 flex items-center gap-2 ${
+                className={`px-4 lg:px-5 py-2.5 text-sm lg:text-base font-black uppercase tracking-wider transition-all border-4 flex items-center gap-2 ${
                   isActive("/documentation") || isActive("/smart-contracts") || isActive("/faq") || isActive("/blog")
-                    ? isScrolled ? "border-heirlock-pink text-white" : "border-black"
-                    : isScrolled ? "border-transparent hover:bg-heirlock-pink hover:text-black" : "border-transparent group-hover:text-white"
+                    ? "border-black bg-heirlock-pink text-black shadow-[4px_4px_0_0_#000]"
+                    : "border-transparent bg-transparent text-black hover:border-black hover:bg-heirlock-pink hover:shadow-[4px_4px_0_0_#000] hover:-translate-y-1"
                 }`}
               >
                 Resources
-                <ChevronDown className="w-4 h-4 group-hover/resources:rotate-180 transition-transform" />
+                <ChevronDown className="w-5 h-5 group-hover/resources:rotate-180 transition-transform" strokeWidth={3} />
               </button>
 
               <div className="absolute left-1/2 -translate-x-1/2 mt-0 w-[94vw] max-w-5xl text-white border-4 border-black shadow-brutal rounded-xl opacity-0 invisible group-hover/resources:opacity-100 group-hover/resources:visible transition-all duration-200 ease-out z-50 overflow-hidden">
@@ -333,18 +305,16 @@ export default function Navbar() {
             {/* Middle Section: Create Vault | Dashboard | Profile */}
             <div className="flex items-center gap-2 lg:gap-4 flex-1 justify-center">
               <Link href="/create-vault">
-                <button className={`px-4 lg:px-6 py-2 text-sm lg:text-base font-bold border-4 shadow-brutal transition-all whitespace-nowrap ${
-                  isScrolled ? "bg-heirlock-yellow text-black border-black hover:bg-heirlock-yellow hover:text-black hover:border-black hover:translate-x-1 hover:translate-y-1 hover:shadow-none" : "bg-heirlock-yellow text-black border-black hover:bg-heirlock-pink hover:text-black hover:border-black hover:translate-x-1 hover:translate-y-1 hover:shadow-none"
-                }`}>Create Vault</button>
+                <button className={`px-4 lg:px-6 py-2.5 text-sm lg:text-base font-black border-4 shadow-[4px_4px_0_0_#000] hover:shadow-[6px_6px_0_0_#000] hover:-translate-y-1 transition-all whitespace-nowrap bg-heirlock-yellow text-black border-black uppercase tracking-wider`}>
+                  Create Vault
+                </button>
               </Link>
 
               {/* Dashboard Button - shown only when logged in */}
               {mounted && session?.user && (
                 <Link href="/dashboard">
-                  <button className={`px-4 lg:px-6 py-2 text-sm lg:text-base font-bold border-4 shadow-brutal transition-all whitespace-nowrap flex items-center gap-1 ${
-                    isScrolled ? "bg-heirlock-blue text-black border-black hover:bg-heirlock-blue hover:text-black hover:border-black hover:translate-x-1 hover:translate-y-1 hover:shadow-none" : "bg-heirlock-blue text-black border-black hover:bg-heirlock-green hover:text-black hover:border-black hover:translate-x-1 hover:translate-y-1 hover:shadow-none"
-                  }`}>
-                    <LayoutGrid className="w-4 h-4" />
+                  <button className={`px-4 lg:px-6 py-2.5 text-sm lg:text-base font-black border-4 shadow-[4px_4px_0_0_#000] hover:shadow-[6px_6px_0_0_#000] hover:-translate-y-1 transition-all whitespace-nowrap flex items-center gap-2 bg-heirlock-blue text-black border-black uppercase tracking-wider`}>
+                    <LayoutGrid className="w-4 h-4" strokeWidth={3} />
                     Dashboard
                   </button>
                 </Link>
@@ -355,9 +325,7 @@ export default function Navbar() {
                 <div className="relative group/profile" ref={userMenuRef}>
                   <button 
                     onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-                    className={`p-2 rounded-full border-4 shadow-brutal transition-all ${
-                      isScrolled ? "border-black hover:bg-heirlock-yellow" : "border-black hover:bg-heirlock-pink"
-                    }`}
+                    className="p-1.5 rounded-none border-4 border-black shadow-[4px_4px_0_0_#000] hover:shadow-[6px_6px_0_0_#000] hover:-translate-y-1 hover:bg-heirlock-pink transition-all bg-white"
                   >
                     {session.user.image ? (
                       <Image
@@ -365,10 +333,10 @@ export default function Navbar() {
                         alt={session.user.name || "User"}
                         width={40}
                         height={40}
-                        className="rounded-full w-10 h-10"
+                        className="w-9 h-9 border-2 border-black"
                       />
                     ) : (
-                      <div className="w-10 h-10 bg-linear-to-br from-heirlock-blue to-heirlock-pink rounded-full flex items-center justify-center text-white font-bold">
+                      <div className="w-9 h-9 bg-heirlock-yellow border-2 border-black flex items-center justify-center text-black font-black uppercase">
                         {session.user.name?.charAt(0) || session.user.email?.charAt(0) || 'U'}
                       </div>
                     )}
@@ -376,19 +344,19 @@ export default function Navbar() {
 
                   {/* User menu dropdown */}
                   {isUserMenuOpen && (
-                    <div className="absolute right-0 mt-2 w-48 bg-black border-4 border-black shadow-brutal z-50">
-                      <div className="p-4 border-b-2 border-white">
-                        <p className="text-white font-bold text-sm">{session.user.name}</p>
-                        <p className="text-gray-400 text-xs">{session.user.email}</p>
+                    <div className="absolute right-0 mt-3 w-56 bg-white border-4 border-black shadow-[8px_8px_0_0_#000] z-50">
+                      <div className="p-4 border-b-4 border-black bg-cream">
+                        <p className="text-black font-black text-sm uppercase truncate">{session.user.name}</p>
+                        <p className="text-gray-600 font-bold text-xs truncate mt-1">{session.user.email}</p>
                       </div>
                       <button 
                         onClick={() => {
                           setIsUserMenuOpen(false);
                           signOut({ redirect: true, callbackUrl: '/' });
                         }}
-                        className="w-full text-left px-4 py-2 text-white hover:bg-heirlock-pink transition-all text-sm font-bold flex items-center gap-2"
+                        className="w-full text-left px-4 py-3 text-black hover:bg-heirlock-red hover:text-white transition-all text-sm font-black flex items-center gap-2 uppercase"
                       >
-                        <LogOut className="w-4 h-4" />
+                        <LogOut className="w-4 h-4" strokeWidth={3} />
                         Logout
                       </button>
                     </div>
@@ -405,9 +373,7 @@ export default function Navbar() {
               {/* Show Sign In button if not logged in */}
               {mounted && !session && (
                 <Link href="/auth/login">
-                  <button className={`px-5 lg:px-7 py-3 text-sm lg:text-base font-bold border-4 shadow-brutal transition-all flex items-center gap-2 whitespace-nowrap ${
-                    isScrolled ? "bg-heirlock-green text-black border-black hover:bg-heirlock-green hover:text-white hover:border-black hover:translate-x-1 hover:translate-y-1 hover:shadow-none" : "bg-heirlock-green text-black border-black hover:bg-heirlock-blue hover:text-white hover:translate-x-1 hover:translate-y-1 hover:shadow-none"
-                  }`}>
+                  <button className="px-5 lg:px-7 py-3 text-sm lg:text-base font-black border-4 shadow-[4px_4px_0_0_#000] hover:shadow-[6px_6px_0_0_#000] hover:-translate-y-1 transition-all flex items-center gap-2 whitespace-nowrap bg-black text-white hover:bg-heirlock-green hover:text-black border-black uppercase tracking-wider">
                     Sign In
                   </button>
                 </Link>
@@ -418,136 +384,110 @@ export default function Navbar() {
           {/* Mobile Menu Button */}
           <button
             onClick={toggleMenu}
-            className={`md:hidden p-2 transition-all border-2 ${
-              isScrolled
-                ? "border-white hover:bg-heirlock-yellow hover:text-black"
-                : "border-black text-black group-hover:border-white group-hover:text-white group-hover:hover:bg-white group-hover:hover:bg-opacity-20"
-            }`}
+            className={`md:hidden p-2 transition-all border-4 shadow-[4px_4px_0_0_#000] border-black text-black bg-white hover:bg-heirlock-yellow`}
           >
-            {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            {isOpen ? <X className="w-6 h-6" strokeWidth={3} /> : <Menu className="w-6 h-6" strokeWidth={3} />}
           </button>
         </div>
 
         {/* Mobile Menu */}
         {isOpen && (
-          <div className={`md:hidden border-t-4 transition-all duration-200 ${
-            isScrolled ? "border-white bg-black" : "border-black bg-heirlock-yellow"
-          }`}>
-            <div className="flex flex-col gap-1 p-2">
+          <div className="md:hidden border-t-8 border-black bg-white absolute top-[100%] left-0 right-0 shadow-[0_12px_0_0_rgba(0,0,0,1)] max-h-[85vh] overflow-y-auto border-b-8">
+            <div className="flex flex-col gap-0 p-4">
               {/* Quick Actions - Top of Mobile Menu */}
               <Link href="/create-vault" onClick={closeMenu}>
-                <button className={`w-full px-3 py-3 text-sm font-bold border-4 shadow-brutal transition-all ${
-                  isActive("/create-vault") ? (isScrolled ? "bg-heirlock-yellow text-black border-black" : "bg-black text-white border-black") : (isScrolled ? "bg-heirlock-yellow text-black border-black hover:translate-x-1 hover:translate-y-1 hover:shadow-none" : "bg-heirlock-yellow text-black border-black hover:translate-x-1 hover:translate-y-1 hover:shadow-none")
-                }`}>Create Vault</button>
+                <button className="w-full px-4 py-4 text-base font-black border-4 shadow-[4px_4px_0_0_#000] transition-all bg-heirlock-yellow text-black border-black uppercase mb-4 active:translate-y-1 active:shadow-none">
+                  Create Vault
+                </button>
               </Link>
 
               <Link href="/dashboard" onClick={closeMenu}>
-                <button className={`w-full px-3 py-3 text-sm font-bold border-4 shadow-brutal transition-all ${
-                  isActive("/dashboard") 
-                    ? (isScrolled ? "bg-heirlock-blue text-white border-black" : "bg-black text-heirlock-blue border-black") 
-                    : (isScrolled ? "bg-heirlock-blue text-white border-black hover:translate-x-1 hover:translate-y-1 hover:shadow-none" : "bg-black text-white border-black hover:translate-x-1 hover:translate-y-1 hover:shadow-none")
-                }`}>Dashboard</button>
+                <button className="w-full px-4 py-4 text-base font-black border-4 shadow-[4px_4px_0_0_#000] transition-all bg-heirlock-blue text-black border-black uppercase mb-4 active:translate-y-1 active:shadow-none">
+                  Dashboard
+                </button>
               </Link>
 
-              <div className="border-2 border-current opacity-30 my-1"></div>
+              <div className="border-b-4 border-black my-2"></div>
 
               {/* Main Navigation */}
               <Link href="/how-it-works" onClick={closeMenu}>
-                <button className={`w-full text-left px-3 py-2 text-xs font-bold transition-all border-l-4 ${
+                <button className={`w-full text-left px-4 py-3 text-sm font-black uppercase tracking-wider transition-all border-l-8 ${
                   isActive("/how-it-works")
-                    ? isScrolled ? "text-white bg-black bg-opacity-20 border-l-heirlock-yellow" : "text-black bg-black bg-opacity-10 border-l-black"
-                    : isScrolled ? "text-white hover:bg-heirlock-yellow hover:text-black hover:border-l-heirlock-yellow" : "text-black hover:bg-heirlock-yellow hover:text-black hover:border-l-black"
+                    ? "text-black bg-heirlock-yellow border-l-black"
+                    : "text-black hover:bg-cream border-l-transparent hover:border-l-black"
                 }`}>How It Works</button>
               </Link>
 
               <Link href="/about" onClick={closeMenu}>
-                <button className={`w-full text-left px-3 py-2 text-xs font-bold transition-all border-l-4 ${
+                <button className={`w-full text-left px-4 py-3 text-sm font-black uppercase tracking-wider transition-all border-l-8 ${
                   isActive("/about")
-                    ? isScrolled ? "text-white bg-black bg-opacity-20 border-l-heirlock-green" : "text-black bg-black bg-opacity-10 border-l-black"
-                    : isScrolled ? "text-white hover:bg-heirlock-green hover:text-black hover:border-l-heirlock-green" : "text-black hover:bg-heirlock-green hover:text-black hover:border-l-black"
+                    ? "text-black bg-heirlock-green border-l-black"
+                    : "text-black hover:bg-cream border-l-transparent hover:border-l-black"
                 }`}>About</button>
               </Link>
 
               <button
                 onClick={() => setIsResourcesOpen(!isResourcesOpen)}
-                className={`w-full text-left px-3 py-2 text-xs font-bold transition-all border-l-4 flex justify-between items-center ${
+                className={`w-full text-left px-4 py-3 text-sm font-black uppercase tracking-wider transition-all border-l-8 flex justify-between items-center ${
                   isActive("/documentation") || isActive("/smart-contracts") || isActive("/faq") || isActive("/blog")
-                    ? isScrolled ? "text-white bg-black bg-opacity-20 border-l-heirlock-pink" : "text-black bg-black bg-opacity-10 border-l-black"
-                    : isScrolled ? "text-white hover:bg-heirlock-pink hover:text-black hover:border-l-heirlock-pink" : "text-black hover:bg-heirlock-pink hover:text-black hover:border-l-black"
+                    ? "text-black bg-heirlock-pink border-l-black"
+                    : "text-black hover:bg-cream border-l-transparent hover:border-l-black"
                 }`}
               >
                 Resources
-                <ChevronDown className={`w-3 h-3 transition-transform ${isResourcesOpen ? "rotate-180" : ""}`} />
+                <ChevronDown className={`w-5 h-5 transition-transform ${isResourcesOpen ? "rotate-180" : ""}`} strokeWidth={3} />
               </button>
 
               {isResourcesOpen && (
-                <div className="space-y-1 pl-3">
+                <div className="space-y-1 pl-4 pr-2 py-2 bg-cream border-y-4 border-black my-2">
                   <Link href="/documentation" onClick={closeMenu}>
-                    <button className="w-full text-left px-3 py-2 text-xs font-bold bg-black text-white hover:bg-heirlock-yellow hover:text-black transition-all border-l-2 border-heirlock-yellow">Docs</button>
+                    <button className="w-full text-left px-4 py-2.5 text-xs font-black uppercase tracking-wider bg-white text-black hover:bg-heirlock-yellow transition-all border-2 border-black mb-1 shadow-[2px_2px_0_0_#000]">Docs</button>
                   </Link>
                   <Link href="/smart-contracts" onClick={closeMenu}>
-                    <button className="w-full text-left px-3 py-2 text-xs font-bold bg-black text-white hover:bg-heirlock-blue hover:text-black transition-all border-l-2 border-heirlock-blue">Smart Contracts</button>
+                    <button className="w-full text-left px-4 py-2.5 text-xs font-black uppercase tracking-wider bg-white text-black hover:bg-heirlock-blue transition-all border-2 border-black mb-1 shadow-[2px_2px_0_0_#000]">Smart Contracts</button>
                   </Link>
                   <Link href="/team" onClick={closeMenu}>
-                    <button className="w-full text-left px-3 py-2 text-xs font-bold bg-black text-white hover:bg-heirlock-green hover:text-black transition-all border-l-2 border-heirlock-green">Team</button>
+                    <button className="w-full text-left px-4 py-2.5 text-xs font-black uppercase tracking-wider bg-white text-black hover:bg-heirlock-green transition-all border-2 border-black mb-1 shadow-[2px_2px_0_0_#000]">Team</button>
                   </Link>
                   <Link href="/procurement" onClick={closeMenu}>
-                    <button className="w-full text-left px-3 py-2 text-xs font-bold bg-black text-white hover:bg-heirlock-yellow hover:text-black transition-all border-l-2 border-heirlock-yellow">Procurement Pack</button>
+                    <button className="w-full text-left px-4 py-2.5 text-xs font-black uppercase tracking-wider bg-white text-black hover:bg-heirlock-yellow transition-all border-2 border-black mb-1 shadow-[2px_2px_0_0_#000]">Procurement Pack</button>
                   </Link>
                   <Link href="/docs/quickstart" onClick={closeMenu}>
-                    <button className="w-full text-left px-3 py-2 text-xs font-bold bg-black text-white hover:bg-heirlock-yellow hover:text-black transition-all border-l-2 border-heirlock-yellow">API Quickstart</button>
+                    <button className="w-full text-left px-4 py-2.5 text-xs font-black uppercase tracking-wider bg-white text-black hover:bg-heirlock-pink transition-all border-2 border-black mb-1 shadow-[2px_2px_0_0_#000]">API Quickstart</button>
                   </Link>
                   <Link href="/integrations" onClick={closeMenu}>
-                    <button className="w-full text-left px-3 py-2 text-xs font-bold bg-black text-white hover:bg-heirlock-green hover:text-black transition-all border-l-2 border-heirlock-green">Integrations</button>
-                  </Link>
-                  <Link href="/trust-center" onClick={closeMenu}>
-                    <button className="w-full text-left px-3 py-2 text-xs font-bold bg-black text-white hover:bg-heirlock-blue hover:text-black transition-all border-l-2 border-heirlock-blue">Trust Center</button>
+                    <button className="w-full text-left px-4 py-2.5 text-xs font-black uppercase tracking-wider bg-white text-black hover:bg-heirlock-green transition-all border-2 border-black mb-1 shadow-[2px_2px_0_0_#000]">Integrations</button>
                   </Link>
                   <Link href="/faq" onClick={closeMenu}>
-                    <button className="w-full text-left px-3 py-2 text-xs font-bold bg-black text-white hover:bg-heirlock-green hover:text-black transition-all border-l-2 border-heirlock-green">FAQ</button>
-                  </Link>
-                  <Link href="/admin" onClick={closeMenu}>
-                    <button className="w-full text-left px-3 py-2 text-xs font-bold bg-black text-white hover:bg-heirlock-pink hover:text-black transition-all border-l-2 border-heirlock-pink">Admin Upload</button>
-                  </Link>
-                  <Link href="/access-portal" onClick={closeMenu}>
-                    <button className="w-full text-left px-3 py-2 text-xs font-bold bg-black text-white hover:bg-heirlock-green hover:text-black transition-all border-l-2 border-heirlock-green">Access Portal</button>
-                  </Link>
-                  <Link href="/blog" onClick={closeMenu}>
-                    <button className="w-full text-left px-3 py-2 text-xs font-bold bg-black text-white hover:bg-heirlock-pink hover:text-black transition-all border-l-2 border-heirlock-pink">Blog</button>
-                  </Link>
-                  <Link href="/changelog" onClick={closeMenu}>
-                    <button className="w-full text-left px-3 py-2 text-xs font-bold bg-black text-white hover:bg-heirlock-yellow hover:text-black transition-all border-l-2 border-heirlock-yellow">Changelog</button>
-                  </Link>
-                  <Link href="/pricing" onClick={closeMenu}>
-                    <button className="w-full text-left px-3 py-2 text-xs font-bold bg-black text-white hover:bg-heirlock-pink hover:text-black transition-all border-l-2 border-heirlock-pink">Pricing</button>
+                    <button className="w-full text-left px-4 py-2.5 text-xs font-black uppercase tracking-wider bg-white text-black hover:bg-heirlock-yellow transition-all border-2 border-black shadow-[2px_2px_0_0_#000]">FAQ</button>
                   </Link>
                 </div>
               )}
 
-              <div className="border-2 border-current opacity-30 my-1"></div>
+              <div className="border-b-4 border-black my-2"></div>
 
               {/* Secondary Links */}
               <Link href="/contact" onClick={closeMenu}>
-                <button className={`w-full text-left px-3 py-2 text-xs font-bold transition-all border-l-4 ${
+                <button className={`w-full text-left px-4 py-3 text-sm font-black uppercase tracking-wider transition-all border-l-8 ${
                   isActive("/contact")
-                    ? isScrolled ? "text-white bg-black bg-opacity-20 border-l-heirlock-yellow" : "text-black bg-black bg-opacity-10 border-l-black"
-                    : isScrolled ? "text-white hover:bg-heirlock-yellow hover:text-black hover:border-l-heirlock-yellow" : "text-black hover:bg-heirlock-yellow hover:text-black hover:border-l-black"
+                    ? "text-black bg-heirlock-yellow border-l-black"
+                    : "text-black hover:bg-cream border-l-transparent hover:border-l-black"
                 }`}>Contact</button>
               </Link>
 
               <Link href="/terms" onClick={closeMenu}>
-                <button className={`w-full text-left px-3 py-2 text-xs font-bold transition-all border-l-4 ${
+                <button className={`w-full text-left px-4 py-3 text-sm font-black uppercase tracking-wider transition-all border-l-8 ${
                   isActive("/terms")
-                    ? isScrolled ? "text-white bg-black bg-opacity-20 border-l-gray-500" : "text-black bg-black bg-opacity-10 border-l-black"
-                    : isScrolled ? "text-white hover:bg-gray-700 hover:text-white hover:border-l-gray-500" : "text-black hover:bg-gray-200 hover:text-black hover:border-l-black"
+                    ? "text-black bg-gray-200 border-l-black"
+                    : "text-black hover:bg-cream border-l-transparent hover:border-l-black"
                 }`}>Terms</button>
               </Link>
 
               <Link href="/privacy" onClick={closeMenu}>
-                <button className={`w-full text-left px-3 py-2 text-xs font-bold transition-all border-l-4 ${
+                <button className={`w-full text-left px-4 py-3 text-sm font-black uppercase tracking-wider transition-all border-l-8 ${
                   isActive("/privacy")
-                    ? isScrolled ? "text-white bg-black bg-opacity-20 border-l-gray-500" : "text-black bg-black bg-opacity-10 border-l-black"
-                    : isScrolled ? "text-white hover:bg-gray-700 hover:text-white hover:border-l-gray-500" : "text-black hover:bg-gray-200 hover:text-black hover:border-l-black"
+                    ? "text-black bg-gray-200 border-l-black"
+                    : "text-black hover:bg-cream border-l-transparent hover:border-l-black"
                 }`}>Privacy</button>
               </Link>
             </div>
