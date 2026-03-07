@@ -68,16 +68,30 @@ function loadRazorpayScript(): Promise<void> {
       resolve();
       return;
     }
+
+    // Remove any previously failed script tag so we get a fresh attempt
     const existing = document.querySelector(`script[src="${CHECKOUT_SCRIPT_URL}"]`);
     if (existing) {
-      existing.addEventListener('load', () => resolve());
-      return;
+      // If Razorpay is already on window, the script loaded fine
+      if (typeof window.Razorpay !== 'undefined') {
+        resolve();
+        return;
+      }
+      // Otherwise the previous attempt may have failed — remove and retry
+      existing.remove();
     }
+
     const script = document.createElement('script');
     script.src = CHECKOUT_SCRIPT_URL;
     script.async = true;
+    script.crossOrigin = 'anonymous';
     script.onload = () => resolve();
-    script.onerror = () => reject(new Error('Failed to load Razorpay checkout script.'));
+    script.onerror = () =>
+      reject(
+        new Error(
+          'Failed to load Razorpay checkout script. Please check your network or disable ad-blockers and try again.',
+        ),
+      );
     document.body.appendChild(script);
   });
 }
