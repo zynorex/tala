@@ -7,8 +7,10 @@ import Footer from './Footer';
 export default function MainLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const isAuthPage = pathname?.startsWith('/auth/login');
-
-  if (isAuthPage) {
+  const isCreateVault = pathname?.startsWith('/create-vault');
+  
+  // Hide Navbar/Footer for auth pages and the full-screen vault creation
+  if (isAuthPage || isCreateVault) {
     return <>{children}</>;
   }
 
