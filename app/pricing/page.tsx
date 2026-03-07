@@ -135,51 +135,50 @@ export default function PricingPage() {
       </div>
 
       {/* HERO SECTION */}
-      <section className="relative pt-24 pb-20 px-4 md:px-8 border-b-8 border-black overflow-hidden bg-[url('/noise.png')] bg-repeat opacity-95">
-        <div className="absolute top-10 left-10 w-96 h-96 bg-heirlock-yellow border-8 border-black rounded-full mix-blend-multiply blur-sm opacity-50 animate-pulse"></div>
-        <div className="absolute bottom-10 right-10 w-[500px] h-[500px] bg-heirlock-pink border-8 border-black mix-blend-multiply opacity-50 transform rotate-12"></div>
+      <section className="relative pt-12 pb-12 px-4 md:px-8 border-b-8 border-black overflow-hidden bg-[url('/noise.png')] bg-repeat opacity-95">
+        <div className="absolute top-0 left-10 w-64 h-64 bg-heirlock-yellow border-8 border-black rounded-full mix-blend-multiply blur-sm opacity-50 animate-pulse hidden md:block"></div>
+        <div className="absolute -bottom-10 right-10 w-[300px] h-[300px] bg-heirlock-pink border-8 border-black mix-blend-multiply opacity-50 transform rotate-12 hidden md:block"></div>
         
-        <div className="max-w-7xl mx-auto relative z-10 flex flex-col items-center mb-16">
-          <div className="inline-block border-4 border-black bg-black text-white px-6 py-2 mb-8 shadow-[8px_8px_0_0_#FFE600] transform -rotate-2">
-            <span className="font-black uppercase tracking-[0.3em] text-sm md:text-base">Acquisition Protocols</span>
+        <div className="max-w-7xl mx-auto relative z-10 flex flex-col items-center">
+          <div className="inline-block border-4 border-black bg-black text-white px-4 py-1 mb-6 shadow-[4px_4px_0_0_#FFE600] transform -rotate-1">
+            <span className="font-black uppercase tracking-[0.2em] text-xs">Acquisition Protocols</span>
           </div>
           
-          <h1 className="text-6xl md:text-8xl lg:text-[120px] font-black leading-[0.85] text-center uppercase tracking-tighter mix-blend-difference drop-shadow-[-4px_4px_0_rgba(0,0,0,1)] text-white">
-            PRICE of <br className="hidden md:block"/> SECURITY
-          </h1>
-          
-          <p className="mt-8 text-xl md:text-2xl font-bold max-w-3xl text-center border-4 border-black bg-white p-6 shadow-[8px_8px_0_0_#000]">
-            NO HIDDEN FEES. NO MIDDLEMEN. <br />
-            JUST UNBREAKABLE ENCRYPTION AT SCALE.
-          </p>
+          <div className="flex flex-col xl:flex-row items-center justify-center gap-6 xl:gap-12 mb-6 w-full">
+            <h1 className="text-5xl md:text-7xl font-black leading-none text-center uppercase tracking-tighter mix-blend-difference drop-shadow-[-3px_3px_0_rgba(0,0,0,1)] text-white">
+              PRICE OF SECURITY
+            </h1>
 
-          {/* BRUTALIST TOGGLE */}
-          <div className="mt-16 flex flex-col items-center">
-            <div className="border-8 border-black bg-white p-4 flex items-center gap-6 shadow-[12px_12px_0_0_#000] rotate-1">
-              <span className={`text-xl md:text-3xl font-black ${!isYearly ? 'text-black' : 'text-gray-400'}`}>MONTHLY</span>
+            {/* BRUTALIST TOGGLE */}
+            <div className="border-4 border-black bg-white p-3 flex items-center gap-4 shadow-[6px_6px_0_0_#000] rotate-1 shrink-0">
+              <span className={`text-lg md:text-xl font-black ${!isYearly ? 'text-black' : 'text-gray-400'}`}>MONTHLY</span>
               
               <button
                 onClick={() => setIsYearly(!isYearly)}
-                className="relative w-32 h-14 bg-heirlock-yellow border-8 border-black rounded-full transition-colors flex items-center shrink-0 cursor-pointer overflow-hidden"
+                className="relative w-20 h-10 bg-heirlock-yellow border-4 border-black rounded-full transition-colors flex items-center shrink-0 cursor-pointer overflow-hidden"
               >
                 <div className={`absolute left-0 top-0 bottom-0 w-1/2 bg-black transition-transform duration-300 ${isYearly ? 'translate-x-full' : 'translate-x-0'}`}></div>
               </button>
 
               <div className="flex flex-col">
-                <span className={`text-xl md:text-3xl font-black ${isYearly ? 'text-black' : 'text-gray-400'}`}>ANNUAL</span>
+                <span className={`text-lg md:text-xl font-black ${isYearly ? 'text-black' : 'text-gray-400'}`}>ANNUAL</span>
                 {isYearly ? (
-                  <span className="text-xs font-black bg-heirlock-pink border-2 border-black px-2 mt-1 -rotate-2 self-start">SAVE 20%</span>
+                  <span className="text-[10px] font-black bg-heirlock-pink border-2 border-black px-1 mt-0.5 -rotate-2 self-start leading-none py-0.5">SAVE 20%</span>
                 ) : (
-                  <span className="text-xs font-black bg-white opacity-0 mt-1">SAVE 20%</span>
+                  <span className="text-[10px] font-black bg-white opacity-0 mt-0.5 leading-none py-0.5">SAVE 20%</span>
                 )}
               </div>
             </div>
           </div>
+          
+          <p className="text-sm md:text-lg font-bold max-w-2xl text-center border-4 border-black bg-white p-3 shadow-[4px_4px_0_0_#000]">
+            NO HIDDEN FEES. NO MIDDLEMEN. JUST UNBREAKABLE ENCRYPTION AT SCALE.
+          </p>
         </div>
       </section>
 
       {/* PRICING CARDS */}
-      <section className="py-20 px-4 md:px-8 border-b-8 border-black bg-white" id="plans">
+      <section className="py-12 px-4 md:px-8 border-b-8 border-black bg-white" id="plans">
         <div className="max-w-[1400px] mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-6">
             {pricingTiers.map((tier, index) => {
