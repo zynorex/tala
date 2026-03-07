@@ -273,7 +273,6 @@ export default function PricingPage() {
                             billingInterval={billingInterval}
                             label={`ACQUIRE NOW`}
                             onSuccess={handlePaymentSuccess(tier.planTierKey!)}
-                            className="w-full h-full !py-4 !bg-transparent !text-inherit !rounded-none !font-black !text-xl !uppercase !tracking-widest"
                           />
                         </div>
                       </div>
