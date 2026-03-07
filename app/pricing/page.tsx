@@ -359,12 +359,12 @@ export default function PricingPage() {
               { q: 'CAN I PULL OUT MY DATA?', a: 'YES. EXPORT BATCHES AVAILABLE. YOUR DATA. YOUR CONTROL. ALWAYS.' },
               { q: 'WHAT HAPPENS TO DELETED FILES?', a: '30-DAY PURGATORY. AFTER THAT, TOTAL INCINERATION FROM ALL GLOBAL SERVERS.' }
             ].map((faq, idx) => (
-              <div key={idx} className="border-4 border-white bg-black p-8 hover:bg-heirlock-blue hover:text-black hover:border-black transition-all group group-hover:shadow-[12px_12px_0_0_#FFF] shadow-[8px_8px_0_0_#FFF]">
-                <div className="text-xl font-black uppercase mb-4 flex items-start gap-4">
+              <div key={idx} className="border-4 border-white bg-black text-white p-8 hover:bg-white hover:text-black hover:border-white transition-all group group-hover:shadow-[12px_12px_0_0_#FFF] shadow-[8px_8px_0_0_#FFF]">
+                <div className="text-xl font-black uppercase mb-4 flex items-start gap-4 text-white group-hover:text-black">
                   <span className="text-heirlock-yellow group-hover:text-black">/0{idx + 1}</span>
                   {faq.q}
                 </div>
-                <p className="font-bold border-t-4 border-white/20 group-hover:border-black pt-4">
+                <p className="font-bold border-t-4 border-white/20 group-hover:border-black pt-4 text-white group-hover:text-black">
                   {faq.a}
                 </p>
               </div>
@@ -383,7 +383,7 @@ export default function PricingPage() {
           <div className="flex flex-col sm:flex-row gap-6 mt-8">
             <Link
               href={session ? '/dashboard' : '/auth/login?redirect=/pricing'}
-              className="px-12 py-6 bg-black text-white font-black text-2xl uppercase tracking-widest border-8 border-black hover:bg-heirlock-pink hover:text-black hover:shadow-[12px_12px_0_0_#000] active:translate-y-2 active:shadow-none transition-all"
+              className="px-12 py-6 bg-black text-white font-black text-2xl uppercase tracking-widest border-8 border-black hover:bg-white hover:text-black hover:shadow-[12px_12px_0_0_#000] active:translate-y-2 active:shadow-none transition-all"
             >
               {session ? 'DASHBOARD' : 'START FREE'}
             </Link>
