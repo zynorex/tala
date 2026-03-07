@@ -55,9 +55,9 @@ function AccessNoticeModal({
             <div className="space-y-1">
               <div className="flex items-center gap-2 text-black mb-2">
                 <AlertTriangle className="w-5 h-5" />
-                <p className="font-bold uppercase tracking-widest text-xs">Access Required</p>
+                <p className="font-bold uppercase tracking-widest text-xs">Authorization Required</p>
               </div>
-              <h2 className="text-3xl font-black text-black leading-none uppercase">RESTRICTED ENVIRONMENT</h2>
+              <h2 className="text-3xl font-black text-black leading-none uppercase">WORKSPACE ACCESS REQUIRED</h2>
             </div>
             <button onClick={onClose} className="p-2 border-2 border-black bg-white hover:bg-black hover:text-white transition-colors" aria-label="Close notice">
               <X className="w-6 h-6" />
@@ -66,26 +66,26 @@ function AccessNoticeModal({
 
           <div className="p-6 md:p-8 space-y-6 bg-white">
             <p className="text-black text-lg font-bold">
-              Production vault deployment requires an active workspace plan.
+              Deploying a production vault requires an active workspace subscription.
             </p>
             <p className="text-gray-700 text-base">
-              You may validate the platform's cryptography and logic by deploying a Sandbox Vault. Sandbox vaults automatically decrypt after 2 minutes.
+              You can evaluate the platform cryptography and logic by deploying a demo vault. Demo vaults automatically decrypt after two minutes to ensure safe evaluation.
             </p>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="border-4 border-black bg-white p-5 cursor-pointer hover:bg-gray-50 transition-colors" onClick={onSelectDemo}>
                 <div className="flex items-center gap-2 mb-2">
                   <Settings className="w-5 h-5 text-gray-500" />
-                  <p className="font-black text-black uppercase">Sandbox Mode</p>
+                  <p className="font-black text-black uppercase">Demo Vault</p>
                 </div>
-                <p className="text-sm text-gray-600 font-medium">Free evaluation. Vault unlocks in 2 mins. Do not use for real data.</p>
+                <p className="text-sm text-gray-600 font-medium">Free evaluation environment. Vault unlocks in two minutes. Not for production data.</p>
               </div>
               <div className="border-4 border-black bg-white p-5 cursor-pointer hover:bg-gray-50 transition-colors" onClick={onSelectPaid}>
                 <div className="flex items-center gap-2 mb-2">
                   <ShieldCheck className="w-5 h-5 text-heirlock-blue" />
-                  <p className="font-black text-black uppercase">Production Mode</p>
+                  <p className="font-black text-black uppercase">Production Vault</p>
                 </div>
-                <p className="text-sm text-gray-600 font-medium">Full access. Custom unlock times. Infinite storage capability.</p>
+                <p className="text-sm text-gray-600 font-medium">Full protocol access. Custom unlock scheduling. Infinite storage capacity.</p>
               </div>
             </div>
           </div>
@@ -107,7 +107,7 @@ function EnvironmentSelector({ activeTab, setActiveTab }: { activeTab: VaultTab;
         }`}
       >
         <Settings className="w-5 h-5" />
-        Sandbox Environment
+        Demo Environment
       </button>
       <button
         onClick={() => setActiveTab('real')}
@@ -161,10 +161,10 @@ export default function CreateVault() {
   }, [showAccessModal]);
 
   const steps = [
-    { title: "Authentication", description: "Connect verifiable identity.", icon: Shield },
-    { title: "Payload Data", description: "Select local file for client-side encryption.", icon: FileUp },
-    { title: "Epoch Schedule", description: "Define absolute future decryption timestamp.", icon: Clock },
-    { title: "Network Commit", description: "Deploy to blockchain. Distribute to IPFS nodes.", icon: Database },
+    { title: "Authentication", description: "Connect identity provider.", icon: Shield },
+    { title: "Payload Data", description: "Select local file for client side encryption.", icon: FileUp },
+    { title: "Vault Schedule", description: "Define absolute future decryption timestamp.", icon: Clock },
+    { title: "Network Commit", description: "Deploy to ledger protocol. Distribute across network points.", icon: Database },
   ];
 
   return (
@@ -181,17 +181,17 @@ export default function CreateVault() {
       <header className="sticky top-0 z-50 bg-white border-b-4 border-black px-4 md:px-8 py-4 flex flex-wrap justify-between items-center gap-4">
         <Link href="/dashboard" className="flex items-center gap-2 font-black text-sm uppercase tracking-widest text-black hover:text-gray-600 transition-colors bg-white px-4 py-2 border-2 border-black inline-flex">
           <ArrowLeft className="w-4 h-4" />
-          EXIT DEPLOYMENT
+          RETURN TO DASHBOARD
         </Link>
         <div className="font-black text-xl tracking-[0.2em] uppercase shrink-0">
-          T.A.L.A. // DEPLOY ENGINE
+          T.A.L.A. CREATION PROTOCOL
         </div>
         <div className="hidden md:flex gap-4 items-center">
           <div className="px-3 py-1 font-bold text-xs uppercase border-2 border-black bg-heirlock-green">
             NETWORK: SECURE
           </div>
           <div className="px-3 py-1 font-bold text-xs uppercase border-2 border-black bg-gray-100">
-            {activeTab === 'demo' ? 'MODE: SANDBOX' : 'MODE: PRODUCTION'}
+            {activeTab === 'demo' ? 'MODE: DEMO' : 'MODE: PRODUCTION'}
           </div>
         </div>
       </header>
@@ -206,12 +206,12 @@ export default function CreateVault() {
               VAULT <br/> SETUP
             </h1>
             <p className="font-bold text-gray-600 text-sm mt-4">
-              Step-by-step cryptographic deployment protocol.
+              Guided cryptographic deployment procedure.
             </p>
           </div>
 
           <div className="p-8 flex-1">
-            <h3 className="font-black uppercase tracking-widest text-xs mb-6 text-gray-500">OPERATIONAL DIRECTIVES</h3>
+            <h3 className="font-black uppercase tracking-widest text-xs mb-6 text-gray-500">DEPLOYMENT PHASES</h3>
             <div className="space-y-6">
               {steps.map((step, index) => {
                 const Icon = step.icon;
@@ -231,10 +231,10 @@ export default function CreateVault() {
 
             <div className="mt-12 p-5 border-4 border-black bg-heirlock-blue/20">
               <div className="flex items-center gap-2 font-black uppercase text-sm mb-2">
-                <Lock className="w-4 h-4" /> NO BACKDOORS
+                <Lock className="w-4 h-4" /> SECURITY NOTICE
               </div>
               <p className="text-xs font-medium text-gray-800">
-                T.A.L.A. uses strict zero-knowledge architecture. If you lose your decryption key and the final hash, there is no recovery mechanism.
+                The system utilizes absolute privacy architecture. If you lose your decryption key and the final hash, data recovery becomes mathematically impossible.
               </p>
             </div>
           </div>
@@ -248,16 +248,16 @@ export default function CreateVault() {
             <div className="mb-8">
               {activeTab === 'demo' ? (
                 <div className="p-4 border-l-4 border-heirlock-yellow bg-gray-50 mb-8">
-                  <h2 className="font-black text-lg uppercase mb-1">Sandbox Evaluation Active</h2>
+                  <h2 className="font-black text-lg uppercase mb-1">Demo Environment Active</h2>
                   <p className="text-sm font-medium text-gray-600">
-                    This vault will automatically unlock exactly 2 minutes after deployment. No blockchain gas fees will be charged to your live wallet.
+                    You are currently operating in a secure testing environment. Vaults created here will automatically decrypt exactly two minutes after deployment. This allows you to evaluate the encryption and retrieval process without incurring network fees or permanently locking test data.
                   </p>
                 </div>
               ) : (
                 <div className="p-4 border-l-4 border-black bg-gray-50 mb-8">
-                  <h2 className="font-black text-lg uppercase mb-1">Production Environment</h2>
+                  <h2 className="font-black text-lg uppercase mb-1">Production Environment Active</h2>
                   <p className="text-sm font-medium text-gray-600">
-                    You are deploying a permanent cryptographic vault. Ensure your target wallet has sufficient gas for the polygon sequence.
+                    You are initiating a permanent cryptographic deployment. The vault will remain locked until your specified timestamp. Please confirm your selected file and schedule carefully, as blockchain deployment operations cannot be reversed.
                   </p>
                 </div>
               )}
