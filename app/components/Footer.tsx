@@ -74,7 +74,7 @@ export default function Footer() {
         {/* Massive Brand Section */}
         <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-10 border-b-8 border-white pb-10 md:pb-16 mb-16">
           <div>
-            <h2 className="text-6xl md:text-8xl lg:text-[140px] font-black uppercase tracking-tighter leading-none mb-6 -ml-1 drop-shadow-[4px_4px_0_#FFFACD]">T.A.L.A.</h2>
+            <h2 className="text-6xl md:text-8xl lg:text-[140px] font-black uppercase tracking-tighter leading-none mb-6 -ml-1 text-white" style={{ textShadow: '8px 8px 0px #FFFACD' }}>T.A.L.A.</h2>
             <p className="text-lg md:text-2xl font-bold max-w-2xl bg-white text-black p-4 inline-block shadow-[8px_8px_0_0_#FFB3BA] leading-snug">
               Zero-trust time capsules for the next generation of public record.
             </p>
@@ -167,17 +167,20 @@ export default function Footer() {
           </div>
 
           {/* Newsletter Box */}
-          <div className="lg:col-span-5 relative mt-8 lg:mt-0 xl:scale-105 xl:origin-right">
-            <div className="absolute -inset-2 bg-heirlock-yellow border-4 border-white transform -rotate-2 shadow-[12px_12px_0_0_#FFF] z-0 hidden md:block"></div>
-            <div className="bg-white text-black border-4 border-black p-6 md:p-8 relative z-10 shadow-[8px_8px_0_0_#FFF] md:shadow-none h-full flex flex-col justify-center">
-              <div className="mb-6 border-b-4 border-black pb-4">
-                <div className="inline-flex items-center gap-2 bg-black text-white px-3 py-1 text-xs font-black uppercase tracking-widest shadow-[4px_4px_0_0_#BAE1FF] mb-4">
-                  <div className="w-2 h-2 bg-heirlock-red rounded-full animate-pulse"></div>
-                  Dispatch Waitlist
+          <div className="lg:col-span-5 relative mt-8 lg:mt-0 xl:scale-105 xl:origin-right flex flex-col justify-center">
+            {/* The pale yellow rotated background layer */}
+            <div className="absolute inset-0 bg-[#FFFACD] transform -rotate-2 scale-105 z-0 hidden md:block"></div>
+            
+            {/* The main white box */}
+            <div className="bg-white text-black border-[6px] border-black p-6 md:p-10 relative z-10 h-full flex flex-col justify-center">
+              <div className="mb-6">
+                <div className="inline-block bg-black text-white px-4 py-1.5 text-sm font-black uppercase tracking-widest shadow-[4px_4px_0_0_#BAE1FF] mb-6">
+                  DISPATCH WAITLIST
                 </div>
-                <h3 className="text-3xl lg:text-4xl font-black uppercase tracking-tight leading-[0.95]">Architect's Log</h3>
+                <h3 className="text-4xl lg:text-5xl font-black uppercase tracking-tight leading-none mb-4">ARCHITECT'S LOG</h3>
+                <div className="w-full h-1.5 bg-black mb-6"></div>
               </div>
-              <p className="text-lg font-bold text-gray-700 mb-6 leading-snug">Security audits, protocol upgrades, and zero-knowledge briefings delivered straight to your inbox.</p>
+              <p className="text-xl font-bold text-gray-800 mb-8 leading-snug pr-4">Security audits, protocol upgrades, and zero-knowledge briefings delivered straight to your inbox.</p>
               
               {submitted ? (
                 <div className="bg-black text-white border-4 border-black p-5 shadow-[6px_6px_0_0_#98FB98]">
@@ -190,20 +193,20 @@ export default function Footer() {
                   </div>
                 </div>
               ) : (
-                <div className="flex flex-col sm:flex-row gap-3">
+                <div className="flex flex-col sm:flex-row gap-4">
                   <input
                     type="email"
                     placeholder="ENTER.EMAIL@HERE"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     onKeyPress={(e) => e.key === 'Enter' && handleNewsletterSubmit()}
-                    className="flex-1 px-4 py-4 border-4 border-black font-mono text-base font-bold focus:outline-none focus:shadow-[4px_4px_0_0_#000] uppercase placeholder-gray-400"
+                    className="flex-1 px-4 py-4 border-[4px] border-black font-mono text-base font-bold focus:outline-none focus:shadow-[4px_4px_0_0_#000] uppercase placeholder-gray-400"
                   />
                   <button 
                     onClick={handleNewsletterSubmit}
-                    className="px-6 py-4 bg-black text-white border-4 border-black font-black hover:bg-heirlock-yellow hover:text-black transition-all shadow-[4px_4px_0_0_#000] hover:shadow-[6px_6px_0_0_#000] hover:-translate-y-1 flex items-center justify-center gap-2 uppercase tracking-wider text-lg"
+                    className="px-8 py-4 bg-black text-white border-4 border-black font-black hover:bg-heirlock-yellow hover:text-black transition-all shadow-[4px_4px_0_0_#000] hover:shadow-[6px_6px_0_0_#000] hover:-translate-y-1 flex items-center justify-center gap-2 uppercase tracking-widest text-lg whitespace-nowrap"
                   >
-                    Subscribe
+                    SUBSCRIBE
                   </button>
                 </div>
               )}
