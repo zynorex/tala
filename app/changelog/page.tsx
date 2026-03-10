@@ -43,6 +43,22 @@ interface ChangelogEntry {
 export default function Changelog() {
   const changelog: ChangelogEntry[] = [
     {
+      version: '2.2.0',
+      date: 'March 10, 2026',
+      category: 'fix',
+      icon: Shield,
+      title: 'Razorpay Payment System Fix',
+      description: 'Resolved critical payment processing failure causing "Internal server error" on all plan purchases. Root cause: Google OAuth users had no corresponding database record, triggering a foreign key constraint violation when creating payment orders.',
+      changes: [
+        'Google OAuth User Provisioning: Added signIn callback to NextAuth that ensures a User row is created in the database on first Google sign-in, resolving the foreign key violation that blocked payment order creation',
+        'PlanTier Enum Correction: Fixed wallet authentication user creation setting plan to lowercase "free" instead of "FREE", which violated the PlanTier enum constraint on new wallet signups',
+        'Razorpay Credential Sanitization: Added .trim() to all Razorpay environment variable getters (key ID, key secret, webhook secret) to prevent authentication failures caused by trailing whitespace in .env values',
+        'Environment Variable Cleanup: Removed trailing whitespace from RAZORPAY_KEY_SECRET in the .env file that could cause Razorpay API signature mismatches',
+        'Payment Error Responses: Replaced generic "Internal server error" with actionable error messages that distinguish between missing user accounts, misconfigured payment services, and transient failures',
+      ],
+      impact: 'major',
+    },
+    {
       version: '2.0.0',
       date: 'February 22, 2026',
       category: 'security',
