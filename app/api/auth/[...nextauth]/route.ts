@@ -48,7 +48,7 @@ providers.push(
           user = await db.user.create({
             data: {
               walletAddress: credentials.address.toLowerCase(),
-              plan: "free",
+              plan: "FREE",
               role: "user",
             },
           });
@@ -100,6 +100,37 @@ export const authOptions: NextAuthOptions = {
     error: "/auth/login",
   },
   callbacks: {
+    async signIn({ user, account, profile }) {
+      // For OAuth providers (Google), ensure a User row exists in the database
+      if (account?.provider === "google" && user.email) {
+        try {
+          const existing = await db.user.findUnique({
+            where: { email: user.email },
+          });
+          if (!existing) {
+            const created = await db.user.create({
+              data: {
+                email: user.email,
+                name: user.name ?? undefined,
+                image: user.image ?? undefined,
+                emailVerified: new Date(),
+                plan: "FREE",
+                role: "user",
+                authMethods: ["google"],
+              },
+            });
+            // Store the database ID so the JWT callback can use it
+            user.id = created.id;
+          } else {
+            user.id = existing.id;
+          }
+        } catch (err) {
+          logger.error('Failed to upsert Google user', err instanceof Error ? err : undefined);
+          return false;
+        }
+      }
+      return true;
+    },
     async jwt({ token, user, account }) {
       if (user) {
         token.id = user.id;

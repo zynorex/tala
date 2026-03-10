@@ -26,19 +26,19 @@ import type {
 // ─── Environment validation ───────────────────────────────────────────────────
 
 function getRazorpayKeyId(): string {
-  const key = process.env.RAZORPAY_KEY_ID;
+  const key = process.env.RAZORPAY_KEY_ID?.trim();
   if (!key) throw new Error('RAZORPAY_KEY_ID environment variable is not set.');
   return key;
 }
 
 function getRazorpayKeySecret(): string {
-  const secret = process.env.RAZORPAY_KEY_SECRET;
+  const secret = process.env.RAZORPAY_KEY_SECRET?.trim();
   if (!secret) throw new Error('RAZORPAY_KEY_SECRET environment variable is not set.');
   return secret;
 }
 
 function getWebhookSecret(): string {
-  const secret = process.env.RAZORPAY_WEBHOOK_SECRET;
+  const secret = process.env.RAZORPAY_WEBHOOK_SECRET?.trim();
   if (!secret) throw new Error('RAZORPAY_WEBHOOK_SECRET environment variable is not set.');
   return secret;
 }

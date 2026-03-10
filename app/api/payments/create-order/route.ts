@@ -74,11 +74,20 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(result, { status: 201 });
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : 'Failed to create payment order.';
-    console.error('[payments/create-order]', err);
+    console.error('[payments/create-order]', message, err);
 
     if (message.includes('Contact sales')) {
       return NextResponse.json({ error: message }, { status: 400 });
     }
-    return NextResponse.json({ error: 'Internal server error.' }, { status: 500 });
+
+    // Return enough detail to debug without leaking internals
+    const safeMessage =
+      message.includes('not found') || message.includes('foreign key')
+        ? 'User account not found. Please sign out and sign in again.'
+        : message.includes('environment variable')
+        ? 'Payment service is misconfigured. Please contact support.'
+        : 'Failed to create payment order. Please try again.';
+
+    return NextResponse.json({ error: safeMessage }, { status: 500 });
   }
 }
