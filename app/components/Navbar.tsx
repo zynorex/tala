@@ -127,162 +127,97 @@ export default function Navbar() {
                 <ChevronDown className="w-5 h-5 group-hover/resources:rotate-180 transition-transform" strokeWidth={3} />
               </button>
 
-              <div className="absolute left-1/2 -translate-x-1/2 mt-0 w-[94vw] max-w-5xl text-white border-4 border-black shadow-brutal rounded-xl opacity-0 invisible group-hover/resources:opacity-100 group-hover/resources:visible transition-all duration-200 ease-out z-50 overflow-hidden">
-                <div className="h-2 bg-linear-to-r from-heirlock-yellow via-heirlock-green to-heirlock-blue" />
-                <div className="bg-black/95 backdrop-blur-sm resources-scroll max-h-[70vh] overflow-y-auto">
-                  <div className="flex flex-wrap items-center justify-between gap-4 px-6 md:px-8 pt-6">
-                    <div className="flex items-center gap-3">
-                      <div className="h-10 w-10 rounded-lg bg-white text-black font-black flex items-center justify-center shadow-[4px_4px_0_0_rgba(255,255,255,0.2)]">R</div>
-                      <div>
-                        <p className="text-[11px] uppercase tracking-[0.2em] text-gray-400 font-black">Resources</p>
-                        <p className="text-sm md:text-base text-white/80 font-semibold">Guides, launch notes, and build-ready docs.</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-3 text-sm text-white/70">
-                      <span className="inline-flex items-center gap-2 px-3 py-2 rounded-full border border-white/20 bg-white/5">
-                        <Shield className="w-4 h-4" />
-                        Security-first content
-                      </span>
+              <div className="absolute left-1/2 -translate-x-1/2 mt-0 w-[90vw] max-w-4xl text-black border-4 border-black shadow-[8px_8px_0_0_rgba(0,0,0,1)] opacity-0 invisible group-hover/resources:opacity-100 group-hover/resources:visible transition-all duration-200 ease-out z-50 flex flex-col bg-white">
+                {/* Colorful Header Bar */}
+                <div className="flex h-3 w-full border-b-4 border-black">
+                  <div className="flex-1 bg-heirlock-yellow" />
+                  <div className="flex-1 bg-heirlock-green" />
+                  <div className="flex-1 bg-heirlock-blue" />
+                  <div className="flex-1 bg-heirlock-pink" />
+                </div>
+
+                <div className="grid md:grid-cols-3 divide-y-4 md:divide-y-0 md:divide-x-4 divide-black">
+                  {/* Column 1: Platform */}
+                  <div className="p-6 md:p-8 bg-heirlock-yellow/20 hover:bg-heirlock-yellow/40 transition-colors">
+                    <h3 className="text-sm font-black uppercase tracking-[0.15em] flex items-center gap-3 mb-6">
+                      <div className="p-1.5 bg-heirlock-yellow border-2 border-black rounded-sm shadow-[2px_2px_0_0_#000]"><BookOpen className="w-4 h-4" /></div>
+                      Platform
+                    </h3>
+                    <div className="flex flex-col gap-4">
+                      {[
+                        { href: '/learn', label: 'Learn T.A.L.A.' },
+                        { href: '/how-it-works', label: 'How It Works' },
+                        { href: '/case-studies', label: 'Case Studies' },
+                        { href: '/pricing', label: 'Pricing & Plans' },
+                        { href: '/faq', label: 'FAQ' }
+                      ].map((item) => (
+                        <Link href={item.href} onClick={closeMenu} key={item.label} className="group/link flex items-center gap-3 w-fit">
+                          <span className="w-2 h-2 border-2 border-black bg-white group-hover/link:bg-heirlock-yellow transition-colors" />
+                          <span className="font-bold text-gray-800 group-hover/link:text-black group-hover/link:-translate-y-0.5 transition-transform">{item.label}</span>
+                        </Link>
+                      ))}
                     </div>
                   </div>
 
-                  <div className="grid lg:grid-cols-[1.1fr_1.1fr_0.95fr] gap-6 md:gap-7 px-6 md:px-8 py-6 md:py-8">
-                    {/* Platform Column */}
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-between">
-                        <h3 className="text-xs font-black text-gray-400 uppercase tracking-[0.25em]">Platform</h3>
-                        <span className="text-[11px] text-white/60">Orientation</span>
-                      </div>
-                      <div className="space-y-2">
-                        {[
-                          { href: '/learn', label: 'Learn T.A.L.A.', icon: BookOpen, desc: 'Overview of the platform and where to start.', accent: 'hover:border-heirlock-yellow/60 hover:bg-heirlock-yellow/10' },
-                          { href: '/how-it-works', label: 'How It Works', icon: Zap, desc: 'Concepts, guarantees, and threat model.', accent: 'hover:border-heirlock-blue/60 hover:bg-heirlock-blue/10' },
-                          { href: '/pricing', label: 'Pricing', icon: Rocket, desc: 'Plans, usage, and billing breakdown.', accent: 'hover:border-heirlock-pink/60 hover:bg-heirlock-pink/10' },
-                          { href: '/case-studies', label: 'Case Studies', icon: LayoutGrid, desc: 'Proof points from real deployments.', accent: 'hover:border-heirlock-green/60 hover:bg-heirlock-green/10' },
-                        ].map((item, idx) => {
-                          const Icon = item.icon;
-                          return (
-                            <Link href={item.href} onClick={closeMenu} key={idx}>
-                              <div className={`group/link flex items-start gap-3 p-3 rounded-lg border border-white/10 bg-white/3 hover:border-white/40 hover:bg-white/10 transition-all ${item.accent}`}>
-                                <div className="h-10 w-10 rounded-md bg-linear-to-br from-white/15 to-white/5 flex items-center justify-center text-white shrink-0 border border-white/10">
-                                  <Icon className="w-5 h-5" />
-                                </div>
-                                <div className="flex-1 space-y-1">
-                                  <div className="flex items-center justify-between">
-                                    <span className="font-bold text-sm text-white">{item.label}</span>
-                                    <span className="w-2 h-2 rounded-full bg-white/30 group-hover/link:bg-white" />
-                                  </div>
-                                  <p className="text-xs text-white/70 leading-snug">{item.desc}</p>
-                                </div>
-                              </div>
-                            </Link>
-                          );
-                        })}
-                      </div>
+                  {/* Column 2: Developers */}
+                  <div className="p-6 md:p-8 bg-heirlock-green/20 hover:bg-heirlock-green/40 transition-colors">
+                    <h3 className="text-sm font-black uppercase tracking-[0.15em] flex items-center gap-3 mb-6">
+                      <div className="p-1.5 bg-heirlock-green border-2 border-black rounded-sm shadow-[2px_2px_0_0_#000]"><Code className="w-4 h-4" /></div>
+                      Developers
+                    </h3>
+                    <div className="flex flex-col gap-4">
+                      {[
+                        { href: '/docs', label: 'Developer Docs' },
+                        { href: '/docs/api', label: 'API Reference' },
+                        { href: '/docs/quickstart', label: 'Quickstarts' },
+                        { href: '/smart-contracts', label: 'Smart Contracts' },
+                        { href: '/integrations', label: 'Integrations' }
+                      ].map((item) => (
+                        <Link href={item.href} onClick={closeMenu} key={item.label} className="group/link flex items-center gap-3 w-fit">
+                          <span className="w-2 h-2 border-2 border-black bg-white group-hover/link:bg-heirlock-green transition-colors" />
+                          <span className="font-bold text-gray-800 group-hover/link:text-black group-hover/link:-translate-y-0.5 transition-transform">{item.label}</span>
+                        </Link>
+                      ))}
                     </div>
+                  </div>
 
-                    {/* Developers Column */}
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-between">
-                        <h3 className="text-xs font-black text-gray-400 uppercase tracking-[0.25em]">Developers</h3>
-                        <span className="text-[11px] text-white/60">Build with T.A.L.A.</span>
-                      </div>
-                      <div className="space-y-2">
-                        {[
-                          { href: '/docs', label: 'Developer Docs', icon: Code, desc: 'SDKs, auth, environments, and examples.', accent: 'hover:border-heirlock-green/60 hover:bg-heirlock-green/10' },
-                          { href: '/docs/api', label: 'API Reference', icon: Zap, desc: 'Reference with request/response samples.', accent: 'hover:border-heirlock-blue/60 hover:bg-heirlock-blue/10' },
-                          { href: '/smart-contracts', label: 'Smart Contracts', icon: Shield, desc: 'Contract ABIs, audits, deployment info.', accent: 'hover:border-heirlock-pink/60 hover:bg-heirlock-pink/10' },
-                          { href: '/integrations', label: 'Integrations', icon: LayoutGrid, desc: 'Prebuilt connectors and recipes.', accent: 'hover:border-heirlock-yellow/60 hover:bg-heirlock-yellow/10' },
-                        ].map((item, idx) => {
-                          const Icon = item.icon;
-                          return (
-                            <Link href={item.href} onClick={closeMenu} key={idx}>
-                              <div className={`group/link flex items-start gap-3 p-3 rounded-lg border border-white/10 bg-white/3 hover:border-white/40 hover:bg-white/10 transition-all ${item.accent}`}>
-                                <div className="h-10 w-10 rounded-md bg-linear-to-br from-white/15 to-white/5 flex items-center justify-center text-white shrink-0 border border-white/10">
-                                  <Icon className="w-5 h-5" />
-                                </div>
-                                <div className="flex-1 space-y-1">
-                                  <div className="flex items-center justify-between">
-                                    <span className="font-bold text-sm text-white">{item.label}</span>
-                                    <span className="w-2 h-2 rounded-full bg-white/30 group-hover/link:bg-white" />
-                                  </div>
-                                  <p className="text-xs text-white/70 leading-snug">{item.desc}</p>
-                                </div>
-                              </div>
-                            </Link>
-                          );
-                        })}
-                      </div>
-                    </div>
-
-                    {/* Resources Column */}
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-between">
-                        <h3 className="text-xs font-black text-gray-400 uppercase tracking-[0.25em]">Trust & Info</h3>
-                        <span className="text-[11px] text-white/60">Connect</span>
-                      </div>
-                      <div className="space-y-2">
-                        {[
-                          { href: '/trust-center', label: 'Trust Center', icon: Shield, desc: 'Compliance, policies, and audits.', accent: 'hover:border-heirlock-blue/60 hover:bg-heirlock-blue/10' },
-                          { href: '/api-status', label: 'Network Status', icon: Zap, desc: 'Availability, limits, and uptime.', accent: 'hover:border-heirlock-yellow/60 hover:bg-heirlock-yellow/10' },
-                          { href: '/changelog', label: 'Changelog', icon: Newspaper, desc: 'What shipped this week.', accent: 'hover:border-heirlock-green/60 hover:bg-heirlock-green/10' },
-                          { href: '/contact', label: 'Contact', icon: Mail, desc: 'Talk with the team or request access.', accent: 'hover:border-heirlock-pink/60 hover:bg-heirlock-pink/10' },
-                        ].map((item, idx) => {
-                          const Icon = item.icon;
-                          return (
-                            <Link href={item.href} onClick={closeMenu} key={idx}>
-                              <div className={`group/link flex items-start gap-3 p-3 rounded-lg border border-white/10 bg-white/3 hover:border-white/40 hover:bg-white/10 transition-all ${item.accent}`}>
-                                <div className="h-10 w-10 rounded-md bg-linear-to-br from-white/15 to-white/5 flex items-center justify-center text-white shrink-0 border border-white/10">
-                                  <Icon className="w-5 h-5" />
-                                </div>
-                                <div className="flex-1 space-y-1">
-                                  <div className="flex items-center justify-between">
-                                    <span className="font-bold text-sm text-white">{item.label}</span>
-                                    <span className="w-2 h-2 rounded-full bg-white/30 group-hover/link:bg-white" />
-                                  </div>
-                                  <p className="text-xs text-white/70 leading-snug">{item.desc}</p>
-                                </div>
-                              </div>
-                            </Link>
-                          );
-                        })}
-                      </div>
-
-                      <div className="p-4 rounded-xl border border-white/10 bg-white/5 mt-4 space-y-3 shadow-brutal">
-                        <div className="flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-white/60 font-black">
-                          Featured action
-                          <span className="w-2 h-2 rounded-full bg-heirlock-yellow animate-pulse" />
-                        </div>
-                        <p className="text-base font-black text-white leading-tight">Create a vault in two minutes</p>
-                        <p className="text-xs text-white/70">Lock files with device-side encryption and contract-enforced unlocks. Guided flow, ready now.</p>
-                        <div className="pt-2">
-                          <Link href="/create-vault" onClick={closeMenu}>
-                            <button className="w-full px-4 py-2.5 bg-heirlock-yellow text-black font-black border-2 border-black rounded-sm shadow-[3px_3px_0_0_#000] hover:shadow-[4px_4px_0_0_#000] hover:-translate-y-0.5 transition-all text-sm uppercase">Start a vault</button>
-                          </Link>
-                        </div>
-                      </div>
+                  {/* Column 3: Trust & Info */}
+                  <div className="p-6 md:p-8 bg-heirlock-blue/20 hover:bg-heirlock-blue/40 transition-colors">
+                    <h3 className="text-sm font-black uppercase tracking-[0.15em] flex items-center gap-3 mb-6">
+                      <div className="p-1.5 bg-heirlock-blue border-2 border-black rounded-sm shadow-[2px_2px_0_0_#000]"><Shield className="w-4 h-4" /></div>
+                      Trust & Info
+                    </h3>
+                    <div className="flex flex-col gap-4">
+                      {[
+                        { href: '/security', label: 'Security' },
+                        { href: '/api-status', label: 'Network Status' },
+                        { href: '/trust-center', label: 'Trust Center' },
+                        { href: '/changelog', label: 'Changelog' },
+                        { href: '/contact', label: 'Contact Us' }
+                      ].map((item) => (
+                        <Link href={item.href} onClick={closeMenu} key={item.label} className="group/link flex items-center gap-3 w-fit">
+                          <span className="w-2 h-2 border-2 border-black bg-white group-hover/link:bg-heirlock-blue transition-colors" />
+                          <span className="font-bold text-gray-800 group-hover/link:text-black group-hover/link:-translate-y-0.5 transition-transform">{item.label}</span>
+                        </Link>
+                      ))}
                     </div>
                   </div>
                 </div>
+
+                {/* Featured Action Footer */}
+                <div className="bg-heirlock-pink p-5 lg:p-6 border-t-4 border-black flex flex-col sm:flex-row items-center justify-between gap-4">
+                  <div>
+                    <h4 className="text-black font-black uppercase tracking-wider text-base lg:text-lg">Ready to experiment?</h4>
+                    <p className="text-black/80 font-bold mt-1 text-sm">Lock files with device-side encryption securely.</p>
+                  </div>
+                  <Link href="/create-vault" onClick={closeMenu}>
+                    <button className="px-6 py-2.5 bg-black text-white font-black text-sm uppercase tracking-wider hover:-translate-y-1 transition-transform border-4 border-white shadow-[4px_4px_0_0_rgba(0,0,0,0.5)]">
+                      Create Vault Now
+                    </button>
+                  </Link>
+                </div>
               </div>
             </div>
-
-            <style jsx global>{`
-              .resources-scroll::-webkit-scrollbar {
-                width: 10px;
-              }
-              .resources-scroll::-webkit-scrollbar-track {
-                background: rgba(255, 255, 255, 0.05);
-              }
-              .resources-scroll::-webkit-scrollbar-thumb {
-                background: linear-gradient(180deg, #F2E85C, #5BE39D, #61A5FF);
-                border-radius: 999px;
-                border: 2px solid rgba(0, 0, 0, 0.6);
-              }
-              .resources-scroll::-webkit-scrollbar-thumb:hover {
-                background: linear-gradient(180deg, #F7F0A0, #7AF7B6, #8AC2FF);
-              }
-            `}</style>
 
             {/* Middle Section: Create Vault | Dashboard | Profile */}
             <div className="flex items-center gap-2 lg:gap-4 flex-1 justify-center">
