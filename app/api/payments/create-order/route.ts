@@ -15,6 +15,7 @@ import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import { createPaymentOrder } from '@/lib/payments/razorpay';
 import { parseBillingInterval, parsePlanTier } from '@/lib/payments/plans';
 import { rateLimit, rateLimitConfigs } from '@/lib/middleware/rate-limit';
+import { db } from '@/lib/prisma';
 
 // ─── Validation ───────────────────────────────────────────────────────────────
 
@@ -32,7 +33,46 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Authentication required.' }, { status: 401 });
   }
 
-  const userId: string = (session.user as { id: string }).id;
+  let userId: string = (session.user as { id: string }).id;
+  const sessionEmail: string | undefined = (session.user as any).email;
+
+  // 1b. Resolve userId to a real DB record — the JWT may contain a stale
+  //     Google sub ID instead of our database CUID.
+  const dbUser = await db.user.findUnique({
+    where: { id: userId },
+    select: { id: true },
+  });
+
+  if (!dbUser) {
+    // Fallback: look up by email for Google OAuth users
+    if (sessionEmail) {
+      const fallback = await db.user.findUnique({
+        where: { email: sessionEmail },
+        select: { id: true },
+      });
+      if (fallback) {
+        userId = fallback.id;
+      } else {
+        // Last resort: auto-create the user from the session data
+        const created = await db.user.create({
+          data: {
+            email: sessionEmail,
+            name: (session.user as any).name ?? undefined,
+            image: (session.user as any).image ?? undefined,
+            plan: 'FREE',
+            role: 'user',
+            authMethods: ['google'],
+          },
+        });
+        userId = created.id;
+      }
+    } else {
+      return NextResponse.json(
+        { error: 'User account not found. Please sign out and sign in again.' },
+        { status: 404 },
+      );
+    }
+  }
 
   // 2. Rate limit (keyed on userId to prevent account-hopping)
   const { allowed, response: rlResponse } = await rateLimit(req, userId, rateLimitConfigs.payment);

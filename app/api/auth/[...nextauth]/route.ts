@@ -142,6 +142,29 @@ export const authOptions: NextAuthOptions = {
       } else if (account?.provider === "credentials") {
         token.provider = "web3";
       }
+
+      // Ensure token.id is always a real database CUID.
+      // Stale JWTs (issued before the signIn-callback fix) may still
+      // carry the Google profile sub ID instead of the DB user ID.
+      if (
+        token.provider === "google" &&
+        token.email &&
+        !token.dbIdResolved
+      ) {
+        try {
+          const dbUser = await db.user.findUnique({
+            where: { email: token.email as string },
+            select: { id: true },
+          });
+          if (dbUser) {
+            token.id = dbUser.id;
+          }
+        } catch (e) {
+          logger.error('JWT: failed to resolve DB user id', e instanceof Error ? e : undefined);
+        }
+        token.dbIdResolved = true;
+      }
+
       return token;
     },
     async session({ session, token }) {

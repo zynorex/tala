@@ -127,85 +127,147 @@ export default function Navbar() {
                 <ChevronDown className="w-5 h-5 group-hover/resources:rotate-180 transition-transform" strokeWidth={3} />
               </button>
 
-              <div className="absolute left-1/2 -translate-x-1/2 mt-0 w-[90vw] max-w-4xl text-black border-4 border-black shadow-[8px_8px_0_0_rgba(0,0,0,1)] opacity-0 invisible group-hover/resources:opacity-100 group-hover/resources:visible transition-all duration-200 ease-out z-50 flex flex-col bg-white">
+              <div className="absolute left-1/2 -translate-x-1/2 mt-0 w-[96vw] max-w-[90rem] text-black border-4 border-black shadow-[8px_8px_0_0_rgba(0,0,0,1)] opacity-0 invisible group-hover/resources:opacity-100 group-hover/resources:visible transition-all duration-200 ease-out z-50 flex flex-col bg-white max-h-[85vh] overflow-hidden">
                 {/* Colorful Header Bar */}
-                <div className="flex h-3 w-full border-b-4 border-black">
+                <div className="flex shrink-0 h-3 w-full border-b-4 border-black">
                   <div className="flex-1 bg-heirlock-yellow" />
                   <div className="flex-1 bg-heirlock-green" />
                   <div className="flex-1 bg-heirlock-blue" />
                   <div className="flex-1 bg-heirlock-pink" />
                 </div>
 
-                <div className="grid md:grid-cols-3 divide-y-4 md:divide-y-0 md:divide-x-4 divide-black">
-                  {/* Column 1: Platform */}
-                  <div className="p-6 md:p-8 bg-heirlock-yellow/20 hover:bg-heirlock-yellow/40 transition-colors">
-                    <h3 className="text-sm font-black uppercase tracking-[0.15em] flex items-center gap-3 mb-6">
-                      <div className="p-1.5 bg-heirlock-yellow border-2 border-black rounded-sm shadow-[2px_2px_0_0_#000]"><BookOpen className="w-4 h-4" /></div>
-                      Platform
-                    </h3>
-                    <div className="flex flex-col gap-4">
-                      {[
-                        { href: '/learn', label: 'Learn T.A.L.A.' },
-                        { href: '/how-it-works', label: 'How It Works' },
-                        { href: '/case-studies', label: 'Case Studies' },
-                        { href: '/pricing', label: 'Pricing & Plans' },
-                        { href: '/faq', label: 'FAQ' }
-                      ].map((item) => (
-                        <Link href={item.href} onClick={closeMenu} key={item.label} className="group/link flex items-center gap-3 w-fit">
-                          <span className="w-2 h-2 border-2 border-black bg-white group-hover/link:bg-heirlock-yellow transition-colors" />
-                          <span className="font-bold text-gray-800 group-hover/link:text-black group-hover/link:-translate-y-0.5 transition-transform">{item.label}</span>
-                        </Link>
-                      ))}
+                <div className="flex-1 overflow-y-auto resources-scroll">
+                  <div className="grid md:grid-cols-4 divide-y-4 md:divide-y-0 md:divide-x-4 divide-black">
+                    {/* Column 1: Product & Company */}
+                    <div className="p-5 lg:p-6 bg-heirlock-yellow/20 hover:bg-heirlock-yellow/40 transition-colors">
+                      <h3 className="text-sm font-black uppercase tracking-[0.15em] flex items-center gap-3 mb-6">
+                        <div className="p-1.5 bg-heirlock-yellow border-2 border-black rounded-sm shadow-[2px_2px_0_0_#000]"><BookOpen className="w-4 h-4" /></div>
+                        Product & Team
+                      </h3>
+                      <div className="flex flex-col gap-3">
+                        {[
+                          { href: '/', label: 'Home Page' },
+                          { href: '/about', label: 'About Us' },
+                          { href: '/learn', label: 'Learn T.A.L.A.' },
+                          { href: '/how-it-works', label: 'How It Works' },
+                          { href: '/case-studies', label: 'Case Studies' },
+                          { href: '/pricing', label: 'Pricing & Plans' },
+                          { href: '/launch', label: 'Launch Program' },
+                          { href: '/student', label: 'Student Program' },
+                          { href: '/team', label: 'Our Team' },
+                          { href: '/faq', label: 'FAQ' },
+                        ].map((item) => (
+                          <Link href={item.href} onClick={closeMenu} key={item.label} className="group/link flex items-center gap-2.5 w-fit">
+                            <span className="w-2 h-2 border-[1.5px] border-black bg-white group-hover/link:bg-heirlock-yellow transition-colors" />
+                            <span className="font-bold text-sm text-gray-800 group-hover/link:text-black group-hover/link:-translate-y-0.5 transition-transform">{item.label}</span>
+                          </Link>
+                        ))}
+                      </div>
                     </div>
-                  </div>
 
-                  {/* Column 2: Developers */}
-                  <div className="p-6 md:p-8 bg-heirlock-green/20 hover:bg-heirlock-green/40 transition-colors">
-                    <h3 className="text-sm font-black uppercase tracking-[0.15em] flex items-center gap-3 mb-6">
-                      <div className="p-1.5 bg-heirlock-green border-2 border-black rounded-sm shadow-[2px_2px_0_0_#000]"><Code className="w-4 h-4" /></div>
-                      Developers
-                    </h3>
-                    <div className="flex flex-col gap-4">
-                      {[
-                        { href: '/docs', label: 'Developer Docs' },
-                        { href: '/docs/api', label: 'API Reference' },
-                        { href: '/docs/quickstart', label: 'Quickstarts' },
-                        { href: '/smart-contracts', label: 'Smart Contracts' },
-                        { href: '/integrations', label: 'Integrations' }
-                      ].map((item) => (
-                        <Link href={item.href} onClick={closeMenu} key={item.label} className="group/link flex items-center gap-3 w-fit">
-                          <span className="w-2 h-2 border-2 border-black bg-white group-hover/link:bg-heirlock-green transition-colors" />
-                          <span className="font-bold text-gray-800 group-hover/link:text-black group-hover/link:-translate-y-0.5 transition-transform">{item.label}</span>
-                        </Link>
-                      ))}
+                    {/* Column 2: Developers */}
+                    <div className="p-5 lg:p-6 bg-heirlock-green/20 hover:bg-heirlock-green/40 transition-colors">
+                      <h3 className="text-sm font-black uppercase tracking-[0.15em] flex items-center gap-3 mb-6">
+                        <div className="p-1.5 bg-heirlock-green border-2 border-black rounded-sm shadow-[2px_2px_0_0_#000]"><Code className="w-4 h-4" /></div>
+                        Developers
+                      </h3>
+                      <div className="flex flex-col gap-3">
+                        {[
+                          { href: '/docs', label: 'Core Docs' },
+                          { href: '/documentation', label: 'Legacy Docs' },
+                          { href: '/docs/api', label: 'API Reference' },
+                          { href: '/docs/architecture', label: 'Architecture' },
+                          { href: '/docs/quickstart', label: 'Quickstarts' },
+                          { href: '/docs/security', label: 'Dev Security' },
+                          { href: '/docs/smart-contract', label: 'Contract Guides' },
+                          { href: '/smart-contracts', label: 'Smart Contracts' },
+                          { href: '/integrations', label: 'Integrations' },
+                        ].map((item) => (
+                          <Link href={item.href} onClick={closeMenu} key={item.label} className="group/link flex items-center gap-2.5 w-fit">
+                            <span className="w-2 h-2 border-[1.5px] border-black bg-white group-hover/link:bg-heirlock-green transition-colors" />
+                            <span className="font-bold text-sm text-gray-800 group-hover/link:text-black group-hover/link:-translate-y-0.5 transition-transform">{item.label}</span>
+                          </Link>
+                        ))}
+                      </div>
                     </div>
-                  </div>
 
-                  {/* Column 3: Trust & Info */}
-                  <div className="p-6 md:p-8 bg-heirlock-blue/20 hover:bg-heirlock-blue/40 transition-colors">
-                    <h3 className="text-sm font-black uppercase tracking-[0.15em] flex items-center gap-3 mb-6">
-                      <div className="p-1.5 bg-heirlock-blue border-2 border-black rounded-sm shadow-[2px_2px_0_0_#000]"><Shield className="w-4 h-4" /></div>
-                      Trust & Info
-                    </h3>
-                    <div className="flex flex-col gap-4">
-                      {[
-                        { href: '/security', label: 'Security' },
-                        { href: '/api-status', label: 'Network Status' },
-                        { href: '/trust-center', label: 'Trust Center' },
-                        { href: '/changelog', label: 'Changelog' },
-                        { href: '/contact', label: 'Contact Us' }
-                      ].map((item) => (
-                        <Link href={item.href} onClick={closeMenu} key={item.label} className="group/link flex items-center gap-3 w-fit">
-                          <span className="w-2 h-2 border-2 border-black bg-white group-hover/link:bg-heirlock-blue transition-colors" />
-                          <span className="font-bold text-gray-800 group-hover/link:text-black group-hover/link:-translate-y-0.5 transition-transform">{item.label}</span>
-                        </Link>
-                      ))}
+                    {/* Column 3: Platform & Portals */}
+                    <div className="p-5 lg:p-6 bg-heirlock-blue/20 hover:bg-heirlock-blue/40 transition-colors">
+                      <h3 className="text-sm font-black uppercase tracking-[0.15em] flex items-center gap-3 mb-6">
+                        <div className="p-1.5 bg-heirlock-blue border-2 border-black rounded-sm shadow-[2px_2px_0_0_#000]"><LayoutGrid className="w-4 h-4" /></div>
+                        Platform Portals
+                      </h3>
+                      <div className="flex flex-col gap-3">
+                        {[
+                          { href: '/dashboard', label: 'Main Dashboard' },
+                          { href: '/dashboard/activity', label: 'Global Activity' },
+                          { href: '/dashboard/analytics', label: 'Analytics' },
+                          { href: '/dashboard/security', label: 'Platform Security' },
+                          { href: '/create-vault', label: 'Create Vault' },
+                          { href: '/access-portal', label: 'Access Portal' },
+                          { href: '/admin', label: 'Admin Panel' },
+                          { href: '/profile', label: 'Your Profile' },
+                          { href: '/auth/login', label: 'Sign In' },
+                          { href: '/auth/logout', label: 'Sign Out' },
+                        ].map((item) => (
+                          <Link href={item.href} onClick={closeMenu} key={item.label} className="group/link flex items-center gap-2.5 w-fit">
+                            <span className="w-2 h-2 border-[1.5px] border-black bg-white group-hover/link:bg-heirlock-blue transition-colors" />
+                            <span className="font-bold text-sm text-gray-800 group-hover/link:text-black group-hover/link:-translate-y-0.5 transition-transform">{item.label}</span>
+                          </Link>
+                        ))}
+                      </div>
                     </div>
+
+                    {/* Column 4: Trust, Info & Legal */}
+                    <div className="p-5 lg:p-6 bg-heirlock-pink/20 hover:bg-heirlock-pink/40 transition-colors">
+                      <h3 className="text-sm font-black uppercase tracking-[0.15em] flex items-center gap-3 mb-6">
+                        <div className="p-1.5 bg-heirlock-pink border-2 border-black rounded-sm shadow-[2px_2px_0_0_#000]"><Shield className="w-4 h-4" /></div>
+                        Trust & Legal
+                      </h3>
+                      <div className="grid grid-cols-2 gap-x-2 gap-y-3">
+                        <div className="space-y-3">
+                          <h4 className="text-[10px] uppercase font-black tracking-widest text-black/40">Status & Info</h4>
+                          {[
+                            { href: '/security', label: 'Security' },
+                            { href: '/trust-center', label: 'Trust Center' },
+                            { href: '/api-status', label: 'API Status' },
+                            { href: '/status', label: 'System Status' },
+                            { href: '/changelog', label: 'Changelog' },
+                            { href: '/roadmap', label: 'Roadmap' },
+                            { href: '/blog', label: 'Blog' },
+                            { href: '/procurement', label: 'Procurement' },
+                          ].map((item) => (
+                            <Link href={item.href} onClick={closeMenu} key={item.label} className="group/link flex items-center gap-2 w-fit">
+                              <span className="w-1.5 h-1.5 border-[1px] border-black bg-white group-hover/link:bg-heirlock-pink transition-colors shrink-0" />
+                              <span className="font-bold text-xs text-gray-800 group-hover/link:text-black hover:underline">{item.label}</span>
+                            </Link>
+                          ))}
+                        </div>
+                        <div className="space-y-3">
+                          <h4 className="text-[10px] uppercase font-black tracking-widest text-black/40">Legal & Auth</h4>
+                          {[
+                            { href: '/contact', label: 'Contact Us' },
+                            { href: '/support', label: 'Support' },
+                            { href: '/legal', label: 'Legal Hub' },
+                            { href: '/terms', label: 'Terms' },
+                            { href: '/privacy', label: 'Privacy' },
+                            { href: '/cookies', label: 'Cookies' },
+                            { href: '/disclaimer', label: 'Disclaimer' },
+                          ].map((item) => (
+                            <Link href={item.href} onClick={closeMenu} key={item.label} className="group/link flex items-center gap-2 w-fit">
+                              <span className="w-1.5 h-1.5 border-[1px] border-black bg-white group-hover/link:bg-heirlock-pink transition-colors shrink-0" />
+                              <span className="font-bold text-xs text-gray-800 group-hover/link:text-black hover:underline">{item.label}</span>
+                            </Link>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+
                   </div>
                 </div>
 
                 {/* Featured Action Footer */}
-                <div className="bg-heirlock-pink p-5 lg:p-6 border-t-4 border-black flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div className="shrink-0 bg-heirlock-pink p-4 lg:p-6 border-t-4 border-black flex flex-col sm:flex-row items-center justify-between gap-4">
                   <div>
                     <h4 className="text-black font-black uppercase tracking-wider text-base lg:text-lg">Ready to experiment?</h4>
                     <p className="text-black/80 font-bold mt-1 text-sm">Lock files with device-side encryption securely.</p>
