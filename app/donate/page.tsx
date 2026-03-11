@@ -1,7 +1,5 @@
 import type { Metadata } from "next";
-import { Heart, ShieldCheck, Zap, HandHeart, Sparkles, ArrowRight } from "lucide-react";
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import { Heart, ShieldCheck, HandHeart, Sparkles, ArrowRight } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "T.A.L.A. | Support Us",
@@ -61,12 +59,10 @@ export default function Donate() {
               href="https://razorpay.me/@usetala" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="w-full md:w-auto shrink-0"
+              className="w-full md:w-auto shrink-0 inline-flex items-center justify-center h-20 px-10 text-xl md:text-2xl font-black bg-heirlock-yellow text-black border-4 border-black hover:bg-heirlock-green hover:-translate-y-2 transition-all shadow-[6px_6px_0_0_#000] hover:shadow-[10px_10px_0_0_#000] uppercase tracking-widest group/btn"
             >
-              <Button size="lg" className="w-full md:w-auto h-20 px-10 text-xl md:text-2xl font-black bg-heirlock-yellow text-black border-4 border-black hover:bg-heirlock-green hover:-translate-y-2 transition-all shadow-[6px_6px_0_0_#000] hover:shadow-[10px_10px_0_0_#000] rounded-none uppercase tracking-widest group/btn">
-                Donate Now
-                <ArrowRight className="w-8 h-8 ml-3 group-hover/btn:translate-x-2 transition-transform" strokeWidth={3} />
-              </Button>
+              Donate Now
+              <ArrowRight className="w-8 h-8 ml-3 group-hover/btn:translate-x-2 transition-transform" strokeWidth={3} />
             </a>
           </div>
 
