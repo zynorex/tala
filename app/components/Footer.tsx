@@ -55,6 +55,7 @@ export default function Footer() {
     company: [
       { label: "About", href: "/about" },
       { label: "Contact", href: "/contact" },
+      { label: "Donate", href: "/donate" },
     ],
     social: [
       { label: "Twitter", href: "https://twitter.com", icon: Twitter, bg: "bg-heirlock-blue" },

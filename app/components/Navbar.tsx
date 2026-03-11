@@ -156,6 +156,7 @@ export default function Navbar() {
                           { href: '/student', label: 'Student Program' },
                           { href: '/team', label: 'Our Team' },
                           { href: '/faq', label: 'FAQ' },
+                          { href: '/donate', label: 'Support & Donate' },
                         ].map((item) => (
                           <Link href={item.href} onClick={closeMenu} key={item.label} className="group/link flex items-center gap-2.5 w-fit">
                             <span className="w-2 h-2 border-[1.5px] border-black bg-white group-hover/link:bg-heirlock-yellow transition-colors" />
@@ -438,7 +439,10 @@ export default function Navbar() {
                     <button className="w-full text-left px-4 py-2.5 text-xs font-black uppercase tracking-wider bg-white text-black hover:bg-heirlock-green transition-all border-2 border-black mb-1 shadow-[2px_2px_0_0_#000]">Integrations</button>
                   </Link>
                   <Link href="/faq" onClick={closeMenu}>
-                    <button className="w-full text-left px-4 py-2.5 text-xs font-black uppercase tracking-wider bg-white text-black hover:bg-heirlock-yellow transition-all border-2 border-black shadow-[2px_2px_0_0_#000]">FAQ</button>
+                    <button className="w-full text-left px-4 py-2.5 text-xs font-black uppercase tracking-wider bg-white text-black hover:bg-heirlock-yellow transition-all border-2 border-black mb-1 shadow-[2px_2px_0_0_#000]">FAQ</button>
+                  </Link>
+                  <Link href="/donate" onClick={closeMenu}>
+                    <button className="w-full text-left px-4 py-2.5 text-xs font-black uppercase tracking-wider bg-white text-black hover:bg-heirlock-blue transition-all border-2 border-black shadow-[2px_2px_0_0_#000]">Support & Donate</button>
                   </Link>
                 </div>
               )}
