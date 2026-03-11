@@ -5,7 +5,7 @@ import { signIn } from 'next-auth/react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAccount, useSignMessage } from 'wagmi';
 import Link from 'next/link';
-import { Lock, Wallet, Mail, ChevronRight, AlertCircle } from 'lucide-react';
+import { Lock, Wallet, Mail, ChevronRight, AlertCircle, ShieldCheck, Loader2, CheckCircle } from 'lucide-react';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { Suspense, useEffect } from 'react';
 
@@ -19,6 +19,12 @@ function LoginContent() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [walletLoading, setWalletLoading] = useState(false);
+
+  // Allowlist bypass state (used when login is disabled)
+  const [bypassEmail, setBypassEmail] = useState('');
+  const [bypassChecking, setBypassChecking] = useState(false);
+  const [bypassAllowed, setBypassAllowed] = useState(false);
+  const [bypassError, setBypassError] = useState('');
 
   // Surface NextAuth error redirects (e.g. allowlist rejection)
   useEffect(() => {
@@ -138,6 +144,57 @@ function LoginContent() {
     }
   };
 
+  // Allowlist bypass — check if an email is pre-authorized
+  const handleBypassCheck = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const email = bypassEmail.trim().toLowerCase();
+    if (!email) return;
+
+    setBypassChecking(true);
+    setBypassError('');
+    setBypassAllowed(false);
+
+    try {
+      const res = await fetch('/api/auth/check-allowlist', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+
+      if (!res.ok) {
+        setBypassError('Unable to verify your access. Please try again.');
+        return;
+      }
+
+      const data = await res.json();
+      if (data.allowed) {
+        setBypassAllowed(true);
+      } else {
+        setBypassError('This email is not authorized. Contact your admin to request access.');
+      }
+    } catch {
+      setBypassError('Network error. Please check your connection and try again.');
+    } finally {
+      setBypassChecking(false);
+    }
+  };
+
+  // Google login specifically for the bypass flow (login disabled)
+  const handleBypassGoogleLogin = async () => {
+    setLoading(true);
+    setError('');
+    try {
+      await signIn('google', {
+        callbackUrl: '/auth/login?sessionReady=true',
+        login_hint: bypassEmail.trim().toLowerCase(),
+      });
+    } catch (err) {
+      setError('Failed to sign in with Google.');
+      console.error(err);
+      setLoading(false);
+    }
+  };
+
   if (!loginEnabled) {
     return (
       <div className="min-h-screen bg-heirlock-yellow flex items-center justify-center p-6 md:p-12 font-sans selection:bg-black selection:text-white relative overflow-hidden">
@@ -180,6 +237,107 @@ function LoginContent() {
                 Public access channels will reopen shortly.
               </li>
             </ul>
+          </div>
+
+          {/* ── Allowlist Bypass Section ─────────────────────────────── */}
+          <div className="bg-heirlock-green/20 border-4 border-black p-6 md:p-8 mb-10 shadow-brutal">
+            <h2 className="text-xl md:text-2xl font-black uppercase mb-2 flex items-center gap-3">
+              <ShieldCheck className="w-7 h-7 text-black" strokeWidth={3} />
+              Authorized Access
+            </h2>
+            <p className="text-base font-bold text-black/70 mb-6">
+              If an admin has granted you access, enter your email to verify and sign in.
+            </p>
+
+            {!bypassAllowed ? (
+              <form onSubmit={handleBypassCheck} className="space-y-4">
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <div className="flex-1 relative">
+                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-black/40" />
+                    <input
+                      type="email"
+                      required
+                      placeholder="your-email@example.com"
+                      value={bypassEmail}
+                      onChange={(e) => {
+                        setBypassEmail(e.target.value);
+                        setBypassError('');
+                      }}
+                      disabled={bypassChecking}
+                      className="w-full pl-10 pr-4 py-4 border-4 border-black font-bold text-base bg-white focus:outline-none focus:border-heirlock-green shadow-[4px_4px_0_0_#000] focus:shadow-none transition-shadow disabled:opacity-50"
+                    />
+                  </div>
+                  <button
+                    type="submit"
+                    disabled={bypassChecking || !bypassEmail.trim()}
+                    className="px-6 py-4 bg-black text-white font-black uppercase text-base border-4 border-black shadow-[4px_4px_0_0_#BAFFC9] hover:-translate-y-1 hover:shadow-[6px_6px_0_0_#BAFFC9] disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2 whitespace-nowrap"
+                  >
+                    {bypassChecking ? (
+                      <>
+                        <Loader2 className="w-5 h-5 animate-spin" />
+                        Verifying...
+                      </>
+                    ) : (
+                      'Verify Access'
+                    )}
+                  </button>
+                </div>
+
+                {bypassError && (
+                  <div className="p-4 bg-heirlock-red/20 border-4 border-black flex items-start gap-3">
+                    <AlertCircle className="w-5 h-5 text-black shrink-0 mt-0.5" strokeWidth={3} />
+                    <p className="text-sm font-bold text-black">{bypassError}</p>
+                  </div>
+                )}
+              </form>
+            ) : (
+              <div className="space-y-4">
+                <div className="p-4 bg-heirlock-green/40 border-4 border-black flex items-center gap-3">
+                  <CheckCircle className="w-6 h-6 text-black shrink-0" strokeWidth={3} />
+                  <div>
+                    <p className="font-black text-black uppercase text-sm">Access Verified</p>
+                    <p className="text-sm font-bold text-black/80 mt-0.5">
+                      <span className="bg-white px-2 py-0.5 border-2 border-black inline-block">{bypassEmail.toLowerCase()}</span>{' '}
+                      is authorized. Sign in below.
+                    </p>
+                  </div>
+                </div>
+
+                <button
+                  onClick={handleBypassGoogleLogin}
+                  disabled={loading}
+                  className="w-full px-6 py-5 bg-heirlock-pink border-4 border-black text-black font-black text-xl flex items-center justify-between shadow-brutal hover:-translate-y-1 hover:translate-x-1 hover:shadow-[12px_12px_0_0_#000] focus:translate-y-0 focus:translate-x-0 focus:shadow-none transition-all disabled:opacity-50 disabled:cursor-not-allowed group"
+                >
+                  <div className="flex items-center gap-4">
+                    <Mail className="w-8 h-8 group-hover:scale-110 transition-transform" strokeWidth={2.5} />
+                    {loading ? 'INITIATING...' : 'CONTINUE WITH GOOGLE'}
+                  </div>
+                  {!loading && <ChevronRight className="w-8 h-8 group-hover:translate-x-2 transition-transform" strokeWidth={3} />}
+                </button>
+
+                <button
+                  onClick={() => {
+                    setBypassAllowed(false);
+                    setBypassEmail('');
+                    setBypassError('');
+                  }}
+                  className="text-sm font-bold text-black/60 hover:text-black underline underline-offset-4 transition-colors"
+                >
+                  Use a different email
+                </button>
+
+                {/* Surface NextAuth errors in bypass flow */}
+                {error && (
+                  <div className="p-4 bg-heirlock-red border-4 border-black shadow-brutal flex items-start gap-3">
+                    <AlertCircle className="w-6 h-6 text-black shrink-0" strokeWidth={3} />
+                    <div>
+                      <p className="font-black text-black uppercase text-base leading-tight">Sign-In Failed</p>
+                      <p className="text-sm font-bold text-black/90 mt-1">{error}</p>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
 
           <div className="flex flex-col sm:flex-row gap-6">

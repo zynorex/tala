@@ -102,47 +102,48 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     async signIn({ user, account, profile }) {
       // ── Invite-only gate ────────────────────────────────────────────────
-      // Login is restricted to emails explicitly added to the AllowedEmail
-      // table by an admin.  Wallet-based (Web3) logins are also blocked
-      // unless the wallet owner has an allowlisted email on file.
+      // When NEXT_PUBLIC_LOGIN_ENABLED is "false", login is restricted to
+      // emails explicitly added to the AllowedEmail table by an admin.
+      // When login is enabled, all users can sign in freely.
+      const loginEnabled = process.env.NEXT_PUBLIC_LOGIN_ENABLED !== 'false';
       const userEmail = user.email?.toLowerCase();
 
-      if (account?.provider === "google") {
-        if (!userEmail) {
-          logger.warn('Google sign-in blocked: no email on Google account');
-          throw new Error("NoEmail");
-        }
-
-        const allowed = await db.allowedEmail.findUnique({
-          where: { email: userEmail },
-        });
-        if (!allowed) {
-          logger.warn('Google sign-in blocked: email not on allowlist', { email: userEmail });
-          throw new Error("NotAllowed");
-        }
-      }
-
-      // For Web3 logins, allow only if the wallet already has a user with
-      // an allowlisted email, or if the platform is open (no allowlist rows
-      // exist at all — this keeps wallet auth working in dev).
-      if (account?.provider === "credentials") {
-        const allowlistCount = await db.allowedEmail.count();
-        if (allowlistCount > 0) {
-          // Allowlist is active — wallet user must have an allowlisted email.
-          const existingUser = await db.user.findUnique({
-            where: { walletAddress: (user.name ?? '').toLowerCase() },
-            select: { email: true },
-          });
-          if (!existingUser?.email) {
-            logger.warn('Web3 sign-in blocked: wallet has no email linked', { wallet: user.name });
-            throw new Error("NotAllowed");
+      if (!loginEnabled) {
+        if (account?.provider === "google") {
+          if (!userEmail) {
+            logger.warn('Google sign-in blocked: no email on Google account');
+            throw new Error("NoEmail");
           }
+
           const allowed = await db.allowedEmail.findUnique({
-            where: { email: existingUser.email.toLowerCase() },
+            where: { email: userEmail },
           });
           if (!allowed) {
-            logger.warn('Web3 sign-in blocked: linked email not on allowlist', { email: existingUser.email });
+            logger.warn('Google sign-in blocked: email not on allowlist', { email: userEmail });
             throw new Error("NotAllowed");
+          }
+        }
+
+        // For Web3 logins, allow only if the wallet already has a user with
+        // an allowlisted email, or if no allowlist rows exist (dev mode).
+        if (account?.provider === "credentials") {
+          const allowlistCount = await db.allowedEmail.count();
+          if (allowlistCount > 0) {
+            const existingUser = await db.user.findUnique({
+              where: { walletAddress: (user.name ?? '').toLowerCase() },
+              select: { email: true },
+            });
+            if (!existingUser?.email) {
+              logger.warn('Web3 sign-in blocked: wallet has no email linked', { wallet: user.name });
+              throw new Error("NotAllowed");
+            }
+            const allowed = await db.allowedEmail.findUnique({
+              where: { email: existingUser.email.toLowerCase() },
+            });
+            if (!allowed) {
+              logger.warn('Web3 sign-in blocked: linked email not on allowlist', { email: existingUser.email });
+              throw new Error("NotAllowed");
+            }
           }
         }
       }
