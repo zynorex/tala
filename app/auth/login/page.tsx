@@ -20,6 +20,20 @@ function LoginContent() {
   const [loading, setLoading] = useState(false);
   const [walletLoading, setWalletLoading] = useState(false);
 
+  // Surface NextAuth error redirects (e.g. allowlist rejection)
+  useEffect(() => {
+    const nextAuthError = searchParams.get('error');
+    if (nextAuthError) {
+      if (nextAuthError === 'NotAllowed') {
+        setError('Your account is not authorized to sign in yet. An admin must grant you access first.');
+      } else if (nextAuthError === 'NoEmail') {
+        setError('No email address was found on your Google account.');
+      } else {
+        setError('Authentication failed. Please try again.');
+      }
+    }
+  }, [searchParams]);
+
   // Check if we just completed Google login
   useEffect(() => {
     const completeGoogleLogin = async () => {

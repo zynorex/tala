@@ -7,7 +7,8 @@ import AnalyticsCard from '@/app/components/admin/AnalyticsCard';
 import UserManagementCard from '@/app/components/admin/UserManagementCard';
 import VaultBrowserCard from '@/app/components/admin/VaultBrowserCard';
 import ActivityLogsCard from '@/app/components/admin/ActivityLogsCard';
-import { BarChart3, Users, FolderOpen, Activity, Zap, HardDrive } from 'lucide-react';
+import AllowlistCard from '@/app/components/admin/AllowlistCard';
+import { BarChart3, Users, FolderOpen, Activity, Zap, HardDrive, ShieldCheck } from 'lucide-react';
 
 interface DashboardStats {
   totalUsers: number;
@@ -100,6 +101,7 @@ export default function AdminDashboard() {
           <div className="flex gap-2 mb-8 border-b border-white/10">
             {[
               { id: 'overview', label: 'Overview', icon: BarChart3 },
+              { id: 'allowlist', label: 'Allowlist', icon: ShieldCheck },
               { id: 'users', label: 'Users', icon: Users },
               { id: 'vaults', label: 'Vaults', icon: FolderOpen },
               { id: 'logs', label: 'Activity Logs', icon: Activity },
@@ -163,6 +165,9 @@ export default function AdminDashboard() {
               <AnalyticsCard />
             </div>
           )}
+
+          {/* Allowlist Tab */}
+          {activeTab === 'allowlist' && <AllowlistCard />}
 
           {/* Users Tab */}
           {activeTab === 'users' && <UserManagementCard />}

@@ -411,3 +411,17 @@ model Subscription {
   @@index([razorpaySubscriptionId])
   @@index([status])
 }
+
+// ─────────────────────────────────────────────
+// ACCESS CONTROL — Invite-only login allowlist
+// ─────────────────────────────────────────────
+
+model AllowedEmail {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  note      String?  // Admin memo ("Beta tester", "Board member", etc.)
+  addedBy   String   // Admin ID / identifier who granted access
+  createdAt DateTime @default(now())
+
+  @@index([email])
+}
