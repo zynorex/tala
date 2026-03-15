@@ -23,7 +23,7 @@ export default function LaunchPage() {
 
   useEffect(() => {
     const updateCountdown = () => {
-      const launchDate = new Date('2026-03-14T00:00:00').getTime();
+      const launchDate = new Date('2026-04-20T00:00:00').getTime();
       const now = new Date().getTime();
       const timeUntilLaunch = launchDate - now;
 
