@@ -1,173 +1,210 @@
 'use client';
 
 import Link from 'next/link';
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import {
   ArrowLeft,
   ArrowRight,
   Clock3,
   Lock,
-  Shield,
   ShieldCheck,
   Sparkles,
   Zap,
 } from 'lucide-react';
 
+const LAUNCH_DATE_ISO = '2026-04-20T00:00:00+05:30';
+const LAUNCH_LABEL = '20 April 2026 • 12:00 AM IST';
+
+const launchHighlights = [
+  {
+    title: 'On-device encryption',
+    description: 'Plaintext stays off the platform from the start.',
+    tone: 'bg-heirlock-yellow',
+  },
+  {
+    title: 'Timed unlocks',
+    description: 'Release behavior follows policy, not operator mood.',
+    tone: 'bg-heirlock-blue',
+  },
+  {
+    title: 'Auditable custody',
+    description: 'Teams can review when and why a vault became available.',
+    tone: 'bg-heirlock-green',
+  },
+];
+
+const scrollNotes = [
+  {
+    label: 'What opens on launch',
+    title: 'The full vault flow goes live.',
+    description: 'Create, encrypt, lock, wait, unlock, and decrypt in one production-ready path.',
+  },
+  {
+    label: 'Who it is for',
+    title: 'Teams that cannot afford timing mistakes.',
+    description: 'Universities, legal teams, public bodies, and operators handling high-trust documents.',
+  },
+  {
+    label: 'What to do now',
+    title: 'Test the flow before the public release window.',
+    description: 'Run a short demo vault or talk to the team if you need launch support.',
+  },
+];
+
+function getCountdownParts() {
+  const target = new Date(LAUNCH_DATE_ISO).getTime();
+  const now = Date.now();
+  const difference = Math.max(0, target - now);
+
+  const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+  const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+  const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+  const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+
+  return {
+    days,
+    hours,
+    minutes,
+    seconds,
+    complete: difference === 0,
+  };
+}
+
+function formatUnit(value: number) {
+  return String(value).padStart(2, '0');
+}
+
 export default function LaunchPage() {
-  const [countdown, setCountdown] = useState({
-    days: 0,
-    hours: 0,
-    minutes: 0,
-    seconds: 0,
-  });
+  const [countdown, setCountdown] = useState(getCountdownParts());
 
   useEffect(() => {
-    const updateCountdown = () => {
-      const launchDate = new Date('2026-04-20T00:00:00').getTime();
-      const now = new Date().getTime();
-      const timeUntilLaunch = launchDate - now;
+    const timer = window.setInterval(() => {
+      setCountdown(getCountdownParts());
+    }, 1000);
 
-      if (timeUntilLaunch > 0) {
-        const days = Math.floor(timeUntilLaunch / (1000 * 60 * 60 * 24));
-        const hours = Math.floor((timeUntilLaunch % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-        const minutes = Math.floor((timeUntilLaunch % (1000 * 60 * 60)) / (1000 * 60));
-        const seconds = Math.floor((timeUntilLaunch % (1000 * 60)) / 1000);
-
-        setCountdown({ days, hours, minutes, seconds });
-      }
-    };
-
-    updateCountdown();
-    const timer = setInterval(updateCountdown, 1000);
-
-    return () => clearInterval(timer);
+    return () => window.clearInterval(timer);
   }, []);
 
   return (
-    <main className="min-h-screen bg-linear-to-b from-heirlock-yellow via-cream to-white">
-      <section className="py-16 md:py-24 px-4 relative">
-        <div className="max-w-5xl mx-auto">
-          <div className="flex items-center justify-between mb-8">
+    <main className="min-h-screen overflow-hidden bg-cream text-black selection:bg-black selection:text-heirlock-yellow">
+      <section className="border-b-4 border-black bg-black text-white">
+        <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 px-4 py-3 text-[11px] font-black uppercase tracking-[0.18em] md:text-xs">
+          <span className="inline-flex items-center gap-2 text-heirlock-yellow">
+            <Sparkles className="h-4 w-4" />
+            Launch protocol is locked
+          </span>
+          <span className="inline-flex items-center gap-2">
+            <Clock3 className="h-4 w-4 text-heirlock-green" />
+            {LAUNCH_LABEL}
+          </span>
+          <span className="inline-flex items-center gap-2 text-heirlock-blue">
+            <ShieldCheck className="h-4 w-4" />
+            No override. No early access.
+          </span>
+        </div>
+      </section>
+
+      <section className="relative overflow-hidden border-b-4 border-black bg-[linear-gradient(180deg,#fffacd_0%,#f5f3c1_52%,#ffffff_100%)] px-4 py-10 md:px-8 md:py-16 lg:min-h-[calc(100vh-52px)] lg:flex lg:items-center">
+        <div className="absolute -left-20 top-24 h-48 w-48 rotate-12 border-4 border-black bg-heirlock-pink opacity-80 md:h-72 md:w-72" />
+        <div className="absolute -bottom-16 -right-5 h-40 w-40 rounded-full border-4 border-black bg-heirlock-blue md:h-64 md:w-64" />
+        <div className="absolute inset-0 bg-[linear-gradient(rgba(0,0,0,0.07)_1px,transparent_1px),linear-gradient(90deg,rgba(0,0,0,0.07)_1px,transparent_1px)] bg-size-[36px_36px] opacity-40" />
+
+        <div className="relative mx-auto max-w-7xl">
+          <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <Link
               href="/"
-              className="inline-flex items-center gap-2 px-4 py-2 border-3 border-black bg-white text-black font-black hover:bg-black hover:text-white transition-all text-sm"
+              className="inline-flex w-fit items-center gap-2 border-4 border-black bg-white px-4 py-2 text-sm font-black uppercase tracking-wide shadow-brutal transition-all hover:-translate-y-1 hover:bg-black hover:text-white"
             >
-              <ArrowLeft className="w-4 h-4" />
+              <ArrowLeft className="h-4 w-4" />
               Back to Home
             </Link>
-            <div className="hidden md:flex items-center gap-3 text-sm font-black uppercase tracking-wide text-black">
-              <Clock3 className="w-4 h-4" />
-              March 14 2026 • 12:00 AM IST
+
+            <div className="inline-flex w-fit items-center gap-2 border-4 border-black bg-heirlock-green px-4 py-2 text-xs font-black uppercase tracking-[0.18em] shadow-brutal md:text-sm">
+              <ShieldCheck className="h-4 w-4" />
+              Public launch confirmed
             </div>
           </div>
 
-          <div className="grid md:grid-cols-[1.1fr_0.9fr] gap-10 items-center">
-            <div className="space-y-6">
-              <div className="inline-flex items-center gap-3 border-4 border-black bg-heirlock-pink px-4 py-2 font-black text-black uppercase tracking-wide shadow-brutal">
-                Public launch window confirmed
+          <div className="grid gap-10 lg:grid-cols-[1.08fr_0.92fr] lg:items-center">
+            <div className="space-y-8">
+              <div className="inline-flex -rotate-1 items-center gap-3 border-4 border-black bg-white px-4 py-2 text-xs font-black uppercase tracking-[0.2em] shadow-[6px_6px_0_0_#000] md:text-sm">
+                Countdown to launch
               </div>
 
-              <h1 className="text-4xl md:text-6xl font-black text-black leading-tight">
-                Secure time locked storage built for people who cannot afford doubts
-              </h1>
+              <div className="space-y-5">
+                <h1 className="max-w-4xl text-5xl font-black uppercase leading-[0.92] tracking-[-0.06em] md:text-7xl xl:text-[5.75rem]">
+                  TALA launches on
+                  <span className="mx-2 inline-block -rotate-1 border-4 border-black bg-heirlock-yellow px-3 py-1 leading-none shadow-[6px_6px_0_0_#000]">
+                    20 April
+                  </span>
+                  at midnight IST.
+                </h1>
 
-              <p className="text-lg md:text-xl text-gray-800 font-medium max-w-2xl">
-                TALA delivers device side encryption, contract enforced unlocks, and distributed storage. You control the keys while the protocol guarantees timing and access.
-              </p>
+                <p className="max-w-2xl border-l-8 border-black bg-white p-5 text-lg font-medium text-black shadow-brutal md:text-2xl">
+                  The page is simple for a reason: the date matters first. Everything else can wait until you scroll.
+                </p>
+              </div>
 
-              <div className="flex flex-col sm:flex-row gap-3">
-                <button className="px-7 py-4 border-4 border-black bg-black text-heirlock-yellow font-black text-lg shadow-brutal hover:-translate-y-1 hover:shadow-brutal-lg transition-all">
-                  Get launch alerts
-                </button>
-                <Link href="/create-vault">
-                  <button className="px-7 py-4 border-4 border-black bg-heirlock-green text-black font-black text-lg shadow-brutal hover:-translate-y-1 hover:shadow-brutal-lg transition-all">
-                    Try a five minute demo
-                  </button>
+              <div className="flex flex-col gap-3 sm:flex-row">
+                <Link
+                  href="/create-vault"
+                  className="inline-flex items-center justify-center gap-3 border-4 border-black bg-black px-7 py-4 text-lg font-black uppercase tracking-wide text-heirlock-yellow shadow-[8px_8px_0_0_#000] transition-all hover:-translate-y-1 hover:shadow-[12px_12px_0_0_#000]"
+                >
+                  Run the five-minute demo
+                  <ArrowRight className="h-5 w-5" />
+                </Link>
+                <Link
+                  href="/contact"
+                  className="inline-flex items-center justify-center gap-3 border-4 border-black bg-heirlock-green px-7 py-4 text-lg font-black uppercase tracking-wide shadow-[8px_8px_0_0_#000] transition-all hover:-translate-y-1 hover:shadow-[12px_12px_0_0_#000]"
+                >
+                  Request launch onboarding
+                  <ArrowRight className="h-5 w-5" />
                 </Link>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                {[{
-                  label: 'Vaults tested in beta', value: '12,000+' }, {
-                  label: 'Average unlock drift', value: '< 2s' }, {
-                  label: 'Data custody', value: 'Client side only' }].map((stat, idx) => (
-                  <div key={idx} className="border-4 border-black bg-white p-4 shadow-brutal">
-                    <p className="text-2xl font-black text-black">{stat.value}</p>
-                    <p className="text-sm font-medium text-gray-700 mt-1">{stat.label}</p>
+              <div className="flex items-center gap-3 text-xs font-black uppercase tracking-[0.18em] text-black/65 md:text-sm">
+                <Sparkles className="h-4 w-4" />
+                Scroll for the essentials
+              </div>
+            </div>
+
+            <div className="relative space-y-5 lg:pt-8">
+              <div className="absolute -left-3 top-10 hidden h-full w-full rotate-2 border-4 border-black bg-black lg:block" />
+
+              <div className="relative border-8 border-black bg-heirlock-blue p-6 shadow-[12px_12px_0_0_#000] md:p-8">
+                <div className="mb-6 flex items-center justify-between gap-4">
+                  <div>
+                    <p className="text-xs font-black uppercase tracking-[0.2em] text-black/65">Launch countdown</p>
+                    <h2 className="mt-2 text-3xl font-black uppercase md:text-4xl">
+                      {countdown.complete ? 'Now Live' : 'Protocol Opens In'}
+                    </h2>
                   </div>
-                ))}
-              </div>
-            </div>
+                  <div className="rotate-3 border-4 border-black bg-white px-3 py-2 text-xs font-black uppercase tracking-[0.18em] shadow-brutal">
+                    {LAUNCH_LABEL}
+                  </div>
+                </div>
 
-            <div className="border-8 border-black bg-heirlock-blue p-6 md:p-8 shadow-brutal">
-              <p className="text-sm font-black text-black uppercase tracking-wider mb-5 text-center">Launch countdown</p>
-              <div className="w-full max-w-3xl mx-auto grid grid-cols-2 sm:grid-cols-4 gap-4 md:gap-5">
-                <div className="border-4 border-black bg-white px-5 py-6 md:px-6 md:py-7 flex flex-col items-center justify-center">
-                  <p className="text-4xl md:text-5xl font-black text-black leading-none tracking-tight">{String(countdown.days).padStart(2, '0')}</p>
-                  <p className="text-[11px] md:text-xs font-black text-gray-600 uppercase mt-3 tracking-wide">Days</p>
+                <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+                  {[
+                    { label: 'Days', value: formatUnit(countdown.days) },
+                    { label: 'Hours', value: formatUnit(countdown.hours) },
+                    { label: 'Minutes', value: formatUnit(countdown.minutes) },
+                    { label: 'Seconds', value: formatUnit(countdown.seconds) },
+                  ].map((unit) => (
+                    <div key={unit.label} className="border-4 border-black bg-white px-4 py-5 text-center shadow-[4px_4px_0_0_#000]">
+                      <p className="text-4xl font-black leading-none md:text-5xl">{unit.value}</p>
+                      <p className="mt-3 text-[11px] font-black uppercase tracking-[0.22em] text-black/55 md:text-xs">
+                        {unit.label}
+                      </p>
+                    </div>
+                  ))}
                 </div>
-                <div className="border-4 border-black bg-white px-5 py-6 md:px-6 md:py-7 flex flex-col items-center justify-center">
-                  <p className="text-4xl md:text-5xl font-black text-black leading-none tracking-tight">{String(countdown.hours).padStart(2, '0')}</p>
-                  <p className="text-[11px] md:text-xs font-black text-gray-600 uppercase mt-3 tracking-wide">Hours</p>
-                </div>
-                <div className="border-4 border-black bg-white px-5 py-6 md:px-6 md:py-7 flex flex-col items-center justify-center">
-                  <p className="text-4xl md:text-5xl font-black text-black leading-none tracking-tight">{String(countdown.minutes).padStart(2, '0')}</p>
-                  <p className="text-[11px] md:text-xs font-black text-gray-600 uppercase mt-3 tracking-wide">Minutes</p>
-                </div>
-                <div className="border-4 border-black bg-white px-5 py-6 md:px-6 md:py-7 flex flex-col items-center justify-center">
-                  <p className="text-4xl md:text-5xl font-black text-black leading-none tracking-tight">{String(countdown.seconds).padStart(2, '0')}</p>
-                  <p className="text-[11px] md:text-xs font-black text-gray-600 uppercase mt-3 tracking-wide">Seconds</p>
-                </div>
-              </div>
-              <p className="text-sm font-black text-black mt-6 text-center">
-                March 14 2026 at 12:00 AM IST
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
 
-      <section className="py-16 md:py-24 px-4 bg-white border-t-4 border-black border-b-4">
-        <div className="max-w-5xl mx-auto">
-          <h2 className="text-4xl md:text-5xl font-black text-black mb-12 text-center">What ships on launch day</h2>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="border-4 border-black bg-heirlock-yellow p-8 shadow-brutal">
-              <div className="flex items-start gap-4 mb-6">
-                <Lock className="w-8 h-8 text-black shrink-0 mt-1" />
-                <div>
-                  <h3 className="text-2xl font-black text-black mb-2">Complete vault journey</h3>
-                  <p className="text-gray-800 font-medium">Create, lock, wait, unlock, and decrypt with a single flow. Every stage is auditable.</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="border-4 border-black bg-heirlock-blue p-8 shadow-brutal">
-              <div className="flex items-start gap-4 mb-6">
-                <ShieldCheck className="w-8 h-8 text-black shrink-0 mt-1" />
-                <div>
-                  <h3 className="text-2xl font-black text-black mb-2">Device side encryption</h3>
-                  <p className="text-gray-800 font-medium">AES 256 GCM runs on your device. Keys never leave your control and are never stored by TALA.</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="border-4 border-black bg-heirlock-green p-8 shadow-brutal">
-              <div className="flex items-start gap-4 mb-6">
-                <Zap className="w-8 h-8 text-black shrink-0 mt-1" />
-                <div>
-                  <h3 className="text-2xl font-black text-black mb-2">Contract enforced timing</h3>
-                  <p className="text-gray-800 font-medium">Polygon smart contracts hold unlock conditions. Vaults open at the exact scheduled time.</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="border-4 border-black bg-heirlock-pink p-8 shadow-brutal">
-              <div className="flex items-start gap-4 mb-6">
-                <Shield className="w-8 h-8 text-black shrink-0 mt-1" />
-                <div>
-                  <h3 className="text-2xl font-black text-black mb-2">Distributed storage</h3>
-                  <p className="text-gray-800 font-medium">Files stay on IPFS with redundant availability. No single failure can block access.</p>
+                <div className="mt-6 border-4 border-black bg-black p-4 text-white shadow-brutal">
+                  <p className="text-xs font-black uppercase tracking-[0.18em] text-heirlock-yellow">Launch note</p>
+                  <p className="mt-3 text-base font-bold text-white/85 md:text-lg">
+                    TALA opens with the full vault flow, clear timing guarantees, and production-facing onboarding paths.
+                  </p>
                 </div>
               </div>
             </div>
@@ -175,140 +212,85 @@ export default function LaunchPage() {
         </div>
       </section>
 
-      <section className="py-16 md:py-24 px-4">
-        <div className="max-w-5xl mx-auto space-y-10">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
-            <h2 className="text-4xl md:text-5xl font-black text-black">Who gets the most value</h2>
-            <p className="text-base md:text-lg text-gray-800 font-medium max-w-xl">
-              Precision unlocks and transparent custody help teams that must prove integrity to regulators, stakeholders, and the public.
+      <section className="border-b-4 border-black bg-white px-4 py-16 md:px-8 md:py-24">
+        <div className="mx-auto max-w-7xl">
+          <div className="mb-10 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+            <div className="space-y-4">
+              <div className="inline-flex items-center gap-2 border-4 border-black bg-heirlock-yellow px-4 py-2 text-xs font-black uppercase tracking-[0.18em] shadow-brutal md:text-sm">
+                More if you keep scrolling
+              </div>
+              <h2 className="text-4xl font-black uppercase leading-none tracking-[-0.05em] md:text-6xl">
+                Just the essentials.
+              </h2>
+            </div>
+            <p className="max-w-2xl text-base font-medium text-black/75 md:text-lg">
+              The top of the page is now date-first. These are the only supporting details you need below it.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {[{
-              title: 'Universities and examination boards',
-              description: 'Protect question papers, evaluation keys, and academic records with timed release and verifiable audit logs.'
-            }, {
-              title: 'Government and legal teams',
-              description: 'Hold sensitive tenders, case files, and directives with clear proof of custody and predictable unlocks.'
-            }, {
-              title: 'Enterprises and program managers',
-              description: 'Share contracts, financial statements, and disclosures only when schedules permit while keeping teams aligned.'
-            }, {
-              title: 'Personal estates and creators',
-              description: 'Store wills, private media, or digital assets with guaranteed access at the right moment.'
-            }].map((useCase, idx) => (
-              <div key={idx} className="border-4 border-black bg-white p-6 shadow-brutal hover:-translate-y-1 hover:shadow-brutal-lg transition-all">
-                <h3 className="text-xl font-black text-black mb-2">{useCase.title}</h3>
-                <p className="text-gray-800 font-medium">{useCase.description}</p>
-              </div>
+          <div className="grid gap-6 md:grid-cols-3">
+            {launchHighlights.map((item) => (
+              <article
+                key={item.title}
+                className={`${item.tone} flex h-full flex-col border-4 border-black p-6 shadow-brutal transition-all hover:-translate-y-1 hover:shadow-[8px_8px_0_0_#000]`}
+              >
+                <p className="text-xs font-black uppercase tracking-[0.18em] text-black/60">Launch highlight</p>
+                <h3 className="mt-3 text-2xl font-black uppercase leading-tight">{item.title}</h3>
+                <p className="mt-3 text-base font-medium text-black/75">{item.description}</p>
+              </article>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="py-16 md:py-24 px-4 bg-white border-t-4 border-black border-b-4">
-        <div className="max-w-5xl mx-auto space-y-10">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
-            <h2 className="text-4xl md:text-5xl font-black text-black">Launch plan highlights</h2>
-            <p className="text-base md:text-lg text-gray-800 font-medium max-w-xl">
-              A focused path to open the protocol with clarity on what is live now and what is shipping on day one.
+      <section className="border-b-4 border-black bg-black px-4 py-16 text-white md:px-8 md:py-24">
+        <div className="mx-auto max-w-6xl">
+          <div className="grid gap-6 md:grid-cols-3">
+            {scrollNotes.map((item, index) => (
+              <article
+                key={item.label}
+                className={`border-4 border-black p-6 text-black shadow-[10px_10px_0_0_#fff] ${index === 0 ? 'bg-white' : index === 1 ? 'bg-heirlock-blue' : 'bg-heirlock-pink'}`}
+              >
+                <p className="text-xs font-black uppercase tracking-[0.2em] text-black/60">{item.label}</p>
+                <h3 className="mt-3 text-3xl font-black uppercase leading-none">{item.title}</h3>
+                <p className="mt-4 text-base font-medium text-black/75">{item.description}</p>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="relative overflow-hidden bg-black px-4 py-16 text-white md:px-8 md:py-24">
+        <div className="absolute left-0 top-0 h-full w-full bg-[radial-gradient(circle_at_top_left,rgba(255,250,205,0.2),transparent_34%),radial-gradient(circle_at_bottom_right,rgba(186,225,255,0.22),transparent_38%)]" />
+        <div className="relative mx-auto max-w-5xl border-4 border-white bg-black p-8 shadow-[12px_12px_0_0_#fff] md:p-12">
+          <div className="space-y-6 text-center">
+            <div className="inline-flex -rotate-1 items-center gap-2 border-4 border-white bg-heirlock-yellow px-4 py-2 text-xs font-black uppercase tracking-[0.2em] text-black shadow-[6px_6px_0_0_#ffb3ba] md:text-sm">
+              Ready before launch
+            </div>
+            <h2 className="text-4xl font-black uppercase leading-none tracking-[-0.05em] md:text-6xl">
+              Test the flow now, then come back on launch day.
+            </h2>
+            <p className="mx-auto max-w-2xl text-base font-medium text-white/75 md:text-lg">
+              If the date is what you came for, you have it. If you need confidence before then, use the demo or contact the team.
             </p>
+
+            <div className="flex flex-col gap-4 sm:flex-row sm:justify-center">
+              <Link
+                href="/create-vault"
+                className="inline-flex items-center justify-between gap-3 border-4 border-black bg-heirlock-yellow px-6 py-5 text-lg font-black uppercase text-black shadow-[8px_8px_0_0_#fff] transition-all hover:-translate-y-1 hover:shadow-[12px_12px_0_0_#fff]"
+              >
+                Start the demo vault
+                <ArrowRight className="h-5 w-5" />
+              </Link>
+              <Link
+                href="/contact"
+                className="inline-flex items-center justify-between gap-3 border-4 border-black bg-heirlock-green px-6 py-5 text-lg font-black uppercase text-black shadow-[8px_8px_0_0_#ffb3ba] transition-all hover:-translate-y-1 hover:shadow-[12px_12px_0_0_#ffb3ba]"
+              >
+                Talk to the launch team
+                <ArrowRight className="h-5 w-5" />
+              </Link>
+            </div>
           </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {[{
-              title: 'Public beta now',
-              copy: 'Create unlimited vaults, test the full flow, and export logs for review. No credit card needed.'
-            }, {
-              title: 'Operational hardening',
-              copy: 'Load testing on Polygon, redundancy on IPFS gateways, and automated key rotation guidance.'
-            }, {
-              title: 'Launch day unlocks',
-              copy: 'Production contracts with timelock proofs, live observability, and support for organizations at scale.'
-            }].map((item, idx) => (
-              <div key={idx} className="border-4 border-black bg-cream p-6 shadow-brutal flex flex-col gap-3">
-                <p className="text-sm font-black uppercase tracking-wide text-black">Step {idx + 1}</p>
-                <h3 className="text-xl font-black text-black">{item.title}</h3>
-                <p className="text-gray-800 font-medium flex-1">{item.copy}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="py-16 md:py-24 px-4">
-        <div className="max-w-4xl mx-auto space-y-8">
-          <h2 className="text-4xl md:text-5xl font-black text-black text-center">Questions teams are asking</h2>
-          <div className="space-y-6">
-            {[{
-              q: 'What happens on March 14',
-              a: 'We open production access with full vault lifecycle, contract enforced unlocks, and monitored IPFS distribution for all users.'
-            }, {
-              q: 'Is there a cost to start',
-              a: 'Starter access remains free with up to ninety nine vaults and five hundred megabytes per vault. No payment details needed to begin.'
-            }, {
-              q: 'Can we test today',
-              a: 'Yes. Create a demo vault that unlocks in five minutes and review every step of the process before launch day.'
-            }, {
-              q: 'How is data protected',
-              a: 'Encryption runs on your device, keys are never stored by TALA, and unlock logic is enforced on chain. Data is never exposed in plaintext during transit or at rest.'
-            }].map((faq, idx) => (
-              <div key={idx} className="border-4 border-black bg-cream p-6 shadow-brutal">
-                <h3 className="text-lg font-black text-black mb-2">{faq.q}</h3>
-                <p className="text-gray-800 font-medium">{faq.a}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="py-16 md:py-24 px-4 bg-heirlock-yellow border-b-4 border-black">
-        <div className="max-w-2xl mx-auto text-center space-y-6">
-          <div className="inline-flex items-center gap-3 border-4 border-black bg-white px-5 py-2 font-black text-black uppercase tracking-wide shadow-brutal">
-            Early access list now open
-          </div>
-          <h2 className="text-4xl md:text-5xl font-black text-black">Stay ahead of launch day</h2>
-          <p className="text-lg text-gray-800 font-medium">Join the first wave to receive launch alerts, implementation guides, and migration support.</p>
-
-          <form className="flex flex-col sm:flex-row gap-3">
-            <input
-              type="email"
-              placeholder="you@example.com"
-              className="flex-1 px-4 py-3 border-4 border-black bg-white text-black font-medium placeholder-gray-500 focus:outline-none focus:ring-4 focus:ring-black/20"
-            />
-            <button className="px-6 py-3 border-4 border-black bg-black text-heirlock-yellow font-black hover:bg-gray-900 transition-all whitespace-nowrap">
-              Notify me
-            </button>
-          </form>
-
-          <p className="text-xs text-gray-700 font-medium">No spam, just launch milestones and setup guidance.</p>
-        </div>
-      </section>
-
-      <section className="py-16 md:py-24 px-4 border-t-4 border-black">
-        <div className="max-w-5xl mx-auto text-center space-y-8">
-          <Sparkles className="w-12 h-12 text-black mx-auto" />
-          <h2 className="text-4xl md:text-5xl font-black text-black">Launch with certainty not promises</h2>
-
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/create-vault">
-              <button className="px-8 py-4 border-4 border-black bg-black text-heirlock-yellow font-black text-lg shadow-brutal hover:-translate-y-1 transition-all inline-flex items-center gap-2">
-                Start the demo
-                <ArrowRight className="w-5 h-5" />
-              </button>
-            </Link>
-            <Link href="/documentation">
-              <button className="px-8 py-4 border-4 border-black bg-white text-black font-black text-lg shadow-brutal hover:-translate-y-1 transition-all inline-flex items-center gap-2">
-                Explore the docs
-                <ArrowRight className="w-5 h-5" />
-              </button>
-            </Link>
-          </div>
-
-          <p className="text-sm text-gray-600 font-medium">
-            Built for public bodies, universities, enterprises, and individuals who need verifiable access control.
-          </p>
         </div>
       </section>
     </main>
