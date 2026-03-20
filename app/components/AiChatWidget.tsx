@@ -242,20 +242,20 @@ export default function AiChatWidget({ chatEnabled }: AiChatWidgetProps) {
           onClick={toggleChat}
           className={`peer ${
             isOpen ? 'bg-dark scale-90' : chatEnabled ? 'bg-black hover:scale-105' : 'bg-accent hover:scale-105'
-          } text-white p-4 rounded-full shadow-xl hover:shadow-2xl transition-all duration-300 flex items-center justify-center group z-50 border-2 border-black`}
+          } text-white h-16 w-16 rounded-full shadow-xl hover:shadow-2xl transition-all duration-300 flex items-center justify-center group z-50 border-2 border-black`}
           aria-label={`Open ${ASSISTANT_NAME}`}
           title={`${ASSISTANT_NAME} - ${ASSISTANT_FULL_FORM}`}
         >
           {isOpen ? (
-            <X className="w-6 h-6 text-cream group-hover:rotate-90 transition-transform duration-300" />
+            <X className="w-7 h-7 text-cream group-hover:rotate-90 transition-transform duration-300" />
           ) : (
-            <span className="relative inline-flex h-7 w-7 overflow-hidden rounded-full border border-white/70 group-hover:-translate-y-0.5 transition-transform duration-300">
+            <span className="relative inline-flex h-14 w-14 overflow-hidden rounded-full border border-white/70 group-hover:-translate-y-0.5 transition-transform duration-300">
               <Image
                 src={ASSISTANT_AVATAR_SRC}
                 alt="T.A.R.A. avatar"
                 fill
-                sizes="28px"
-                className="object-cover"
+                sizes="50px"
+                className="object-cover scale-[1.2] group-hover:scale-100 transition-transform duration-300"
               />
             </span>
           )}
