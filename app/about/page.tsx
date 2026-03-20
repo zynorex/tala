@@ -266,16 +266,16 @@ export default function About() {
               {trustStack.map((layer, index) => (
                 <div
                   key={layer.title}
-                  className="relative group border-4 border-white bg-black p-6 transition-all hover:bg-white hover:text-black"
+                  className="relative group border-4 border-white bg-black p-6 transition-all hover:border-heirlock-green"
                 >
-                  <div className="absolute -left-3 -top-3 -z-10 h-full w-full border-4 border-white/20 bg-transparent transition-all group-hover:border-heirlock-blue" />
+                  <div className="absolute -left-3 -top-3 -z-10 h-full w-full border-4 border-white/20 bg-transparent transition-all group-hover:border-heirlock-green" />
                   <div className="flex items-start gap-5">
-                    <div className="flex h-12 w-12 shrink-0 items-center justify-center border-4 border-white bg-black text-white group-hover:border-black group-hover:bg-white group-hover:text-black">
+                    <div className="flex h-12 w-12 shrink-0 items-center justify-center border-4 border-white bg-black text-white group-hover:border-heirlock-green group-hover:text-heirlock-green">
                       <layer.icon className="h-6 w-6" />
                     </div>
                     <div>
-                      <h3 className="text-xl font-black uppercase tracking-wide">{layer.title}</h3>
-                      <p className="mt-2 font-mono text-sm leading-relaxed opacity-80 group-hover:opacity-100">
+                      <h3 className="text-xl font-black uppercase tracking-wide text-white group-hover:text-heirlock-green">{layer.title}</h3>
+                      <p className="mt-2 font-mono text-sm leading-relaxed text-gray-300 group-hover:text-white">
                         {layer.description}
                       </p>
                     </div>
