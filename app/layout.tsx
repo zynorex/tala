@@ -12,6 +12,7 @@ import DevelopmentNotification from "./components/DevelopmentNotification";
 import CookieConsent from "./components/CookieConsent";
 import Web3ClientWrapper from "./components/Web3ClientWrapper";
 import LaunchAnnouncementModal from "./components/LaunchAnnouncementModal";
+import AiChatWidget from "./components/AiChatWidget";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -113,6 +114,7 @@ export default function RootLayout({
                     <DevelopmentNotification />
                     <CookieConsent />
                     <MainLayout>{children}</MainLayout>
+                    <AiChatWidget />
                   </ToastProvider>
                 </Web3ClientWrapper>
               </ThemeProvider>

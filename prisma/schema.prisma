@@ -48,6 +48,9 @@ model User {
   planExpiresAt   DateTime?  // Null = lifetime or free tier
   razorpayContactId String?  // Razorpay customer ID for recurring billing
 
+  // AI Chat Bot
+  aiChatCount     Int        @default(0) // Rate limit for FREE users
+
   // Relations
   accounts      Account[]
   sessions      Session[]
