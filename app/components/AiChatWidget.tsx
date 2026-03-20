@@ -4,7 +4,8 @@ import { useChat } from '@ai-sdk/react';
 import { useState, useRef, useEffect } from 'react';
 import type { FormEvent } from 'react';
 import { DefaultChatTransport } from 'ai';
-import { MessageSquare, X, Send, Bot, User, AlertCircle } from 'lucide-react';
+import Image from 'next/image';
+import { X, Send, User, AlertCircle } from 'lucide-react';
 import { toast } from 'sonner';
 
 type AiChatWidgetProps = {
@@ -13,6 +14,7 @@ type AiChatWidgetProps = {
 
 const ASSISTANT_NAME = 'T.A.R.A.';
 const ASSISTANT_FULL_FORM = 'Trustworthy AI Response Assistant';
+const ASSISTANT_AVATAR_SRC = '/tara.png';
 
 export default function AiChatWidget({ chatEnabled }: AiChatWidgetProps) {
   const [isOpen, setIsOpen] = useState(false);
@@ -71,7 +73,15 @@ export default function AiChatWidget({ chatEnabled }: AiChatWidgetProps) {
           {/* Header */}
           <div className="bg-zinc-950 text-white p-4 flex justify-between items-center rounded-t-2xl">
             <div className="flex items-center space-x-2">
-              <Bot className="w-5 h-5 text-zinc-300" />
+              <span className="relative inline-flex h-6 w-6 overflow-hidden rounded-md border border-zinc-700">
+                <Image
+                  src={ASSISTANT_AVATAR_SRC}
+                  alt="T.A.R.A. avatar"
+                  fill
+                  sizes="24px"
+                  className="object-cover"
+                />
+              </span>
               <span className="font-semibold text-sm tracking-wide">{ASSISTANT_NAME}</span>
             </div>
             <button onClick={toggleChat} className="text-zinc-400 hover:text-white transition">
@@ -83,7 +93,15 @@ export default function AiChatWidget({ chatEnabled }: AiChatWidgetProps) {
           <div className="flex-1 p-4 overflow-y-auto bg-zinc-50 dark:bg-zinc-950/50 space-y-4 text-sm">
             {messages.length === 0 ? (
               <div className="h-full flex flex-col items-center justify-center text-center text-zinc-500 dark:text-zinc-400 p-6 space-y-3">
-                <Bot className="w-12 h-12 opacity-50" />
+                <span className="relative inline-flex h-14 w-14 overflow-hidden rounded-xl border-2 border-zinc-300 dark:border-zinc-700">
+                  <Image
+                    src={ASSISTANT_AVATAR_SRC}
+                    alt="T.A.R.A. avatar"
+                    fill
+                    sizes="56px"
+                    className="object-cover"
+                  />
+                </span>
                 <p>Hi there! Need help with your vaults or smart contracts? I\'m here to guide you.</p>
               </div>
             ) : (
@@ -92,7 +110,19 @@ export default function AiChatWidget({ chatEnabled }: AiChatWidgetProps) {
                   <div className={`flex space-x-2 max-w-[85%] ${m.role === 'user' ? 'flex-row-reverse space-x-reverse' : 'flex-row'}`}>
                     {/* Avatar Bubble */}
                     <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${m.role === 'user' ? 'bg-zinc-200 dark:bg-zinc-800' : 'bg-emerald-100 dark:bg-emerald-900/50 text-emerald-600 dark:text-emerald-400'}`}>
-                      {m.role === 'user' ? <User className="w-4 h-4" /> : <Bot className="w-4 h-4" />}
+                      {m.role === 'user' ? (
+                        <User className="w-4 h-4" />
+                      ) : (
+                        <span className="relative inline-flex h-8 w-8 overflow-hidden rounded-full border border-emerald-300 dark:border-emerald-700">
+                          <Image
+                            src={ASSISTANT_AVATAR_SRC}
+                            alt="T.A.R.A. avatar"
+                            fill
+                            sizes="32px"
+                            className="object-cover"
+                          />
+                        </span>
+                      )}
                     </div>
                     
                     {/* Message Bubble */}
@@ -167,7 +197,15 @@ export default function AiChatWidget({ chatEnabled }: AiChatWidgetProps) {
         <div className="mb-4 w-[350px] sm:w-[400px] border-4 border-black bg-cream text-dark shadow-brutal overflow-hidden animate-slideUp">
           <div className="border-b-4 border-black bg-accent px-4 py-3 flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Bot className="w-5 h-5 text-black" />
+              <span className="relative inline-flex h-6 w-6 overflow-hidden rounded border-2 border-black bg-black">
+                <Image
+                  src={ASSISTANT_AVATAR_SRC}
+                  alt="T.A.R.A. avatar"
+                  fill
+                  sizes="24px"
+                  className="object-cover"
+                />
+              </span>
               <span className="text-xs font-black tracking-[0.08em] uppercase">{ASSISTANT_NAME} Console</span>
             </div>
             <button onClick={toggleChat} className="bg-black text-cream p-1.5 border-2 border-black hover:bg-dark">
@@ -211,7 +249,15 @@ export default function AiChatWidget({ chatEnabled }: AiChatWidgetProps) {
           {isOpen ? (
             <X className="w-6 h-6 text-cream group-hover:rotate-90 transition-transform duration-300" />
           ) : (
-            <MessageSquare className="w-6 h-6 text-white group-hover:-translate-y-0.5 transition-transform duration-300" />
+            <span className="relative inline-flex h-7 w-7 overflow-hidden rounded-full border border-white/70 group-hover:-translate-y-0.5 transition-transform duration-300">
+              <Image
+                src={ASSISTANT_AVATAR_SRC}
+                alt="T.A.R.A. avatar"
+                fill
+                sizes="28px"
+                className="object-cover"
+              />
+            </span>
           )}
         </button>
         <div className="pointer-events-none absolute right-16 top-1/2 z-50 -translate-y-1/2 whitespace-nowrap border-2 border-black bg-cream px-3 py-1 text-[10px] font-black uppercase tracking-[0.08em] text-dark opacity-0 translate-x-2 transition-all duration-200 peer-hover:translate-x-0 peer-hover:opacity-100 peer-focus-visible:translate-x-0 peer-focus-visible:opacity-100">
