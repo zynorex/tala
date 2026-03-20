@@ -7,7 +7,14 @@ import { DefaultChatTransport } from 'ai';
 import { MessageSquare, X, Send, Bot, User, AlertCircle } from 'lucide-react';
 import { toast } from 'sonner';
 
-export default function AiChatWidget() {
+type AiChatWidgetProps = {
+  chatEnabled: boolean;
+};
+
+const ASSISTANT_NAME = 'T.A.R.A.';
+const ASSISTANT_FULL_FORM = 'Trustworthy AI Response Assistant';
+
+export default function AiChatWidget({ chatEnabled }: AiChatWidgetProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [input, setInput] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -33,7 +40,7 @@ export default function AiChatWidget() {
     e.preventDefault();
 
     const prompt = input.trim();
-    if (!prompt || isLoading || isRateLimited) {
+    if (!chatEnabled || !prompt || isLoading || isRateLimited) {
       return;
     }
 
@@ -58,14 +65,14 @@ export default function AiChatWidget() {
   return (
     <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end">
       {/* Chat Window */}
-      {isOpen && (
+      {isOpen && chatEnabled && (
         <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl shadow-2xl mb-4 w-[350px] sm:w-[400px] h-[550px] flex flex-col overflow-hidden transition-all duration-300 transform origin-bottom-right scale-100">
           
           {/* Header */}
           <div className="bg-zinc-950 text-white p-4 flex justify-between items-center rounded-t-2xl">
             <div className="flex items-center space-x-2">
               <Bot className="w-5 h-5 text-zinc-300" />
-              <span className="font-semibold text-sm tracking-wide">Tala Assistant</span>
+              <span className="font-semibold text-sm tracking-wide">{ASSISTANT_NAME}</span>
             </div>
             <button onClick={toggleChat} className="text-zinc-400 hover:text-white transition">
               <X className="w-5 h-5" />
@@ -156,20 +163,61 @@ export default function AiChatWidget() {
         </div>
       )}
 
+      {isOpen && !chatEnabled && (
+        <div className="mb-4 w-[350px] sm:w-[400px] border-4 border-black bg-cream text-dark shadow-brutal overflow-hidden animate-slideUp">
+          <div className="border-b-4 border-black bg-accent px-4 py-3 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Bot className="w-5 h-5 text-black" />
+              <span className="text-xs font-black tracking-[0.08em] uppercase">{ASSISTANT_NAME} Console</span>
+            </div>
+            <button onClick={toggleChat} className="bg-black text-cream p-1.5 border-2 border-black hover:bg-dark">
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+
+          <div className="p-4 sm:p-5">
+            <div className="border-4 border-black bg-heirlock-blue p-4">
+              <p className="text-[11px] font-black uppercase tracking-[0.08em] text-black">Status: Disabled</p>
+              <h3 className="mt-2 text-lg font-black uppercase leading-tight">T.A.R.A. is temporarily offline.</h3>
+              <p className="mt-3 text-sm font-semibold leading-relaxed">
+                We're fine-tuning the assistant for a better launch experience. It will be available again soon.
+              </p>
+            </div>
+
+            <div className="mt-4 grid grid-cols-2 gap-3">
+              <div className="border-4 border-black bg-heirlock-pink p-3">
+                <p className="text-[10px] font-black uppercase tracking-[0.08em]">Mode</p>
+                <p className="mt-1 text-sm font-extrabold">Maintenance</p>
+              </div>
+              <div className="border-4 border-black bg-accent-light p-3">
+                <p className="text-[10px] font-black uppercase tracking-[0.08em]">ETA</p>
+                <p className="mt-1 text-sm font-extrabold">Opening Soon</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Floating Action Button */}
-      <button
-        onClick={toggleChat}
-        className={`${
-          isOpen ? 'bg-zinc-800 scale-90' : 'bg-black hover:scale-105'
-        } dark:bg-white text-white dark:text-black p-4 rounded-full shadow-xl hover:shadow-2xl transition-all duration-300 flex items-center justify-center group z-50 border border-zinc-800 dark:border-zinc-200`}
-        aria-label="Open chat assistant"
-      >
-        {isOpen ? (
-          <X className="w-6 h-6 text-zinc-100 dark:text-zinc-900 group-hover:rotate-90 transition-transform duration-300" />
-        ) : (
-          <MessageSquare className="w-6 h-6 text-white dark:text-black group-hover:-translate-y-0.5 transition-transform duration-300" />
-        )}
-      </button>
+      <div className="relative">
+        <button
+          onClick={toggleChat}
+          className={`peer ${
+            isOpen ? 'bg-dark scale-90' : chatEnabled ? 'bg-black hover:scale-105' : 'bg-accent hover:scale-105'
+          } text-white p-4 rounded-full shadow-xl hover:shadow-2xl transition-all duration-300 flex items-center justify-center group z-50 border-2 border-black`}
+          aria-label={`Open ${ASSISTANT_NAME}`}
+          title={`${ASSISTANT_NAME} - ${ASSISTANT_FULL_FORM}`}
+        >
+          {isOpen ? (
+            <X className="w-6 h-6 text-cream group-hover:rotate-90 transition-transform duration-300" />
+          ) : (
+            <MessageSquare className="w-6 h-6 text-white group-hover:-translate-y-0.5 transition-transform duration-300" />
+          )}
+        </button>
+        <div className="pointer-events-none absolute right-16 top-1/2 z-50 -translate-y-1/2 whitespace-nowrap border-2 border-black bg-cream px-3 py-1 text-[10px] font-black uppercase tracking-[0.08em] text-dark opacity-0 translate-x-2 transition-all duration-200 peer-hover:translate-x-0 peer-hover:opacity-100 peer-focus-visible:translate-x-0 peer-focus-visible:opacity-100">
+          {ASSISTANT_NAME} - {ASSISTANT_FULL_FORM}
+        </div>
+      </div>
     </div>
   );
 }

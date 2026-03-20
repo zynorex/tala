@@ -10,6 +10,10 @@ export const maxDuration = 30;
 
 export async function POST(req: Request) {
   try {
+    if (process.env.ENABLE_CHAT_AI !== 'true') {
+      return new NextResponse('AI chat is currently disabled by the developer and will open soon.', { status: 503 });
+    }
+
     const { messages } = (await req.json()) as { messages: UIMessage[] };
 
     // Verify User Authentication

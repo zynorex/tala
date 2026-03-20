@@ -82,6 +82,8 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const isChatEnabled = process.env.ENABLE_CHAT_AI === 'true';
+
   const orgJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Organization',
@@ -114,7 +116,7 @@ export default function RootLayout({
                     <DevelopmentNotification />
                     <CookieConsent />
                     <MainLayout>{children}</MainLayout>
-                    <AiChatWidget />
+                    <AiChatWidget chatEnabled={isChatEnabled} />
                   </ToastProvider>
                 </Web3ClientWrapper>
               </ThemeProvider>
