@@ -23,6 +23,7 @@ import {
   Laptop,
   Server,
   Radar,
+  Terminal,
   Fingerprint,
   FileKey,
 } from 'lucide-react';
@@ -381,25 +382,32 @@ const faqs = [
 
 const pricingTiers = [
   {
-    name: 'Field Pilot',
-    price: 'Free',
-    accent: 'bg-white',
-    bullets: ['Up to 25 vaults', 'Single faculty/team wallet', 'Shared audit dashboard', 'Email incident digests'],
-    cta: { label: 'Launch Pilot', href: '/create-vault' },
+    name: 'Starter',
+    price: '₹99 /mo',
+    accent: 'bg-heirlock-blue',
+    bullets: ['99 Secure Vaults', '500MB per vault', 'AES-256 Encryption', '1 User Account', 'IPFS Cold Storage', 'Standard Support'],
+    cta: { label: 'Get Starter', href: '/pricing' },
   },
   {
-    name: 'Civic Grid',
-    price: '$499 /mo',
+    name: 'Pro',
+    price: '₹499 /mo',
     accent: 'bg-heirlock-yellow',
-    bullets: ['Unlimited vaults', 'Multi-wallet organizations', 'Webhook + API access', 'Priority security reviews'],
-    cta: { label: 'Talk to Sales', href: '/pricing' },
+    bullets: ['Unlimited vaults', '1GB per vault', 'AES-256-GCM Military', 'Up to 10 Operators', 'API Integration', 'Audit Logs'],
+    cta: { label: 'Get Pro', href: '/pricing' },
   },
   {
-    name: 'Sovereign',
-    price: 'Custom',
+    name: 'Enterprise',
+    price: '₹999 /mo',
+    accent: 'bg-heirlock-green',
+    bullets: ['Unlimited Everything', 'Infinite Storage', 'Unlimited Operators', 'Premium IPFS Nodes', 'Webhook Triggers', '24/7 Dedicated Coms'],
+    cta: { label: 'Get Enterprise', href: '/pricing' },
+  },
+  {
+    name: 'Gov / Syndicate',
+    price: '₹9,999 /mo',
     accent: 'bg-heirlock-pink',
-    bullets: ['Air-gapped deployments', 'On-prem IPFS clusters', 'Dedicated compliance desk', 'Joint incident playbooks'],
-    cta: { label: 'Schedule Briefing', href: 'mailto:support@usetala.in' },
+    bullets: ['Dedicated Metal', 'SOC 2 / ISO 27001', 'On-Premise Hybrid', 'Zero-Knowledge Proofs', 'Multi-Sig Clearance', 'Incident Response Team'],
+    cta: { label: 'Contact Sales', href: 'mailto:support@usetala.in' },
   },
 ];
 
@@ -583,49 +591,100 @@ export default function HomeClient() {
         </div>
       </section>
 
-      <section className="py-20 md:py-32 px-4 bg-black border-b-8 border-black text-white relative overflow-hidden">
-        {/* Background Grids for dark section */}
-        <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.05)_1px,transparent_1px)] bg-[size:40px_40px]"></div>
-        
-        <div className="container mx-auto max-w-7xl grid grid-cols-1 lg:grid-cols-12 gap-16 relative z-10">
-          <div className="lg:col-span-5 space-y-8">
-            <span className="inline-block bg-white text-black px-3 py-1 font-black uppercase text-sm tracking-widest shadow-[4px_4px_0_0_#FFB3BA]">
-              Vulnerability Analysis
-            </span>
-            <h2 className="text-6xl md:text-7xl font-black text-white uppercase tracking-tighter leading-none">Humans Are The<br/>Attack Surface.</h2>
+      <section className="relative overflow-hidden border-b-8 border-black bg-black py-20 px-4 md:py-32 text-white">
+        {/* Harsh grid background to match brutalist theme */}
+        <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.08)_2px,transparent_2px),linear-gradient(90deg,rgba(255,255,255,0.08)_2px,transparent_2px)] bg-[size:48px_48px]"></div>
+
+        <div className="container relative z-10 mx-auto grid max-w-7xl grid-cols-1 gap-16 lg:grid-cols-12">
+          
+          {/* LEFT NARRATIVE */}
+          <div className="flex flex-col space-y-12 lg:col-span-5">
+            <div>
+              <span className="inline-block border-4 border-white bg-heirlock-pink px-4 py-2 text-lg font-black uppercase tracking-widest text-black shadow-[6px_6px_0_0_#FFFACD]">
+                Vulnerability Analysis
+              </span>
+            </div>
+            
             <div className="space-y-6">
-              {narrativeBlocks.map((block) => (
-                <div key={block.title} className="border-4 border-white bg-dark p-6 shadow-[8px_8px_0_0_#FFFACD]">
-                  <p className="text-xl font-black text-heirlock-yellow uppercase mb-3 px-2 bg-white/10 inline-block">{block.title}</p>
-                  <p className="text-lg text-white font-medium leading-relaxed">{block.body}</p>
-                </div>
-              ))}
+              <h2 className="text-6xl font-black uppercase leading-[0.9] tracking-tighter text-white md:text-7xl">
+                Humans Are The <br />
+                <span className="text-heirlock-red">Attack Surface.</span>
+              </h2>
+              <p className="max-w-xl text-xl font-bold leading-relaxed text-gray-200">
+                We treat insider mistakes, rushed approvals, and mishandled copies as first-class threats. Every safeguard is tuned to defuse the human blast radius.
+              </p>
+            </div>
+
+            <div className="space-y-10 pt-4">
+              {narrativeBlocks.map((block, idx) => {
+                const cardColors = ['bg-heirlock-yellow', 'bg-heirlock-green', 'bg-heirlock-blue'];
+                const cardBg = cardColors[idx % cardColors.length];
+                return (
+                  <div
+                    key={block.title}
+                    className={`relative border-4 border-black ${cardBg} p-6 shadow-[8px_8px_0_0_#FFF] transition-all hover:translate-y-1 hover:shadow-[4px_4px_0_0_#FFF]`}
+                  >
+                    <div className="absolute -left-4 -top-5 border-4 border-black bg-black px-4 py-1 text-sm font-black uppercase text-white shadow-[4px_4px_0_0_#FF6961]">
+                      Threat 0{idx + 1}
+                    </div>
+                    <div className="mb-4 mt-2 border-b-4 border-black pb-4">
+                      <h4 className="text-2xl font-black uppercase text-black">{block.title}</h4>
+                    </div>
+                    <p className="text-lg font-bold leading-snug text-black">{block.body}</p>
+                  </div>
+                );
+              })}
             </div>
           </div>
 
-          <div className="lg:col-span-7 flex flex-col justify-center">
-            <div className="border-4 border-white bg-black p-8 md:p-12 shadow-[12px_12px_0_0_#BAE1FF] relative">
-              
-              <div className="absolute -top-6 -right-6 bg-heirlock-red text-white border-4 border-white px-4 py-2 font-black uppercase text-xl transform rotate-6 z-10">
-                ARCHITECTURE
+          {/* RIGHT STACK ARCHITECTURE */}
+          <div className="mt-8 lg:col-span-7 lg:mt-0">
+            <div className="relative h-full border-4 border-white bg-dark p-8 shadow-[16px_16px_0_0_#BAE1FF] md:p-12">
+              <div className="absolute -right-4 -top-6 rotate-3 border-4 border-white bg-heirlock-yellow px-6 py-2 text-xl font-black uppercase text-black shadow-[8px_8px_0_0_#000] z-10">
+                Architecture
               </div>
 
-              <div className="flex items-center gap-4 mb-10 border-b-4 border-white pb-6">
-                <Shield className="w-12 h-12 text-heirlock-green" />
-                <h3 className="text-4xl font-black text-white uppercase tracking-tight">Proof First Stack</h3>
+              <div className="mb-12 flex flex-col gap-6 border-b-4 border-white pb-8 sm:flex-row sm:items-center">
+                <div className="flex h-24 w-24 shrink-0 items-center justify-center border-4 border-white bg-black shadow-[8px_8px_0_0_#BAFFC9]">
+                  <Shield className="h-12 w-12 text-heirlock-green" />
+                </div>
+                <div>
+                  <h3 className="mb-2 text-5xl font-black uppercase leading-none tracking-tight text-white md:text-6xl">
+                    Proof First <br /> Stack
+                  </h3>
+                  <p className="border-l-4 border-heirlock-yellow pl-3 text-sm font-bold uppercase tracking-widest text-heirlock-yellow">
+                    Zero Trust Controls
+                  </p>
+                </div>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                {securityLayers.map((layer) => {
+
+              <div className="grid grid-cols-1 gap-8 sm:grid-cols-2">
+                {securityLayers.map((layer, idx) => {
                   const Icon = layer.icon;
+                  const shadows = [
+                    'shadow-[6px_6px_0_0_#FFB3BA] hover:shadow-[10px_10px_0_0_#FFB3BA]',
+                    'shadow-[6px_6px_0_0_#FFFACD] hover:shadow-[10px_10px_0_0_#FFFACD]',
+                    'shadow-[6px_6px_0_0_#BAE1FF] hover:shadow-[10px_10px_0_0_#BAE1FF]',
+                    'shadow-[6px_6px_0_0_#FF6961] hover:shadow-[10px_10px_0_0_#FF6961]',
+                  ];
+                  const shadowClasses = shadows[idx % shadows.length];
+
                   return (
-                    <div key={layer.title} className="border-4 border-white bg-white/5 p-5 flex flex-col gap-4 hover:bg-white/10 transition-colors">
-                      <div className="w-12 h-12 bg-white text-black flex items-center justify-center border-2 border-white">
-                        <Icon className="w-6 h-6" />
+                    <div
+                      key={layer.title}
+                      className={`group flex flex-col border-4 border-white bg-black p-6 transition-all hover:-translate-y-1 ${shadowClasses}`}
+                    >
+                      <div className="mb-6 flex items-start justify-between">
+                        <div className="flex h-16 w-16 items-center justify-center border-4 border-white bg-white text-black transition-colors group-hover:bg-heirlock-blue">
+                          <Icon className="h-8 w-8" />
+                        </div>
                       </div>
-                      <div>
-                        <p className="text-xl font-black text-white uppercase mb-2">{layer.title}</p>
-                        <p className="text-sm text-gray-300 font-bold leading-relaxed">{layer.description}</p>
-                      </div>
+                      <p className="mb-3 text-2xl font-black uppercase leading-tight text-white">
+                        {layer.title}
+                      </p>
+                      <p className="text-base font-bold leading-relaxed text-gray-300">
+                        {layer.description}
+                      </p>
                     </div>
                   );
                 })}
@@ -726,31 +785,31 @@ export default function HomeClient() {
               <span className="inline-block bg-heirlock-blue text-black px-3 py-1 font-black uppercase text-sm tracking-widest shadow-[4px_4px_0_0_#000] mb-4">
                 Operations Scale
               </span>
-              <h2 className="text-6xl md:text-7xl font-black text-black uppercase tracking-tighter leading-none">Start With<br/>Pilots.</h2>
+              <h2 className="text-6xl md:text-7xl font-black text-black uppercase tracking-tighter leading-none">Price Of<br/>Security.</h2>
             </div>
             <Link href="/pricing" className="inline-flex items-center gap-2 font-black text-xl text-white bg-black border-4 border-black px-6 py-4 shadow-[6px_6px_0_0_#BAE1FF] hover:-translate-y-1 hover:shadow-[10px_10px_0_0_#BAE1FF] transition-all uppercase">
               See Full Pricing <ChevronRight className="w-6 h-6" />
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {pricingTiers.map((tier) => (
-              <div key={tier.name} className={`border-4 border-black ${tier.accent} p-8 md:p-10 shadow-[10px_10px_0_0_#000] flex flex-col gap-6 relative group overflow-hidden`}>
-                <div className="flex items-center justify-between border-b-4 border-black pb-6">
-                  <h3 className="text-3xl font-black text-black uppercase">{tier.name}</h3>
-                  <p className="text-2xl font-black text-black bg-white border-4 border-black px-3 py-1 -rotate-2">{tier.price}</p>
+              <div key={tier.name} className={`border-4 border-black ${tier.accent} p-8 shadow-[10px_10px_0_0_#000] flex flex-col gap-6 relative group overflow-hidden`}>
+                <div className="flex items-center justify-between border-b-4 border-black pb-6 gap-4">
+                  <h3 className="text-2xl font-black text-black uppercase leading-none">{tier.name}</h3>
+                  <p className="text-lg font-black text-black bg-white border-4 border-black px-2 py-1 -rotate-2 whitespace-nowrap">{tier.price}</p>
                 </div>
-                <ul className="text-lg font-bold text-black flex-1 space-y-4 z-10 relative">
+                <ul className="text-sm font-bold text-black flex-1 space-y-3 z-10 relative">
                   {tier.bullets.map((b) => (
-                    <li key={b} className="flex items-start gap-4">
-                      <CheckCircle className="w-6 h-6 shrink-0 mt-0.5" strokeWidth={3} />
-                      <span>{b}</span>
+                    <li key={b} className="flex items-start gap-3">
+                      <Terminal className="w-5 h-5 shrink-0 mt-0.5" strokeWidth={2.5} />
+                      <span className="leading-tight uppercase">{b}</span>
                     </li>
                   ))}
                 </ul>
-                <div className="pt-6 relative z-10">
-                  <Link href={tier.cta.href} className="inline-flex items-center justify-center gap-3 font-black text-xl text-black bg-white border-4 border-black px-6 py-5 shadow-[6px_6px_0_0_#000] hover:shadow-[10px_10px_0_0_#000] hover:-translate-y-1 transition-all w-full uppercase">
-                    {tier.cta.label} <ChevronRight className="w-6 h-6" strokeWidth={3} />
+                <div className="pt-4 relative z-10 mt-auto">
+                  <Link href={tier.cta.href} className="inline-flex items-center justify-center gap-2 font-black text-lg text-black bg-white border-4 border-black px-4 py-4 shadow-[4px_4px_0_0_#000] hover:shadow-[6px_6px_0_0_#000] hover:-translate-y-1 transition-all w-full uppercase">
+                    {tier.cta.label} <ChevronRight className="w-5 h-5" strokeWidth={3} />
                   </Link>
                 </div>
               </div>
