@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
@@ -225,7 +225,7 @@ const journeyTimeline = [
       'Unlock is deterministic, no manual approvals required.',
     ],
     details: [
-      'Still encrypted—only holders of the key material can decrypt.',
+      'Still encryptedâ€”only holders of the key material can decrypt.',
       'Ciphertext remains sealed without the key fragments.',
       'No key, no access even after release proofs.',
       'Decryption requires the holder-approved key material.',
@@ -324,7 +324,7 @@ const securityLayers = [
   {
     icon: Fingerprint,
     title: 'Identity-agnostic access',
-    description: 'Wallet signatures + passphrase shards. Avoids email resets, centralized admins, and “trust me” links.',
+    description: 'Wallet signatures + passphrase shards. Avoids email resets, centralized admins, and â€œtrust meâ€ links.',
   },
   {
     icon: FileKey,
@@ -380,38 +380,31 @@ const faqs = [
   },
 ];
 
-const pricingTiers = [
-  {
-    name: 'Starter',
-    price: '₹99 /mo',
-    accent: 'bg-heirlock-blue',
-    bullets: ['99 Secure Vaults', '500MB per vault', 'AES-256 Encryption', '1 User Account', 'IPFS Cold Storage', 'Standard Support'],
-    cta: { label: 'Get Starter', href: '/pricing' },
-  },
-  {
-    name: 'Pro',
-    price: '₹499 /mo',
-    accent: 'bg-heirlock-yellow',
-    bullets: ['Unlimited vaults', '1GB per vault', 'AES-256-GCM Military', 'Up to 10 Operators', 'API Integration', 'Audit Logs'],
-    cta: { label: 'Get Pro', href: '/pricing' },
-  },
-  {
-    name: 'Enterprise',
-    price: '₹999 /mo',
-    accent: 'bg-heirlock-green',
-    bullets: ['Unlimited Everything', 'Infinite Storage', 'Unlimited Operators', 'Premium IPFS Nodes', 'Webhook Triggers', '24/7 Dedicated Coms'],
-    cta: { label: 'Get Enterprise', href: '/pricing' },
-  },
-  {
-    name: 'Gov / Syndicate',
-    price: '₹9,999 /mo',
-    accent: 'bg-heirlock-pink',
-    bullets: ['Dedicated Metal', 'SOC 2 / ISO 27001', 'On-Premise Hybrid', 'Zero-Knowledge Proofs', 'Multi-Sig Clearance', 'Incident Response Team'],
-    cta: { label: 'Contact Sales', href: 'mailto:support@usetala.in' },
-  },
-];
+  const pricingTiers = [
+    {
+      name: 'FIELD PILOT',
+      price: 'Free',
+      accent: 'bg-white',
+      bullets: ['Up to 25 vaults', 'Single faculty/team wallet', 'Shared audit dashboard', 'Email incident digests'],
+      cta: { label: 'LAUNCH PILOT', href: '/contact' },
+    },
+    {
+      name: 'CIVIC GRID',
+      price: '$499 /mo',
+      accent: 'bg-heirlock-yellow',
+      bullets: ['Unlimited vaults', 'Multi-wallet organizations', 'Webhook + API access', 'Priority security reviews'],
+      cta: { label: 'TALK TO SALES', href: '/contact' },
+    },
+    {
+      name: 'SOVEREIGN',
+      price: 'Custom',
+      accent: 'bg-heirlock-pink',
+      bullets: ['Air-gapped deployments', 'On-prem IPFS clusters', 'Dedicated compliance desk', 'Joint incident playbooks'],
+      cta: { label: 'SCHEDULE BRIEFING', href: '/contact' },
+    }
+  ];
 
-export default function HomeClient() {
+  export default function HomeClient() {
   useMicroInteractions();
   const [isLoading, setIsLoading] = useState(true);
   const [activeTimelineIndex, setActiveTimelineIndex] = useState(0);
@@ -571,7 +564,7 @@ export default function HomeClient() {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {useCases.map((use) => {
               const Icon = use.icon;
               return (
@@ -707,7 +700,7 @@ export default function HomeClient() {
               View Architecture <ChevronRight className="w-6 h-6" />
             </Link>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {blueprint.map((layer) => {
               const Icon = layer.icon;
               return (
@@ -769,7 +762,7 @@ export default function HomeClient() {
                       <p className="font-black text-black text-xl uppercase">{entity.name}</p>
                       <p className="text-sm text-gray-700 font-bold">{entity.note}</p>
                     </div>
-                    <div className="w-8 h-8 bg-black text-heirlock-green flex items-center justify-center border-2 border-black font-bold">✓</div>
+                    <div className="w-8 h-8 bg-black text-heirlock-green flex items-center justify-center border-2 border-black font-bold">âœ“</div>
                   </div>
                 ))}
               </div>
@@ -785,14 +778,14 @@ export default function HomeClient() {
               <span className="inline-block bg-heirlock-blue text-black px-3 py-1 font-black uppercase text-sm tracking-widest shadow-[4px_4px_0_0_#000] mb-4">
                 Operations Scale
               </span>
-              <h2 className="text-6xl md:text-7xl font-black text-black uppercase tracking-tighter leading-none">Price Of<br/>Security.</h2>
+              <h2 className="text-6xl md:text-7xl font-black text-black uppercase tracking-tighter leading-none">START WITH<br/>PILOTS.</h2>
             </div>
             <Link href="/pricing" className="inline-flex items-center gap-2 font-black text-xl text-white bg-black border-4 border-black px-6 py-4 shadow-[6px_6px_0_0_#BAE1FF] hover:-translate-y-1 hover:shadow-[10px_10px_0_0_#BAE1FF] transition-all uppercase">
               See Full Pricing <ChevronRight className="w-6 h-6" />
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {pricingTiers.map((tier) => (
               <div key={tier.name} className={`border-4 border-black ${tier.accent} p-8 shadow-[10px_10px_0_0_#000] flex flex-col gap-6 relative group overflow-hidden`}>
                 <div className="flex items-center justify-between border-b-4 border-black pb-6 gap-4">
@@ -802,7 +795,7 @@ export default function HomeClient() {
                 <ul className="text-sm font-bold text-black flex-1 space-y-3 z-10 relative">
                   {tier.bullets.map((b) => (
                     <li key={b} className="flex items-start gap-3">
-                      <Terminal className="w-5 h-5 shrink-0 mt-0.5" strokeWidth={2.5} />
+                      <CheckCircle className="w-5 h-5 shrink-0 mt-0.5" strokeWidth={2.5} />
                       <span className="leading-tight uppercase">{b}</span>
                     </li>
                   ))}
@@ -909,3 +902,7 @@ export default function HomeClient() {
     </main>
   );
 }
+
+
+
+
