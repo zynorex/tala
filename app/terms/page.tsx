@@ -52,32 +52,29 @@ export default function TermsPage() {
   return (
     <div className="min-h-screen bg-cream selection:bg-black selection:text-white">
       {/* Brutalist Hero Header */}
-      <div className="bg-black text-white pt-32 pb-24 px-4 border-b-8 border-black shadow-[0_16px_0_0_#BAE1FF] relative z-20">
-        <div className="container mx-auto max-w-5xl relative">
-          <Link href="/legal" className="inline-flex items-center gap-2 font-bold mb-12 hover:-translate-x-2 transition-transform bg-white text-black px-5 py-3 border-4 border-black shadow-[4px_4px_0_0_#FFE600] uppercase text-sm tracking-widest">
-            <ChevronLeft className="w-5 h-5" strokeWidth={3} /> Back to Legal Directory
-          </Link>
-          <div className="flex flex-col md:flex-row gap-8 items-start md:items-end justify-between">
-            <div>
-              <div className="inline-block bg-heirlock-yellow text-black px-4 py-2 font-black uppercase tracking-widest text-sm mb-6 shadow-[4px_4px_0_0_#FFF]">
-                LEGAL DIRECTIVE // 01
-              </div>
-              <h1 className="text-6xl md:text-8xl lg:text-9xl font-black uppercase tracking-tighter leading-none mb-6">
-                Terms of<br/><span className="text-heirlock-red drop-shadow-[6px_6px_0_rgba(255,255,255,1)]">Service.</span>
-              </h1>
-              <p className="text-xl md:text-2xl font-bold border-l-8 border-heirlock-yellow pl-6 max-w-2xl mt-8">
-                The operational doctrines governing your use of the T.A.L.A. zero-trust protocol.
-              </p>
-            </div>
-            <div className="font-mono text-sm uppercase text-gray-400 border-4 border-gray-800 p-4 bg-gray-900 shadow-[4px_4px_0_0_#FFF]">
-              <div className="text-white font-bold mb-1 border-b border-gray-700 pb-1">FILE METADATA</div>
-              <div>Last Updated: DEC.2024</div>
-              <div>Version: 1.0.0</div>
-              <div>Status: ACTIVE</div>
-            </div>
+      <section className="relative pt-32 pb-20 px-4 border-b-8 border-black overflow-hidden bg-cream">
+        <div className="absolute inset-0 z-0">
+          <div className="absolute inset-0 bg-[linear-gradient(to_right,#0000001a_1px,transparent_1px),linear-gradient(to_bottom,#0000001a_1px,transparent_1px)] bg-[size:4rem_4rem]"></div>
+        </div>
+        
+        <div className="container mx-auto max-w-5xl relative z-10">
+          <div className="flex flex-col gap-6">
+            <Link href="/legal" className="inline-flex items-center gap-2 font-black mb-8 hover:-translate-x-2 transition-transform bg-black text-white px-5 py-3 border-4 border-black shadow-[4px_4px_0_0_#FFFACD] hover:shadow-[8px_8px_0_0_#FFFACD] uppercase text-sm tracking-widest max-w-fit">
+              <ChevronLeft className="w-5 h-5" strokeWidth={3} /> Back to Legal Directory
+            </Link>
+            
+            <span className="inline-block bg-heirlock-yellow text-black border-2 border-black px-3 py-1 font-black uppercase text-sm tracking-widest shadow-[4px_4px_0_0_#000] max-w-fit mb-4 -rotate-1">
+              LEGAL DIRECTIVE // 01
+            </span>
+            <h1 className="text-6xl md:text-8xl lg:text-9xl font-black text-black uppercase tracking-tighter leading-none mb-6">
+              TERMS OF <br/> SERVICE.
+            </h1>
+            <p className="text-xl md:text-2xl font-bold bg-white border-4 border-black p-6 shadow-[8px_8px_0_0_#000] max-w-2xl leading-relaxed">
+              The operational doctrines governing your use of the T.A.L.A. zero-trust protocol.
+            </p>
           </div>
         </div>
-      </div>
+      </section>
 
       {/* Main Content Sections */}
       <div className="container mx-auto max-w-5xl px-4 py-24">

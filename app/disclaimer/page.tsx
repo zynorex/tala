@@ -1,350 +1,226 @@
 import { Metadata } from "next";
 import Link from "next/link";
-import { ChevronLeft, AlertTriangle } from "lucide-react";
+import { ChevronLeft } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Disclaimer | TALA",
   description: "Important disclaimers and risk warnings for TALA",
 };
 
+const SectionCard = ({ index, title, children, variant = 'default' }: { index: string, title: string, children: React.ReactNode, variant?: 'default' | 'warning' | 'terminal' | 'critical' }) => {
+  const bgs = {
+    default: 'bg-white',
+    warning: 'bg-heirlock-yellow',
+    terminal: 'bg-black text-white',
+    critical: 'bg-[#FF6961] text-black'
+  };
+  const shadows = {
+    default: 'shadow-[12px_12px_0_0_#000]',
+    warning: 'shadow-[12px_12px_0_0_#000]',
+    terminal: 'shadow-[12px_12px_0_0_#FFFACD]',
+    critical: 'shadow-[12px_12px_0_0_#000]'
+  };
+  const titleColor = {
+    default: 'text-black',
+    warning: 'text-black',
+    terminal: 'text-heirlock-green',
+    critical: 'text-black'
+  };
+  const borderColor = variant === 'terminal' ? 'border-white' : 'border-black';
+  const headerBorder = variant === 'terminal' ? 'border-white' : 'border-black';
+
+  return (
+    <div className={`border-4 ${borderColor} ${bgs[variant]} p-8 md:p-12 relative group ${shadows[variant]} hover:-translate-y-2 transition-all duration-300`}>
+      <div className={`absolute -left-4 -top-6 md:-left-6 w-16 h-16 flex items-center justify-center font-black text-2xl border-4 transition-all duration-300 z-10 
+        ${variant === 'terminal' ? 'bg-white text-black border-black shadow-[4px_4px_0_0_#BAFFC9] group-hover:shadow-[8px_8px_0_0_#BAFFC9]' : 'bg-black text-white border-black shadow-[4px_4px_0_0_#FFF] group-hover:shadow-[8px_8px_0_0_#FFF]'} 
+        group-hover:scale-110 group-hover:rotate-6`}>
+        {index}
+      </div>
+      <h2 className={`text-3xl md:text-4xl font-black uppercase mb-8 ${titleColor[variant]} border-b-4 ${headerBorder} pb-4`}>{title}</h2>
+      <div className={`space-y-6 text-lg md:text-xl font-bold leading-relaxed ${variant === 'terminal' ? 'text-gray-300' : 'text-gray-900'}`}>
+        {children}
+      </div>
+    </div>
+  );
+};
+
+const Bullet = ({ variant = 'default' }: { variant?: 'default' | 'terminal' | 'critical' }) => (
+  <span className={`w-3 h-3 mt-2.5 shrink-0 border-2 ${variant === 'terminal' ? 'bg-heirlock-green border-heirlock-green' : 'bg-black border-black'}`}></span>
+);
+
 export default function DisclaimerPage() {
   return (
-    <div className="min-h-screen bg-cream pt-20 pb-16">
-      <div className="container mx-auto max-w-3xl px-4">
-        <Link href="/legal" className="inline-flex items-center gap-2 text-black font-bold mb-8 hover:gap-3 transition-all">
-          <ChevronLeft className="w-5 h-5" />
-          Back to Legal
-        </Link>
+    <div className="min-h-screen bg-white selection:bg-black selection:text-white font-sans pb-32">
+      {/* Brutalist Hero Header */}
+      <section className="relative pt-32 pb-20 px-4 border-b-8 border-black overflow-hidden bg-cream">
+        <div className="absolute inset-0 z-0">
+          <div className="absolute inset-0 bg-[linear-gradient(to_right,#0000001a_1px,transparent_1px),linear-gradient(to_bottom,#0000001a_1px,transparent_1px)] bg-[size:4rem_4rem]"></div>
+        </div>
+        
+        <div className="container mx-auto max-w-5xl relative z-10">
+          <div className="flex flex-col gap-6">
+            <Link href="/legal" className="inline-flex items-center gap-2 font-black mb-8 hover:-translate-x-2 transition-transform bg-black text-white px-5 py-3 border-4 border-black shadow-[4px_4px_0_0_#FFB3BA] hover:shadow-[8px_8px_0_0_#FFB3BA] uppercase text-sm tracking-widest max-w-fit">
+              <ChevronLeft className="w-5 h-5" strokeWidth={3} /> Back to Legal Directory
+            </Link>
+            
+            <span className="inline-block bg-heirlock-pink text-black border-2 border-black px-3 py-1 font-black uppercase text-sm tracking-widest shadow-[4px_4px_0_0_#000] max-w-fit mb-4 -rotate-1">
+              LEGAL DIRECTIVE // 03
+            </span>
+            <h1 className="text-6xl md:text-8xl lg:text-9xl font-black text-black uppercase tracking-tighter leading-none mb-6">
+              DISCLAIMER.
+            </h1>
+            <p className="text-xl md:text-2xl font-bold bg-white border-4 border-black p-6 shadow-[8px_8px_0_0_#000] max-w-2xl leading-relaxed">
+              Liability boundaries and absolute warnings for interacting with Web3 protocols.
+            </p>
+          </div>
+        </div>
+      </section>
 
-        <div className="border-4 border-black bg-white p-8 md:p-12 shadow-brutal">
-          <h1 className="font-black text-4xl text-black mb-2">Disclaimer</h1>
-          <p className="text-sm text-gray-600 mb-8">Last updated: December 2024</p>
+      {/* Main Content Sections */}
+      <div className="container mx-auto max-w-5xl px-4 py-24">
+        
+        <div className="bg-[#FF6961] text-black border-4 border-black p-8 md:p-12 shadow-[12px_12px_0_0_#000] mb-16 animate-pulse-slow">
+          <h2 className="text-4xl md:text-5xl font-black uppercase tracking-tighter border-b-4 border-black pb-4 mb-6">CRITICAL ALERT</h2>
+          <p className="text-xl md:text-2xl font-black leading-tight">
+            TALA is a non-custodial platform. Loss of your encryption keys or private keys results in PERMANENT AND IRREVERSIBLE loss of access to your vault and all contents. We cannot recover your data.
+          </p>
+        </div>
 
-          <div className="bg-red-100 border-4 border-red-500 p-6 mb-8 flex gap-4">
-            <AlertTriangle className="w-8 h-8 text-red-600 flex-shrink-0 mt-1" />
-            <div>
-              <p className="font-black text-red-800 text-lg">CRITICAL DISCLAIMER</p>
-              <p className="text-red-800 font-bold mt-2">
-                TALA is a non-custodial platform. Loss of your encryption keys or private keys results in PERMANENT AND IRREVERSIBLE loss of access to your vault and all contents. We cannot recover your data. Use TALA only if you understand and accept this risk.
-              </p>
-            </div>
+        <div className="space-y-16">
+          <SectionCard index="01" title="Non-Custodial Nature" variant="terminal">
+            <p className="text-white">TALA is explicitly a non-custodial platform. This mathematically means:</p>
+            <ul className="space-y-4 flex flex-col mt-6">
+              <li className="flex gap-4 items-start"><Bullet variant="terminal"/><span><strong className="text-heirlock-green uppercase">We hold zero assets.</strong> You maintain absolute control over your encryption keys, private keys, wallet, and vault contents at all times.</span></li>
+              <li className="flex gap-4 items-start"><Bullet variant="terminal"/><span><strong className="text-heirlock-green uppercase">No system backdoors.</strong> Your keys exist purely on your local device. We cannot access, decrypt, or recover your vault.</span></li>
+              <li className="flex gap-4 items-start"><Bullet variant="terminal"/><span><strong className="text-heirlock-green uppercase">Not a fiduciary.</strong> TALA is software infrastructure, not a designated financial custodian or banking institution.</span></li>
+            </ul>
+          </SectionCard>
+
+          <SectionCard index="02" title="Permanent Loss of Access" variant="critical">
+            <p className="text-2xl font-black uppercase bg-black text-white p-4 shadow-[4px_4px_0_0_#FFF]">
+              IF YOU LOSE YOUR ENCRYPTION KEY:
+            </p>
+            <ul className="space-y-4 mt-6">
+              <li className="flex gap-4 flex-col md:flex-row md:items-start border-b-2 border-black/20 pb-4">
+                <strong className="text-black uppercase tracking-wider min-w-[200px]">NO RECOVERY</strong>
+                <span className="text-gray-900">There is no "forgot password." No mechanisms exist for recovery. Customer service mathematically cannot help you.</span>
+              </li>
+              <li className="flex gap-4 flex-col md:flex-row md:items-start border-b-2 border-black/20 pb-4">
+                <strong className="text-black uppercase tracking-wider min-w-[200px]">NO BACKUPS</strong>
+                <span className="text-gray-900">We do not sweep or backup your telemetry. Your key exists only with you.</span>
+              </li>
+              <li className="flex gap-4 flex-col md:flex-row md:items-start">
+                <strong className="text-black uppercase tracking-wider min-w-[200px]">IRREVERSIBLE</strong>
+                <span className="text-gray-900">It is equivalent to burning the data. Restoration is computationally impossible.</span>
+              </li>
+            </ul>
+          </SectionCard>
+
+          <SectionCard index="03" title="Blockchain Vulnerabilities" variant="terminal">
+            <p className="text-white">TALA operates on blockchain mechanics, exposing you to inherent architectural risks:</p>
+            <ul className="space-y-4 mt-6">
+              <li className="border-l-4 border-heirlock-yellow pl-4">
+                <strong className="text-heirlock-yellow block uppercase">Irreversible Transactions</strong>
+                <span className="text-gray-300">Errors in destination or payloads cannot be rolled back by central administrators.</span>
+              </li>
+              <li className="border-l-4 border-heirlock-green pl-4">
+                <strong className="text-heirlock-green block uppercase">Gas Extortion</strong>
+                <span className="text-gray-300">Network congestion can result in violently unpredictable and catastrophic transaction fees.</span>
+              </li>
+              <li className="border-l-4 border-heirlock-blue pl-4">
+                <strong className="text-heirlock-blue block uppercase">RPC & Network Interruption</strong>
+                <span className="text-gray-300">Third-party node providers failing will prevent you from interacting with the smart contracts.</span>
+              </li>
+            </ul>
+          </SectionCard>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-16">
+            <SectionCard index="04" title="Smart Contracts" variant="warning">
+              <p>While rigorously tested, TALA's smart contracts carry extreme operational risks:</p>
+              <ul className="space-y-3 flex flex-col mt-4">
+                <li className="flex gap-4 items-start"><Bullet/><strong>No Formal Audits:</strong> Code is used explicitly at-your-own-risk.</li>
+                <li className="flex gap-4 items-start"><Bullet/><strong>Exploitable Flaws:</strong> Zero-day exploits can permanently lock funds.</li>
+                <li className="flex gap-4 items-start"><Bullet/><strong>No Insurance:</strong> Failure yields zero recourse. No one will reimburse you.</li>
+              </ul>
+            </SectionCard>
+
+            <SectionCard index="05" title="Cryptography Limits">
+              <p>Encryption secures TALA, but physics and implementations decay:</p>
+              <ul className="space-y-3 flex flex-col mt-4">
+                <li className="flex gap-4 items-start"><Bullet/><strong>Quantum Threats:</strong> Algorithms may degrade against future computing capabilities.</li>
+                <li className="flex gap-4 items-start"><Bullet/><strong>Malware Intercepts:</strong> Device compromises can scrape memory during decryption.</li>
+              </ul>
+            </SectionCard>
           </div>
 
-          <div className="space-y-6 text-gray-800 font-medium">
-            <section>
-              <h2 className="font-black text-xl text-black mb-3">1. Non-Custodial Nature</h2>
-              <p>
-                TALA is a non-custodial platform. This means:
-              </p>
-              <ul className="list-disc pl-6 space-y-3 mt-3">
-                <li>
-                  <strong>We Do Not Hold Your Assets:</strong> You maintain complete control and responsibility for your encryption keys, private keys, wallet, and vault contents.
-                </li>
-                <li>
-                  <strong>We Cannot Access Your Data:</strong> Your encryption keys are stored only on your device. We cannot access, recover, or decrypt your vault contents.
-                </li>
-                <li>
-                  <strong>We Are Not a Bank or Custodian:</strong> TALA is a software platform, not a financial institution. We provide no safekeeping services or fiduciary duties.
-                </li>
-                <li>
-                  <strong>You Are Responsible:</strong> You alone are responsible for the security, backup, and management of all credentials and data.
-                </li>
-              </ul>
-            </section>
-
-            <section>
-              <h2 className="font-black text-xl text-black mb-3">2. Permanent Loss of Access</h2>
-              <p>
-                If you lose your encryption key or private key:
-              </p>
-              <ul className="list-disc pl-6 space-y-3 mt-3">
-                <li>
-                  <strong>Your Data Is Gone Forever:</strong> There is no "forgot password" option. No recovery mechanism exists. No customer service can help. Your vault and all contents will be permanently inaccessible.
-                </li>
-                <li>
-                  <strong>No Backup Available:</strong> We do not maintain backups of encryption keys or vault contents. Only you have this information.
-                </li>
-                <li>
-                  <strong>Irreversible Decision:</strong> Losing your key is equivalent to destroying all data in your vault. Once lost, recovery is mathematically impossible.
-                </li>
-                <li>
-                  <strong>Your Responsibility Alone:</strong> We are not responsible for lost keys, forgotten passwords, or inaccessible data resulting from your actions or inactions.
-                </li>
-              </ul>
-            </section>
-
-            <section>
-              <h2 className="font-black text-xl text-black mb-3">3. Blockchain Risks</h2>
-              <p>
-                TALA operates on blockchain technology, which carries inherent risks:
-              </p>
-              <ul className="list-disc pl-6 space-y-3 mt-3">
-                <li>
-                  <strong>Irreversible Transactions:</strong> All blockchain transactions are permanent and cannot be reversed. If you send MATIC to the wrong address, it is permanently lost.
-                </li>
-                <li>
-                  <strong>Gas Fees:</strong> Blockchain transactions require payment of gas fees in MATIC, which fluctuate unpredictably. High network congestion can result in very expensive transactions.
-                </li>
-                <li>
-                  <strong>Network Failures:</strong> Blockchain networks can experience congestion, slowdowns, outages, or other technical issues. During these periods, you may be unable to access or interact with TALA.
-                </li>
-                <li>
-                  <strong>RPC Provider Failures:</strong> TALA relies on third-party RPC providers for blockchain access. If these services fail, you cannot interact with the platform.
-                </li>
-                <li>
-                  <strong>Smart Contract Bugs:</strong> Despite testing, smart contracts may contain undiscovered vulnerabilities. Exploitation could result in loss of funds or data.
-                </li>
-                <li>
-                  <strong>Network Attacks:</strong> Blockchain networks can experience attacks, forks, or other disruptions. These could affect your vault and stored data.
-                </li>
-              </ul>
-            </section>
-
-            <section>
-              <h2 className="font-black text-xl text-black mb-3">4. Smart Contract Risks</h2>
-              <p>
-                The TALA smart contract carries specific risks:
-              </p>
-              <ul className="list-disc pl-6 space-y-3 mt-3">
-                <li>
-                  <strong>No Formal Audit:</strong> While tested, the TALA smart contract has not undergone formal third-party security audit.
-                </li>
-                <li>
-                  <strong>Undiscovered Vulnerabilities:</strong> Hidden bugs or vulnerabilities could exist despite thorough testing.
-                </li>
-                <li>
-                  <strong>Exploitable Flaws:</strong> Discovered vulnerabilities could be exploited to compromise the contract or vault contents.
-                </li>
-                <li>
-                  <strong>Permanent Fund Loss:</strong> Smart contract failure or exploitation could permanently lock funds or vault access.
-                </li>
-                <li>
-                  <strong>No Recovery Path:</strong> There is no insurance, escrow, or recovery mechanism if the contract fails. No one can reimburse you.
-                </li>
-                <li>
-                  <strong>Contract Upgrades:</strong> We may upgrade the smart contract, which could change behavior or affect existing vaults in unexpected ways.
-                </li>
-              </ul>
-            </section>
-
-            <section>
-              <h2 className="font-black text-xl text-black mb-3">5. Encryption and Security Risks</h2>
-              <p>
-                TALA uses encryption for security, but encryption carries inherent risks:
-              </p>
-              <ul className="list-disc pl-6 space-y-3 mt-3">
-                <li>
-                  <strong>Encryption Key Loss:</strong> If you lose your encryption key, your data is permanently inaccessible. No one can decrypt it.
-                </li>
-                <li>
-                  <strong>Implementation Flaws:</strong> While using standard encryption libraries, implementation errors could compromise security.
-                </li>
-                <li>
-                  <strong>Future Encryption Weakness:</strong> Current encryption standards may be broken in the future by quantum computers or mathematical breakthroughs. Your data encrypted today may become vulnerable tomorrow.
-                </li>
-                <li>
-                  <strong>Device Compromise:</strong> If your device is compromised by malware, your encryption keys could be stolen without our knowledge or ability to help.
-                </li>
-                <li>
-                  <strong>Memory Exposure:</strong> When decrypting vault contents, the encryption key and plaintext are temporarily in your device's memory. A compromised device could leak this information.
-                </li>
-              </ul>
-            </section>
-
-            <section>
-              <h2 className="font-black text-xl text-black mb-3">6. IPFS and Distributed Storage Risks</h2>
-              <p>
-                TALA uses IPFS (via Pinata) for storage, which carries specific risks:
-              </p>
-              <ul className="list-disc pl-6 space-y-3 mt-3">
-                <li>
-                  <strong>No Guaranteed Persistence:</strong> IPFS does not guarantee that data will persist indefinitely. If pinned files are unpinned, data could be lost.
-                </li>
-                <li>
-                  <strong>Pinata Service Failure:</strong> If Pinata discontinues service or removes your files, your vault contents are lost forever.
-                </li>
-                <li>
-                  <strong>Data Availability:</strong> Your IPFS data is only as available as the peers hosting it. Unpopular files are likely to be garbage-collected.
-                </li>
-                <li>
-                  <strong>No Backup Guarantee:</strong> While Pinata may maintain copies, this is not guaranteed. We cannot restore lost files.
-                </li>
-                <li>
-                  <strong>IPFS Hash Immutability:</strong> IPFS hashes are immutable. If you want to modify vault contents, you must recreate the vault with new files.
-                </li>
-                <li>
-                  <strong>Third-Party Risk:</strong> We have no control over Pinata's operations, security, or continuity. Their failure affects TALA users.
-                </li>
-              </ul>
-            </section>
-
-            <section>
-              <h2 className="font-black text-xl text-black mb-3">7. Wallet and Private Key Risks</h2>
-              <p>
-                Your wallet and private keys are critical and carry significant risks:
-              </p>
-              <ul className="list-disc pl-6 space-y-3 mt-3">
-                <li>
-                  <strong>Private Key Exposure:</strong> If someone gains access to your private key, they can control your wallet and all its contents. We have no ability to reverse this or recover your funds.
-                </li>
-                <li>
-                  <strong>Wallet Compromise:</strong> If your wallet provider (MetaMask, etc.) is compromised, your private keys and funds could be stolen.
-                </li>
-                <li>
-                  <strong>Phishing Attacks:</strong> Attackers may impersonate TALA or other services to trick you into revealing your private keys or seed phrases.
-                </li>
-                <li>
-                  <strong>Malware Theft:</strong> Malware on your device could steal private keys, seed phrases, or encryption keys without you knowing.
-                </li>
-                <li>
-                  <strong>Hardware Wallet Failure:</strong> If using hardware wallets for storage, hardware failure could result in permanent loss of access.
-                </li>
-              </ul>
-            </section>
-
-            <section>
-              <h2 className="font-black text-xl text-black mb-3">8. Regulatory and Legal Risks</h2>
-              <p>
-                Using blockchain and cryptocurrency services carries significant legal risks:
-              </p>
-              <ul className="list-disc pl-6 space-y-3 mt-3">
-                <li>
-                  <strong>Regulatory Uncertainty:</strong> Cryptocurrency and blockchain regulation is unclear and changing rapidly in all jurisdictions. TALA's legal status could change at any time.
-                </li>
-                <li>
-                  <strong>Potential Shutdown:</strong> Regulatory action could force TALA to shut down or change service, affecting your access.
-                </li>
-                <li>
-                  <strong>User Responsibility for Compliance:</strong> You are responsible for complying with all applicable laws in your jurisdiction, including tax reporting and sanctions laws.
-                </li>
-                <li>
-                  <strong>Cross-Border Issues:</strong> If you use TALA while traveling, different jurisdictions may have conflicting legal requirements.
-                </li>
-                <li>
-                  <strong>Financial Regulations:</strong> TALA may be classified as a money service or exchange, triggering compliance obligations on you.
-                </li>
-                <li>
-                  <strong>Tax Implications:</strong> Using TALA likely triggers tax reporting requirements. Consult a tax professional in your jurisdiction.
-                </li>
-              </ul>
-            </section>
-
-            <section>
-              <h2 className="font-black text-xl text-black mb-3">9. Technology and Compatibility Risks</h2>
-              <p>
-                TALA relies on technology that may become incompatible or obsolete:
-              </p>
-              <ul className="list-disc pl-6 space-y-3 mt-3">
-                <li>
-                  <strong>Browser Compatibility:</strong> TALA may not work on all browsers. You must use a compatible, up-to-date browser.
-                </li>
-                <li>
-                  <strong>Wallet Compatibility:</strong> TALA requires a compatible wallet (MetaMask, etc.). Wallet updates could break compatibility.
-                </li>
-                <li>
-                  <strong>Operating System Changes:</strong> OS updates could affect TALA functionality or security.
-                </li>
-                <li>
-                  <strong>Library Deprecation:</strong> JavaScript and Web3 libraries we use may be deprecated, forcing major updates.
-                </li>
-                <li>
-                  <strong>Blockchain Incompatibility:</strong> If Polygon Amoy testnet is shut down, TALA vaults become inaccessible.
-                </li>
-              </ul>
-            </section>
-
-            <section>
-              <h2 className="font-black text-xl text-black mb-3">10. Service Interruption and Availability</h2>
-              <p>
-                TALA is provided on an "as is" basis with no guarantees of availability or performance:
-              </p>
-              <ul className="list-disc pl-6 space-y-3 mt-3">
-                <li>
-                  <strong>No Uptime Guarantee:</strong> We do not guarantee 100% availability. The service may be down for maintenance, updates, or emergency fixes.
-                </li>
-                <li>
-                  <strong>Feature Changes:</strong> We may add, remove, or modify features without advance notice.
-                </li>
-                <li>
-                  <strong>Service Discontinuation:</strong> We may discontinue TALA entirely at any time. You are responsible for securing your data before discontinuation.
-                </li>
-                <li>
-                  <strong>No Compensation:</strong> We are not liable for any damages resulting from service interruptions or unavailability.
-                </li>
-                <li>
-                  <strong>Limited Support:</strong> Support is provided on a best-effort basis with no guarantees of response time or resolution.
-                </li>
-              </ul>
-            </section>
-
-            <section>
-              <h2 className="font-black text-xl text-black mb-3">11. Assumption of Risk</h2>
-              <p className="font-bold text-red-700 mb-3">
-                By using TALA, you explicitly acknowledge and assume all risks described in this disclaimer. You understand that:
-              </p>
-              <ul className="list-disc pl-6 space-y-2 text-red-700 font-bold">
-                <li>Loss of your encryption key = permanent loss of data</li>
-                <li>Blockchain transactions are irreversible</li>
-                <li>Smart contracts may have exploitable vulnerabilities</li>
-                <li>IPFS/Pinata may not persist your data indefinitely</li>
-                <li>We cannot recover lost keys, funds, or data under any circumstances</li>
-                <li>Regulatory changes could affect TALA's availability</li>
-              </ul>
-              <p className="mt-3 font-bold">
-                If you do not accept these risks, do not use TALA.
-              </p>
-            </section>
-
-            <section className="bg-yellow-50 p-6 border-4 border-yellow-400 mt-8">
-              <h2 className="font-black text-xl text-black mb-3">Important Recommendations</h2>
-              <ul className="list-disc pl-6 space-y-2">
-                <li><strong>Backup Your Encryption Key:</strong> Keep secure offline copies in multiple safe locations</li>
-                <li><strong>Test Your Key:</strong> Verify you can decrypt your vault before storing important data</li>
-                <li><strong>Use Strong Security:</strong> Keep your device secure, use antivirus, avoid phishing</li>
-                <li><strong>Small Initial Test:</strong> Start with small, non-critical files to learn the system</li>
-                <li><strong>Keep Learning:</strong> Understand blockchain and cryptography before using seriously</li>
-                <li><strong>Consult Professionals:</strong> For legal/tax questions, consult appropriate professionals</li>
-              </ul>
-            </section>
-
-            <section>
-              <h2 className="font-black text-xl text-black mb-3">12. Limitation of Liability</h2>
-              <p className="font-bold mb-3">
-                TO THE MAXIMUM EXTENT PERMITTED BY LAW:
-              </p>
-              <p>
-                TALA and its developers/operators are not liable for any of the following, even if advised of the possibility:
-              </p>
-              <ul className="list-disc pl-6 space-y-2 mt-3">
-                <li>Loss or corruption of data</li>
-                <li>Loss of encryption keys, private keys, or wallet access</li>
-                <li>Blockchain network failures or attacks</li>
-                <li>Smart contract vulnerabilities or exploits</li>
-                <li>IPFS/Pinata service failures or data loss</li>
-                <li>Wallet provider failures or compromises</li>
-                <li>Gas fees or transaction costs</li>
-                <li>Lost profits, revenues, or opportunities</li>
-                <li>Any indirect, incidental, or consequential damages</li>
-                <li>Any damages arising from regulatory action</li>
-              </ul>
-            </section>
-
-            <section>
-              <h2 className="font-black text-xl text-black mb-3">13. Contact and Questions</h2>
-              <p>
-                For questions about this disclaimer, please <Link href="/contact" className="text-blue-600 font-black underline">contact us</Link>. This disclaimer does not waive any legal rights you may have under applicable law.
-              </p>
-            </section>
-
-            <div className="pt-6 border-t-2 border-gray-300 mt-8 bg-gray-50 p-4 border-4 border-gray-300">
-              <p className="text-sm font-black text-gray-800">
-                ✓ By using TALA, you agree that you have read, understood, and accept all terms in this disclaimer and Terms of Service.
-              </p>
+          <SectionCard index="06" title="IPFS & Data Persistence">
+            <p>We leverage Pinata and IPFS. Understand the following harsh reality:</p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
+              <div className="bg-cream p-6 border-4 border-black shadow-[8px_8px_0_0_#FFF]">
+                <h4 className="font-black text-xl uppercase mb-3 px-2 py-1 bg-black text-white inline-block">PERSISTENCE</h4>
+                <p>IPFS does NOT guarantee forever storage. If Pinata unpins your payload, your vault data is permanently purged across the network.</p>
+              </div>
+              <div className="bg-cream p-6 border-4 border-black shadow-[8px_8px_0_0_#FFF]">
+                <h4 className="font-black text-xl uppercase mb-3 px-2 py-1 bg-black text-white inline-block">IMMUTABILITY</h4>
+                <p>IPFS payload hashes are strictly immutable. To alter vault content, you must execute an entirely new deployment logic.</p>
+              </div>
             </div>
+          </SectionCard>
+
+          <SectionCard index="07" title="Wallet Sovereignty" variant="critical">
+            <p className="text-2xl font-black uppercase bg-black text-white p-4 shadow-[4px_4px_0_0_#FFF]">
+              YOUR PRIVATE KEY IS THE ABSOLUTE MASTER OVERRIDE.
+            </p>
+            <p className="mt-6 text-black">If your seed phrase or hardware wallet is compromised via phishing, malicious injections, or physical theft—your assets and vault ownership can be fully drained. We cannot halt this or freeze the contract.</p>
+          </SectionCard>
+
+          <SectionCard index="08" title="Global Law & Compliance">
+             <p className="mb-6">Deploying cryptography and participating in Web3 interfaces carries shifting jurisdictional liability.</p>
+             <ul className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <li className="bg-gray-100 p-4 border-2 border-black font-bold text-base flex flex-col"><strong className="uppercase block border-b-2 border-black pb-2 mb-2">Shutdown Directives</strong> Governments can throttle TALA access regionally without notice.</li>
+              <li className="bg-gray-100 p-4 border-2 border-black font-bold text-base flex flex-col"><strong className="uppercase block border-b-2 border-black pb-2 mb-2">Tax Liability</strong> Using TALA might trigger undeclared taxable events based on your tax residency.</li>
+              <li className="bg-gray-100 p-4 border-2 border-black font-bold text-base flex flex-col"><strong className="uppercase block border-b-2 border-black pb-2 mb-2">Sanctions</strong> Attempting to evade global sanctions using anon wallets is your sole legal peril.</li>
+             </ul>
+          </SectionCard>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-16">
+            <SectionCard index="09" title="Tech Rot">
+              <p>Platform dependencies degrade. Browser engine shifts, Web3 deprecation standards, or Polygon AMOY shutdowns can instantaneously render vaults inaccessible.</p>
+            </SectionCard>
+
+            <SectionCard index="10" title="Service Uptime">
+              <p>TALA is inherently provided "AS-IS". There is explicitly zero 99.9% uptime guarantee. Interfaces can vanish; contracts can fail.</p>
+            </SectionCard>
           </div>
+
+          <SectionCard index="11" title="Assumption of Risk" variant="critical">
+            <p className="mb-6 font-black uppercase text-2xl">By deploying to TALA, you accept full responsibility for:</p>
+            <ul className="space-y-4">
+              <li className="flex gap-4 items-center line-through decoration-black decoration-4"><Bullet variant="critical"/> Any hope of centralized disaster recovery.</li>
+              <li className="flex gap-4 items-center line-through decoration-black decoration-4"><Bullet variant="critical"/> Holding TALA devs liable for ANY financial destruction.</li>
+              <li className="flex gap-4 items-center line-through decoration-black decoration-4"><Bullet variant="critical"/> Assuming your IPFS chunks will exist indefinitely.</li>
+            </ul>
+            <div className="mt-8 bg-black text-white p-4 font-black text-xl uppercase text-center border-4 border-black">
+              IF YOU DO NOT ACCEPT, DISCONNECT IMMEDIATELY.
+            </div>
+          </SectionCard>
+
+          <SectionCard index="12" title="Resolution & Liability">
+             <p className="mb-8">
+              TO THE ABSOLUTE MAXIMUM MAXIMUM EXTENT PERMITTED BY APPLICABLE GLOBAL LAW: TALA AND ITS ARCHITECTS DENY ALL LIABILITY FOR LOST OPPORTUNITIES, LOST ASSETS, DECRYPTION FAILURES, AND PROTOCOL EXPLOITS.
+            </p>
+            <div className="bg-heirlock-pink text-black p-8 md:p-12 border-4 border-black shadow-[12px_12px_0_0_#000] flex flex-col md:flex-row items-center justify-between gap-8 hover:-rotate-1 transition-transform duration-500">
+              <p className="text-2xl md:text-3xl font-black uppercase max-w-lg leading-tight">
+                Review complete legal vectors or open a communications thread.
+              </p>
+              <Link href="/contact" className="px-8 py-5 bg-black text-heirlock-pink font-black uppercase tracking-widest text-xl border-4 border-black shadow-[6px_6px_0_0_#FFF] hover:-translate-y-1 hover:shadow-[10px_10px_0_0_#FFF] transition-all whitespace-nowrap">
+                Contact Legal
+              </Link>
+            </div>
+          </SectionCard>
+
         </div>
       </div>
     </div>
   );
 }
-

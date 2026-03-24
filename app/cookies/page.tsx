@@ -7,324 +7,182 @@ export const metadata: Metadata = {
   description: "Cookie Policy for TALA vault system",
 };
 
+const SectionCard = ({ index, title, children, variant = 'default' }: { index: string, title: string, children: React.ReactNode, variant?: 'default' | 'warning' | 'terminal' | 'critical' }) => {
+  const bgs = {
+    default: 'bg-white',
+    warning: 'bg-heirlock-yellow',
+    terminal: 'bg-black text-white',
+    critical: 'bg-[#FF6961] text-black'
+  };
+  const shadows = {
+    default: 'shadow-[12px_12px_0_0_#000]',
+    warning: 'shadow-[12px_12px_0_0_#000]',
+    terminal: 'shadow-[12px_12px_0_0_#FFFACD]',
+    critical: 'shadow-[12px_12px_0_0_#000]'
+  };
+  const titleColor = {
+    default: 'text-black',
+    warning: 'text-black',
+    terminal: 'text-heirlock-green',
+    critical: 'text-black'
+  };
+  const borderColor = variant === 'terminal' ? 'border-white' : 'border-black';
+  const headerBorder = variant === 'terminal' ? 'border-white' : 'border-black';
+
+  return (
+    <div className={`border-4 ${borderColor} ${bgs[variant]} p-8 md:p-12 relative group ${shadows[variant]} hover:-translate-y-2 transition-all duration-300`}>
+      <div className={`absolute -left-4 -top-6 md:-left-6 w-16 h-16 flex items-center justify-center font-black text-2xl border-4 transition-all duration-300 z-10 
+        ${variant === 'terminal' ? 'bg-white text-black border-black shadow-[4px_4px_0_0_#BAFFC9] group-hover:shadow-[8px_8px_0_0_#BAFFC9]' : 'bg-black text-white border-black shadow-[4px_4px_0_0_#FFF] group-hover:shadow-[8px_8px_0_0_#FFF]'} 
+        group-hover:scale-110 group-hover:rotate-6`}>
+        {index}
+      </div>
+      <h2 className={`text-3xl md:text-4xl font-black uppercase mb-8 ${titleColor[variant]} border-b-4 ${headerBorder} pb-4`}>{title}</h2>
+      <div className={`space-y-6 text-lg md:text-xl font-bold leading-relaxed ${variant === 'terminal' ? 'text-gray-300' : 'text-gray-900'}`}>
+        {children}
+      </div>
+    </div>
+  );
+};
+
+const Bullet = ({ variant = 'default' }: { variant?: 'default' | 'terminal' | 'critical' }) => (
+  <span className={`w-3 h-3 mt-2.5 shrink-0 border-2 ${variant === 'terminal' ? 'bg-heirlock-green border-heirlock-green' : 'bg-black border-black'}`}></span>
+);
+
 export default function CookiesPage() {
   return (
-    <div className="min-h-screen bg-cream pt-20 pb-16">
-      <div className="container mx-auto max-w-3xl px-4">
-        <Link href="/legal" className="inline-flex items-center gap-2 text-black font-bold mb-8 hover:gap-3 transition-all">
-          <ChevronLeft className="w-5 h-5" />
-          Back to Legal
-        </Link>
-
-        <div className="border-4 border-black bg-white p-8 md:p-12 shadow-brutal">
-          <h1 className="font-black text-4xl text-black mb-2">Cookie Policy</h1>
-          <p className="text-sm text-gray-600 mb-8">Last updated: December 2024</p>
-
-          <div className="space-y-6 text-gray-800 font-medium">
-            <section>
-              <h2 className="font-black text-xl text-black mb-3">1. What Are Cookies?</h2>
-              <p>
-                Cookies are small text files stored on your device when you visit a website. They contain data that can be retrieved by the website or service that created them. Cookies serve many purposes including:
-              </p>
-              <ul className="list-disc pl-6 space-y-2 mt-3">
-                <li>Remembering login information and preferences</li>
-                <li>Tracking user behavior and preferences</li>
-                <li>Delivering personalized content</li>
-                <li>Measuring website performance and engagement</li>
-              </ul>
-              <p className="mt-3">
-                Cookies can be categorized as:
-              </p>
-              <ul className="list-disc pl-6 space-y-2 mt-2">
-                <li><strong>Session Cookies:</strong> Temporary cookies deleted when you close your browser</li>
-                <li><strong>Persistent Cookies:</strong> Stored on your device for a specified duration</li>
-                <li><strong>First-Party Cookies:</strong> Set by TALA directly</li>
-                <li><strong>Third-Party Cookies:</strong> Set by external services we use</li>
-              </ul>
-            </section>
-
-            <section>
-              <h2 className="font-black text-xl text-black mb-3">2. Why We Use Cookies</h2>
-              <p>
-                TALA uses cookies to:
-              </p>
-              <ul className="list-disc pl-6 space-y-3 mt-3">
-                <li>
-                  <strong>Maintain Your Session:</strong> Keep you logged in and maintain your connection state with our servers
-                </li>
-                <li>
-                  <strong>Security:</strong> Detect and prevent fraud, unauthorized access, and suspicious activities
-                </li>
-                <li>
-                  <strong>Wallet Connection:</strong> Remember your connected wallet and authentication status
-                </li>
-                <li>
-                  <strong>User Preferences:</strong> Store your theme choice, language preference, and layout settings
-                </li>
-                <li>
-                  <strong>Analytics:</strong> Understand how users interact with TALA to improve the service
-                </li>
-                <li>
-                  <strong>Performance:</strong> Track page load times, errors, and service performance metrics
-                </li>
-              </ul>
-            </section>
-
-            <section>
-              <h2 className="font-black text-xl text-black mb-3">3. Types of Cookies We Use</h2>
-              <p className="font-bold mb-3">Essential Cookies (Required):</p>
-              <p className="mb-3">
-                These cookies are absolutely necessary for TALA to function. You cannot disable them without severely impacting Service functionality:
-              </p>
-              <ul className="list-disc pl-6 space-y-2 mb-4">
-                <li><strong>Session ID:</strong> Identifies your session (expires when you close browser)</li>
-                <li><strong>Authentication Token:</strong> Verifies your wallet connection and identity</li>
-                <li><strong>Security Token:</strong> Prevents CSRF attacks and unauthorized requests</li>
-                <li><strong>Consent Cookie:</strong> Remembers your cookie preferences</li>
-              </ul>
-
-              <p className="font-bold mb-3">Performance/Analytics Cookies (Non-Essential):</p>
-              <p className="mb-3">
-                These cookies help us understand how TALA is used and identify performance issues:
-              </p>
-              <ul className="list-disc pl-6 space-y-2 mb-4">
-                <li><strong>Google Analytics:</strong> Tracks anonymous user behavior and usage statistics</li>
-                <li><strong>Performance Metrics:</strong> Measures page load times and API response times</li>
-                <li><strong>Error Logging:</strong> Captures JavaScript errors and stack traces for debugging</li>
-                <li><strong>Feature Usage:</strong> Tracks which features are most popular</li>
-              </ul>
-
-              <p className="font-bold mb-3">Preference Cookies (Non-Essential):</p>
-              <p>
-                These cookies remember your choices:
-              </p>
-              <ul className="list-disc pl-6 space-y-2 mt-2">
-                <li><strong>Theme Preference:</strong> Dark/light mode selection</li>
-                <li><strong>Language:</strong> Your preferred language</li>
-                <li><strong>Layout:</strong> View preferences (list vs. grid, expanded vs. collapsed)</li>
-              </ul>
-            </section>
-
-            <section>
-              <h2 className="font-black text-xl text-black mb-3">4. Third-Party Cookies</h2>
-              <p>
-                Third-party services we integrate with may set their own cookies:
-              </p>
-              <ul className="list-disc pl-6 space-y-3 mt-3">
-                <li>
-                  <strong>Google Analytics:</strong> Cookie name "_ga", "_gat", "_gid". Tracks anonymous usage statistics. See <a href="https://policies.google.com/privacy" className="text-blue-600 font-black underline">Google's Privacy Policy</a>
-                </li>
-                <li>
-                  <strong>MetaMask/Wallet Providers:</strong> May set cookies for wallet connection state and security. Review their privacy policies.
-                </li>
-                <li>
-                  <strong>CDN Services:</strong> Content delivery networks may set performance-related cookies
-                </li>
-                <li>
-                  <strong>RPC Providers:</strong> Blockchain RPC providers may track requests via cookies or identifiers
-                </li>
-              </ul>
-              <p className="mt-3">
-                These third parties have their own privacy policies over which we have no control. We are not responsible for their cookie practices.
-              </p>
-            </section>
-
-            <section>
-              <h2 className="font-black text-xl text-black mb-3">5. Detailed Cookie Inventory</h2>
-              <p className="font-bold mb-3">First-Party Cookies Set by TALA:</p>
-              <div className="overflow-x-auto mt-3">
-                <table className="w-full text-sm border-collapse">
-                  <thead>
-                    <tr className="bg-gray-100 border-b-2 border-black">
-                      <th className="border-r border-gray-400 p-2 text-left font-bold">Cookie Name</th>
-                      <th className="border-r border-gray-400 p-2 text-left font-bold">Duration</th>
-                      <th className="border-r border-gray-400 p-2 text-left font-bold">Purpose</th>
-                      <th className="p-2 text-left font-bold">Type</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr className="border-b border-gray-300">
-                      <td className="border-r border-gray-300 p-2">session_id</td>
-                      <td className="border-r border-gray-300 p-2">Session</td>
-                      <td className="border-r border-gray-300 p-2">User session management</td>
-                      <td className="p-2">Essential</td>
-                    </tr>
-                    <tr className="border-b border-gray-300">
-                      <td className="border-r border-gray-300 p-2">auth_token</td>
-                      <td className="border-r border-gray-300 p-2">Session</td>
-                      <td className="border-r border-gray-300 p-2">Authentication and security</td>
-                      <td className="p-2">Essential</td>
-                    </tr>
-                    <tr className="border-b border-gray-300">
-                      <td className="border-r border-gray-300 p-2">csrf_token</td>
-                      <td className="border-r border-gray-300 p-2">Session</td>
-                      <td className="border-r border-gray-300 p-2">CSRF protection</td>
-                      <td className="p-2">Essential</td>
-                    </tr>
-                    <tr className="border-b border-gray-300">
-                      <td className="border-r border-gray-300 p-2">theme_preference</td>
-                      <td className="border-r border-gray-300 p-2">1 year</td>
-                      <td className="border-r border-gray-300 p-2">Theme selection (dark/light)</td>
-                      <td className="p-2">Preference</td>
-                    </tr>
-                    <tr className="border-b border-gray-300">
-                      <td className="border-r border-gray-300 p-2">language</td>
-                      <td className="border-r border-gray-300 p-2">1 year</td>
-                      <td className="border-r border-gray-300 p-2">Language preference</td>
-                      <td className="p-2">Preference</td>
-                    </tr>
-                    <tr>
-                      <td className="border-r border-gray-300 p-2">cookie_consent</td>
-                      <td className="border-r border-gray-300 p-2">1 year</td>
-                      <td className="border-r border-gray-300 p-2">Cookie consent choice</td>
-                      <td className="p-2">Essential</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </section>
-
-            <section>
-              <h2 className="font-black text-xl text-black mb-3">6. Local Storage and Session Storage</h2>
-              <p>
-                Beyond cookies, we use browser storage technologies:
-              </p>
-              <ul className="list-disc pl-6 space-y-3 mt-3">
-                <li>
-                  <strong>Local Storage:</strong> Persistent browser storage (persists until manually cleared). Used for user preferences and theme settings.
-                </li>
-                <li>
-                  <strong>Session Storage:</strong> Temporary browser storage (cleared when browser closes). Used for current session data.
-                </li>
-                <li>
-                  <strong>IndexedDB:</strong> Larger database for client-side storage. May store vault metadata and cache.
-                </li>
-              </ul>
-              <p className="mt-3">
-                These storage methods are managed similarly to cookies through browser settings.
-              </p>
-            </section>
-
-            <section>
-              <h2 className="font-black text-xl text-black mb-3">7. How to Manage Cookies</h2>
-              <p className="font-bold mb-3">Browser-Level Controls:</p>
-              <p className="mb-3">
-                Most modern browsers allow you to view, manage, and delete cookies:
-              </p>
-              <ul className="list-disc pl-6 space-y-2 mb-4">
-                <li><strong>View Cookies:</strong> See all cookies stored for TALA</li>
-                <li><strong>Delete Cookies:</strong> Remove cookies from your device</li>
-                <li><strong>Block Cookies:</strong> Prevent TALA from setting new cookies</li>
-                <li><strong>Clear On Exit:</strong> Automatically delete cookies when closing browser</li>
-              </ul>
-
-              <p className="font-bold mb-3">Important Note:</p>
-              <p>
-                Disabling essential cookies will prevent TALA from functioning properly. You may not be able to log in, maintain your session, or use vault features.
-              </p>
-            </section>
-
-            <section>
-              <h2 className="font-black text-xl text-black mb-3">8. Browser-Specific Instructions</h2>
-              <p className="font-bold mb-3">Google Chrome:</p>
-              <ol className="list-decimal pl-6 space-y-2 mb-4">
-                <li>Click menu icon (⋮) → Settings</li>
-                <li>Select "Privacy and security" → "Cookies and other site data"</li>
-                <li>View, manage, or delete cookies</li>
-              </ol>
-
-              <p className="font-bold mb-3">Mozilla Firefox:</p>
-              <ol className="list-decimal pl-6 space-y-2 mb-4">
-                <li>Click menu icon (≡) → Preferences</li>
-                <li>Select "Privacy & Security" → "Cookies and Site Data"</li>
-                <li>Manage cookies and storage</li>
-              </ol>
-
-              <p className="font-bold mb-3">Apple Safari:</p>
-              <ol className="list-decimal pl-6 space-y-2 mb-4">
-                <li>Select Safari → Preferences</li>
-                <li>Click "Privacy" tab</li>
-                <li>Click "Manage Website Data"</li>
-              </ol>
-
-              <p className="font-bold mb-3">Microsoft Edge:</p>
-              <ol className="list-decimal pl-6 space-y-2">
-                <li>Click menu icon (⋯) → Settings</li>
-                <li>Select "Privacy, search, and services" → "Cookies and other site data"</li>
-                <li>Manage cookies</li>
-              </ol>
-            </section>
-
-            <section>
-              <h2 className="font-black text-xl text-black mb-3">9. Opt-Out and Privacy Controls</h2>
-              <p className="font-bold mb-3">Google Analytics Opt-Out:</p>
-              <p>
-                Install the <a href="https://tools.google.com/dlpage/gaoptout" className="text-blue-600 font-black underline">Google Analytics Opt-out Browser Add-on</a> to prevent Google Analytics tracking.
-              </p>
-
-              <p className="font-bold mb-3 mt-4">Do Not Track (DNT):</p>
-              <p>
-                You can enable "Do Not Track" in your browser. However, we note that this is not a universal standard and many services (including TALA) do not honor DNT requests.
-              </p>
-
-              <p className="font-bold mb-3 mt-4">Privacy Browser Extensions:</p>
-              <p>
-                Consider using privacy-focused tools:
-              </p>
-              <ul className="list-disc pl-6 space-y-2 mt-2">
-                <li><strong>uBlock Origin:</strong> Blocks ads and trackers</li>
-                <li><strong>Privacy Badger:</strong> Automatically blocks tracking</li>
-                <li><strong>Brave Browser:</strong> Built-in privacy protections</li>
-              </ul>
-            </section>
-
-            <section>
-              <h2 className="font-black text-xl text-black mb-3">10. GDPR and Privacy Law Compliance</h2>
-              <p>
-                If you're subject to GDPR (EU users) or other privacy laws:
-              </p>
-              <ul className="list-disc pl-6 space-y-3 mt-3">
-                <li>
-                  <strong>Cookie Consent:</strong> We obtain your explicit consent for non-essential cookies before setting them
-                </li>
-                <li>
-                  <strong>Data Subject Rights:</strong> You have rights to access, delete, and port your data (see our <Link href="/privacy" className="text-blue-600 font-black underline">Privacy Policy</Link>)
-                </li>
-                <li>
-                  <strong>Right to Object:</strong> You can object to cookies at any time
-                </li>
-                <li>
-                  <strong>CCPA Compliance:</strong> California residents have additional rights regarding personal information
-                </li>
-              </ul>
-            </section>
-
-            <section>
-              <h2 className="font-black text-xl text-black mb-3">11. Changes to This Policy</h2>
-              <p>
-                As TALA evolves, we may update this Cookie Policy to reflect new features, technologies, or legal requirements. Changes will be effective immediately upon posting.
-              </p>
-              <p className="mt-3">
-                Continued use of TALA after policy updates constitutes your acceptance of the new terms.
-              </p>
-            </section>
-
-            <section>
-              <h2 className="font-black text-xl text-black mb-3">12. Contact Us</h2>
-              <p>
-                If you have questions about our cookie practices or how to manage cookies, please <Link href="/contact" className="text-blue-600 font-black underline">contact us</Link>.
-              </p>
-            </section>
-
-            <div className="pt-6 border-t-2 border-gray-300 mt-8 bg-green-50 p-4 border-4 border-green-300">
-              <p className="text-sm font-black text-green-800">
-                ✓ We are committed to transparent cookie practices and protecting your privacy.
-              </p>
-            </div>
+    <div className="min-h-screen bg-white selection:bg-black selection:text-white font-sans pb-32">
+      {/* Brutalist Hero Header */}
+      <section className="relative pt-32 pb-20 px-4 border-b-8 border-black overflow-hidden bg-cream">
+        <div className="absolute inset-0 z-0">
+          <div className="absolute inset-0 bg-[linear-gradient(to_right,#0000001a_1px,transparent_1px),linear-gradient(to_bottom,#0000001a_1px,transparent_1px)] bg-[size:4rem_4rem]"></div>
+        </div>
+        
+        <div className="container mx-auto max-w-5xl relative z-10">
+          <div className="flex flex-col gap-6">
+            <Link href="/legal" className="inline-flex items-center gap-2 font-black mb-8 hover:-translate-x-2 transition-transform bg-black text-white px-5 py-3 border-4 border-black shadow-[4px_4px_0_0_#BAE1FF] hover:shadow-[8px_8px_0_0_#BAE1FF] uppercase text-sm tracking-widest max-w-fit">
+              <ChevronLeft className="w-5 h-5" strokeWidth={3} /> Back to Legal Directory
+            </Link>
+            
+            <span className="inline-block bg-heirlock-blue text-black border-2 border-black px-3 py-1 font-black uppercase text-sm tracking-widest shadow-[4px_4px_0_0_#000] max-w-fit mb-4 rotate-1">
+              LEGAL DIRECTIVE // 04
+            </span>
+            <h1 className="text-6xl md:text-8xl lg:text-9xl font-black text-black uppercase tracking-tighter leading-none mb-6">
+              COOKIE <br/> POLICY.
+            </h1>
+            <p className="text-xl md:text-2xl font-bold bg-white border-4 border-black p-6 shadow-[8px_8px_0_0_#000] max-w-2xl leading-relaxed">
+              Functional tracking matrices and anonymous analytics declarations.
+            </p>
           </div>
+        </div>
+      </section>
+
+      {/* Main Content Sections */}
+      <div className="container mx-auto max-w-5xl px-4 py-24">
+        
+        <div className="bg-heirlock-blue text-black border-4 border-black p-8 md:p-12 shadow-[12px_12px_0_0_#000] mb-16 hover:translate-x-2 transition-transform">
+          <h2 className="text-4xl md:text-5xl font-black uppercase tracking-tighter border-b-4 border-black pb-4 mb-6">TRANSPARENCY</h2>
+          <p className="text-xl font-bold leading-tight">
+            We use absolute minimum tracking. No third-party ad networks. No cross-site profiling. We use localized tokens exclusively to maintain decentralized session states and essential interface settings.
+          </p>
+        </div>
+
+        <div className="space-y-16">
+          <SectionCard index="01" title="What are Cookies?">
+            <p className="text-2xl font-black uppercase border-b-4 border-black pb-4 mb-6">
+              Cookies are local files stored on your machine.
+            </p>
+            <p>They contain data retrieved by your browser to serve specific purposes. TALA heavily relies on client-side storage to execute cryptography without touching servers.</p>
+            <ul className="space-y-4 flex flex-col mt-6">
+              <li className="flex gap-4 items-start"><Bullet/><span><strong className="uppercase block mb-1">Session Data</strong> Temporal state tokens deleted upon browser exit.</span></li>
+              <li className="flex gap-4 items-start"><Bullet/><span><strong className="uppercase block mb-1">Persistent Storage</strong> Local hardware storage preserving UI themes (Dark/Light).</span></li>
+              <li className="flex gap-4 items-start"><Bullet/><span><strong className="uppercase block mb-1">First-Party Only</strong> Set uniquely and explicitly by the TALA protocol domain.</span></li>
+            </ul>
+          </SectionCard>
+
+          <SectionCard index="02" title="Why We Use Cookies" variant="terminal">
+            <p className="text-white">Our decentralized service completely requires local authentication matrices to function:</p>
+            <ul className="space-y-6 mt-6">
+              <li className="border-l-4 border-heirlock-green pl-4">
+                <strong className="text-heirlock-green block uppercase">Identity & Connection</strong>
+                <span className="text-gray-300">Wallet connection persistence (Web3Modal/Wagmi flags) preventing immediate disconnection upon refresh.</span>
+              </li>
+              <li className="border-l-4 border-white pl-4">
+                <strong className="text-white block uppercase">Authentication Overlays</strong>
+                <span className="text-gray-300">Securing JWTs holding the server signature proving you own the connected Web3 wallet.</span>
+              </li>
+              <li className="border-l-4 border-heirlock-blue pl-4">
+                <strong className="text-heirlock-blue block uppercase">Performance & Diagnostics</strong>
+                <span className="text-gray-300">Basic Vercel/NextJS routing cache variables essential to SPA architecture.</span>
+              </li>
+            </ul>
+          </SectionCard>
+
+          <SectionCard index="03" title="Detailed Inventory">
+            <p>We believe in verifiable transparency. Here is the strict index of all potential local variables utilized by TALA:</p>
+            
+            <div className="overflow-x-auto mt-8 border-4 border-black shadow-[8px_8px_0_0_#FFFACD]">
+              <table className="w-full text-left font-bold m-0 border-collapse bg-white whitespace-nowrap">
+                <thead>
+                  <tr className="bg-black text-white uppercase text-sm tracking-widest">
+                    <th className="p-4 border-r-2 border-b-4 border-white">Token/Cookie</th>
+                    <th className="p-4 border-r-2 border-b-4 border-white">Type</th>
+                    <th className="p-4 border-r-2 border-b-4 border-white">TTL</th>
+                    <th className="p-4 border-b-4 border-white">Logic Vector</th>
+                  </tr>
+                </thead>
+                <tbody className="text-sm md:text-base">
+                  <tr className="border-b-2 border-black hover:bg-heirlock-yellow transition-colors">
+                    <td className="p-4 border-r-2 border-black font-mono">auth_session</td>
+                    <td className="p-4 border-r-2 border-black">HTTP Cookie</td>
+                    <td className="p-4 border-r-2 border-black">7 Days</td>
+                    <td className="p-4">Retains cryptographic wallet signature proof</td>
+                  </tr>
+                  <tr className="border-b-2 border-black hover:bg-heirlock-yellow transition-colors">
+                    <td className="p-4 border-r-2 border-black font-mono">wagmi.store</td>
+                    <td className="p-4 border-r-2 border-black">Local Storage</td>
+                    <td className="p-4 border-r-2 border-black">Browser</td>
+                    <td className="p-4">Cached RPC provider and Web3 connection state</td>
+                  </tr>
+                  <tr className="border-b-2 border-black hover:bg-heirlock-yellow transition-colors">
+                    <td className="p-4 border-r-2 border-black font-mono">tala-theme</td>
+                    <td className="p-4 border-r-2 border-black">Local Storage</td>
+                    <td className="p-4 border-r-2 border-black">Infinite</td>
+                    <td className="p-4">UI contrast mode preference</td>
+                  </tr>
+                  <tr className="hover:bg-heirlock-yellow transition-colors">
+                    <td className="p-4 border-r-2 border-black font-mono">csrf_token</td>
+                    <td className="p-4 border-r-2 border-black">HTTP Cookie</td>
+                    <td className="p-4 border-r-2 border-black">Session</td>
+                    <td className="p-4">Anti-forgery injection block</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </SectionCard>
+
+          <SectionCard index="04" title="Third-Party Vectors" variant="warning">
+             <p className="mb-6">While TALA fundamentally limits external vectors, interacting with decentralized networks triggers external network tracking.</p>
+             <ul className="space-y-4 flex flex-col mt-6 bg-white p-6 border-4 border-black">
+              <li className="flex gap-4 items-start"><Bullet/><span><strong className="uppercase block border-b-2 border-black pb-1 mb-2">Web3 Wallets (MetaMask etc.)</strong> Inject completely siloed variables entirely out of our domain scope.</span></li>
+              <li className="flex gap-4 items-start"><Bullet/><span><strong className="uppercase block border-b-2 border-black pb-1 mb-2">RPC Provider Analytics</strong> Alchemy and independent RPC nodes passively log query IPs globally via the transaction broadcast route.</span></li>
+            </ul>
+            <div className="mt-8 bg-black text-white p-4 font-black text-sm uppercase text-center w-full">
+              WE HAVE ZERO ADMINISTRATIVE CONTROL OVER PROTOCOL-LAYER METADATA AGGREGATION.
+            </div>
+          </SectionCard>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-16">
+            <SectionCard index="05" title="Consent Mechanics">
+              <p>Navigating the protocol and successfully deploying vaults constitutes active consent to fundamental storage mechanics outlined here, as it is mathematically impossible to sustain a session otherwise.</p>
+            </SectionCard>
+
+            <SectionCard index="06" title="Control Access">
+              <p>Browsers grant absolute client-side sovereignty. You can nuke <code className="bg-gray-200 px-2 py-1 border-2 border-black text-sm text-black inline-block">LocalStorage</code> and clear <code className="bg-gray-200 text-black px-2 py-1 border-2 border-black text-sm inline-block">Cookies</code> manually via developer tools. Disabling these immediately bricks the DApp connection.</p>
+            </SectionCard>
+          </div>
+
         </div>
       </div>
     </div>
   );
 }
-
