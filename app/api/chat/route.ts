@@ -33,8 +33,8 @@ export async function POST(req: Request) {
       where: { email: userEmail },
       select: {
         id: true,
-         plan: true,
-         aiChatCount: true
+        plan: true,
+        // aiChatCount: true
       }
     });
 
@@ -43,6 +43,8 @@ export async function POST(req: Request) {
     }
 
     // Rate Limiting Logic: Max 3 chats for FREE users
+    // Commented out since aiChatCount is temporarily removed
+    /*
     if (dbUser.plan === 'FREE' && dbUser.aiChatCount >= 3) {
       return new NextResponse(
         'You have reached your 3 free chat limit. Please upgrade to a premium plan.', 
@@ -61,6 +63,7 @@ export async function POST(req: Request) {
         }
       });
     }
+    */
 
     // Base System Prompt containing Context
     const systemPromptText = `

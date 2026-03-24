@@ -49,7 +49,7 @@ model User {
   razorpayContactId String?  // Razorpay customer ID for recurring billing
 
   // AI Chat Bot
-  aiChatCount     Int        @default(0) // Rate limit for FREE users
+  // aiChatCount temporarily removed to match remote DB
 
   // Relations
   accounts      Account[]
