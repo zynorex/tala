@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
@@ -382,24 +382,24 @@ const faqs = [
 
   const pricingTiers = [
     {
-      name: 'FIELD PILOT',
-      price: 'Free',
-      accent: 'bg-white',
-      bullets: ['Up to 25 vaults', 'Single faculty/team wallet', 'Shared audit dashboard', 'Email incident digests'],
-      cta: { label: 'LAUNCH PILOT', href: '/contact' },
+      name: 'STARTER',
+      price: '₹99 /mo',
+      accent: 'bg-heirlock-blue',
+      bullets: ['99 Secure vaults', '500MB per vault', 'AES-256 encryption', '1 User account'],
+      cta: { label: 'START FREE', href: '/pricing' },
     },
     {
-      name: 'CIVIC GRID',
-      price: '$499 /mo',
+      name: 'PRO',
+      price: '₹499 /mo',
       accent: 'bg-heirlock-yellow',
-      bullets: ['Unlimited vaults', 'Multi-wallet organizations', 'Webhook + API access', 'Priority security reviews'],
-      cta: { label: 'TALK TO SALES', href: '/contact' },
+      bullets: ['Unlimited vaults', '1GB per vault', 'AES-256-GCM military', 'Up to 10 operators'],
+      cta: { label: 'GET PRO', href: '/pricing' },
     },
     {
-      name: 'SOVEREIGN',
-      price: 'Custom',
-      accent: 'bg-heirlock-pink',
-      bullets: ['Air-gapped deployments', 'On-prem IPFS clusters', 'Dedicated compliance desk', 'Joint incident playbooks'],
+      name: 'ENTERPRISE',
+      price: '₹999 /mo',
+      accent: 'bg-heirlock-green',
+      bullets: ['Unlimited everything', 'Infinite storage', 'Premium IPFS nodes', '24/7 Dedicated coms'],
       cta: { label: 'SCHEDULE BRIEFING', href: '/contact' },
     }
   ];
@@ -568,13 +568,13 @@ const faqs = [
             {useCases.map((use) => {
               const Icon = use.icon;
               return (
-                <div key={use.title} className="border-4 border-black bg-cream p-8 shadow-[8px_8px_0_0_#000] hover:shadow-[12px_12px_0_0_#000] hover:-translate-y-2 transition-all flex flex-col gap-5 group cursor-default">
-                  <div className="w-16 h-16 bg-black flex items-center justify-center border-4 border-black group-hover:bg-heirlock-yellow transition-colors rotate-[-3deg]">
-                    <Icon className="w-8 h-8 text-white group-hover:text-black transition-colors" />
+                <div key={use.title} className="border-4 border-black bg-cream p-8 shadow-[8px_8px_0_0_#000] hover:shadow-[16px_16px_0_0_#000] hover:-translate-y-2 transition-all duration-300 flex flex-col gap-5 group cursor-default overflow-hidden micro-sheen">
+                  <div className="w-16 h-16 bg-black flex items-center justify-center border-4 border-black group-hover:bg-heirlock-yellow group-hover:scale-110 group-hover:rotate-6 transition-all duration-300 rotate-[-3deg] relative z-10">
+                    <Icon className="w-8 h-8 text-white group-hover:text-black transition-colors duration-300" />
                   </div>
-                  <h3 className="text-2xl font-black text-black uppercase leading-none">{use.title}</h3>
-                  <p className="text-base text-black font-bold leading-relaxed flex-1 border-l-4 border-black pl-3">{use.summary}</p>
-                  <div className="bg-black text-white p-3 text-sm font-bold uppercase">
+                  <h3 className="text-2xl font-black text-black uppercase leading-none group-hover:translate-x-1 transition-transform duration-300 relative z-10">{use.title}</h3>
+                  <p className="text-base text-black font-bold leading-relaxed flex-1 border-l-4 border-black pl-3 group-hover:border-heirlock-pink transition-colors duration-300 relative z-10">{use.summary}</p>
+                  <div className="bg-black text-white p-3 text-sm font-bold uppercase group-hover:bg-heirlock-yellow group-hover:text-black transition-colors duration-300 relative z-10">
                     Outcome: {use.impact}
                   </div>
                 </div>
@@ -615,15 +615,18 @@ const faqs = [
                 return (
                   <div
                     key={block.title}
-                    className={`relative border-4 border-black ${cardBg} p-6 shadow-[8px_8px_0_0_#FFF] transition-all hover:translate-y-1 hover:shadow-[4px_4px_0_0_#FFF]`}
+                    className={`relative border-4 border-black ${cardBg} p-6 shadow-[8px_8px_0_0_#FFF] transition-all duration-300 hover:shadow-[16px_16px_0_0_#FFF] hover:-translate-y-2 group cursor-default`}
                   >
-                    <div className="absolute -left-4 -top-5 border-4 border-black bg-black px-4 py-1 text-sm font-black uppercase text-white shadow-[4px_4px_0_0_#FF6961]">
+                    <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
+                      <div className="absolute inset-0 bg-[linear-gradient(120deg,transparent_30%,rgba(255,255,255,0.25)_50%,transparent_70%)] -translate-x-[150%] transition-transform duration-700 ease-in-out group-hover:translate-x-[150%]"></div>
+                    </div>
+                    <div className="absolute -left-4 -top-5 border-4 border-black bg-black px-4 py-1 text-sm font-black uppercase text-white shadow-[4px_4px_0_0_#FF6961] transition-transform duration-300 group-hover:-translate-y-1 group-hover:rotate-2 z-10">
                       Threat 0{idx + 1}
                     </div>
-                    <div className="mb-4 mt-2 border-b-4 border-black pb-4">
-                      <h4 className="text-2xl font-black uppercase text-black">{block.title}</h4>
+                    <div className="mb-4 mt-2 border-b-4 border-black pb-4 relative z-10">
+                      <h4 className="text-2xl font-black uppercase text-black group-hover:translate-x-1 transition-transform duration-300">{block.title}</h4>
                     </div>
-                    <p className="text-lg font-bold leading-snug text-black">{block.body}</p>
+                    <p className="text-lg font-bold leading-snug text-black relative z-10">{block.body}</p>
                   </div>
                 );
               })}
@@ -655,27 +658,27 @@ const faqs = [
                 {securityLayers.map((layer, idx) => {
                   const Icon = layer.icon;
                   const shadows = [
-                    'shadow-[6px_6px_0_0_#FFB3BA] hover:shadow-[10px_10px_0_0_#FFB3BA]',
-                    'shadow-[6px_6px_0_0_#FFFACD] hover:shadow-[10px_10px_0_0_#FFFACD]',
-                    'shadow-[6px_6px_0_0_#BAE1FF] hover:shadow-[10px_10px_0_0_#BAE1FF]',
-                    'shadow-[6px_6px_0_0_#FF6961] hover:shadow-[10px_10px_0_0_#FF6961]',
+                    'shadow-[6px_6px_0_0_#FFB3BA] hover:shadow-[12px_12px_0_0_#FFB3BA]',
+                    'shadow-[6px_6px_0_0_#FFFACD] hover:shadow-[12px_12px_0_0_#FFFACD]',
+                    'shadow-[6px_6px_0_0_#BAE1FF] hover:shadow-[12px_12px_0_0_#BAE1FF]',
+                    'shadow-[6px_6px_0_0_#FF6961] hover:shadow-[12px_12px_0_0_#FF6961]',
                   ];
                   const shadowClasses = shadows[idx % shadows.length];
 
                   return (
                     <div
                       key={layer.title}
-                      className={`group flex flex-col border-4 border-white bg-black p-6 transition-all hover:-translate-y-1 ${shadowClasses}`}
+                      className={`group flex flex-col border-4 border-white bg-black p-6 transition-all duration-300 hover:-translate-y-2 cursor-default overflow-hidden micro-sheen ${shadowClasses}`}
                     >
-                      <div className="mb-6 flex items-start justify-between">
-                        <div className="flex h-16 w-16 items-center justify-center border-4 border-white bg-white text-black transition-colors group-hover:bg-heirlock-blue">
-                          <Icon className="h-8 w-8" />
+                      <div className="mb-6 flex items-start justify-between relative z-10">
+                        <div className="flex h-16 w-16 items-center justify-center border-4 border-white bg-white text-black transition-all duration-300 group-hover:bg-heirlock-blue group-hover:scale-110 group-hover:rotate-6">
+                          <Icon className="h-8 w-8 group-hover:text-white transition-colors duration-300" />
                         </div>
                       </div>
-                      <p className="mb-3 text-2xl font-black uppercase leading-tight text-white">
+                      <p className="mb-3 text-2xl font-black uppercase leading-tight text-white group-hover:text-heirlock-yellow transition-colors duration-300 relative z-10">
                         {layer.title}
                       </p>
-                      <p className="text-base font-bold leading-relaxed text-gray-300">
+                      <p className="text-base font-bold leading-relaxed text-gray-300 relative z-10">
                         {layer.description}
                       </p>
                     </div>
@@ -704,18 +707,18 @@ const faqs = [
             {blueprint.map((layer) => {
               const Icon = layer.icon;
               return (
-                <div key={layer.title} className="border-4 border-black bg-white p-6 shadow-[8px_8px_0_0_#000] flex flex-col gap-5 hover:bg-black transition-colors duration-300 group cursor-default">
-                  <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 bg-cream text-black flex items-center justify-center border-4 border-black group-hover:bg-heirlock-yellow group-hover:border-black transition-colors duration-300">
+                <div key={layer.title} className="border-4 border-black bg-white p-6 shadow-[8px_8px_0_0_#000] hover:shadow-[16px_16px_0_0_#000] hover:-translate-y-2 flex flex-col gap-5 hover:bg-black transition-all duration-300 group cursor-default overflow-hidden micro-sheen">
+                  <div className="flex items-center gap-4 relative z-10">
+                    <div className="w-12 h-12 bg-cream text-black flex items-center justify-center border-4 border-black group-hover:bg-heirlock-yellow group-hover:border-black group-hover:scale-110 group-hover:-rotate-6 transition-all duration-300">
                       <Icon className="w-6 h-6 transform group-hover:scale-110 transition-transform duration-300" />
                     </div>
-                    <h3 className="text-2xl font-black text-black group-hover:text-white uppercase leading-tight transition-colors duration-300">{layer.title}</h3>
+                    <h3 className="text-2xl font-black text-black group-hover:text-white uppercase leading-tight group-hover:translate-x-1 transition-all duration-300">{layer.title}</h3>
                   </div>
-                  <ul className="text-base font-bold list-none space-y-3 flex-1 mt-4">
+                  <ul className="text-base font-bold list-none space-y-3 flex-1 mt-4 relative z-10">
                     {layer.bullets.map((b) => (
                       <li key={b} className="flex items-start gap-3">
-                        <span className="w-2 h-2 mt-2 bg-black border border-black group-hover:border-heirlock-yellow group-hover:bg-heirlock-yellow shrink-0 transition-colors duration-300"></span>
-                        <span className="text-black group-hover:text-gray-100 transition-colors duration-300">{b}</span>
+                        <span className="w-2 h-2 mt-2 bg-black border border-black group-hover:border-heirlock-yellow group-hover:bg-heirlock-yellow group-hover:scale-150 shrink-0 transition-all duration-300"></span>
+                        <span className="text-black group-hover:text-gray-100 group-hover:translate-x-1 transition-all duration-300 inline-block">{b}</span>
                       </li>
                     ))}
                   </ul>
@@ -736,10 +739,10 @@ const faqs = [
             <p className="text-xl text-black font-bold border-l-8 border-black pl-4">Real numbers from current deployments and synthetic drills.</p>
             <div className="grid grid-cols-2 gap-6 mt-8">
               {trustSignals.map((signal) => (
-                <div key={signal.label} className="border-4 border-black bg-white p-6 shadow-[6px_6px_0_0_#000]">
-                  <p className="text-4xl md:text-5xl font-black text-black mb-2">{signal.value}</p>
-                  <p className="text-sm font-black text-black uppercase">{signal.label}</p>
-                  <p className="text-xs text-gray-700 font-bold mt-2 leading-tight">{signal.detail}</p>
+                <div key={signal.label} className="border-4 border-black bg-white p-6 shadow-[6px_6px_0_0_#000] hover:shadow-[12px_12px_0_0_#000] hover:-translate-y-2 transition-all duration-300 group cursor-default overflow-hidden micro-sheen">
+                  <p className="text-4xl md:text-5xl font-black text-black mb-2 group-hover:text-heirlock-pink group-hover:scale-105 origin-left transition-all duration-300 relative z-10">{signal.value}</p>
+                  <p className="text-sm font-black text-black uppercase group-hover:translate-x-1 transition-transform duration-300 relative z-10">{signal.label}</p>
+                  <p className="text-xs text-gray-700 font-bold mt-2 leading-tight relative z-10">{signal.detail}</p>
                 </div>
               ))}
             </div>
@@ -787,22 +790,22 @@ const faqs = [
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {pricingTiers.map((tier) => (
-              <div key={tier.name} className={`border-4 border-black ${tier.accent} p-8 shadow-[10px_10px_0_0_#000] flex flex-col gap-6 relative group overflow-hidden`}>
+              <div key={tier.name} className={`border-4 border-black ${tier.accent} p-8 shadow-[8px_8px_0_0_#000] hover:shadow-[16px_16px_0_0_#000] hover:-translate-y-2 transition-all duration-300 flex flex-col gap-6 relative group overflow-hidden micro-sheen`}>
                 <div className="flex items-center justify-between border-b-4 border-black pb-6 gap-4">
-                  <h3 className="text-2xl font-black text-black uppercase leading-none">{tier.name}</h3>
-                  <p className="text-lg font-black text-black bg-white border-4 border-black px-2 py-1 -rotate-2 whitespace-nowrap">{tier.price}</p>
+                  <h3 className="text-2xl font-black text-black uppercase leading-none group-hover:translate-x-1 transition-transform duration-300">{tier.name}</h3>
+                  <p className="text-lg font-black text-black bg-white border-4 border-black px-2 py-1 -rotate-2 whitespace-nowrap group-hover:-rotate-6 group-hover:scale-105 transition-all duration-300">{tier.price}</p>
                 </div>
                 <ul className="text-sm font-bold text-black flex-1 space-y-3 z-10 relative">
                   {tier.bullets.map((b) => (
                     <li key={b} className="flex items-start gap-3">
-                      <CheckCircle className="w-5 h-5 shrink-0 mt-0.5" strokeWidth={2.5} />
-                      <span className="leading-tight uppercase">{b}</span>
+                      <CheckCircle className="w-5 h-5 shrink-0 mt-0.5 group-hover:scale-110 group-hover:rotate-12 group-hover:text-black transition-all duration-300" strokeWidth={2.5} />
+                      <span className="leading-tight uppercase group-hover:translate-x-1 transition-transform duration-300 inline-block">{b}</span>
                     </li>
                   ))}
                 </ul>
                 <div className="pt-4 relative z-10 mt-auto">
-                  <Link href={tier.cta.href} className="inline-flex items-center justify-center gap-2 font-black text-lg text-black bg-white border-4 border-black px-4 py-4 shadow-[4px_4px_0_0_#000] hover:shadow-[6px_6px_0_0_#000] hover:-translate-y-1 transition-all w-full uppercase">
-                    {tier.cta.label} <ChevronRight className="w-5 h-5" strokeWidth={3} />
+                  <Link href={tier.cta.href} className="group/btn inline-flex items-center justify-center gap-2 font-black text-lg text-black bg-white border-4 border-black px-4 py-4 shadow-[4px_4px_0_0_#000] hover:shadow-[6px_6px_0_0_#000] hover:-translate-y-1 hover:bg-black hover:text-white transition-all w-full uppercase">
+                    {tier.cta.label} <ChevronRight className="w-5 h-5 group-hover/btn:translate-x-1 transition-transform" strokeWidth={3} />
                   </Link>
                 </div>
               </div>
@@ -825,11 +828,11 @@ const faqs = [
           </div>
           <div className="space-y-4">
             {faqs.map((item) => (
-              <div key={item.q} className="border-4 border-black bg-cream p-6 md:p-8 shadow-[8px_8px_0_0_#000] hover:-translate-y-1 hover:shadow-[12px_12px_0_0_#000] transition-all">
-                <div className="flex gap-4 items-start">
-                  <span className="text-2xl font-black text-heirlock-yellow drop-shadow-[2px_2px_0_rgba(0,0,0,1)] mt-1">Q.</span>
+              <div key={item.q} className="border-4 border-black bg-cream p-6 md:p-8 shadow-[8px_8px_0_0_#000] hover:-translate-y-2 hover:shadow-[16px_16px_0_0_#000] transition-all duration-300 group cursor-default overflow-hidden micro-sheen">
+                <div className="flex gap-4 items-start relative z-10">
+                  <span className="text-2xl font-black text-heirlock-yellow drop-shadow-[2px_2px_0_rgba(0,0,0,1)] mt-1 group-hover:scale-125 group-hover:-rotate-12 transition-transform duration-300">Q.</span>
                   <div>
-                    <p className="text-xl font-black text-black uppercase leading-tight mb-2">{item.q}</p>
+                    <p className="text-xl font-black text-black uppercase leading-tight mb-2 group-hover:text-heirlock-blue transition-colors duration-300">{item.q}</p>
                     <p className="text-base text-black font-bold leading-relaxed">{item.a}</p>
                   </div>
                 </div>

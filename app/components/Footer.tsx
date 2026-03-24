@@ -75,8 +75,8 @@ export default function Footer() {
         {/* Massive Brand Section */}
         <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-10 border-b-8 border-white pb-10 md:pb-16 mb-16">
           <div>
-            <h2 className="text-6xl md:text-8xl lg:text-[140px] font-black uppercase tracking-tighter leading-none mb-6 -ml-1 text-white" style={{ textShadow: '8px 8px 0px #FFFACD' }}>T.A.L.A.</h2>
-            <p className="text-lg md:text-2xl font-bold max-w-2xl bg-white text-black p-4 inline-block shadow-[8px_8px_0_0_#FFB3BA] leading-snug">
+            <h2 className="text-6xl md:text-8xl lg:text-[140px] font-black uppercase tracking-tighter leading-none mb-6 -ml-1 text-white hover:text-black hover:drop-shadow-[8px_8px_0_#FFF] transition-all duration-300 cursor-default" style={{ textShadow: '8px 8px 0px #FFE600' }}>T.A.L.A.</h2>
+            <p className="text-lg md:text-2xl font-bold max-w-2xl bg-black text-white p-4 inline-block border-4 border-white shadow-[8px_8px_0_0_#FF6961] hover:shadow-[12px_12px_0_0_#BAE1FF] hover:-translate-y-1 transition-all duration-300 leading-snug">
               Zero-trust time capsules for the next generation of public record.
             </p>
           </div>
