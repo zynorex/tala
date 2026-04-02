@@ -67,7 +67,7 @@ function AccessNoticeModal({
                 ACTIVE DEPLOYMENTS REQUIRE AUTHORIZED WORKSPACE UPGRADES.
               </p>
               <p className="text-gray-700 text-sm font-bold mt-2">
-                TO VERIFY PROTOCOL INTEGRITY, YOU MAY INITIATE A GHOST-DEPLOYMENT (DEMO) THAT AUTO-UNLOCKS IN 2 MINUTES.
+                TO VERIFY PROTOCOL INTEGRITY, YOU MAY INITIATE A GHOST-DEPLOYMENT (DEMO) THAT AUTO-UNLOCKS IN 1 MINUTE.
               </p>
             </div>
 
@@ -77,7 +77,7 @@ function AccessNoticeModal({
                   <Terminal className="w-6 h-6" />
                   <p className="text-xl font-black text-black uppercase">GHOST (DEMO)</p>
                 </div>
-                <p className="font-bold text-sm">2 MINUTE TICKER. BURN AFTER READING. FOR RECON ONLY.</p>
+                <p className="font-bold text-sm">1 MINUTE TICKER. BURN AFTER READING. FOR RECON ONLY.</p>
               </div>
               <div className="border-4 border-black bg-black text-white p-6 rounded-none">
                 <div className="flex items-center gap-3 mb-2">
@@ -147,7 +147,7 @@ function DemoVaultFormTab({ activeTab, setActiveTab }: { activeTab: VaultTab; se
               <span className="font-black bg-heirlock-green text-black px-3 py-1 mb-6 inline-block uppercase tracking-widest text-sm border-2 border-heirlock-green">SIMULATION MODE</span>
               <h2 className="text-4xl md:text-5xl font-black mb-6 uppercase tracking-tight">GHOST PROTOCOL</h2>
               <p className="font-bold text-lg md:text-xl text-gray-300 mb-8 max-w-2xl uppercase border-l-4 border-heirlock-green pl-4">
-                VALIDATE ENCRYPTION LOGIC. VAULT UNLOCKS IN EXACTLY 120 SECONDS. ZERO COST.
+                VALIDATE ENCRYPTION LOGIC. VAULT UNLOCKS IN EXACTLY 60 SECONDS. ZERO COST.
               </p>
               
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -155,7 +155,7 @@ function DemoVaultFormTab({ activeTab, setActiveTab }: { activeTab: VaultTab; se
                   'AES-256-GCM ACTIVE',
                   '50MB PAYLOAD MAX',
                   'KEY GENERATION LIVE',
-                  'AUTO-DESTRUCT IN 2M'
+                  'AUTO-DESTRUCT IN 1M'
                 ].map((item, i) => (
                   <div key={i} className="flex items-center gap-3 border-2 border-white/20 p-3 bg-white/5 uppercase font-bold text-sm">
                     <CheckCircle className="w-5 h-5 text-heirlock-green" />

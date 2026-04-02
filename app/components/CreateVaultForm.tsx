@@ -62,7 +62,7 @@ export default function CreateVaultForm({ demoMode = false }: CreateVaultFormPro
 
   // For demo mode, set defaults
   const defaultVaultName = demoMode ? 'My Demo Vault' : '';
-  const defaultDescription = demoMode ? 'Testing TALA time-locking technology (auto-unlocks in 2 minutes)' : '';
+  const defaultDescription = demoMode ? 'Testing TALA time-locking technology (auto-unlocks in 1 minute)' : '';
 
   const [form, setForm] = useState<FormState>({
     vaultName: defaultVaultName,
@@ -342,7 +342,7 @@ export default function CreateVaultForm({ demoMode = false }: CreateVaultFormPro
       newErrors.decryptionKey = 'You must copy or download the decryption key before proceeding';
     }
 
-    // Skip date validation for demo mode (auto-set to 2 minutes)
+    // Skip date validation for demo mode (auto-set to 1 minute)
     if (!demoMode) {
       if (!form.unlockDate) {
         newErrors.unlockDate = 'Unlock date is required';
@@ -457,9 +457,9 @@ export default function CreateVaultForm({ demoMode = false }: CreateVaultFormPro
       let unlockDateTime: Date;
       
       if (demoMode) {
-        // Demo vaults auto-unlock after 5 minutes
-        unlockDateTime = new Date(Date.now() + 5 * 60 * 1000);
-        console.log('[DEMO] Creating demo vault with 5-minute auto-unlock');
+        // Demo vaults auto-unlock after 1 minute
+        unlockDateTime = new Date(Date.now() + 1 * 60 * 1000);
+        console.log('[DEMO] Creating demo vault with 1-minute auto-unlock');
       } else {
         // Regular: use form date/time
         unlockDateTime = new Date(`${form.unlockDate}T${form.unlockTime}`);
@@ -709,7 +709,7 @@ export default function CreateVaultForm({ demoMode = false }: CreateVaultFormPro
       // Reset form
       setForm({
         vaultName: demoMode ? 'My Demo Vault' : '',
-        vaultDescription: demoMode ? 'Testing TALA time-locking technology (auto-unlocks in 2 minutes)' : '',
+        vaultDescription: demoMode ? 'Testing TALA time-locking technology (auto-unlocks in 1 minute)' : '',
         file: null,
         decryptionKey: '',
         unlockDate: '',
@@ -724,7 +724,7 @@ export default function CreateVaultForm({ demoMode = false }: CreateVaultFormPro
       updateStep('finalize', 'completed');
 
       const successMsg = demoMode 
-        ? 'Vault created successfully! It will auto-unlock in 2 minutes.' 
+        ? 'Vault created successfully! It will auto-unlock in 1 minute.' 
         : fileUploadSuccess
         ? 'Vault created and file secured successfully!'
         : 'Vault created successfully! No files were uploaded.';
@@ -817,15 +817,15 @@ export default function CreateVaultForm({ demoMode = false }: CreateVaultFormPro
           <div className="flex items-start gap-3">
             <Zap className="w-6 h-6 text-black flex-shrink-0 mt-1" />
             <div>
-              <h3 className="font-black text-black text-lg mb-2">⏱️ Demo Vault Mode (2 Minutes)</h3>
+              <h3 className="font-black text-black text-lg mb-2">⏱️ Demo Vault Mode (1 Minute)</h3>
               <p className="text-sm text-gray-800 font-medium mb-2">
-                Experience the full TALA workflow! This vault uses real encryption and will auto-unlock in 2 minutes.
+                Experience the full TALA workflow! This vault uses real encryption and will auto-unlock in 1 minute.
               </p>
               <ul className="text-sm text-gray-800 font-medium space-y-1 list-disc list-inside">
                 <li>Real AES-256-GCM encryption</li>
                 <li>Upload any file up to 50MB</li>
                 <li>Download and save your encryption key</li>
-                <li>Auto-unlocks in 2 minutes for testing</li>
+                <li>Auto-unlocks in 1 minute for testing</li>
               </ul>
             </div>
           </div>
@@ -1103,9 +1103,9 @@ export default function CreateVaultForm({ demoMode = false }: CreateVaultFormPro
           <div className="flex items-center gap-3">
             <Clock className="w-6 h-6 text-black flex-shrink-0" />
             <div>
-              <h3 className="font-black text-black text-lg mb-1">⏱️ Auto-Unlock: 2 Minutes</h3>
+              <h3 className="font-black text-black text-lg mb-1">⏱️ Auto-Unlock: 1 Minute</h3>
               <p className="text-sm text-gray-800 font-medium">
-                This demo vault will automatically unlock 2 minutes after creation. Perfect for testing the full TALA experience!
+                This demo vault will automatically unlock 1 minute after creation. Perfect for testing the full TALA experience!
               </p>
             </div>
           </div>

@@ -205,7 +205,7 @@ export default function DashboardContent() {
                 <div>
                   <h3 className="text-xl font-black text-black mb-1">⏱️ Try Demo Vault</h3>
                   <p className="text-black font-medium">
-                    Experience the full TALA workflow! Create a real vault that auto-unlocks in 2 minutes.
+                    Experience the full TALA workflow! Create a real vault that auto-unlocks in 1 minute.
                   </p>
                 </div>
               </div>
