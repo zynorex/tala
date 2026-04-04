@@ -1,0 +1,363 @@
+/**
+ * File Upload API Route - PHASE 1 IMPROVED
+ * Handles file uploads with validation, quota checking, and IPFS storage
+ */
+
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "../../auth/[...nextauth]/route";
+import { db } from "@/lib/prisma";
+import { validateFile } from "@/lib/utils/file-validation";
+import { canUserUpload, recordBandwidthUsage } from "@/lib/utils/storage-quota";
+import { uploadToIPFS } from "@/lib/ipfs/ipfs";
+import { getLogger } from "@/lib/utils/logger";
+import { NextRequest } from "next/server";
+import crypto from "crypto";
+import { verifyRequest } from "@/lib/auth/jwt";
+import { verifyUnlockBeforeFileAccess } from "@/lib/services/vault-unlock";
+
+const logger = getLogger('FileUpload');
+
+interface UploadResponse {
+  success: boolean;
+  fileId?: string;
+  ipfsHash?: string;
+  error?: string;
+  warnings?: string[];
+}
+
+export async function POST(req: NextRequest): Promise<Response> {
+  const startTime = Date.now();
+
+  try {
+    // 1. Verify authentication - Support both NextAuth session and JWT Bearer token
+    let userId: string | undefined;
+    
+    // First try JWT Bearer token (from Authorization header)
+    const jwtPayload = verifyRequest(req);
+    if (jwtPayload?.userId) {
+      userId = jwtPayload.userId;
+      logger.info("Authenticated via JWT token", { userId });
+    } else {
+      // Fallback to NextAuth session
+      const session = await getServerSession(authOptions);
+      if (session?.user?.id) {
+        userId = session.user.id;
+        logger.info("Authenticated via NextAuth session", { userId });
+      }
+    }
+
+    if (!userId) {
+      logger.warn("Upload attempt: No authentication");
+      return Response.json<UploadResponse>(
+        { success: false, error: "Unauthorized. Please sign in first." },
+        { status: 401 }
+      );
+    }
+
+    logger.info("Upload started", { userId });
+
+    // 2. Parse form data
+    const formData = await req.formData();
+    const file = formData.get("file") as File;
+    const vaultId = formData.get("vaultId") as string;
+    const encryptionPassword = formData.get("encryptionPassword") as string;
+
+    if (!file) {
+      logger.warn("Upload failed: No file provided", { userId });
+      return Response.json<UploadResponse>(
+        { success: false, error: "No file provided" },
+        { status: 400 }
+      );
+    }
+
+    if (!vaultId) {
+      logger.warn("Upload failed: No vaultId provided", { userId });
+      return Response.json<UploadResponse>(
+        { success: false, error: "No vault ID provided" },
+        { status: 400 }
+      );
+    }
+
+    logger.debug("Received file", {
+      fileName: file.name,
+      fileSize: file.size,
+      mimeType: file.type,
+      vaultId,
+    });
+
+    // 3. Verify vault belongs to user
+    const vault = await db.vault.findUnique({
+      where: { id: vaultId },
+      select: { 
+        userId: true, 
+        isActive: true, 
+        name: true,
+        _count: { select: { files: true } },
+      },
+    });
+
+    if (!vault || vault.userId !== userId) {
+      logger.warn("Upload failed: Unauthorized vault access", { userId, vaultId });
+      return Response.json<UploadResponse>(
+        { success: false, error: "Vault not found or unauthorized" },
+        { status: 403 }
+      );
+    }
+
+    if (!vault.isActive) {
+      logger.warn("Upload failed: Vault not active", { userId, vaultId });
+      return Response.json<UploadResponse>(
+        { success: false, error: "This vault is inactive" },
+        { status: 400 }
+      );
+    }
+
+    // 3.5 ⏰ VERIFY UNLOCK STATUS - Skip for INITIAL UPLOAD (empty vault)
+    // Allow first file upload during vault creation, enforce lock on subsequent access
+    const isInitialUpload = vault._count?.files === 0;
+    
+    if (!isInitialUpload) {
+      const unlockCheck = await verifyUnlockBeforeFileAccess(
+        vaultId,
+        userId,
+        req.headers.get('x-forwarded-for') || 'unknown',
+        req.headers.get('user-agent') || 'unknown'
+      );
+
+      if (!unlockCheck.allowed) {
+        logger.warn("Upload failed: Vault is locked", { userId, vaultId, reason: unlockCheck.reason });
+        return Response.json<UploadResponse>(
+          { success: false, error: unlockCheck.reason || "Vault is locked and cannot be accessed" },
+          { status: 423 }
+        );
+      }
+    } else {
+      logger.info("Initial file upload - skipping unlock check", { vaultId, userId });
+    }
+
+    // 4. Convert File to Buffer for validation
+    const arrayBuffer = await file.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
+
+    // 5. Validate file (security checks)
+    logger.info("Validating file", { fileName: file.name, fileSize: file.size, mimeType: file.type });
+    const validation = validateFile(file.name, buffer, file.type, { strict: true });
+
+    if (!validation.valid) {
+      logger.warn("Upload failed: File validation failed", {
+        userId,
+        fileName: file.name,
+        error: validation.error,
+      });
+      return Response.json<UploadResponse>(
+        {
+          success: false,
+          error: validation.error,
+          warnings: validation.warnings,
+        },
+        { status: 400 }
+      );
+    }
+
+    // 6. Check storage quota — resolve user's real plan from DB
+    let userPlan = 'free';
+    try {
+      const userRecord = await db.user.findUnique({
+        where: { id: userId },
+        select: { plan: true },
+      });
+      if (userRecord?.plan) {
+        // Map PlanTier enum (FREE/STARTER/PROFESSIONAL/ENTERPRISE/GOVERNMENT) to quota key
+        const PLAN_TIER_TO_QUOTA: Record<string, string> = {
+          FREE: 'free',
+          STARTER: 'starter',
+          PROFESSIONAL: 'pro',
+          ENTERPRISE: 'enterprise',
+          GOVERNMENT: 'enterprise', // Government gets enterprise-level quotas
+        };
+        userPlan = PLAN_TIER_TO_QUOTA[userRecord.plan] || 'free';
+      }
+    } catch (planError) {
+      logger.warn('Could not fetch user plan, defaulting to free', { userId });
+    }
+    logger.info("Checking storage quota", { userId, userPlan, fileSize: file.size });
+
+    const canUpload = await canUserUpload(userId, file.size, userPlan);
+
+    if (!canUpload.allowed) {
+      logger.warn("Upload failed: Storage quota exceeded", {
+        userId,
+        userPlan,
+        fileSize: file.size,
+        reason: canUpload.reason,
+      });
+      return Response.json<UploadResponse>(
+        {
+          success: false,
+          error: canUpload.reason || `Storage quota exceeded. Upgrade your plan to continue.`,
+        },
+        { status: 413 }
+      );
+    }
+
+    // 6. Use the buffer we already created for validation (reuse instead of reading again)
+    const fileBuffer = buffer;
+
+    // 7. Calculate original file hash
+    const fileHash = crypto.createHash('sha256').update(fileBuffer).digest('hex');
+
+    // 8. Encrypt file (AES-256-GCM)
+    let encryptedBuffer = fileBuffer;
+    let encryptionMetadata = {
+      iv: "",
+      salt: "",
+      authTag: "",
+      passwordHash: "",
+    };
+
+    if (encryptionPassword && encryptionPassword.length >= 8) {
+      const ALGORITHM = 'aes-256-gcm';
+      const KEY_LENGTH = 32;
+      const IV_LENGTH = 16;
+      const PBKDF2_ITERATIONS = 100000;
+
+      const salt = crypto.randomBytes(32);
+      const iv = crypto.randomBytes(IV_LENGTH);
+      const key = crypto.pbkdf2Sync(encryptionPassword, salt, PBKDF2_ITERATIONS, KEY_LENGTH, 'sha256');
+
+      const cipher = crypto.createCipheriv(ALGORITHM, key, iv);
+      encryptedBuffer = Buffer.concat([cipher.update(fileBuffer), cipher.final()]);
+      const authTag = cipher.getAuthTag();
+
+      encryptionMetadata = {
+        iv: iv.toString('hex'),
+        salt: salt.toString('hex'),
+        authTag: authTag.toString('hex'),
+        passwordHash: crypto.createHash('sha256').update(encryptionPassword).digest('hex'),
+      };
+
+      logger.debug("File encrypted", { fileName: file.name });
+    }
+
+    // 9. Upload encrypted file to IPFS
+    logger.info("Uploading to IPFS", { fileName: file.name, fileSize: encryptedBuffer.length });
+    let ipfsHash: string;
+
+    try {
+      // Upload buffer directly to IPFS with proper parameters
+      const ipfsResult = await uploadToIPFS(
+        encryptedBuffer,
+        `${file.name}.encrypted`,
+        `TALA encrypted vault file for vault ${vaultId}`,
+        fileHash
+      );
+      
+      ipfsHash = ipfsResult.ipfsHash;
+      logger.info("IPFS upload successful", { ipfsHash, fileName: file.name, size: ipfsResult.size });
+    } catch (error) {
+      logger.error("IPFS upload failed", error instanceof Error ? error : undefined);
+      const errMsg = error instanceof Error ? error.message : 'Unknown IPFS error';
+      console.error('[UPLOAD] IPFS upload error details:', errMsg);
+      return Response.json<UploadResponse>(
+        { success: false, error: `Failed to upload file to storage. ${errMsg}` },
+        { status: 500 }
+      );
+    }
+
+    // 10. Save file record to database
+    logger.info("Creating file record", { ipfsHash, vaultId, fileName: file.name });
+    let vaultFile;
+    
+    try {
+      vaultFile = await db.vaultFile.create({
+        data: {
+          vaultId,
+          fileName: file.name,
+          ipfsHash,
+          fileSizeBytes: file.size,
+          mimeType: file.type || "application/octet-stream",
+          fileHash,
+          encryptionKeyHash: encryptionMetadata.passwordHash || crypto.createHash('sha256').update('default').digest('hex'),
+          encryptionIV: encryptionMetadata.iv || null,
+          encryptionSalt: encryptionMetadata.salt || null,
+          encryptionAuthTag: encryptionMetadata.authTag || null,
+          uploadedBy: userId,
+          uploadedAt: new Date(),
+          isActive: true,
+          deletedAt: null,
+          deletedBy: null,
+        },
+      });
+      
+      // Validate file was created correctly
+      if (!vaultFile.id || vaultFile.isActive !== true || vaultFile.deletedAt !== null) {
+        logger.error("File created with invalid state", {
+          fileId: vaultFile.id,
+          isActive: vaultFile.isActive,
+          deletedAt: vaultFile.deletedAt,
+        });
+        throw new Error('File created with invalid state - please try again');
+      }
+      
+      logger.info("File record created successfully", {
+        fileId: vaultFile.id,
+        fileName: vaultFile.fileName,
+        isActive: vaultFile.isActive,
+        deletedAt: vaultFile.deletedAt,
+        uploadedAt: vaultFile.uploadedAt,
+      });
+    } catch (dbError) {
+      logger.error("Failed to create file record in database", dbError instanceof Error ? dbError : undefined);
+      
+      // If database save fails, don't throw silently - report it
+      if (dbError instanceof Error && dbError.message.includes('invalid state')) {
+        throw dbError;
+      }
+      
+      throw new Error(`Failed to save file to database: ${dbError instanceof Error ? dbError.message : 'Unknown error'}`);
+    }
+
+    // 11. Record bandwidth usage
+    logger.info("Recording bandwidth usage", { userId, bytes: file.size });
+    await recordBandwidthUsage(userId, file.size);
+
+    // 12. Log activity
+    await db.activityLog.create({
+      data: {
+        userId,
+        vaultId,
+        action: "FILE_UPLOADED",
+        description: `Uploaded ${file.name} (${(file.size / 1024 / 1024).toFixed(2)}MB) to vault`,
+      },
+    });
+
+    const duration = Date.now() - startTime;
+    logger.info("Upload completed successfully", {
+      userId,
+      fileId: vaultFile.id,
+      duration: `${duration}ms`,
+    });
+
+    return Response.json<UploadResponse>(
+      {
+        success: true,
+        fileId: vaultFile.id,
+        ipfsHash,
+      },
+      { status: 201 }
+    );
+  } catch (error) {
+    logger.error("Upload error", error instanceof Error ? error : undefined);
+
+    return Response.json<UploadResponse>(
+      {
+        success: false,
+        error:
+          error instanceof Error
+            ? error.message
+            : "An unexpected error occurred during upload",
+      },
+      { status: 500 }
+    );
+  }
+}

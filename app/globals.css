@@ -1,0 +1,450 @@
+@import "tailwindcss";
+
+@theme {
+  /* Heirlock Color System */
+  --color-heirlock-yellow: #FFFACD;
+  --color-heirlock-pink: #FFB3BA;
+  --color-heirlock-green: #BAFFC9;
+  --color-heirlock-blue: #BAE1FF;
+  --color-dark: #000000;
+  --color-navy: #2B2D42;
+  --color-cream: #F5F3C1;
+  
+  /* Font Family - Modern & Clean */
+  --font-family-sans: var(--font-inter), system-ui, sans-serif;
+  --font-family-display: var(--font-space-grotesk), system-ui, sans-serif;
+  
+  /* Brutal Box Shadows */
+  --shadow-brutal: 4px 4px 0px 0px #000000;
+  --shadow-brutal-lg: 8px 8px 0px 0px #000000;
+  
+  /* Soft shadows */
+  --shadow-soft: 0 2px 8px rgb(0 0 0 / 0.1);
+  --shadow-card: 0 4px 12px rgb(0 0 0 / 0.08);
+  --shadow-hover: 0 8px 24px rgb(0 0 0 / 0.12);
+}
+
+@layer base {
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  /* Theme Styles - Light Mode (Default) */
+  html.light-theme,
+  html:not(.light-theme):not(.dim-theme):not(.dark-theme) {
+    --bg-primary: #ffffff;
+    --bg-secondary: #f5f3c1;
+    --bg-tertiary: #f9f9f9;
+    --text-primary: #000000;
+    --text-secondary: #666666;
+    --text-tertiary: #999999;
+    --border-color: #000000;
+    --shadow-color: rgba(0, 0, 0, 0.2);
+    --card-bg: #ffffff;
+    --input-bg: #ffffff;
+    --input-border: #cccccc;
+  }
+
+  /* Theme Styles - Dim Mode */
+  html.dim-theme {
+    --bg-primary: #1a1a1a;
+    --bg-secondary: #2a2a2a;
+    --bg-tertiary: #333333;
+    --text-primary: #e0e0e0;
+    --text-secondary: #b0b0b0;
+    --text-tertiary: #808080;
+    --border-color: #4a4a4a;
+    --shadow-color: rgba(0, 0, 0, 0.5);
+    --card-bg: #252525;
+    --input-bg: #1f1f1f;
+    --input-border: #404040;
+  }
+
+  /* Theme Styles - Dark Mode */
+  html.dark-theme {
+    --bg-primary: #0a0a0a;
+    --bg-secondary: #151515;
+    --bg-tertiary: #1f1f1f;
+    --text-primary: #ffffff;
+    --text-secondary: #d0d0d0;
+    --text-tertiary: #909090;
+    --border-color: #333333;
+    --shadow-color: rgba(0, 0, 0, 0.8);
+    --card-bg: #0f0f0f;
+    --input-bg: #0a0a0a;
+    --input-border: #2a2a2a;
+  }
+
+  body {
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    font-family: var(--font-family-sans);
+    font-weight: 400;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    scrollbar-width: thin;
+    scrollbar-color: var(--text-primary) var(--bg-secondary);
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+
+  /* Custom Scrollbar Styling */
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: var(--color-cream);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-dark);
+    border-radius: 5px;
+    border: 2px solid var(--color-cream);
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--color-navy);
+  }
+
+  /* Balanced Headings - Space Grotesk for display */
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-family-display);
+    font-weight: 700;
+    line-height: 1.2;
+  }
+
+  h1 {
+    font-size: 2.5rem;
+  }
+
+  h2 {
+    font-size: 2rem;
+  }
+
+  h3 {
+    font-size: 1.5rem;
+    font-weight: 600;
+  }
+
+  p {
+    font-weight: 400;
+  }
+
+  strong {
+    font-weight: 600;
+  }
+}
+
+@layer components {
+  /* Button Variations */
+  .btn-primary {
+    @apply bg-dark text-white px-6 py-3 rounded-lg font-black border-3 border-dark transition-all duration-200 hover:translate-y-[-2px] hover:shadow-brutal active:translate-y-[0px] active:shadow-none;
+  }
+
+  .btn-secondary {
+    @apply bg-heirlock-yellow text-dark px-6 py-3 rounded-lg font-black border-3 border-dark transition-all duration-200 hover:translate-y-[-2px] hover:shadow-brutal active:translate-y-[0px] active:shadow-none;
+  }
+
+  .btn-ghost {
+    @apply bg-transparent text-dark px-6 py-3 rounded-lg font-black border-3 border-dark transition-all duration-200 hover:bg-dark hover:text-white active:translate-y-[1px];
+  }
+
+  .btn-accent {
+    @apply bg-heirlock-green text-dark px-6 py-3 rounded-lg font-black border-3 border-dark transition-all duration-200 hover:translate-y-[-2px] hover:shadow-brutal active:translate-y-[0px] active:shadow-none;
+  }
+
+  .card {
+    @apply bg-white rounded-xl shadow-card p-6 transition-all duration-200 hover:shadow-hover border-2 border-transparent hover:border-dark;
+  }
+
+  /* Feature Card */
+  .card-feature {
+    @apply bg-white rounded-xl border-3 border-dark p-6 transition-all duration-300 hover:translate-y-[-8px] hover:shadow-brutal;
+  }
+
+  /* Stat Card */
+  .card-stat {
+    @apply bg-white rounded-xl border-3 border-dark p-6 text-center transition-all duration-300 hover:bg-heirlock-yellow hover:translate-y-[-4px] hover:shadow-brutal;
+  }
+
+  /* Timeline Card */
+  .card-timeline {
+    @apply bg-white rounded-xl border-3 border-dark p-6 relative transition-all duration-300 hover:translate-y-[-6px] hover:shadow-brutal;
+  }
+}
+
+@layer utilities {
+  /* Keyframe Animations */
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes slideInLeft {
+    from {
+      opacity: 0;
+      transform: translateX(-30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes slideInRight {
+    from {
+      opacity: 0;
+      transform: translateX(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes scaleIn {
+    from {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  @keyframes float {
+    0%, 100% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+
+  @keyframes pulse-glow {
+    0%, 100% {
+      box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.3);
+    }
+    50% {
+      box-shadow: 0 0 0 8px rgba(0, 0, 0, 0);
+    }
+  }
+
+  @keyframes geometric-rotate {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  /* Animation Classes */
+  .animate-slideUp {
+    animation: slideUp 0.5s ease-out;
+  }
+
+  .animate-fadeIn {
+    animation: fadeIn 0.6s ease-out;
+  }
+
+  .animate-slideInLeft {
+    animation: slideInLeft 0.5s ease-out;
+  }
+
+  .animate-slideInRight {
+    animation: slideInRight 0.5s ease-out;
+  }
+
+  .animate-scaleIn {
+    animation: scaleIn 0.5s ease-out;
+  }
+
+  .animate-float {
+    animation: float 3s ease-in-out infinite;
+  }
+
+  .animate-pulse-glow {
+    animation: pulse-glow 2s infinite;
+  }
+
+  .animate-geometric {
+    animation: geometric-rotate 20s linear infinite;
+  }
+
+  /* Scroll Fade In - opacity based on scroll */
+  .scroll-fade {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+  }
+
+  .scroll-fade.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Stagger animations for multiple elements */
+  .stagger-1 { animation-delay: 0.1s; }
+  .stagger-2 { animation-delay: 0.2s; }
+  .stagger-3 { animation-delay: 0.3s; }
+  .stagger-4 { animation-delay: 0.4s; }
+  .stagger-5 { animation-delay: 0.5s; }
+  .stagger-6 { animation-delay: 0.6s; }
+
+  /* Decorative Patterns */
+  .pattern-dots {
+    background-image: radial-gradient(circle, rgba(0, 0, 0, 0.05) 1px, transparent 1px);
+    background-size: 20px 20px;
+  }
+
+  .pattern-grid {
+    background-image: 
+      linear-gradient(0deg, transparent 24%, rgba(0, 0, 0, 0.03) 25%, rgba(0, 0, 0, 0.03) 26%, transparent 27%, transparent 74%, rgba(0, 0, 0, 0.03) 75%, rgba(0, 0, 0, 0.03) 76%, transparent 77%, transparent),
+      linear-gradient(90deg, transparent 24%, rgba(0, 0, 0, 0.03) 25%, rgba(0, 0, 0, 0.03) 26%, transparent 27%, transparent 74%, rgba(0, 0, 0, 0.03) 75%, rgba(0, 0, 0, 0.03) 76%, transparent 77%, transparent);
+    background-size: 50px 50px;
+  }
+
+  .pattern-diagonal {
+    background-image: repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 35px,
+      rgba(0, 0, 0, 0.02) 35px,
+      rgba(0, 0, 0, 0.02) 70px
+    );
+  }
+
+  /* Geometric Shape Utilities */
+  .shape-circle {
+    border-radius: 50%;
+  }
+
+  .shape-blob {
+    border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+  }
+
+  /* Decorative corner elements */
+  .corner-decoration::before {
+    content: '';
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    border: 2px solid rgba(0, 0, 0, 0.05);
+  }
+
+  .corner-top-left::before {
+    top: 0;
+    left: 0;
+    border-right: none;
+    border-bottom: none;
+  }
+
+  .corner-top-right::before {
+    top: 0;
+    right: 0;
+    border-left: none;
+    border-bottom: none;
+  }
+
+  .corner-bottom-left::before {
+    bottom: 0;
+    left: 0;
+    border-right: none;
+    border-top: none;
+  }
+
+  .corner-bottom-right::before {
+    bottom: 0;
+    right: 0;
+    border-left: none;
+    border-top: none;
+  }
+
+  /* Hide footer on docs pages */
+  body[data-page="docs"] footer,
+  body[data-page="docs-page"] footer {
+    display: none;
+  }
+
+  /* Custom Calendar Styling - Brutalist Theme */
+  input[type="date"]::-webkit-calendar-picker-indicator,
+  input[type="time"]::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+    opacity: 0;
+    position: absolute;
+    right: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Calendar popup styles (limited browser support) */
+  input[type="date"]::-webkit-datetime-edit,
+  input[type="time"]::-webkit-datetime-edit {
+    padding: 0;
+  }
+
+  input[type="date"]::-webkit-datetime-edit-fields-wrapper,
+  input[type="time"]::-webkit-datetime-edit-fields-wrapper {
+    padding: 0;
+  }
+
+  input[type="date"]::-webkit-datetime-edit-text,
+  input[type="time"]::-webkit-datetime-edit-text {
+    color: #000000;
+    padding: 0 0.25rem;
+  }
+
+  input[type="date"]::-webkit-datetime-edit-month-field,
+  input[type="date"]::-webkit-datetime-edit-day-field,
+  input[type="date"]::-webkit-datetime-edit-year-field,
+  input[type="time"]::-webkit-datetime-edit-hour-field,
+  input[type="time"]::-webkit-datetime-edit-minute-field {
+    color: #000000;
+    font-weight: 600;
+    padding: 0.25rem;
+    border-radius: 2px;
+    transition: all 0.2s;
+  }
+
+  input[type="date"]::-webkit-datetime-edit-month-field:focus,
+  input[type="date"]::-webkit-datetime-edit-day-field:focus,
+  input[type="date"]::-webkit-datetime-edit-year-field:focus,
+  input[type="time"]::-webkit-datetime-edit-hour-field:focus,
+  input[type="time"]::-webkit-datetime-edit-minute-field:focus {
+    background: var(--color-heirlock-yellow);
+    color: #000000;
+    outline: 2px solid #000000;
+  }
+
+  /* Firefox date picker styles */
+  input[type="date"]::-moz-calendar-picker-indicator,
+  input[type="time"]::-moz-calendar-picker-indicator {
+    cursor: pointer;
+  }
+}
+
+::selection {
+  background: var(--color-dark);
+  color: var(--color-cream);
+}

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>TALA - Secure Document Vault Blog</title>
+    <link>https://tala.ai/blog</link>
+    <description>Latest updates, security insights, and product announcements from TALA</description>
+    <language>en-us</language>
+    <lastBuildDate>Fri, 17 Jan 2026 00:00:00 GMT</lastBuildDate>
+    <atom:link href="https://tala.ai/feed.xml" rel="self" type="application/rss+xml" />
+
+    <item>
+      <title>Enterprise Security: Best Practices for Document Vaults</title>
+      <link>https://tala.ai/blog</link>
+      <guid>blog-1</guid>
+      <pubDate>Fri, 17 Jan 2026 00:00:00 GMT</pubDate>
+      <description>Learn how enterprises can maximize security with TALA's document vault system</description>
+    </item>
+
+    <item>
+      <title>TALA Q1 2026 Roadmap: Mainnet Launch & Beyond</title>
+      <link>https://tala.ai/roadmap</link>
+      <guid>roadmap-2026</guid>
+      <pubDate>Fri, 10 Jan 2026 00:00:00 GMT</pubDate>
+      <description>Exciting updates coming in Q1 2026: mainnet launch, analytics, and new API features</description>
+    </item>
+
+    <item>
+      <title>Case Study: IIT Delhi's Zero-Leak Exam System</title>
+      <link>https://tala.ai/case-studies</link>
+      <guid>case-study-iit</guid>
+      <pubDate>Fri, 01 Jan 2026 00:00:00 GMT</pubDate>
+      <description>How TALA helped IIT Delhi achieve zero exam paper leaks across 200+ exams</description>
+    </item>
+
+    <item>
+      <title>Security First: Our Approach to Document Protection</title>
+      <link>https://tala.ai/security</link>
+      <guid>security-first</guid>
+      <pubDate>Wed, 25 Dec 2025 00:00:00 GMT</pubDate>
+      <description>Deep dive into TALA's security architecture and cryptographic safeguards</description>
+    </item>
+
+  </channel>
+</rss>
