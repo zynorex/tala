@@ -1,110 +1,138 @@
 'use client';
 
-import { ChevronDown, ChevronUp, Shield, Zap, Lock, Users, HelpCircle, ChevronRight } from "lucide-react";
+import { ChevronDown, ChevronUp, HelpCircle, ChevronRight, Lock, Users, Briefcase, Code } from "lucide-react";
 import { useState } from "react";
 import Link from "next/link";
 
 export default function FAQ() {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
-  const faqs = [
+  const faqCategories = [
     {
-      category: "General",
+      category: "General & Security",
+      color: "heirlock-yellow",
+      icon: Lock,
       questions: [
         {
-          question: "What is T.A.L.A.?",
+          question: "Why not just use a Password Protected PDF?",
           answer:
-            "T.A.L.A. (Time-locked Accessible Learning Archive) is a blockchain-based system that secures exam papers with time-lock cryptography and automatic release. It prevents paper leaks while ensuring fair, instant access to authorized students at scheduled times.",
+            "Passwords can be shared or stolen. T.A.L.A. uses a Smart Contract that physically refuses to release the password until the exact time. No human can bypass it. No hacker can steal it before the scheduled moment. The encryption key is locked inside immutable blockchain code.",
         },
         {
-          question: "How does T.A.L.A. prevent exam paper leaks?",
+          question: "Is T.A.L.A. owned by the Government?",
           answer:
-            "Papers are encrypted using AES-256 before being stored on the blockchain. Time-locked smart contracts prevent decryption until the scheduled unlock time. The private keys stay with administrators, not with T.A.L.A., making it impossible for anyone to access papers early.",
+            "T.A.L.A. is neutral infrastructure. It is a protocol that any Board, Department, or Court can use. We do not control exams, tenders, or documents. We provide the cryptographic guarantee. You own your data.",
         },
         {
-          question: "Is T.A.L.A. open source?",
+          question: "Is the encryption really unbreakable?",
           answer:
-            "Yes, T.A.L.A. is fully open source. You can review all smart contracts and source code on GitHub. This transparency is crucial for educational institutions to verify security.",
+            "We use AES-256 (Advanced Encryption Standard), the same standard used by Banks and the Military. To brute-force this encryption would take billions of years using current supercomputers. It is mathematically unbreakable with known technology.",
         },
       ],
     },
     {
-      category: "Technical",
+      category: "For Students (Exams)",
+      color: "heirlock-green",
+      icon: Users,
       questions: [
         {
-          question: "Which blockchains does T.A.L.A. support?",
+          question: "Do I need to pay to view the paper?",
           answer:
-            "Currently, T.A.L.A. is deployed on Polygon Amoy, Ethereum Sepolia, and Arbitrum Sepolia for testing. Mainnet deployments on Polygon, Ethereum, and Arbitrum are coming soon.",
+            "No. Reading and unlocking the paper is completely free. You only need a wallet address to verify you are a real, authorized user. No cryptocurrency, no money, no subscription. Zero cost for students.",
         },
         {
-          question: "How much does it cost to use T.A.L.A.?",
+          question: "What if my internet fails at 10:00 AM?",
           answer:
-            "Initial vault setup requires a small amount of gas (typically $1-5 on Polygon). Admin check-ins are free on gas-optimized networks. Student access and paper downloads are completely free.",
+            "You download the heavy encrypted PDF *before* the exam—hours in advance. At 10:00 AM, you only need 1kb of data to fetch the decryption key. This works even on 2G internet. If your connection drops after unlocking, the decrypted PDF is already on your device.",
         },
         {
-          question: "How are papers encrypted?",
+          question: "Will my identity be revealed?",
           answer:
-            "Papers are encrypted using AES-256 on the client side before being uploaded. The encryption keys never leave your device. Only authorized users with the correct key can decrypt papers after unlock.",
+            "No. T.A.L.A. is privacy-preserving. We verify your wallet address to confirm you are authorized. We never ask for your name, Aadhaar number, or personal information. Your blockchain transaction is pseudonymous.",
+        },
+        {
+          question: "Can I download the exam paper before 10:00 AM?",
+          answer:
+            "Yes! You can download the encrypted file anytime. Verification of the file hash ensures it hasn't been tampered with. What you cannot do is decrypt it—the key is mathematically locked until the unlock time. This is a security feature.",
+        },
+        {
+          question: "What if I lose my wallet password?",
+          answer:
+            "Once you unlock the exam and download the decrypted PDF, your wallet password doesn't matter anymore. The PDF is yours to keep. However, we recommend backing up your wallet securely as you would with any cryptocurrency wallet.",
         },
       ],
     },
     {
-      category: "For Administrators",
+      category: "For Government (Tenders & Contracts)",
+      color: "heirlock-pink",
+      icon: Briefcase,
       questions: [
         {
-          question: "How do I upload exam papers?",
+          question: "How does this stop corruption in Tenders?",
           answer:
-            "Log in to your admin dashboard, connect your wallet, and click 'Create Vault'. Upload your papers (they'll be encrypted), set the unlock time, add authorized students, and deploy. Takes about 5 minutes.",
+            "Currently, corrupt officials peek at sealed bids early to help their friends win. With T.A.L.A., the bids are AES-256 encrypted. Even the official opening the tender cannot read the bid amounts until the public opening time. The encryption key is locked in the blockchain until the official moment.",
         },
         {
-          question: "Can I update papers after uploading?",
+          question: "Is this legally binding?",
           answer:
-            "Once papers are locked and deployed, they cannot be modified. This is a security feature. Plan carefully before deployment. You can create new vaults with updated papers if needed.",
+            "Yes. The Blockchain creates a \"Non-Repudiable Audit Trail.\" Every upload, lock, unlock, and modification is cryptographically signed. If a file was uploaded or unlocked, the blockchain signature proves exactly who did it and when. No one can deny it. This is admissible as legal evidence in court.",
         },
         {
-          question: "What happens if the oracle fails?",
+          question: "Can an official change the unlock time after uploading?",
           answer:
-            "We have redundant oracle infrastructure with 99.99% uptime. In the extremely unlikely event of oracle failure, papers will still be accessible through direct blockchain interaction. You can also manually trigger the unlock function.",
+            "No. Once the unlock time is recorded on the blockchain, it cannot be changed. The smart contract code enforces this mathematically. Even the uploading official cannot modify the time. This removes the possibility of \"forgetting\" to unlock something on time.",
+        },
+        {
+          question: "What if we need to cancel the tender?",
+          answer:
+            "Officials can use the \"Emergency Void\" function to permanently destroy the encryption key on the blockchain. This makes the bid file absolutely unreadable by anyone, forever. The cancellation is permanently recorded on-chain as proof.",
+        },
+        {
+          question: "How many tenders can we manage at once?",
+          answer:
+            "Unlimited. Each tender gets its own vault with its own encryption key and unlock time. You can manage 10 tenders or 1000 tenders simultaneously. The system is built for multi-tender operations.",
         },
       ],
     },
     {
-      category: "For Students",
+      category: "Technical & Developers",
+      color: "heirlock-blue",
+      icon: Code,
       questions: [
         {
-          question: "When can I access my exam papers?",
+          question: "What if the exam/tender is cancelled?",
           answer:
-            "You'll see a countdown timer in your student portal showing exactly when papers will unlock. Once the time expires, you can download them instantly. Check back at the scheduled time.",
+            "The Admin can trigger the \"Emergency Void\" function. This permanently destroys the encryption key on the Polygon Blockchain, making the file unreadable forever. The cancellation is recorded on-chain as permanent, non-deniable proof. No student can access the file, even if they somehow obtained the original ciphertext.",
         },
         {
-          question: "Can I download papers multiple times?",
+          question: "How scalable is it?",
           answer:
-            "Yes, once papers are unlocked, you can download them as many times as you need. They're stored securely and you get permanent access.",
+            "Highly scalable. The heavy PDF files are stored on IPFS (distributed network), not on our servers. Encryption happens client-side in the browser. The blockchain only stores tiny metadata (CID, unlock time, key hash). This architecture allows millions of concurrent users without server crashes.",
         },
         {
-          question: "What if I lose my access?",
+          question: "What happens if IPFS goes down?",
           answer:
-            "Your access is tied to your wallet address. As long as you have access to the wallet that was authorized, you can always download your papers.",
-        },
-      ],
-    },
-    {
-      category: "Security",
-      questions: [
-        {
-          question: "Has T.A.L.A. been audited?",
-          answer:
-            "Yes, all smart contracts have been audited by leading blockchain security firms. Audit reports are available on our Smart Contracts page. We maintain high security standards.",
+            "IPFS is distributed across thousands of nodes worldwide run by independent parties. It has no single point of failure. Even if 99% of IPFS nodes went offline, as long as 1 node has the file, it remains accessible. But more realistically, files are redundantly stored by Pinata (our gateway), ensuring 99.99% availability.",
         },
         {
-          question: "What if someone hacks my wallet?",
+          question: "Can you read our exam papers?",
           answer:
-            "If your wallet is compromised, immediately contact your school admin. They can revoke access and grant it to a new wallet. Never share your private keys with anyone.",
+            "No. The data never touches our servers. Encryption happens in your browser, and the encrypted ciphertext goes directly to IPFS. We never have access to encryption keys. Even if we wanted to read your papers, we physically cannot—the data is encrypted.",
         },
         {
-          question: "Can T.A.L.A. admins access my papers?",
+          question: "What blockchains do you support?",
           answer:
-            "No. T.A.L.A. is completely non-custodial. We never have access to encryption keys or papers. Even our founders cannot decrypt your exam papers.",
+            "Currently: Polygon Amoy (testnet) for testing. Mainnet support includes: Polygon (low cost, fast), with Ethereum and Arbitrum coming soon. You can choose which blockchain to use for your vault.",
+        },
+        {
+          question: "How much does it cost to set up a vault?",
+          answer:
+            "On Polygon, vault setup costs ~₹1-2 (0.01-0.02 MATIC) in gas fees. Reading/unlocking is completely free (no gas cost for view operations). One-time setup, unlimited unlocks. No subscription fees.",
+        },
+        {
+          question: "Can developers integrate T.A.L.A. into their LMS?",
+          answer:
+            "Yes. We provide REST APIs and SDKs for integration. Your LMS can upload exams, retrieve audit logs, and embed our unlock widget. All communication is encrypted (TLS 1.3). No exam content passes through our servers.",
         },
       ],
     },
@@ -114,61 +142,85 @@ export default function FAQ() {
     setOpenIndex(openIndex === index ? null : index);
   };
 
-  let questionIndex = 0;
+  let globalIndex = 0;
 
   return (
-    <main className="min-h-screen bg-white">
+    <main className="min-h-screen bg-cream">
       {/* Hero Section */}
-      <section className="bg-heirlock-green border-b-4 border-black py-12 md:py-20 pt-24 md:pt-32">
-        <div className="container mx-auto max-w-7xl px-3 sm:px-4">
-          <div className="space-y-4 md:space-y-6">
-            <h1 className="text-5xl md:text-7xl font-bold text-black leading-tight">
-              Frequently Asked <br />
-              Questions
-            </h1>
-            <p className="text-lg md:text-xl text-black max-w-3xl">
-              Find answers to common questions about T.A.L.A., security, and how it works.
+      <section className="bg-heirlock-yellow py-12 md:py-20 px-4 border-b-4 border-black">
+        <div className="container mx-auto max-w-4xl">
+          <div className="text-center">
+            <h1 className="text-5xl md:text-7xl font-black text-black mb-4">F.A.Q.</h1>
+            <h2 className="text-xl md:text-3xl font-bold text-black mb-6">
+              Questions & Answers from Every Perspective.
+            </h2>
+            <p className="text-base md:text-lg font-medium text-black max-w-2xl mx-auto">
+              Whether you're a student, government official, or developer, find answers to your concerns about T.A.L.A.'s security, logic, and usage.
             </p>
           </div>
         </div>
       </section>
 
-      {/* FAQ Sections */}
-      <section className="py-12 md:py-20 bg-white">
-        <div className="container mx-auto max-w-4xl px-3 sm:px-4">
-          <div className="space-y-16">
-            {faqs.map((section, sectionIndex) => (
-              <div key={sectionIndex}>
-                <div className="flex items-center gap-3 mb-8 pb-4 border-b-4 border-heirlock-green">
-                  <HelpCircle className="w-6 h-6 text-heirlock-green" />
-                  <h2 className="text-3xl md:text-4xl font-bold text-black">{section.category}</h2>
+      {/* FAQ Categories */}
+      <section className="py-12 md:py-20 px-4">
+        <div className="container mx-auto max-w-4xl">
+          {faqCategories.map((category, catIdx) => {
+            const bgColor = {
+              "heirlock-yellow": "bg-heirlock-yellow",
+              "heirlock-green": "bg-heirlock-green",
+              "heirlock-pink": "bg-heirlock-pink",
+              "heirlock-blue": "bg-heirlock-blue",
+            }[category.color] || "bg-heirlock-yellow";
+
+            const CategoryIcon = category.icon;
+
+            return (
+              <div key={catIdx} className="mb-12">
+                {/* Category Header */}
+                <div className={`${bgColor} p-6 md:p-8 border-4 border-black mb-6 shadow-brutal`}>
+                  <div className="flex items-center gap-4 mb-2">
+                    <CategoryIcon className="w-8 h-8 text-black" />
+                    <h2 className="text-3xl md:text-4xl font-black text-black">
+                      {category.category}
+                    </h2>
+                  </div>
                 </div>
 
-                <div className="space-y-4">
-                  {section.questions.map((q, qIndex) => {
-                    const globalIndex = questionIndex++;
+                {/* Questions */}
+                <div className="space-y-3">
+                  {category.questions.map((q, qIdx) => {
                     const isOpen = openIndex === globalIndex;
+                    const currentIndex = globalIndex;
+                    globalIndex++;
 
                     return (
                       <div
-                        key={qIndex}
-                        className="border-4 border-black bg-white shadow-brutal hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all"
+                        key={qIdx}
+                        className="border-4 border-black bg-white shadow-brutal hover:shadow-brutal-lg transition-all"
                       >
                         <button
-                          onClick={() => toggleQuestion(globalIndex)}
-                          className="w-full p-6 flex items-center justify-between hover:bg-gray-50 transition-colors"
+                          onClick={() => toggleQuestion(currentIndex)}
+                          className="w-full p-6 md:p-7 text-left flex items-start justify-between gap-4 hover:bg-gray-50 transition-colors"
                         >
-                          <h3 className="text-lg font-bold text-black text-left">{q.question}</h3>
-                          {isOpen ? (
-                            <ChevronUp className="w-6 h-6 text-heirlock-green flex-shrink-0" />
-                          ) : (
-                            <ChevronDown className="w-6 h-6 text-heirlock-green flex-shrink-0" />
-                          )}
+                          <span className="flex-1">
+                            <h3 className="text-lg md:text-xl font-bold text-black leading-tight">
+                              {q.question}
+                            </h3>
+                          </span>
+                          <div className="flex-shrink-0 mt-1">
+                            {isOpen ? (
+                              <ChevronUp className="w-6 h-6 text-black" />
+                            ) : (
+                              <ChevronDown className="w-6 h-6 text-black" />
+                            )}
+                          </div>
                         </button>
 
                         {isOpen && (
-                          <div className="px-6 pb-6 border-t-4 border-heirlock-green pt-4">
-                            <p className="text-gray-700 leading-relaxed">{q.answer}</p>
+                          <div className="border-t-4 border-black bg-gray-50 p-6 md:p-7">
+                            <p className="text-base md:text-lg text-gray-800 leading-relaxed">
+                              {q.answer}
+                            </p>
                           </div>
                         )}
                       </div>
@@ -176,28 +228,28 @@ export default function FAQ() {
                   })}
                 </div>
               </div>
-            ))}
-          </div>
+            );
+          })}
         </div>
       </section>
 
-      {/* Contact Section */}
-      <section className="py-12 md:py-20 bg-black border-t-4 border-heirlock-green">
-        <div className="container mx-auto max-w-7xl px-3 sm:px-4">
-          <div className="border-4 border-heirlock-green bg-black p-12 shadow-brutal">
-            <h2 className="text-4xl md:text-5xl font-bold text-white mb-6 text-heirlock-green">Still Have Questions?</h2>
-            <p className="text-gray-300 mb-8">
-              Can't find what you're looking for? Reach out to our support team. We're here to help.
+      {/* Still Have Questions */}
+      <section className="bg-black border-t-4 border-black py-12 md:py-16 px-4">
+        <div className="container mx-auto max-w-4xl">
+          <div className="bg-white border-4 border-white p-8 md:p-10 text-center shadow-brutal">
+            <HelpCircle className="w-12 h-12 mx-auto mb-4 text-black" />
+            <p className="text-lg md:text-xl font-bold text-black mb-6">
+              Still have doubts? Our team is here to help.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <a
-                href="mailto:support@tala.edu"
-                className="flex-1 bg-heirlock-green text-black px-6 py-4 font-bold rounded border-4 border-heirlock-green hover:bg-black hover:text-heirlock-green transition-all text-center shadow-brutal hover:shadow-none hover:translate-x-1 hover:translate-y-1"
+                href="mailto:support@usetala.in"
+                className="px-6 py-3 bg-heirlock-green text-black font-bold border-4 border-black shadow-brutal hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all inline-block"
               >
                 Email Support
               </a>
-              <Link href="/documentation" className="flex-1">
-                <button className="w-full border-4 border-heirlock-green text-heirlock-green px-6 py-4 font-bold rounded hover:bg-heirlock-green hover:text-black transition-all shadow-brutal hover:shadow-none hover:translate-x-1 hover:translate-y-1">
+              <Link href="/documentation">
+                <button className="px-6 py-3 bg-heirlock-blue text-black font-bold border-4 border-black shadow-brutal hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all">
                   Read Documentation
                 </button>
               </Link>
@@ -205,6 +257,24 @@ export default function FAQ() {
           </div>
         </div>
       </section>
+
+      {/* CTA Section */}
+      <section className="bg-heirlock-green py-12 md:py-16 px-4 border-b-4 border-black">
+        <div className="container mx-auto max-w-4xl text-center">
+          <h3 className="text-2xl md:text-4xl font-black text-black mb-6">
+            Ready to Begin?
+          </h3>
+          <p className="text-base md:text-lg text-black mb-8 font-bold max-w-2xl mx-auto">
+            Now that your questions are answered, deploy T.A.L.A. and secure your documents today.
+          </p>
+          <Link href="/create-vault">
+            <button className="px-8 py-4 bg-black text-white font-black border-4 border-black shadow-brutal hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all inline-flex items-center gap-2 text-lg">
+              Create Free Vault <ChevronRight className="w-5 h-5" />
+            </button>
+          </Link>
+        </div>
+      </section>
     </main>
   );
 }
+

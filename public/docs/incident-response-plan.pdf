@@ -1,0 +1,87 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 4 0 R /Resources << /Font << /F1 5 0 R >> >> >>
+endobj
+4 0 obj
+<< /Length 650 >>
+stream
+BT
+/F1 24 Tf
+50 700 Td
+(Incident Response Plan) Tj
+0 -40 Td
+/F1 12 Tf
+(T.A.L.A. Security Incident Response Procedures) Tj
+0 -20 Td
+(Version: 1.0 - January 2026) Tj
+0 -60 Td
+/F1 14 Tf
+(1. Purpose) Tj
+0 -20 Td
+/F1 12 Tf
+(This document outlines T.A.L.A.'s comprehensive incident response) Tj
+0 -15 Td
+(procedures for detecting, responding to, and recovering from security) Tj
+0 -15 Td
+(incidents and breaches.) Tj
+0 -40 Td
+/F1 14 Tf
+(2. Incident Response Team) Tj
+0 -20 Td
+/F1 12 Tf
+(24/7 dedicated incident response team) Tj
+0 -15 Td
+(- Chief Information Security Officer) Tj
+0 -15 Td
+(- Security Operations Center Manager) Tj
+0 -15 Td
+(- Incident Response Coordinator) Tj
+0 -15 Td
+(- Forensic Analysis Specialist) Tj
+0 -40 Td
+/F1 14 Tf
+(3. Response Procedures) Tj
+0 -20 Td
+/F1 12 Tf
+(Detection: Automated monitoring 24/7) Tj
+0 -15 Td
+(Response: Immediate containment within 1 hour) Tj
+0 -15 Td
+(Analysis: Root cause analysis within 24 hours) Tj
+0 -15 Td
+(Notification: Customer notification within 72 hours) Tj
+0 -15 Td
+(Recovery: System restoration and hardening) Tj
+0 -40 Td
+/F1 14 Tf
+(4. Communication) Tj
+0 -20 Td
+/F1 12 Tf
+(All customers affected by incidents receive immediate notification) Tj
+0 -15 Td
+(with incident details and recommended actions.) Tj
+ET
+endstream
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000214 00000 n 
+0000000914 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+993
+%%EOF

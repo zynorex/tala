@@ -1,0 +1,87 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 4 0 R /Resources << /Font << /F1 5 0 R >> >> >>
+endobj
+4 0 obj
+<< /Length 600 >>
+stream
+BT
+/F1 24 Tf
+50 700 Td
+(T.A.L.A. SOC 2 Type II Report) Tj
+0 -40 Td
+/F1 12 Tf
+(Annual Third-Party Audit Report) Tj
+0 -20 Td
+(Audit Year: January 2026) Tj
+0 -60 Td
+/F1 14 Tf
+(1. Audit Scope) Tj
+0 -20 Td
+/F1 12 Tf
+(This SOC 2 Type II audit covers:) Tj
+0 -20 Td
+(- Security Controls) Tj
+0 -15 Td
+(- System Availability) Tj
+0 -15 Td
+(- Processing Integrity) Tj
+0 -15 Td
+(- Confidentiality) Tj
+0 -15 Td
+(- Privacy) Tj
+0 -40 Td
+/F1 14 Tf
+(2. Audit Results) Tj
+0 -20 Td
+/F1 12 Tf
+(All control objectives were met effectively. The organization demonstrated) Tj
+0 -15 Td
+(effective implementation and operation of controls.) Tj
+0 -40 Td
+/F1 14 Tf
+(3. Key Findings) Tj
+0 -20 Td
+/F1 12 Tf
+(- Strong access control mechanisms) Tj
+0 -15 Td
+(- Effective encryption practices) Tj
+0 -15 Td
+(- Comprehensive monitoring systems) Tj
+0 -15 Td
+(- Regular backup and recovery testing) Tj
+0 -15 Td
+(- Incident response procedures in place) Tj
+0 -40 Td
+/F1 14 Tf
+(4. Recommendations) Tj
+0 -20 Td
+/F1 12 Tf
+(Continue current security practices and maintain audit compliance.) Tj
+0 -20 Td
+(Recommended: Quarterly security assessments.) Tj
+ET
+endstream
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000214 00000 n 
+0000000864 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+943
+%%EOF

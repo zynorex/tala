@@ -1,79 +1,147 @@
 'use client';
 
-import { Code, FileText, Shield, Zap, BookOpen, ExternalLink, ChevronRight, Github } from "lucide-react";
+import { BookOpen, ChevronRight, Code, ExternalLink, FileText, Github, Layers, Lock, Shield, Zap } from "lucide-react";
 import Link from "next/link";
 
-export default function Documentation() {
-  const docSections = [
-    {
-      title: "Getting Started",
-      description: "Learn the basics of T.A.L.A. and how to set up your first vault.",
-      icon: BookOpen,
-      href: "/documentation/getting-started",
-    },
-    {
-      title: "API Reference",
-      description: "Complete API documentation for integrating T.A.L.A. into your systems.",
-      icon: Code,
-      href: "/documentation/api-reference",
-    },
-    {
-      title: "Smart Contracts",
-      description: "Understand the smart contracts powering T.A.L.A. security and time-locks.",
-      icon: Shield,
-      href: "/smart-contracts",
-    },
-    {
-      title: "Best Practices",
-      description: "Security tips and best practices for protecting your exam papers.",
-      icon: Zap,
-      href: "/documentation/best-practices",
-    },
-    {
-      title: "Deployment Guide",
-      description: "Step-by-step guide to deploying T.A.L.A. on different blockchains.",
-      icon: FileText,
-      href: "/documentation/deployment",
-    },
-    {
-      title: "Troubleshooting",
-      description: "Common issues and how to resolve them quickly.",
-      icon: Shield,
-      href: "/documentation/troubleshooting",
-    },
-  ];
+const navEntries = [
+  {
+    title: "Platform overview",
+    description: "What T.A.L.A. does, why it matters, and the principles behind the release guarantee.",
+    icon: Layers,
+    href: "/docs",
+  },
+  {
+    title: "Developer quick start",
+    description: "Set up your environment, deploy a vault, and test the unlock path in minutes.",
+    icon: BookOpen,
+    href: "/docs/quickstart",
+  },
+  {
+    title: "Architecture and security",
+    description: "Detailed view of client encryption, IPFS anchoring, and chain enforced timing.",
+    icon: Shield,
+    href: "/docs/architecture",
+  },
+  {
+    title: "Contract reference",
+    description: "Function catalog, error surfaces, and state model for TimeLockedVault.",
+    icon: Code,
+    href: "/docs/smart-contract",
+  },
+  {
+    title: "API and web clients",
+    description: "Guides for programmatic vault creation, webhook delivery, and client side helpers.",
+    icon: FileText,
+    href: "/docs/api",
+  },
+  {
+    title: "Security posture",
+    description: "Threat analysis, AES 256 design choices, and operational safeguards for exams and RFPs.",
+    icon: Zap,
+    href: "/docs/security",
+  },
+];
 
+const featured = [
+  {
+    title: "Vault deployment guide",
+    summary: "Create a vault, upload encrypted content, and publish the policy so stakeholders can verify it.",
+    href: "/create-vault",
+    cta: "Launch a vault",
+  },
+  {
+    title: "Contract deep dive",
+    summary: "Read the Solidity source, audit the unlock guard, and see how voiding destroys the key on chain.",
+    href: "/docs/smart-contract",
+    cta: "Review the contract",
+  },
+  {
+    title: "Integration blueprint",
+    summary: "Embed vault status in your product, surface CID checks to users, and stream unlock outcomes to logs.",
+    href: "/docs/api",
+    cta: "Follow the blueprint",
+  },
+];
+
+const credibility = [
+  {
+    title: "Open source",
+    copy: "Inspect the code, reuse components, and track changes as we harden the platform.",
+    href: "https://github.com",
+    icon: Github,
+  },
+  {
+    title: "Cryptography first",
+    copy: "Client side AES 256 with keys erased after upload. No server holds secrets.",
+    href: "/docs/security",
+    icon: Lock,
+  },
+  {
+    title: "Proof oriented",
+    copy: "Every action leaves an on chain trace so you can present evidence to auditors and regulators.",
+    href: "/docs/architecture",
+    icon: Shield,
+  },
+];
+
+export default function Documentation() {
   return (
-    <main className="min-h-screen bg-white">
-      {/* Hero Section */}
-      <section className="bg-heirlock-green border-b-4 border-black py-12 md:py-20 pt-24 md:pt-32">
-        <div className="container mx-auto max-w-7xl px-3 sm:px-4">
-          <div className="space-y-4 md:space-y-6">
-            <h1 className="text-5xl md:text-7xl font-bold text-black leading-tight">
-              Documentation
-            </h1>
-            <p className="text-lg md:text-xl text-black max-w-3xl">
-              Complete guides, API reference, and technical documentation for T.A.L.A.
+    <main className="min-h-screen bg-white text-black">
+      <section className="border-b-4 border-black bg-heirlock-green px-6 py-16 md:py-24">
+        <div className="mx-auto flex max-w-6xl flex-col gap-6">
+          <div className="space-y-4">
+            <p className="text-xs font-black uppercase tracking-[0.18em] text-black/70">Documentation</p>
+            <h1 className="text-4xl md:text-6xl font-black leading-tight">A single source for T.A.L.A. delivery</h1>
+            <p className="max-w-3xl text-lg md:text-xl font-semibold text-black/90">
+              Build, review, and operate with confidence. These resources give developers, security teams, and educators clear guidance without marketing fluff.
             </p>
+          </div>
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
+            <Link
+              href="/docs/quickstart"
+              className="inline-flex items-center justify-center gap-2 rounded-xl border-3 border-black bg-black px-5 py-3 font-black text-white shadow-brutal transition-transform hover:-translate-y-0.5"
+            >
+              Start building
+              <ChevronRight className="h-4 w-4" />
+            </Link>
+            <Link
+              href="/docs/smart-contract"
+              className="inline-flex items-center justify-center gap-2 rounded-xl border-3 border-black bg-white px-5 py-3 font-black text-black shadow-brutal transition-transform hover:-translate-y-0.5"
+            >
+              Review the contract
+              <ChevronRight className="h-4 w-4" />
+            </Link>
           </div>
         </div>
       </section>
 
-      {/* Documentation Sections */}
-      <section className="py-12 md:py-20 bg-white">
-        <div className="container mx-auto max-w-7xl px-3 sm:px-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {docSections.map((section, index) => {
-              const Icon = section.icon;
+      <section className="border-b-4 border-black bg-white px-6 py-14">
+        <div className="mx-auto max-w-6xl space-y-6">
+          <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+            <div>
+              <p className="text-xs font-black uppercase tracking-[0.18em] text-black/60">Navigation</p>
+              <h2 className="text-3xl md:text-4xl font-black">Pick the track that fits</h2>
+              <p className="text-sm text-black/80">Curated entry points for builders, auditors, and program owners.</p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {navEntries.map((item) => {
+              const Icon = item.icon;
               return (
-                <Link key={index} href={section.href}>
-                  <div className="border-4 border-black bg-white p-6 shadow-brutal hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all h-full flex flex-col cursor-pointer">
-                    <Icon className="w-8 h-8 text-heirlock-green mb-4" />
-                    <h3 className="text-xl font-bold mb-3 flex-1">{section.title}</h3>
-                    <p className="text-gray-700 text-sm mb-4">{section.description}</p>
-                    <div className="flex items-center gap-2 text-heirlock-green font-bold">
-                      Read More <ExternalLink className="w-4 h-4" />
-                    </div>
+                <Link
+                  key={item.title}
+                  href={item.href}
+                  className="group flex h-full flex-col gap-3 rounded-2xl border-3 border-black bg-white p-6 shadow-brutal transition-transform hover:-translate-y-0.5"
+                >
+                  <div className="flex items-center gap-2 text-xs font-black uppercase tracking-[0.14em] text-black/70">
+                    <Icon className="h-4 w-4" />
+                    {item.title}
+                  </div>
+                  <p className="text-sm leading-relaxed text-black/80 flex-1">{item.description}</p>
+                  <div className="flex items-center gap-2 text-sm font-black text-black">
+                    Read now
+                    <ExternalLink className="h-4 w-4" />
                   </div>
                 </Link>
               );
@@ -82,60 +150,88 @@ export default function Documentation() {
         </div>
       </section>
 
-      {/* Quick Links */}
-      <section className="py-12 md:py-20 bg-black border-t-4 border-heirlock-green">
-        <div className="container mx-auto max-w-7xl px-3 sm:px-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="border-4 border-heirlock-green bg-black p-8 shadow-brutal">
-              <Github className="w-8 h-8 text-heirlock-green mb-4" />
-              <h3 className="text-2xl font-bold text-white mb-4">Open Source Code</h3>
-              <p className="text-gray-300 mb-6">
-                T.A.L.A. is fully open source. Review our smart contracts and frontend code on GitHub.
-              </p>
-              <a
-                href="https://github.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-heirlock-green font-bold flex items-center gap-2 hover:gap-3 transition-all"
-              >
-                View on GitHub <ExternalLink className="w-4 h-4" />
-              </a>
+      <section className="border-b-4 border-black bg-heirlock-yellow px-6 py-14">
+        <div className="mx-auto max-w-6xl space-y-8">
+          <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+            <div>
+              <p className="text-xs font-black uppercase tracking-[0.18em] text-black/70">Featured guides</p>
+              <h2 className="text-3xl md:text-4xl font-black">Go from concept to live run</h2>
+              <p className="text-sm text-black/80">Follow these concise guides to ship a working release path.</p>
             </div>
+          </div>
 
-            <div className="border-4 border-heirlock-green bg-black p-8 shadow-brutal">
-              <FileText className="w-8 h-8 text-heirlock-green mb-4" />
-              <h3 className="text-2xl font-bold text-white mb-4">Whitepaper</h3>
-              <p className="text-gray-300 mb-6">
-                Read our technical whitepaper explaining the T.A.L.A. architecture and security model.
-              </p>
-              <a
-                href="#"
-                className="text-heirlock-green font-bold flex items-center gap-2 hover:gap-3 transition-all"
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+            {featured.map((item) => (
+              <Link
+                key={item.title}
+                href={item.href}
+                className="flex h-full flex-col gap-3 rounded-2xl border-3 border-black bg-white p-6 shadow-brutal transition-transform hover:-translate-y-0.5"
               >
-                Download PDF <ExternalLink className="w-4 h-4" />
-              </a>
-            </div>
+                <h3 className="text-xl font-black">{item.title}</h3>
+                <p className="text-sm leading-relaxed text-black/80 flex-1">{item.summary}</p>
+                <div className="flex items-center gap-2 text-sm font-black text-black">
+                  {item.cta}
+                  <ChevronRight className="h-4 w-4" />
+                </div>
+              </Link>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="py-12 md:py-20 bg-heirlock-green border-t-4 border-black">
-        <div className="container mx-auto max-w-7xl px-3 sm:px-4 text-center">
-          <h2 className="text-4xl md:text-5xl font-bold text-black mb-6">
-            Need Help?
-          </h2>
-          <p className="text-lg text-black mb-8 max-w-2xl mx-auto">
-            Can't find what you're looking for? Check our FAQ or contact our support team.
+      <section className="border-b-4 border-black bg-white px-6 py-14">
+        <div className="mx-auto max-w-6xl space-y-8">
+          <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+            <div>
+              <p className="text-xs font-black uppercase tracking-[0.18em] text-black/60">Assurance layer</p>
+              <h2 className="text-3xl md:text-4xl font-black">Why teams rely on T.A.L.A.</h2>
+              <p className="text-sm text-black/80">Every claim is backed by verifiable artifacts, not promises.</p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+            {credibility.map((item) => {
+              const Icon = item.icon;
+              return (
+                <Link
+                  key={item.title}
+                  href={item.href}
+                  className="flex h-full flex-col gap-3 rounded-2xl border-3 border-black bg-heirlock-green p-6 shadow-brutal transition-transform hover:-translate-y-0.5"
+                >
+                  <Icon className="h-6 w-6" />
+                  <h3 className="text-lg font-black">{item.title}</h3>
+                  <p className="text-sm leading-relaxed text-black/80 flex-1">{item.copy}</p>
+                  <div className="flex items-center gap-2 text-sm font-black text-black">
+                    Explore
+                    <ExternalLink className="h-4 w-4" />
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      <section className="bg-black px-6 py-16">
+        <div className="mx-auto max-w-6xl space-y-6 text-center">
+          <h2 className="text-3xl md:text-4xl font-black text-heirlock-green">Need a direct path to help?</h2>
+          <p className="mx-auto max-w-3xl text-sm md:text-base text-gray-200">
+            Browse the FAQ for quick answers or reach support for architecture reviews, compliance questions, and launch preparation.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/faq">
-              <button className="px-8 py-3 bg-black text-heirlock-green font-bold border-4 border-black hover:bg-white hover:text-black shadow-brutal hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all">
-                Visit FAQ
-              </button>
+          <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
+            <Link
+              href="/faq"
+              className="inline-flex items-center justify-center gap-2 rounded-xl border-3 border-heirlock-green bg-heirlock-green px-6 py-3 font-black text-black shadow-brutal transition-transform hover:-translate-y-0.5"
+            >
+              Visit FAQ
+              <ChevronRight className="h-4 w-4" />
             </Link>
-            <a href="mailto:support@tala.edu" className="px-8 py-3 bg-white text-black font-bold border-4 border-black hover:bg-black hover:text-white shadow-brutal hover:shadow-none hover:translate-x-1 hover:translate-y-1 transition-all flex items-center justify-center gap-2">
-              Contact Support <ChevronRight className="w-4 h-4" />
+            <a
+              href="mailto:support@usetala.in"
+              className="inline-flex items-center justify-center gap-2 rounded-xl border-3 border-heirlock-green bg-black px-6 py-3 font-black text-white shadow-brutal transition-transform hover:-translate-y-0.5"
+            >
+              Contact support
+              <ChevronRight className="h-4 w-4" />
             </a>
           </div>
         </div>
@@ -143,3 +239,4 @@ export default function Documentation() {
     </main>
   );
 }
+

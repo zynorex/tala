@@ -26,9 +26,10 @@ export default function WalletButton({ isScrolled = false }: { isScrolled?: bool
           connect({ connector: connectors[0] });
         }
       }}
-      className={`px-5 lg:px-7 py-2 text-sm lg:text-base font-bold border-4 shadow-brutal transition-all ${isScrolled ? 'bg-white text-black border-black hover:bg-heirlock-green hover:border-black hover:translate-x-1 hover:translate-y-1 hover:shadow-none' : 'bg-heirlock-green text-black border-black hover:bg-black hover:text-heirlock-green hover:translate-x-1 hover:translate-y-1 hover:shadow-none'}`}
+      className={`px-5 lg:px-7 py-2 text-sm lg:text-base font-bold border-4 shadow-brutal transition-all ${isScrolled ? 'bg-white text-black border-black hover:bg-heirlock-green hover:border-black hover:translate-x-1 hover:translate-y-1 hover:shadow-none' : 'bg-heirlock-green text-black border-black hover:bg-heirlock-pink hover:text-heirlock-green hover:translate-x-1 hover:translate-y-1 hover:shadow-none'}`}
     >
       {isConnected ? displayAddress : 'Connect Wallet'}
     </button>
   );
 }
+
