@@ -75,7 +75,7 @@ export default function Navbar() {
       <div className="container mx-auto max-w-7xl px-4">
         <div className="flex justify-between items-center h-16 md:h-20">
           <Link href="/" className="flex items-center gap-4 group">
-            <div className="relative h-10 md:h-12 w-auto bg-white border-4 border-transparent group-hover:border-black transition-all p-1">
+            <div className="relative h-10 md:h-12 w-auto bg-[#1A1A1A] border-4 border-transparent group-hover:border-black transition-all p-1">
               <Image 
                 src="/logo.png" 
                 alt="T.A.L.A. Logo" 
