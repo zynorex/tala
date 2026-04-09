@@ -54,7 +54,7 @@ export default function LaunchAnnouncementModal() {
 
   if (!isOpen) return null;
 
-  const launchDate = new Date('2026-03-14');
+  const launchDate = new Date('2026-05-02');
   const today = new Date();
   const daysUntilLaunch = Math.ceil((launchDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
 

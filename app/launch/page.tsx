@@ -12,8 +12,8 @@ import {
   Zap,
 } from 'lucide-react';
 
-const LAUNCH_DATE_ISO = '2026-04-20T00:00:00+05:30';
-const LAUNCH_LABEL = '20 April 2026 • 12:00 AM IST';
+const LAUNCH_DATE_ISO = '2026-05-02T00:00:00+05:30';
+const LAUNCH_LABEL = '2 May 2026 • 12:00 AM IST';
 
 const launchHighlights = [
   {
