@@ -1,4 +1,4 @@
-# NIL — Non-Intervenable Integrity-Locked Ledger
+# T.A.L.A. - Tamper-proof Automated Locking Algorithm
 ## Complete Production-Ready Smart Contract System
 
 A non-custodial, blockchain-based time-locked vault system with end-to-end encryption and decentralized file storage on IPFS.
