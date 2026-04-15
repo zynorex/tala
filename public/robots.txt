@@ -1,5 +1,5 @@
 # robots.txt for T.A.L.A. - Non-Intervenable Integrity-Locked Ledger
-# https://tala.ai
+# https://usetala.in
 
 # Allow all crawlers to index the site
 User-agent: *
